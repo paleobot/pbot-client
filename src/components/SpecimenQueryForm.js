@@ -5,7 +5,7 @@ import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
 import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 
 
-const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
    
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -13,10 +13,9 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
        
         <Formik
             initialValues={{
-                descriptionID: '', 
-                family: '', 
-                genus: '', 
-                species: '',
+                specimenID: '', 
+                name: '', 
+                locality: '', 
                 includeComplex: false}}
             validate={values => {
                 const errors = {};
@@ -26,13 +25,11 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 return errors;
             }}
             validationSchema={Yup.object({
-                descriptionID: Yup.string()
+                specimenID: Yup.string()
                 .uuid('Must be a valid uuid'),
-                family: Yup.string()
+                name: Yup.string()
                 .max(30, 'Must be 30 characters or less'),
-                genus: Yup.string()
-                .max(30, 'Must be 30 characters or less'),
-                species: Yup.string()
+                locality: Yup.string()
                 .max(30, 'Must be 30 characters or less'),
             })}
             onSubmit={values => {
@@ -46,35 +43,27 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
             <Form>
                 <Field 
                     component={TextField}
-                    name="descriptionID" 
+                    name="specimenID" 
                     type="text"
-                    label="Description ID"
+                    label="Specimen ID"
                     disabled={false}
                 />
                 <br />
                 
                 <Field 
                     component={TextField}
-                    name="family" 
+                    name="name" 
                     type="text" 
-                    label="Family"
+                    label="Name"
                     disabled={false}
                 />
                 <br />
                 
                 <Field 
                     component={TextField}                
-                    name="genus" 
+                    name="locality" 
                     type="text" 
-                    label="Genus"
-                    disabled={false}
-                />
-                <br />
-                <Field 
-                    component={TextField}
-                    name="species" 
-                    type="text" 
-                    label="Species"
+                    label="Locality"
                     disabled={false}
                 />
                 <br />
@@ -98,4 +87,4 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
     );
 };
 
-export default OTUQueryForm;
+export default SpecimenQueryForm;
