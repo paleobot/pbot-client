@@ -6,22 +6,12 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import CharacterInstances from "./CharacterInstances";
 
 const client = new ApolloClient({
   uri: '/graphql',
   cache: new InMemoryCache()
 });
-
-function CharacterInstances(props) {
-    if (!props.characterInstances) return ''; //TODO: is this the best place to handle this?
-    console.log(props.characterInstances);
-    const style = {marginLeft:"2em"}
-    return props.characterInstances.map(({characterInstanceID, character, state}) => (
-        <div key={characterInstanceID}  style={style}>
-            {character.name}: {state.value !== null ? `${state.value}` : `${state.State.name}`}<br />
-        </div>
-    ));
-}
 
 function OTUs(props) {
     console.log(props);
