@@ -122,6 +122,9 @@ function Specimens(props) {
                 Specimen${specs} {
                     specimenID
                     name
+                    organ {
+                        type
+                    }
                     archtypeDescription {
                         Description {
                             name
@@ -141,6 +144,9 @@ function Specimens(props) {
                 Specimen${specs} {
                     specimenID
                     name
+                    organ {
+                        type
+                    }
                     archtypeDescription {
                         Description {
                             descriptionID
@@ -222,9 +228,9 @@ function Specimens(props) {
     if (error) return <p>Error :(</p>;
            
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return data.Specimen.map(({ specimenID, name, description, archtypeDescription }) => (
+    return data.Specimen.map(({ specimenID, name, organ, description, archtypeDescription }) => (
         <div key={specimenID} style={style}>
-            {specimenID}: {name}{archtypeDescription ? `, ${archtypeDescription.Description.name}` : ""}{description ? "" : ", OTU specimen"}  <br />
+            {specimenID}: {name}, {organ.type}{archtypeDescription ? `, ${archtypeDescription.Description.name}` : ""}{description ? "" : ", OTU specimen"}  <br />
              <CharacterInstances characterInstances={description ? description.Description.characterInstances : archtypeDescription.Description.characterInstances} />
            <br />
         </div>
