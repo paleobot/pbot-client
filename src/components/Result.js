@@ -2,6 +2,7 @@ import React, { useState }from 'react';
 import { Grid } from '@material-ui/core';
 import OTUQueryResults from './OTUQueryResults';
 import SpecimenQueryResults from './SpecimenQueryResults';
+import SchemaQueryResults from './SchemaQueryResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -11,6 +12,9 @@ const Result = ({queryParams, queryEntity}) => {
         ) : 
         queryEntity === "Specimen" ? (
             <SpecimenQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) :
+        queryEntity === "Schema" ? (
+            <SchemaQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) :
         '';
         
