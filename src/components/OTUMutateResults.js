@@ -75,6 +75,7 @@ const OTUMutateResults = ({queryParams, queryEntity}) => {
                             family: queryParams.family, 
                             genus: queryParams.genus, 
                             species: queryParams.species, 
+                            name: queryParams.genus + ' ' + queryParams.species,
                         }}
                     />
                 ) : 

@@ -35,7 +35,7 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
-                handleQueryParamChange(values)
+                handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
             }}
