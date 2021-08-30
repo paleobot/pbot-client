@@ -3,6 +3,7 @@ import { Grid } from '@material-ui/core';
 import OTUQueryResults from './OTUQueryResults';
 import SpecimenQueryResults from './SpecimenQueryResults';
 import SchemaQueryResults from './SchemaQueryResults';
+import OTUMutateResults from './OTUMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -16,6 +17,9 @@ const Result = ({queryParams, queryEntity}) => {
         queryEntity === "Schema" ? (
             <SchemaQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) :
+        queryEntity === "OTU-mutate" ? (
+            <OTUMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
         '';
         
     return (
