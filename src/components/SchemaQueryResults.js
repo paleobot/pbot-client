@@ -55,7 +55,7 @@ function Schemas(props) {
         `;
     }
     
-    const { loading, error, data } = useQuery(schemaGQL);
+    const { loading, error, data } = useQuery(schemaGQL, {fetchPolicy: "cache-and-network"});
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;

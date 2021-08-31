@@ -131,7 +131,7 @@ function Specimens(props) {
         */
     }
     
-    const { loading, error, data } = useQuery(specimenGQL);
+    const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;

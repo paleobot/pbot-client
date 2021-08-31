@@ -63,7 +63,7 @@ function OTUs(props) {
         `;
     }
     
-    const { loading, error, data } = useQuery(otuGQL);
+    const { loading, error, data } = useQuery(otuGQL, {fetchPolicy: "cache-and-network"});
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
