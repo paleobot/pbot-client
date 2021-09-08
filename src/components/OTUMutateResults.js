@@ -22,18 +22,27 @@ function OTUcreate(props) {
         console.log(key + ", " + props.filters[key]);
         if (props.filters[key]) acc += `, ${key}: "${props.filters[key]}"`;
         return acc;
-    }, 'type: "OTU"');
+    }, 'type: "OTU", enteredByPersonID: "fbc53387-0447-479b-b655-e210884763ee"'); //TODO: set person through login of some sort
     console.log(specs);
 
     let otuGQL;
+        /*
         otuGQL = gql`
             mutation {
                 CreateDescription(${specs}) {
                     descriptionID
-                }            
+                }      
             }
         `;
-    
+        */
+        otuGQL = gql`
+            mutation {
+                CustomCreateDescription(data:{${specs}}) {
+                    descriptionID
+                }      
+            }
+        `;
+
     const [addDescription, { data, loading, error }] = useMutation(otuGQL);
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
@@ -54,8 +63,8 @@ function OTUcreate(props) {
         
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
         return (
-            <div key={data.CreateDescription.descriptionID} style={style}>
-                {data.CreateDescription.descriptionID} <br />
+            <div key={data.CustomCreateDescription.descriptionID} style={style}>
+                {data.CustomCreateDescription.descriptionID} <br />
                 <br />
             </div>
         );
