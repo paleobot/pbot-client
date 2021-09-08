@@ -8,16 +8,30 @@ const LoginForm = ({ setToken }) => {
     //const [username, setUserName] = useState();
     //const [password, setPassword] = useState();
 
-    const handleSubmit = values => {
+    const loginUser = async (credentials) => {
+        return fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(credentials)
+        })
+        .then(data => data.json())
+    }
+    
+    const handleSubmit = async (values) => {
         console.log(values.userName);
         
-        /*
         const token = await loginUser({
-            username,
-            password
+            username: values.userName,
+            password: values.password
         });
-        */
-        setToken("gubba");
+        
+        if (token) {
+            setToken(token);
+        } else {
+            //setStatus("Hogan's goat!"); //TODO: figure out how Formik setStatus works
+        }
     }
 
     return(
