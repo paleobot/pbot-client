@@ -5,6 +5,7 @@ import OTUQueryForm from './OTUQueryForm';
 import SpecimenQueryForm from './SpecimenQueryForm';
 import SchemaQueryForm from './SchemaQueryForm';
 import OTUMutateForm from './OTUMutateForm';
+import LoginForm from './LoginForm';
 
 const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     /*
@@ -15,6 +16,11 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
        //console.log(selectedForm);
     };
     */
+    
+    const [token, setToken] = useState();
+    if(!token) {
+        return <LoginForm setToken={setToken} />
+    }
     
     return (
         <Grid container spacing={3}>
