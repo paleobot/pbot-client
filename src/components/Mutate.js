@@ -17,7 +17,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
     };
     */
     
-    const [token, setToken] = useState();
+    const [token, setToken] = useState(localStorage.getItem('PBOTMutationToken'));
     if(!token) {
         return <LoginForm setToken={setToken} />
     }

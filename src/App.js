@@ -18,18 +18,19 @@ const theme = createMuiTheme({
   }
 });
 function App() {
-  return (
+    localStorage.removeItem('PBOTMutationToken');
+    return (
     <ThemeProvider theme={theme}>
     <div className="App">
-      <header className="App-header">
+        <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-      </header>
-       <QueryInterface />
-       <br />
-       <br />
-   </div>
-   </ThemeProvider>
-  );
+        </header>
+        <QueryInterface />
+        <br />
+        <br />
+    </div>
+    </ThemeProvider>
+    );
 }
 
 export default App;

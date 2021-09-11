@@ -4,14 +4,35 @@ import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
+  createHttpLink,
   useQuery,
   useMutation,
   gql
 } from "@apollo/client";
+import { setContext } from '@apollo/client/link/context';
 import CharacterInstances from "./CharacterInstances";
-
+/*
 const client = new ApolloClient({
   uri: '/graphql',
+  cache: new InMemoryCache()
+});
+*/
+const httpLink = createHttpLink({
+  uri: '/graphql',
+});
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('PBOTMutationToken');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    }
+  }
+});
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache()
 });
 

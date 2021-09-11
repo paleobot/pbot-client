@@ -17,6 +17,7 @@ const LoginForm = ({ setToken }) => {
             body: JSON.stringify(credentials)
         })
         .then(data => data.json())
+        .then(response => response.token);
     }
     
     const handleSubmit = async (values) => {
@@ -28,6 +29,7 @@ const LoginForm = ({ setToken }) => {
         });
         
         if (token) {
+            localStorage.setItem('PBOTMutationToken', token);
             setToken(token);
         } else {
             //setStatus("Hogan's goat!"); //TODO: figure out how Formik setStatus works
