@@ -72,13 +72,19 @@ function OTUcreate(props) {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-        addDescription();
+            addDescription().catch((err) => {
+                //Just eat it. The UI will get what it needs below through the error field defined on the hook.
+                console.log("catch");
+                console.log(err);
+            });
     }, []);
 
     if (loading) {
         return <p>Loading...</p>;
     } else if (error) {
-        return <p>Error :(</p>;
+        console.log("ERROR!");
+        console.log(error);
+        return <p>Error: {error.message}</p>;
     } else if (data) {
         console.log(data);
         
