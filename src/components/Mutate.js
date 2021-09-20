@@ -6,6 +6,7 @@ import SpecimenQueryForm from './SpecimenQueryForm';
 import SchemaQueryForm from './SchemaQueryForm';
 import OTUMutateForm from './OTUMutateForm';
 import LoginForm from './LoginForm';
+import RegisterForm from './RegisterForm';
 
 const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     /*
@@ -16,10 +17,15 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
        //console.log(selectedForm);
     };
     */
+    const [showRegistration, setShowRegistration] = useState(false);
     
     const [token, setToken] = useState(localStorage.getItem('PBOTMutationToken'));
     if(!token) {
-        return <LoginForm setToken={setToken} />
+        if (!showRegistration) {
+            return <LoginForm setToken={setToken} setShowRegistration={setShowRegistration} />
+        } else {
+            return <RegisterForm setShowRegistration={setShowRegistration}/>
+        }
     }
     
     return (

@@ -4,12 +4,12 @@ import * as Yup from 'yup';
 import { Button } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
 
-const LoginForm = ({ setToken, setShowRegistration }) => {
+const RegisterForm = ({ setShowRegistration }) => {
     //const [username, setUserName] = useState();
     //const [password, setPassword] = useState();
     
-    const loginUser = async (credentials) => {
-        return fetch('http://localhost:3000/login', {
+    const registerUser = async (credentials) => {
+        return fetch('http://localhost:3000/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -40,18 +40,23 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
     const handleSubmit = async (values, {setStatus}) => {
         console.log(values.userName);
         
-        const loginResult = await loginUser({
-            username: values.userName,
+        setShowRegistration(false);
+        /*
+        const registerResult = await registerUser({
+            givenname: values.givenName,
+            surname: values.surname,
+            email: values.email,
             password: values.password
         });
         
-        if (loginResult.ok) {
-            localStorage.setItem('PBOTMutationToken', loginResult.token);
+        if (registerResult.ok) {
+            //localStorage.setItem('PBOTMutationToken', loginResult.token);
             setToken(loginResult.token);
         } else {
             console.log("else");
-            setStatus({error: loginResult.message}); //TODO: figure out how Formik setStatus works
+            setStatus({error: resigterResult.message}); //TODO: figure out how Formik setStatus works
         }
+        */
     }
     
     //TODO: try out styled-components
@@ -61,35 +66,57 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
 
     return(
         <div>
-        <h2>Mutations require authentication</h2>
+        <h2>Register for PBOT</h2>
         <Formik
             initialValues={{
-                userName: '', 
+                givenName: '',
+                surname: '',
+                email: '', 
                 password: '', 
             }}
             validationSchema={Yup.object({
-                userName: Yup.string()
-                .required("User Name is required")
+                givenName: Yup.string()
+                .required("Given Name is required")
                 .max(30, 'Must be 30 characters or less'),
+                surname: Yup.string()
+                .required("Surname is required")
+                .max(30, 'Must be 30 characters or less'),
+                email: Yup.string()
+                .required("Email is required")
+                .max(30, 'Must be 30 characters or less')
+                .email("Must be a valid email address"),
                 password: Yup.string()
                 .required("Password is required")
                 .min(6, "Passwords must contain at least six characters")
                 .max(30, 'Must be 30 characters or less'),
             })}
-            onSubmit={handleSubmit}/*({values => {
-                //alert(JSON.stringify(values, null, 2));
-                //setValues(values);
-                handleSubmit(values);
-                setStatus("Oh no!");
-            }}*/
+            onSubmit={handleSubmit}
         >
         {({ status }) => (
         <Form>
                 <Field 
                     component={TextField}
-                    name="userName" 
+                    name="givenName" 
                     type="text"
-                    label="User Name"
+                    label="Given Name"
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={TextField}
+                    name="surname" 
+                    type="text"
+                    label="Surname"
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={TextField}
+                    name="email" 
+                    type="text"
+                    label="Email"
                     disabled={false}
                 />
                 <br />
@@ -105,7 +132,7 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
                 <br />
                 <br />
 
-                <Button type="submit" variant="contained" color="primary">Login</Button>
+                <Button type="submit" variant="contained" color="primary">Register</Button>
                 <br />
                 <br />
                 {status && status.error && (
@@ -114,10 +141,9 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
             </Form>
             )}
         </Formik>
-        <Button variant="text" color="secondary" onClick={() => {setShowRegistration(true);}}>Register</Button>
         </div>
     );
 };
 
-export default LoginForm;
+export default RegisterForm;
 
