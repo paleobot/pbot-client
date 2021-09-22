@@ -2,11 +2,12 @@ import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button } from '@material-ui/core';
-import { TextField } from 'formik-material-ui';
+import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 
 const RegisterForm = ({ setShowRegistration }) => {
     //const [username, setUserName] = useState();
     //const [password, setPassword] = useState();
+    const [showUseExistingUser, setshowUseExistingUser] = useState(false);
     
     const registerUser = async (credentials) => {
         return fetch('http://localhost:3000/register', {
@@ -23,10 +24,9 @@ const RegisterForm = ({ setShowRegistration }) => {
         })
         .then(data => {
             console.log(data);
-            if (data.token) {
-                return { ok: true, token: data.token}
-            } else if (data.msg) {
-                return { ok: false, message: data.msg}
+            if (data.msg) {
+                const success = data.msg === "User created";
+                return { ok: success, message: data.msg}
             } else {
                 throw new Error("Unrecognized message from server");
             }
@@ -38,9 +38,18 @@ const RegisterForm = ({ setShowRegistration }) => {
     }
     
     const handleSubmit = async (values, {setStatus}) => {
-        console.log(values.userName);
+        console.log(values.givenName);
         
-        setShowRegistration(false);
+        const result = await registerUser(values);
+        
+        if (result.ok) {
+            setShowRegistration(false);
+        } else {
+            setStatus({error: result.message});
+            if (result.message === "Unregistered user with that email found") {
+                setshowUseExistingUser(true);
+            }
+        }
         /*
         const registerResult = await registerUser({
             givenname: values.givenName,
@@ -63,6 +72,21 @@ const RegisterForm = ({ setShowRegistration }) => {
     const apiErrorStyle = {
         color: 'red'
     };
+    
+    let existingUserCheckbox = showUseExistingUser ? (
+            <div>
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="useExistingUser" 
+                    type="checkbox"
+                    Label={{label:"Use existing user"}}
+                    disabled={false}
+                />
+                <br />
+            </div>
+        ) :
+        '';
+
 
     return(
         <div>
@@ -129,6 +153,8 @@ const RegisterForm = ({ setShowRegistration }) => {
                     disabled={false}
                 />
                 <br />
+
+                {existingUserCheckbox}
                 <br />
                 <br />
 
