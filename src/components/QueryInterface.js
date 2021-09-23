@@ -6,7 +6,7 @@ import Mutate from './Mutate';
 import Result from './Result';
 import Action from './Action';
 
-const QueryInterface = () => {
+const QueryInterface = ({setRotatePBOT}) => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [queryParams, setQueryParams] = useState(0);
     const [selectedForm, setSelectedForm] = useState(0);
@@ -21,6 +21,11 @@ const QueryInterface = () => {
     };
 
     const handleTabChange = (event, newTab) => {
+        if (newTab === 0) {
+            setRotatePBOT(true);
+        } else if (newTab === 1) {
+            setRotatePBOT(false);
+        }
         setSelectedTab(newTab);
     };
 

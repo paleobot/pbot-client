@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 //import logo from './logo.svg';
 import logo from './PBOT-logo-transparent.png';
 import './App.css';
@@ -17,15 +18,24 @@ const theme = createMuiTheme({
     }
   }
 });
+
+const PBOTIcon = ({rotatePBOT}) => {
+    const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
+    return (
+             <img src={logo} style={{ transform: rotate, transition: "all 0.2s linear", height: "30vmin" }}  />
+      )
+}
+
 function App() {
+    const [rotatePBOT, setRotatePBOT] = useState(true);
     localStorage.removeItem('PBOTMutationToken');
     return (
     <ThemeProvider theme={theme}>
     <div className="App">
         <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <PBOTIcon rotatePBOT={rotatePBOT} />
         </header>
-        <QueryInterface />
+        <QueryInterface setRotatePBOT={setRotatePBOT}/>
         <br />
         <br />
     </div>
