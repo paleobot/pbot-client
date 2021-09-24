@@ -12,6 +12,15 @@ const QueryInterface = ({setRotatePBOT}) => {
     const [selectedForm, setSelectedForm] = useState(0);
     const [showResult, setShowResult] = useState(false);
     
+    const setSelectedTabDeco = (newTab) => {
+        if (newTab === 0) {
+            setRotatePBOT(true);
+        } else if (newTab === 1) {
+            setRotatePBOT(false);
+        }
+        setSelectedTab(newTab);
+    };
+    
     const handleFormChange = (event) => {
         console.log(event.target.value);
         setShowResult(false);
@@ -26,13 +35,13 @@ const QueryInterface = ({setRotatePBOT}) => {
         } else if (newTab === 1) {
             setRotatePBOT(false);
         }
-        setSelectedTab(newTab);
+        setSelectedTabDeco(newTab);
     };
 
     const handleQueryParamChange = (values) => {
         console.log(values);
         setQueryParams(values);
-        setSelectedTab(1);
+        setSelectedTabDeco(1);
     };
         
     let result = showResult ? (

@@ -28,7 +28,7 @@ const PBOTIcon = ({rotatePBOT}) => {
 
 function App() {
     const [rotatePBOT, setRotatePBOT] = useState(true);
-    localStorage.removeItem('PBOTMutationToken');
+    //localStorage.removeItem('PBOTMutationToken');
     return (
     <ThemeProvider theme={theme}>
     <div className="App">
