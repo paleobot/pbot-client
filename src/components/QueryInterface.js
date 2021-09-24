@@ -11,7 +11,7 @@ const QueryInterface = ({setRotatePBOT}) => {
     const [queryParams, setQueryParams] = useState(0);
     const [selectedForm, setSelectedForm] = useState(0);
     const [showResult, setShowResult] = useState(false);
-
+    
     const handleFormChange = (event) => {
         console.log(event.target.value);
         setShowResult(false);
@@ -33,7 +33,6 @@ const QueryInterface = ({setRotatePBOT}) => {
         console.log(values);
         setQueryParams(values);
         setSelectedTab(1);
-        //setSelectedTab(2);
     };
         
     let result = showResult ? (
