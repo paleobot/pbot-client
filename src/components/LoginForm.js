@@ -1,4 +1,4 @@
-import React, { useState }from 'react';
+import React, { useState, useRef }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button } from '@material-ui/core';
@@ -10,6 +10,35 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
     
     const loginUser = async (credentials) => {
         return fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(credentials)
+        })
+        .then(response => {
+            console.log(response);
+            //TODO: there is an "ok" built into the server response. Would be nice to check that here, rather than deferring to the next "then"
+            return response.json()
+        })
+        .then(data => {
+            console.log(data);
+            if (data.token) {
+                return { ok: true, token: data.token}
+            } else if (data.msg) {
+                return { ok: false, message: data.msg}
+            } else {
+                throw new Error("Unrecognized message from server");
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            return {ok: false, message: "Network error"}; //Could be anything, really
+        })
+    }
+
+    const resetPassword = async (credentials) => {
+        return fetch('http://localhost:3000/reset', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -58,11 +87,14 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
     const apiErrorStyle = {
         color: 'red'
     };
+    
+const ref = useRef(null);
 
     return(
         <div>
         <h2>Mutations require authentication</h2>
         <Formik
+            innerRef= {ref}
             initialValues={{
                 userName: '', 
                 password: '', 
@@ -115,6 +147,8 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
             )}
         </Formik>
         <Button variant="text" color="secondary" onClick={() => {setShowRegistration(true);}}>Register</Button>
+        <br />
+        <Button variant="text" color="secondary" onClick={() => {resetPassword({username: ref.current.values.userName});}}>Reset Password</Button>
         </div>
     );
 };
