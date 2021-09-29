@@ -1,7 +1,7 @@
 import React, { useState, useRef }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button } from '@material-ui/core';
+import { Button, Box } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
 
 const LoginForm = ({ setToken, setShowRegistration }) => {
@@ -37,6 +37,7 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
         })
     }
 
+    const [resetStatus, setResetStatus] = useState();
     const resetPassword = async (credentials) => {
         return fetch('http://localhost:3000/reset', {
             method: 'POST',
@@ -52,10 +53,15 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
         })
         .then(data => {
             console.log(data);
-            if (data.token) {
-                return { ok: true, token: data.token}
-            } else if (data.msg) {
-                return { ok: false, message: data.msg}
+            if (data.msg) {
+                console.log("msg");
+                if (data.code && data.code !== 200) {
+                    setResetStatus({ok: false, message:data.msg});
+                    return {ok: false, message:data.msg}; //Doesn't do anything
+                } else {
+                    setResetStatus({ok: true, message: data.msg});
+                    return { ok: true, message: data.msg}; //Also pointless
+                }
             } else {
                 throw new Error("Unrecognized message from server");
             }
@@ -88,8 +94,23 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
         color: 'red'
     };
     
-const ref = useRef(null);
+    const ref = useRef(null);
 
+    let reset = 
+        <Button variant="text" color="secondary" onClick={() => {resetPassword({username: ref.current.values.userName});}}>Reset Password</Button>;
+    if (resetStatus) {
+        if (resetStatus.ok) {
+            reset = 
+                <div>{resetStatus.message}</div>
+        } else {
+            reset = 
+                <div>
+                <Button variant="text" color="secondary" onClick={() => {resetPassword({username: ref.current.values.userName});}}>Reset Password</Button>
+                <div style={apiErrorStyle}>{resetStatus.message}</div>
+                </div>;
+        }
+    } 
+    
     return(
         <div>
         <h2>Mutations require authentication</h2>
@@ -150,7 +171,7 @@ const ref = useRef(null);
         </Formik>
         <Button variant="text" color="secondary" onClick={() => {setShowRegistration(true);}}>Register</Button>
         <br />
-        <Button variant="text" color="secondary" onClick={() => {resetPassword({username: ref.current.values.userName});}}>Reset Password</Button>
+        {reset}
         </div>
     );
 };
