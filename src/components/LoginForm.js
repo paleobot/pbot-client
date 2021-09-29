@@ -101,12 +101,14 @@ const ref = useRef(null);
             }}
             validationSchema={Yup.object({
                 userName: Yup.string()
-                .required("User Name is required")
-                .max(30, 'Must be 30 characters or less'),
+                    .required("User Name is required")
+                    .max(30, 'Must be 30 characters or less'),
                 password: Yup.string()
-                .required("Password is required")
-                .min(6, "Passwords must contain at least six characters")
-                .max(30, 'Must be 30 characters or less'),
+                    .required("Password is required")
+                    .min(6, "Passwords must contain at least six characters")
+                    .max(30, 'Must be 30 characters or less'),
+                confirmPassword: Yup.string()
+                    .oneOf([Yup.ref('password'), null], 'Passwords must match')
             })}
             onSubmit={handleSubmit}/*({values => {
                 //alert(JSON.stringify(values, null, 2));

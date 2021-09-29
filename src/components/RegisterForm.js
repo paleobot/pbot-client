@@ -97,22 +97,25 @@ const RegisterForm = ({ setShowRegistration }) => {
                 surname: '',
                 email: '', 
                 password: '', 
+                confirmPassword: '',
             }}
             validationSchema={Yup.object({
                 givenName: Yup.string()
-                .required("Given Name is required")
-                .max(30, 'Must be 30 characters or less'),
+                    .required("Given Name is required")
+                    .max(30, 'Must be 30 characters or less'),
                 surname: Yup.string()
-                .required("Surname is required")
-                .max(30, 'Must be 30 characters or less'),
+                    .required("Surname is required")
+                    .max(30, 'Must be 30 characters or less'),
                 email: Yup.string()
-                .required("Email is required")
-                .max(30, 'Must be 30 characters or less')
-                .email("Must be a valid email address"),
+                    .required("Email is required")
+                    .max(30, 'Must be 30 characters or less')
+                    .email("Must be a valid email address"),
                 password: Yup.string()
-                .required("Password is required")
-                .min(6, "Passwords must contain at least six characters")
-                .max(30, 'Must be 30 characters or less'),
+                    .required("Password is required")
+                    .min(6, "Passwords must contain at least six characters")
+                    .max(30, 'Must be 30 characters or less'),
+                confirmPassword: Yup.string()
+                    .oneOf([Yup.ref('password'), null], 'Passwords must match'),
             })}
             onSubmit={handleSubmit}
         >
@@ -150,6 +153,15 @@ const RegisterForm = ({ setShowRegistration }) => {
                     name="password" 
                     type="password" 
                     label="Password"
+                    disabled={false}
+                />
+                <br />
+                
+                <Field 
+                    component={TextField}
+                    name="confirmPassword" 
+                    type="password" 
+                    label="Confirm password"
                     disabled={false}
                 />
                 <br />
