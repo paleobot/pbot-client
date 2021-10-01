@@ -43,7 +43,7 @@ function OTUcreate(props) {
         console.log(key + ", " + props.filters[key]);
         if (props.filters[key]) acc += `, ${key}: "${props.filters[key]}"`;
         return acc;
-    }, 'type: "OTU", enteredByPersonID: "fbc53387-0447-479b-b655-e210884763ee"'); //TODO: set person through login of some sort
+    }, 'type: "OTU"'); 
     console.log(specs);
 
     let otuGQL;
