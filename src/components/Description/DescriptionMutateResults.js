@@ -10,7 +10,7 @@ import {
   gql
 } from "@apollo/client";
 import { setContext } from '@apollo/client/link/context';
-import CharacterInstances from "./CharacterInstances";
+import CharacterInstances from "../CharacterInstances";
 /*
 const client = new ApolloClient({
   uri: '/graphql',

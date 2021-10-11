@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
-import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel } from '@material-ui/core';
+import { TextField, CheckboxWithLabel, RadioGroup } from 'formik-material-ui';
 
 
 const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
@@ -13,6 +13,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
        
         <Formik
             initialValues={{
+                type: "all",
                 descriptionID: '', 
                 family: '', 
                 genus: '', 
@@ -43,7 +44,42 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 //setShowOTUs(true);
             }}
         >
+            {props => (
             <Form>
+                <InputLabel htmlFor="type" style={{ marginTop: "10px" }}>Type</InputLabel>
+                <Field 
+                    component={RadioGroup} 
+                    name="type" 
+                    label="Type"
+                >
+                    <Grid container>
+                        <Grid item>
+                            <FormControlLabel
+                                value="OTU"
+                                control={<Radio />}
+                                label="OTU"
+                                disabled={false}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <FormControlLabel
+                                value="specimen"
+                                control={<Radio />}
+                                label="Specimen"
+                                disabled={false}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <FormControlLabel
+                                value="all"
+                                control={<Radio  />}
+                                label="All"
+                                disabled={false}
+                            />
+                        </Grid>
+                    </Grid>
+                </Field>
+            
                 <Field 
                     component={TextField}
                     name="descriptionID" 
@@ -58,7 +94,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                     name="family" 
                     type="text" 
                     label="Family"
-                    disabled={false}
+                    disabled={props.values.type !== "OTU"}
                 />
                 <br />
                 
@@ -67,7 +103,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                     name="genus" 
                     type="text" 
                     label="Genus"
-                    disabled={false}
+                    disabled={props.values.type !== "OTU"}
                 />
                 <br />
                 <Field 
@@ -75,7 +111,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                     name="species" 
                     type="text" 
                     label="Species"
-                    disabled={false}
+                    disabled={props.values.type !== "OTU"}
                 />
                 <br />
                 <Field 
@@ -93,6 +129,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 <br />
                 <br />
             </Form>
+            )}
         </Formik>
     
     );

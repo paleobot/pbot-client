@@ -5,7 +5,7 @@ import './App.css';
 //import Query from './components/Query';
 //import ApolloQuery from './components/ApolloQuery';
 //import OTUQueryForm from './components/OTUQueryForm';
-import QueryInterface from './components/QueryInterface';
+import PBOTInterface from './components/PBOTInterface';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 
 const theme = createMuiTheme({
@@ -35,7 +35,7 @@ function App() {
         <header className="App-header">
         <PBOTIcon rotatePBOT={rotatePBOT} />
         </header>
-        <QueryInterface setRotatePBOT={setRotatePBOT}/>
+        <PBOTInterface setRotatePBOT={setRotatePBOT}/>
         <br />
         <br />
     </div>

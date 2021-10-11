@@ -1,10 +1,10 @@
 import React, { useState }from 'react';
 import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button } from '@material-ui/core';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
-import OTUQueryForm from './OTUQueryForm';
+import DescriptionQueryForm from './Description/DescriptionQueryForm';
 import SpecimenQueryForm from './SpecimenQueryForm';
 import SchemaQueryForm from './SchemaQueryForm';
-import OTUMutateForm from './OTUMutateForm';
+import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
@@ -42,7 +42,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                 <Grid item>
                     <FormControl component="fieldset">
                         <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                        <FormControlLabel value="OTU-mutate" control={<Radio />} label="OTU" labelPlacement="end"/>
+                        <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" disabled />
                         <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" disabled />
                         </RadioGroup>
@@ -50,8 +50,8 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                 </Grid>
                 
                 <Grid item>
-                    <div hidden={selectedForm !== "OTU-mutate"}>
-                        <OTUMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    <div hidden={selectedForm !== "Description-mutate"}>
+                        <DescriptionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
                         
                     <div hidden={selectedForm !== "Specimen-mutate"}>

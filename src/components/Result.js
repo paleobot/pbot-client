@@ -1,15 +1,15 @@
 import React, { useState }from 'react';
 import { Grid } from '@material-ui/core';
-import OTUQueryResults from './OTUQueryResults';
+import DescriptionQueryResults from './Description/DescriptionQueryResults';
 import SpecimenQueryResults from './SpecimenQueryResults';
 import SchemaQueryResults from './SchemaQueryResults';
-import OTUMutateResults from './OTUMutateResults';
+import DescriptionMutateResults from './Description/DescriptionMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
     let result = 
-        queryEntity === "OTU" ? (
-            <OTUQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        queryEntity === "Description" ? (
+            <DescriptionQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         queryEntity === "Specimen" ? (
             <SpecimenQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
@@ -17,8 +17,8 @@ const Result = ({queryParams, queryEntity}) => {
         queryEntity === "Schema" ? (
             <SchemaQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) :
-        queryEntity === "OTU-mutate" ? (
-            <OTUMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        queryEntity === "Description-mutate" ? (
+            <DescriptionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         '';
         

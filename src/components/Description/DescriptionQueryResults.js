@@ -6,28 +6,36 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import CharacterInstances from "./CharacterInstances";
+import CharacterInstances from "../CharacterInstances";
 
 const client = new ApolloClient({
   uri: '/graphql',
   cache: new InMemoryCache()
 });
 
-function OTUs(props) {
+function Descriptions(props) {
+    console.log("Descriptions");
     console.log(props);
     console.log(props.filters.genus);
-    const specs = Object.keys(props.filters).reduce((acc, key) => {
+    
+    //TODO: Pretty sure these params can be passed through the gql rather than built into a string
+    let specs = Object.keys(props.filters).reduce((acc, key) => {
         console.log(key + ", " + props.filters[key]);
+        if (key === "type" && props.filters[key] === "all") return acc;
         if (props.filters[key]) acc += `, ${key}: "${props.filters[key]}"`;
         return acc;
-    }, 'type: "OTU"');
+    }, '');
+    console.log("specs");
     console.log(specs);
-
+    specs = specs ? 
+                "(" + specs + ")" :
+                "";
+    
     let otuGQL;
     if (!props.includeComplex) {
         otuGQL = gql`
             query {
-                Description(${specs}) {
+                Description ${specs} {
                     descriptionID
                     name
                     family
@@ -39,7 +47,7 @@ function OTUs(props) {
     } else {
         otuGQL = gql`
             query {
-                Description (${specs}) {
+                Description ${specs} {
                     descriptionID
                     type
                     name
@@ -79,12 +87,13 @@ function OTUs(props) {
 
 }
 
-const OTUQueryResults = ({queryParams, queryEntity}) => {
+const DescriptionQueryResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
-    let otus = queryEntity === "OTU" ? (
-                    <OTUs 
+    let otus = queryEntity === "Description" ? (
+                    <Descriptions 
                         filters={{
+                            type: queryParams.type,
                             descriptionID: queryParams.descriptionID,
                             family: queryParams.family, 
                             genus: queryParams.genus, 
@@ -102,4 +111,4 @@ const OTUQueryResults = ({queryParams, queryEntity}) => {
     );
 };
 
-export default OTUQueryResults;
+export default DescriptionQueryResults;

@@ -1,9 +1,5 @@
 import React, { useState }from 'react';
 import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid } from '@material-ui/core';
-//import { TextField, CheckboxWithLabel } from 'formik-material-ui';
-import OTUQueryForm from './OTUQueryForm';
-import SpecimenQueryForm from './SpecimenQueryForm';
-import SchemaQueryForm from './SchemaQueryForm';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Query from './Query';
