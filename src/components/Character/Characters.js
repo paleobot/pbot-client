@@ -1,5 +1,5 @@
 import React from 'react';
-import States from './States';
+import States from '../State/States';
 
 function Characters(props) {
     console.log("Characters");

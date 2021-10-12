@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Grid } from '@material-ui/core';
 import DescriptionQueryResults from './Description/DescriptionQueryResults';
-import SpecimenQueryResults from './SpecimenQueryResults';
-import SchemaQueryResults from './SchemaQueryResults';
+import SpecimenQueryResults from './Specimen/SpecimenQueryResults';
+import SchemaQueryResults from './Schema/SchemaQueryResults';
 import DescriptionMutateResults from './Description/DescriptionMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {

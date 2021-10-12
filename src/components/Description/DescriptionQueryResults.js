@@ -6,7 +6,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import CharacterInstances from "../CharacterInstances";
+import CharacterInstances from "../CharacterInstance/CharacterInstances";
 
 const client = new ApolloClient({
   uri: '/graphql',
@@ -31,9 +31,9 @@ function Descriptions(props) {
                 "(" + specs + ")" :
                 "";
     
-    let otuGQL;
+    let descriptionGQL;
     if (!props.includeComplex) {
-        otuGQL = gql`
+        descriptionGQL = gql`
             query {
                 Description ${specs} {
                     descriptionID
@@ -45,7 +45,7 @@ function Descriptions(props) {
             }
         `;
     } else {
-        otuGQL = gql`
+        descriptionGQL = gql`
             query {
                 Description ${specs} {
                     descriptionID
@@ -71,7 +71,7 @@ function Descriptions(props) {
         `;
     }
     
-    const { loading, error, data } = useQuery(otuGQL, {fetchPolicy: "cache-and-network"});
+    const { loading, error, data } = useQuery(descriptionGQL, {fetchPolicy: "cache-and-network"});
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -90,7 +90,7 @@ function Descriptions(props) {
 const DescriptionQueryResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
-    let otus = queryEntity === "Description" ? (
+    let descriptions = queryEntity === "Description" ? (
                     <Descriptions 
                         filters={{
                             type: queryParams.type,
@@ -106,7 +106,7 @@ const DescriptionQueryResults = ({queryParams, queryEntity}) => {
     
     return (
         <ApolloProvider client={client}>
-            {otus}
+            {descriptions}
         </ApolloProvider>
     );
 };

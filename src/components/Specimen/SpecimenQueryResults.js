@@ -6,7 +6,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import CharacterInstances from "./CharacterInstances";
+import CharacterInstances from "../CharacterInstance/CharacterInstances";
 
 const client = new ApolloClient({
   uri: '/graphql',

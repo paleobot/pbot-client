@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid } from '@material-ui/core';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import DescriptionQueryForm from './Description/DescriptionQueryForm';
-import SpecimenQueryForm from './SpecimenQueryForm';
-import SchemaQueryForm from './SchemaQueryForm';
+import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
+import SchemaQueryForm from './Schema/SchemaQueryForm';
 
 const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     /*
