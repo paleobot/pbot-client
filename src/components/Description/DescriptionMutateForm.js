@@ -1,11 +1,11 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
-import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 
 
-const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
    
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -13,6 +13,7 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
        
         <Formik
             initialValues={{
+                type: '',
                 family: '', 
                 genus: '', 
                 species: '',
@@ -25,12 +26,19 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 return errors;
             }}
             validationSchema={Yup.object({
-                family: Yup.string().required()
-                .max(30, 'Must be 30 characters or less'),
-                genus: Yup.string().required()
-                .max(30, 'Must be 30 characters or less'),
-                species: Yup.string().required()
-                .max(30, 'Must be 30 characters or less'),
+                type: Yup.string().required(),
+                family: Yup.string().when("type", {
+                    is: (val) => val === "OTU",
+                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
+                }),
+                genus: Yup.string().when("type", {
+                    is: (val) => val === "OTU",
+                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
+                }),
+                species: Yup.string().when("type", {
+                    is: (val) => val === "OTU",
+                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
+                }),
             })}
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
@@ -40,13 +48,31 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 //setShowOTUs(true);
             }}
         >
+            {props => (
             <Form>
+                <Field
+                    component={TextField}
+                    type="text"
+                    name="type"
+                    label="Type"
+                    fullWidth 
+                    disabled={false}
+                    select={true}
+                    SelectProps={{
+                        multiple: false,
+                    }}
+                >
+                    <MenuItem value="OTU">OTU</MenuItem>
+                    <MenuItem value="specimen">Specimen</MenuItem>
+                </Field>
+                <br />
+                                
                 <Field 
                     component={TextField}
                     name="family" 
                     type="text" 
                     label="Family"
-                    disabled={false}
+                    disabled={props.values.type !== "OTU"}
                 />
                 <br />
                 
@@ -55,7 +81,7 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                     name="genus" 
                     type="text" 
                     label="Genus"
-                    disabled={false}
+                    disabled={props.values.type !== "OTU"}
                 />
                 <br />
                 <Field 
@@ -63,7 +89,7 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                     name="species" 
                     type="text" 
                     label="Species"
-                    disabled={false}
+                    disabled={props.values.type !== "OTU"}
                 />
                 <br />
                 <br />
@@ -73,9 +99,10 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 <br />
                 <br />
             </Form>
+            )}
         </Formik>
     
     );
 };
 
-export default OTUMutateForm;
+export default DescriptionMutateForm;

@@ -6,15 +6,15 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import CharacterInstances from "../CharacterInstance/CharacterInstances";
+import Descriptions from "./Descriptions.js";
 
 const client = new ApolloClient({
   uri: '/graphql',
   cache: new InMemoryCache()
 });
 
-function Descriptions(props) {
-    console.log("Descriptions");
+function DescriptionList(props) {
+    console.log("DescriptionList");
     console.log(props);
     console.log(props.filters.genus);
     
@@ -76,14 +76,9 @@ function Descriptions(props) {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
            
-    const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return data.Description.map(({ descriptionID, name, family, genus, species, characterInstances }) => (
-        <div key={descriptionID} style={style}>
-            {descriptionID}: {name}, {family}, {genus}, {species} <br />
-            <CharacterInstances characterInstances={characterInstances} />
-            <br />
-        </div>
-    ));
+    return (
+        <Descriptions descriptions={data.Description}/>
+    );
 
 }
 
@@ -91,7 +86,7 @@ const DescriptionQueryResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
     let descriptions = queryEntity === "Description" ? (
-                    <Descriptions 
+                    <DescriptionList 
                         filters={{
                             type: queryParams.type,
                             descriptionID: queryParams.descriptionID,

@@ -10,13 +10,7 @@ import {
   gql
 } from "@apollo/client";
 import { setContext } from '@apollo/client/link/context';
-import CharacterInstances from "../CharacterInstance/CharacterInstances";
-/*
-const client = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache()
-});
-*/
+
 const httpLink = createHttpLink({
   uri: '/graphql',
 });
@@ -36,17 +30,17 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-function OTUcreate(props) {
+function DescriptionCreate(props) {
     console.log(props);
-    console.log(props.filters.genus);
-    const specs = Object.keys(props.filters).reduce((acc, key) => {
-        console.log(key + ", " + props.filters[key]);
-        if (props.filters[key]) acc += `, ${key}: "${props.filters[key]}"`;
+    console.log(props.params.genus);
+    const specs = Object.keys(props.params).reduce((acc, key) => {
+        console.log(key + ", " + props.params[key]);
+        if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
         return acc;
-    }, 'type: "OTU"'); 
+    }, 'schemaID: "38e10c5e-3abb-4fb5-90f5-db42bc241752"'); //TODO: select these from form
     console.log(specs);
 
-    let otuGQL;
+    let descriptionGQL;
         /*
         otuGQL = gql`
             mutation {
@@ -56,7 +50,7 @@ function OTUcreate(props) {
             }
         `;
         */
-        otuGQL = gql`
+        descriptionGQL = gql`
             mutation {
                 CustomCreateDescription(data:{${specs}}) {
                     descriptionID
@@ -64,7 +58,7 @@ function OTUcreate(props) {
             }
         `;
 
-    const [addDescription, { data, loading, error }] = useMutation(otuGQL);
+    const [addDescription, { data, loading, error }] = useMutation(descriptionGQL);
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -102,12 +96,13 @@ function OTUcreate(props) {
 
 }
 
-const OTUMutateResults = ({queryParams, queryEntity}) => {
+const DescriptionMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
-    let otus = queryEntity === "OTU-mutate" ? (
-                    <OTUcreate 
-                        filters={{
+    let descriptions = queryEntity === "Description-mutate" ? (
+                    <DescriptionCreate 
+                        params={{
+                            type: queryParams.type,
                             family: queryParams.family, 
                             genus: queryParams.genus, 
                             species: queryParams.species, 
@@ -119,9 +114,9 @@ const OTUMutateResults = ({queryParams, queryEntity}) => {
     
     return (
         <ApolloProvider client={client}>
-            {otus}
+            {descriptions}
         </ApolloProvider>
     );
 };
 
-export default OTUMutateResults;
+export default DescriptionMutateResults;
