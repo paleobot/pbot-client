@@ -4,6 +4,76 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql
+} from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: '/graphql',
+  cache: new InMemoryCache()
+});
+
+
+function SpecimenMenuItems() {
+    console.log("SpecimenMenuItems");
+    const specimenGQL = gql`
+            query {
+                Specimen {
+                    specimenID
+                    name
+                }            
+            }
+        `;
+
+    const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+           
+    return data.Specimen.map(({ specimenID, name }) => (
+        <MenuItem key={specimenID} value="{specimenID}">{name}</MenuItem>
+    ));
+}
+
+/*
+class SpecimenMenuItems extends React.Component {
+    async render() {
+        console.log("SpecimenMenuItems");
+        const specimenGQL = gql`
+                query {
+                    Specimen {
+                        specimenID
+                        name
+                    }            
+                }
+            `;
+
+        //const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
+
+        //if (loading) return <p>Loading...</p>;
+        //if (error) return <p>Error :(</p>;
+            
+        const result = await client.query({
+            query: specimenGQL,
+            variables: {}
+        });
+               
+        const items = result.Specimen.map(({ specimenID, name }) => (
+                <MenuItem key={specimenID} value="{specimenID}">{name}</MenuItem>
+            ))
+
+        return (
+            <div>
+            {items}
+            </div>
+        );
+    }
+}
+*/
 
 const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
@@ -66,7 +136,26 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     <MenuItem value="specimen">Specimen</MenuItem>
                 </Field>
                 <br />
-                                
+
+                <ApolloProvider client={client}>
+                <Field
+                    component={TextField}
+                    type="text"
+                    name="specimen"
+                    label="Specimen"
+                    fullWidth 
+                    disabled={false}
+                    select={true}
+                    SelectProps={{
+                        multiple: false,
+                    }}
+                    disabled={props.values.type === "OTU"}
+                >
+                    <SpecimenMenuItems />
+                </Field>
+                </ApolloProvider>
+                <br />
+                
                 <Field 
                     component={TextField}
                     name="family" 
