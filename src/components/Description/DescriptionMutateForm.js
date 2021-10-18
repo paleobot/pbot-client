@@ -18,6 +18,7 @@ const client = new ApolloClient({
 });
 
 
+/*
 function SpecimenMenuItems() {
     console.log("SpecimenMenuItems");
     const specimenGQL = gql`
@@ -38,11 +39,41 @@ function SpecimenMenuItems() {
         <MenuItem key={specimenID} value="{specimenID}">{name}</MenuItem>
     ));
 }
+*/
+//This is the cleanest version, though I really don't understand how the forwardRef thing works.
+//The MenuItem's still aren't selectable. I think it needs a complete rewrite to return
+//the entire Field. Also, should use conditional rendering rather than disabled in presenting 
+//OTU vs Specimen form.
+const SpecimenMenuItems = React.forwardRef((props, ref) => {
+    console.log("SpecimenMenuItems");
+    const specimenGQL = gql`
+            query {
+                Specimen {
+                    specimenID
+                    name
+                }            
+            }
+        `;
 
+    const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+           
+    return data.Specimen.map(({ specimenID, name }) => (
+        <MenuItem ref={ref} key={specimenID} value="{specimenID}">{name}</MenuItem>
+    ));
+});
 /*
 class SpecimenMenuItems extends React.Component {
-    async render() {
-        console.log("SpecimenMenuItems");
+    constructor() {
+        console.log("SpecimenMenuItems - constructor");
+        super();
+        this.state = {items: []};
+    }
+    
+    componentDidMount() {
+        console.log("SpecimenMenuItems - componentDidMount");
         const specimenGQL = gql`
                 query {
                     Specimen {
@@ -51,24 +82,27 @@ class SpecimenMenuItems extends React.Component {
                     }            
                 }
             `;
-
-        //const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
-
-        //if (loading) return <p>Loading...</p>;
-        //if (error) return <p>Error :(</p>;
             
-        const result = await client.query({
+        client.query({
             query: specimenGQL,
             variables: {}
+        }).then(result => {
+            console.log("then");
+            console.log(result);
+            const items = result.data.Specimen.map(({ specimenID, name }) => (
+                    <MenuItem key={specimenID} value="{specimenID}">{name}</MenuItem>
+                ));
+            console.log("items:");
+            this.setState({items: items});
+            console.log(this.state.items);
         });
-               
-        const items = result.Specimen.map(({ specimenID, name }) => (
-                <MenuItem key={specimenID} value="{specimenID}">{name}</MenuItem>
-            ))
-
+    }
+    
+    render() {
+        console.log("SpecimenMenuItems - render");
         return (
             <div>
-            {items}
+            {this.state.items}
             </div>
         );
     }
@@ -77,13 +111,16 @@ class SpecimenMenuItems extends React.Component {
 
 const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
-   
+    
+    const ref = React.createRef();
+
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
             initialValues={{
                 type: '',
+                specimen: '',
                 family: '', 
                 genus: '', 
                 species: '',
@@ -97,6 +134,10 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
             }}
             validationSchema={Yup.object({
                 type: Yup.string().required(),
+                specimen: Yup.string().when("type", {
+                    is: (val) => val === "Specimen",
+                    then: Yup.string().required()
+                }),
                 family: Yup.string().when("type", {
                     is: (val) => val === "OTU",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
@@ -137,23 +178,22 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 </Field>
                 <br />
 
-                <ApolloProvider client={client}>
                 <Field
                     component={TextField}
                     type="text"
                     name="specimen"
                     label="Specimen"
                     fullWidth 
-                    disabled={false}
                     select={true}
                     SelectProps={{
                         multiple: false,
                     }}
                     disabled={props.values.type === "OTU"}
                 >
-                    <SpecimenMenuItems />
+                    <ApolloProvider client={client}>
+                        <SpecimenMenuItems ref={ref}/>
+                    </ApolloProvider>
                 </Field>
-                </ApolloProvider>
                 <br />
                 
                 <Field 
