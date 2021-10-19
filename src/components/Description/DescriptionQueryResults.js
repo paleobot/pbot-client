@@ -1,17 +1,9 @@
 import React from 'react';
 import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
   useQuery,
   gql
 } from "@apollo/client";
 import Descriptions from "./Descriptions.js";
-
-const client = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache()
-});
 
 function DescriptionList(props) {
     console.log("DescriptionList");
@@ -100,9 +92,9 @@ const DescriptionQueryResults = ({queryParams, queryEntity}) => {
                 '';
     
     return (
-        <ApolloProvider client={client}>
+        <div>
             {descriptions}
-        </ApolloProvider>
+        </div>
     );
 };
 

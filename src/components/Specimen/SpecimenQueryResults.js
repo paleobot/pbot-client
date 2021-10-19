@@ -1,17 +1,9 @@
 import React from 'react';
 import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
   useQuery,
   gql
 } from "@apollo/client";
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-
-const client = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache()
-});
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
@@ -164,9 +156,9 @@ const SpecimenQueryResults = ({queryParams, queryEntity}) => {
                 '';
     
     return (
-        <ApolloProvider client={client}>
+        <div>
             {specimens}
-        </ApolloProvider>
+        </div>
     );
 };
 

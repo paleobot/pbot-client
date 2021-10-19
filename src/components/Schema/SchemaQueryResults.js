@@ -1,17 +1,9 @@
 import React from 'react';
 import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
   useQuery,
   gql
 } from "@apollo/client";
 import Characters from "../Character/Characters";
-
-const client = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache()
-});
 
 function Schemas(props) {
     console.log(props);
@@ -87,9 +79,9 @@ const SchemaQueryResults = ({queryParams, queryEntity}) => {
                 '';
     
     return (
-        <ApolloProvider client={client}>
+        <div>
             {schemas}
-        </ApolloProvider>
+        </div>
     );
 };
 
