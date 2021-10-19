@@ -25,7 +25,11 @@ const authLink = setContext((_, { headers }) => {
     }
   }
 });
-const client = new ApolloClient({
+//Create new client. This will be passed explicitly to useMutation, since we already have a 
+//client defined in the context from ApolloProvider. 
+//TODO: Look into loading the ApolloProvider client on the fly using something like the 
+//method described in https://github.com/apollographql/apollo-client/issues/2897.
+const mclient = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache()
 });
@@ -58,7 +62,7 @@ function DescriptionCreate(props) {
             }
         `;
 
-    const [addDescription, { data, loading, error }] = useMutation(descriptionGQL);
+    const [addDescription, { data, loading, error }] = useMutation(descriptionGQL, {client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -113,9 +117,9 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                 '';
     
     return (
-        <ApolloProvider client={client}>
+        <div>
             {descriptions}
-        </ApolloProvider>
+        </div>
     );
 };
 
