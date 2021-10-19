@@ -3,6 +3,19 @@ import { AppBar, Tabs, Tab } from '@material-ui/core';
 import Result from './Result';
 import Action from './Action';
 
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql
+} from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: '/graphql',
+  cache: new InMemoryCache()
+});
+
 const PBOTInterface = ({setRotatePBOT}) => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [queryParams, setQueryParams] = useState(0);
@@ -48,6 +61,7 @@ const PBOTInterface = ({setRotatePBOT}) => {
 
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
+        <ApolloProvider client={client}>
         <div style={style}>
             <AppBar position="static">
                 <Tabs value={selectedTab} onChange={handleTabChange} variant="fullWidth">
@@ -64,6 +78,8 @@ const PBOTInterface = ({setRotatePBOT}) => {
                 {result}
             </div>
         </div>
+        </ApolloProvider>
+
     );
 };
 
