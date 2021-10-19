@@ -5,115 +5,34 @@ import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, M
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 
 import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
   useQuery,
   gql
 } from "@apollo/client";
 
-const client = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache()
-});
-
-
-/*
-function SpecimenMenuItems() {
-    console.log("SpecimenMenuItems");
-    const specimenGQL = gql`
-            query {
-                Specimen {
-                    specimenID
-                    name
-                }            
-            }
-        `;
-
-    const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-           
-    return data.Specimen.map(({ specimenID, name }) => (
-        <MenuItem key={specimenID} value="{specimenID}">{name}</MenuItem>
-    ));
-}
-*/
-//This is the cleanest version, though I really don't understand how the forwardRef thing works.
-//The MenuItem's still aren't selectable. I think it needs a complete rewrite to return
-//the entire Field. Also, should use conditional rendering rather than disabled in presenting 
-//OTU vs Specimen form.
-const SpecimenMenuItems = React.forwardRef((props, ref) => {
-    console.log("SpecimenMenuItems");
-    const specimenGQL = gql`
-            query {
-                Specimen {
-                    specimenID
-                    name
-                }            
-            }
-        `;
-
-    const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-           
-    return data.Specimen.map(({ specimenID, name }) => (
-        <MenuItem ref={ref} key={specimenID} value="{specimenID}">{name}</MenuItem>
-    ));
-});
-/*
-class SpecimenMenuItems extends React.Component {
-    constructor() {
-        console.log("SpecimenMenuItems - constructor");
-        super();
-        this.state = {items: []};
-    }
-    
-    componentDidMount() {
-        console.log("SpecimenMenuItems - componentDidMount");
-        const specimenGQL = gql`
-                query {
-                    Specimen {
-                        specimenID
-                        name
-                    }            
-                }
-            `;
-            
-        client.query({
-            query: specimenGQL,
-            variables: {}
-        }).then(result => {
-            console.log("then");
-            console.log(result);
-            const items = result.data.Specimen.map(({ specimenID, name }) => (
-                    <MenuItem key={specimenID} value="{specimenID}">{name}</MenuItem>
-                ));
-            console.log("items:");
-            this.setState({items: items});
-            console.log(this.state.items);
-        });
-    }
-    
-    render() {
-        console.log("SpecimenMenuItems - render");
-        return (
-            <div>
-            {this.state.items}
-            </div>
-        );
-    }
-}
-*/
-
 const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
     
-    const ref = React.createRef();
+    const ref = React.useRef();
 
+    const specimenGQL = gql`
+            query {
+                Specimen {
+                    specimenID
+                    name
+                }            
+            }
+        `;
+
+    const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                 
+    console.log(data.Specimen);
+    
+    const specimens = data.Specimen;
+    console.log(specimens);
+    
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
@@ -190,9 +109,9 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     }}
                     disabled={props.values.type === "OTU"}
                 >
-                    <ApolloProvider client={client}>
-                        <SpecimenMenuItems ref={ref}/>
-                    </ApolloProvider>
+                    {specimens.map(({ specimenID, name }) => (
+                        <MenuItem key={specimenID} value={specimenID}>{name}</MenuItem>
+                    ))}
                 </Field>
                 <br />
                 
