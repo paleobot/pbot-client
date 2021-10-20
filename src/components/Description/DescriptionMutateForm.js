@@ -12,8 +12,6 @@ import {
 const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
     
-    const ref = React.useRef();
-
     const specimenGQL = gql`
             query {
                 Specimen {
