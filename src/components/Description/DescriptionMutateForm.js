@@ -52,7 +52,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
             validationSchema={Yup.object({
                 type: Yup.string().required(),
                 specimen: Yup.string().when("type", {
-                    is: (val) => val === "Specimen",
+                    is: (val) => val === "specimen",
                     then: Yup.string().required()
                 }),
                 family: Yup.string().when("type", {
@@ -95,49 +95,58 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 </Field>
                 <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="specimen"
-                    label="Specimen"
-                    fullWidth 
-                    select={true}
-                    SelectProps={{
-                        multiple: false,
-                    }}
-                    disabled={props.values.type === "OTU"}
-                >
-                    {specimens.map(({ specimenID, name }) => (
-                        <MenuItem key={specimenID} value={specimenID}>{name}</MenuItem>
-                    ))}
-                </Field>
-                <br />
+                {props.values.type === "specimen" &&
+                    <div>
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="specimen"
+                            label="Specimen"
+                            fullWidth 
+                            select={true}
+                            SelectProps={{
+                                multiple: false,
+                            }}
+                            disabled={false}
+                        >
+                            {specimens.map(({ specimenID, name }) => (
+                                <MenuItem key={specimenID} value={specimenID}>{name}</MenuItem>
+                            ))}
+                        </Field>
+                        <br />
+                    </div>
+                }
                 
-                <Field 
-                    component={TextField}
-                    name="family" 
-                    type="text" 
-                    label="Family"
-                    disabled={props.values.type !== "OTU"}
-                />
-                <br />
-                
-                <Field 
-                    component={TextField}                
-                    name="genus" 
-                    type="text" 
-                    label="Genus"
-                    disabled={props.values.type !== "OTU"}
-                />
-                <br />
-                <Field 
-                    component={TextField}
-                    name="species" 
-                    type="text" 
-                    label="Species"
-                    disabled={props.values.type !== "OTU"}
-                />
-                <br />
+                {props.values.type === "OTU" &&
+                    <div>
+                        <Field 
+                            component={TextField}
+                            name="family" 
+                            type="text" 
+                            label="Family"
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <Field 
+                            component={TextField}                
+                            name="genus" 
+                            type="text" 
+                            label="Genus"
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <Field 
+                            component={TextField}
+                            name="species" 
+                            type="text" 
+                            label="Species"
+                            disabled={false}
+                        />
+                        <br />
+                    </div>
+                }
                 <br />
                 <br />
 
