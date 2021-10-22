@@ -21,15 +21,35 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
             }
         `;
 
-    const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
+    const { loading: specimenLoading, error: specimenError, data: specimenData } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
+    //if (loading) return <p>Loading...</p>;
+    //if (error) return <p>Error :(</p>;
                                  
-    console.log(data.Specimen);
+
+    const schemaGQL = gql`
+            query {
+                Schema {
+                    schemaID
+                    title
+                }            
+            }
+        `;
+
+    const { loading: schemaLoading, error: schemaError, data: schemaData } = useQuery(schemaGQL, {fetchPolicy: "cache-and-network"});
+
+    if (specimenLoading || schemaLoading) return <p>Loading...</p>;
+    if (specimenError || schemaError) return <p>Error :(</p>;
+                                 
+    console.log(specimenData.Specimen);
     
-    const specimens = data.Specimen;
+    const specimens = specimenData.Specimen;
     console.log(specimens);
+ 
+    console.log(schemaData.Schema);
+    
+    const schemas = schemaData.Schema;
+    console.log(schemas);
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
@@ -37,6 +57,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
         <Formik
             initialValues={{
                 type: '',
+                schema: '',
                 specimen: '',
                 family: '', 
                 genus: '', 
@@ -51,6 +72,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
             }}
             validationSchema={Yup.object({
                 type: Yup.string().required(),
+                schema: Yup.string().required(),
                 specimen: Yup.string().when("type", {
                     is: (val) => val === "specimen",
                     then: Yup.string().required()
@@ -95,6 +117,24 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 </Field>
                 <br />
 
+                <Field
+                    component={TextField}
+                    type="text"
+                    name="schema"
+                    label="Schema"
+                    fullWidth 
+                    select={true}
+                    SelectProps={{
+                        multiple: false,
+                    }}
+                    disabled={false}
+                >
+                    {schemas.map(({ schemaID, title }) => (
+                        <MenuItem key={schemaID} value={schemaID}>{title}</MenuItem>
+                    ))}
+                </Field>
+                <br />
+                
                 {props.values.type === "specimen" &&
                     <div>
                         <Field
