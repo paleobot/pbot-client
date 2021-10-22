@@ -5,6 +5,7 @@ import DescriptionQueryForm from './Description/DescriptionQueryForm';
 import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
 import SchemaQueryForm from './Schema/SchemaQueryForm';
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
+import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
@@ -43,6 +44,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     <FormControl component="fieldset">
                         <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                         <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
+                        <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" disabled />
                         <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" disabled />
                         </RadioGroup>
@@ -53,7 +55,11 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     <div hidden={selectedForm !== "Description-mutate"}>
                         <DescriptionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
-                        
+
+                    <div hidden={selectedForm !== "CharacterInstance-mutate"}>
+                        <CharacterInstanceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    </div>
+                    
                     <div hidden={selectedForm !== "Specimen-mutate"}>
                         <SpecimenQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
