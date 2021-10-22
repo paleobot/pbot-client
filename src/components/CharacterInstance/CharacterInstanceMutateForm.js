@@ -9,6 +9,87 @@ import {
   gql
 } from "@apollo/client";
 
+
+const DescriptionSelect = (props) => {
+    console.log("DescriptionSelect");
+    console.log(props);
+    console.log(props.schema);
+    const descriptionGQL = gql`
+            query {
+                Description {
+                    descriptionID
+                    name
+                  	schema {
+                      schemaID
+                      title
+                    }
+                  	specimen {
+                      Specimen {
+                        name
+                      }
+                    }
+                }            
+            }
+        `;
+        
+    //TODO: set global schema somehow, for use in getting Characters
+
+    const { loading: descriptionLoading, error: descriptionError, data: descriptionData } = useQuery(descriptionGQL, {fetchPolicy: "cache-and-network"});
+
+    if (descriptionLoading) return <p>Loading...</p>;
+    if (descriptionError) return <p>Error :(</p>;
+                                 
+    console.log(descriptionData);
+    let descriptions = [...descriptionData.Description];
+    descriptions = descriptions.map(description => {
+        const newDesc = {...description};
+        console.log(newDesc);
+        if (!newDesc.name || newDesc.name === " ") {
+            newDesc.name = null;
+            if (description.specimen) {
+                console.log(description.specimen.Specimen.name);
+                newDesc.name = description.specimen.Specimen.name;
+            } else {
+                newDesc.name = "ignore";
+            }
+        }
+        return newDesc;
+    });
+    console.log(descriptions);
+    descriptions.sort((a,b) => {
+        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
+        const nameB = b.name ? b.name.toUpperCase() : "z"; 
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+    
+    return (
+        <Field
+            component={TextField}
+            type="text"
+            name="description"
+            label="Description"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {descriptions.map(({ descriptionID, name }) => (
+                <MenuItem key={descriptionID} value={descriptionID}>{name}</MenuItem>
+            ))}
+        </Field>
+    )
+        
+}
+
+
 const CharacterSelect = (props) => {
     console.log("CharacterSelect");
     console.log(props);
@@ -70,7 +151,7 @@ const StateSelect = (props) => {
     console.log(props.character);
     const stateGQL = gql`
         query {
-            GetLeafStates (data: {characterID: "${props.character}"})  {
+            GetAllStates (characterID: "${props.character}")  {
                 stateID
                 name
             }
@@ -83,7 +164,7 @@ const StateSelect = (props) => {
     if (stateError) return <p>Error :(</p>;
                                  
     //console.log(stateData.Schema[0].characters);
-    const states = [...stateData.GetLeafStates];
+    const states = [...stateData.GetAllStates];
     states.sort((a,b) => {
         const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
         const nameB = b.name ? b.name.toUpperCase() : "z"; 
@@ -190,6 +271,8 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                     ))}
                 </Field>
                 <br />
+                
+                <DescriptionSelect />
                 
                 {props.values.schema !== "" &&
                     <div>
