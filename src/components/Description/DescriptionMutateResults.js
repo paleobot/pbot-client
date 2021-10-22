@@ -41,7 +41,7 @@ function DescriptionCreate(props) {
         console.log(key + ", " + props.params[key]);
         if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
         return acc;
-    }, 'schemaID: "38e10c5e-3abb-4fb5-90f5-db42bc241752"'); //TODO: select these from form
+    }, ''); //TODO: select these from form
     console.log(specs);
 
     let descriptionGQL;
@@ -107,6 +107,8 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                     <DescriptionCreate 
                         params={{
                             type: queryParams.type,
+                            specimenID: queryParams.specimen,
+                            schemaID: queryParams.schema,
                             family: queryParams.family, 
                             genus: queryParams.genus, 
                             species: queryParams.species, 
