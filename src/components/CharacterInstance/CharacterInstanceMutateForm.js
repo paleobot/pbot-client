@@ -26,6 +26,7 @@ const DescriptionSelect = (props) => {
                   	specimen {
                       Specimen {
                         name
+                        specimenID
                       }
                     }
                 }            
@@ -41,6 +42,7 @@ const DescriptionSelect = (props) => {
                                  
     console.log(descriptionData);
     let descriptions = [...descriptionData.Description];
+    /*
     descriptions = descriptions.map(description => {
         const newDesc = {...description};
         console.log(newDesc);
@@ -49,12 +51,32 @@ const DescriptionSelect = (props) => {
             if (description.specimen) {
                 console.log(description.specimen.Specimen.name);
                 newDesc.name = description.specimen.Specimen.name;
+                newDesc.descriptionID = newDesc.descriptionID + "," + description.specimen.Specimen.specimenID;
             } else {
                 newDesc.name = "ignore";
             }
         }
         return newDesc;
     });
+    */
+    
+    descriptions = descriptions.reduce((acc, description) => {
+        const newDesc = {...description};
+        console.log(newDesc);
+
+        newDesc.descriptionID = newDesc.descriptionID + "," + description.schema.schemaID;
+        if (newDesc.name) {
+            acc.push(newDesc);
+        } else {
+            if (description.specimen) {
+                console.log(description.specimen.Specimen.name);
+                newDesc.name = description.specimen.Specimen.name;
+                acc.push(newDesc);
+            } 
+        }
+        return acc;
+    }, []);
+    
     console.log(descriptions);
     descriptions.sort((a,b) => {
         const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
@@ -67,19 +89,23 @@ const DescriptionSelect = (props) => {
         }
         return 0;
     });
+    console.log(descriptions);
     
+    const style = {minWidth: "12ch"}
     return (
-        <Field
+        <Field 
+            style={style}
             component={TextField}
             type="text"
             name="description"
             label="Description"
-            fullWidth 
+            fullWidth
             select={true}
             SelectProps={{
                 multiple: false,
             }}
             disabled={false}
+            defaultValue=""
         >
             {descriptions.map(({ descriptionID, name }) => (
                 <MenuItem key={descriptionID} value={descriptionID}>{name}</MenuItem>
@@ -223,12 +249,13 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
     //const characters = [{characterID: "1", name:"Character 1"}, {characterID: "2", name: "Character 2"}];
     const states = [{stateID: "1", name:"State 1"}, {stateID: "2", name: "State 2"}];
     
-    const style = {textAlign: "left", width: "60%", margin: "auto"}
+    //const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const style = {minWidth: "200"}
     return (
        
         <Formik
             initialValues={{
-                schema: '',
+                description: '',
                 character: '',
                 state: '', 
             }}
@@ -254,6 +281,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
         >
             {props => (
             <Form>
+            {/*
                 <Field
                     component={TextField}
                     type="text"
@@ -271,15 +299,16 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                     ))}
                 </Field>
                 <br />
-                
+            */}
                 <DescriptionSelect />
                 
-                {props.values.schema !== "" &&
+                {props.values.description !== '' &&
                     <div>
-                        <CharacterSelect schema={props.values.schema} />
+                        <CharacterSelect schema={props.values.description.split(",")[1]} />
                         <br />
                     </div>
                 }
+                
                 {props.values.character !== "" &&
                     <div>
                         <StateSelect character={props.values.character} />
