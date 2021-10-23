@@ -249,8 +249,6 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
     //const characters = [{characterID: "1", name:"Character 1"}, {characterID: "2", name: "Character 2"}];
     const states = [{stateID: "1", name:"State 1"}, {stateID: "2", name: "State 2"}];
     
-    //const style = {textAlign: "left", width: "60%", margin: "auto"}
-    const style = {minWidth: "200"}
     return (
        
         <Formik
