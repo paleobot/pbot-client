@@ -35,13 +35,18 @@ const mclient = new ApolloClient({
 });
 
 function DescriptionCreate(props) {
+    console.log("DescriptionCreate");
     console.log(props);
     console.log(props.params.genus);
     const specs = Object.keys(props.params).reduce((acc, key) => {
         console.log(key + ", " + props.params[key]);
-        if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
+        //if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
+        if (props.params[key]) {
+            acc = !acc ? '' : acc += ", ";
+            acc += `${key}: "${props.params[key]}"`;
+        }
         return acc;
-    }, ''); //TODO: select these from form
+    }, null); //TODO: select these from form
     console.log(specs);
 
     let descriptionGQL;
@@ -112,7 +117,9 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                             family: queryParams.family, 
                             genus: queryParams.genus, 
                             species: queryParams.species, 
-                            name: queryParams.genus + ' ' + queryParams.species,
+                            name: queryParams.type === "OTU" ? 
+                                queryParams.genus + ' ' + queryParams.species :
+                                null,
                         }}
                     />
                 ) : 
