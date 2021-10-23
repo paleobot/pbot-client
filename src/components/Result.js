@@ -4,6 +4,7 @@ import DescriptionQueryResults from './Description/DescriptionQueryResults';
 import SpecimenQueryResults from './Specimen/SpecimenQueryResults';
 import SchemaQueryResults from './Schema/SchemaQueryResults';
 import DescriptionMutateResults from './Description/DescriptionMutateResults';
+import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanceMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -19,6 +20,9 @@ const Result = ({queryParams, queryEntity}) => {
         ) :
         queryEntity === "Description-mutate" ? (
             <DescriptionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "CharacterInstance-mutate" ? (
+            <CharacterInstanceMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         '';
         
