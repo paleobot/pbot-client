@@ -9,6 +9,36 @@ import {
   gql
 } from "@apollo/client";
 
+/*
+const NameField = (props) => {
+  const {
+    values: { type, specimen, genus, species },
+    touched,
+    setFieldValue,
+  } = useFormikContext();
+  const [field, meta] = useField(props);
+
+  React.useEffect(() => {
+    // set the value of textC, based on textA and textB
+    if (type === "OTU") {
+        if (touched.genus && ouched.species) {
+            setFieldValue(props.name, genus + " " + species);
+        }
+    } else {
+        if (touched.specimen) {
+            setFieldValue(props.name, specimen);
+        }
+    }
+  }, [type, genus, species, specimen, touched.genus, touched.species, touched.specimen, setFieldValue, props.name]);
+  return (
+    <>
+      <input {...props} {...field} />
+      {!!meta.touched && !!meta.error && <div>{meta.error}</div>}
+    </>
+  );
+};
+*/
+
 const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
     
@@ -90,12 +120,20 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
             })}
-            onSubmit={values => {
+            onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                if (values.type === "specimen") {
+                    values.family = null;
+                    values.genus = null;
+                    values.species = null;
+                } else {
+                    values.specimen = null;
+                }
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
+                resetForm();
             }}
         >
             {props => (
@@ -187,6 +225,18 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                         <br />
                     </div>
                 }
+          
+                <Field 
+                    component={TextField}
+                    name="name" 
+                    type="text" 
+                    label="Name"
+                    value={props.values.type === "OTU" ?
+                                props.values.genus + " " + props.values.species :
+                                props.values.specimen}
+                    disabled={false}
+                />
+          
                 <br />
                 <br />
 
