@@ -5,6 +5,7 @@ import SpecimenQueryResults from './Specimen/SpecimenQueryResults';
 import SchemaQueryResults from './Schema/SchemaQueryResults';
 import DescriptionMutateResults from './Description/DescriptionMutateResults';
 import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanceMutateResults';
+import SpecimenMutateResults from './Specimen/SpecimenMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -23,6 +24,9 @@ const Result = ({queryParams, queryEntity}) => {
         ) : 
         queryEntity === "CharacterInstance-mutate" ? (
             <CharacterInstanceMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "Specimen-mutate" ? (
+            <SpecimenMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         '';
         

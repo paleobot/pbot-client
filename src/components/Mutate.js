@@ -6,6 +6,7 @@ import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
 import SchemaQueryForm from './Schema/SchemaQueryForm';
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
+import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
@@ -45,8 +46,8 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                         <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
-                        <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" disabled />
-                        <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" disabled />
+                        <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
+                        {/*<FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" disabled />*/}
                         </RadioGroup>
                     </FormControl>
                 </Grid>
@@ -61,12 +62,14 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     </div>
                     
                     <div hidden={selectedForm !== "Specimen-mutate"}>
-                        <SpecimenQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                        <SpecimenMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
 
+                    {/*
                     <div hidden={selectedForm !== "Schema-mutate"}>
                         <SchemaQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
+                    */}
                     
                 </Grid>
             </Grid>
