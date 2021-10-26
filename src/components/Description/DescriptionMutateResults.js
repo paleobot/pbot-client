@@ -117,9 +117,7 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                             family: queryParams.family, 
                             genus: queryParams.genus, 
                             species: queryParams.species, 
-                            name: queryParams.type === "OTU" ? 
-                                queryParams.genus + ' ' + queryParams.species :
-                                null,
+                            name: queryParams.name,
                         }}
                     />
                 ) : 
