@@ -92,6 +92,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 family: '', 
                 genus: '', 
                 species: '',
+                name: '',
             }}
             validate={values => {
                 const errors = {};
@@ -103,10 +104,11 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
             validationSchema={Yup.object({
                 type: Yup.string().required(),
                 schema: Yup.string().required(),
-                specimen: Yup.string().when("type", {
-                    is: (val) => val === "specimen",
-                    then: Yup.string().required()
-                }),
+                //TODO: decide if specimen is required for specimen types                         
+                //specimen: Yup.string().when("type", {
+                //    is: (val) => val === "specimen",
+                //    then: Yup.string().required()
+                //}),
                 family: Yup.string().when("type", {
                     is: (val) => val === "OTU",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
@@ -119,6 +121,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     is: (val) => val === "OTU",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
+                name: Yup.string().required(),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -148,6 +151,10 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     select={true}
                     SelectProps={{
                         multiple: false,
+                    }}
+                    onChange={event => {
+                        props.resetForm();
+                        props.handleChange(event);
                     }}
                 >
                     <MenuItem value="OTU">OTU</MenuItem>
@@ -186,9 +193,13 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                                 multiple: false,
                             }}
                             disabled={false}
+                            onChange={event => {
+                                props.handleChange(event);
+                                props.setFieldValue("name", event.currentTarget.dataset.name)
+                            }}
                         >
                             {specimens.map(({ specimenID, name }) => (
-                                <MenuItem key={specimenID} value={specimenID}>{name}</MenuItem>
+                                <MenuItem key={specimenID} value={specimenID} data-name={name}>{name}</MenuItem>
                             ))}
                         </Field>
                         <br />
@@ -212,6 +223,10 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                             type="text" 
                             label="Genus"
                             disabled={false}
+                            onChange={event => {
+                                props.handleChange(event)
+                                props.setFieldValue("name", event.target.value + " " + props.values.species)
+                            }}
                         />
                         <br />
                         
@@ -221,6 +236,10 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                             type="text" 
                             label="Species"
                             disabled={false}
+                            onChange={event => {
+                                props.handleChange(event)
+                                props.setFieldValue("name", props.values.genus + " " + event.target.value)
+                            }}
                         />
                         <br />
                     </div>
@@ -231,9 +250,6 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     name="name" 
                     type="text" 
                     label="Name"
-                    value={props.values.type === "OTU" ?
-                                props.values.genus + " " + props.values.species :
-                                props.values.specimen}
                     disabled={false}
                 />
           
