@@ -9,54 +9,8 @@ import {
   gql
 } from "@apollo/client";
 
-/*
-const NameField = (props) => {
-  const {
-    values: { type, specimen, genus, species },
-    touched,
-    setFieldValue,
-  } = useFormikContext();
-  const [field, meta] = useField(props);
-
-  React.useEffect(() => {
-    // set the value of textC, based on textA and textB
-    if (type === "OTU") {
-        if (touched.genus && ouched.species) {
-            setFieldValue(props.name, genus + " " + species);
-        }
-    } else {
-        if (touched.specimen) {
-            setFieldValue(props.name, specimen);
-        }
-    }
-  }, [type, genus, species, specimen, touched.genus, touched.species, touched.specimen, setFieldValue, props.name]);
-  return (
-    <>
-      <input {...props} {...field} />
-      {!!meta.touched && !!meta.error && <div>{meta.error}</div>}
-    </>
-  );
-};
-*/
-
-const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
-    //const [values, setValues] = useState({});
-    
-    const specimenGQL = gql`
-            query {
-                Specimen {
-                    specimenID
-                    name
-                }            
-            }
-        `;
-
-    const { loading: specimenLoading, error: specimenError, data: specimenData } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
-
-    //if (loading) return <p>Loading...</p>;
-    //if (error) return <p>Error :(</p>;
-                                 
-
+const SchemaSelect = (props) => {
+    console.log("SchemaSelect");
     const schemaGQL = gql`
             query {
                 Schema {
@@ -68,19 +22,99 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
 
     const { loading: schemaLoading, error: schemaError, data: schemaData } = useQuery(schemaGQL, {fetchPolicy: "cache-and-network"});
 
-    if (specimenLoading || schemaLoading) return <p>Loading...</p>;
-    if (specimenError || schemaError) return <p>Error :(</p>;
+    if (schemaLoading) return <p>Loading...</p>;
+    if (schemaError) return <p>Error :(</p>;
+                                 
+    console.log(schemaData.Schema);
+    const schemas = [...schemaData.Schema];
+    schemas.sort((a,b) => {
+        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
+        const nameB = b.name ? b.name.toUpperCase() : "z"; 
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
+    
+    return (
+        <Field
+            component={TextField}
+            type="text"
+            name="schema"
+            label="Schema"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {schemas.map(({ schemaID, title }) => (
+                <MenuItem key={schemaID} value={schemaID}>{title}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const SpecimenSelect = (props) => {
+    console.log("SpecimenSelect");
+    const specimenGQL = gql`
+            query {
+                Specimen {
+                    specimenID
+                    name
+                }            
+            }
+        `;
+
+    const { loading: specimenLoading, error: specimenError, data: specimenData } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
+
+    if (specimenLoading) return <p>Loading...</p>;
+    if (specimenError) return <p>Error :(</p>;
                                  
     console.log(specimenData.Specimen);
+    const specimens = [...specimenData.Specimen];
+    specimens.sort((a,b) => {
+        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
+        const nameB = b.name ? b.name.toUpperCase() : "z"; 
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameA > nameB) {
+            return 1;
+        }
+        return 0;
+    });
     
-    const specimens = specimenData.Specimen;
-    console.log(specimens);
- 
-    console.log(schemaData.Schema);
-    
-    const schemas = schemaData.Schema;
-    console.log(schemas);
-    
+    return (
+        <Field
+            component={TextField}
+            type="text"
+            name="specimen"
+            label="Specimen"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={event => {
+                props.handleChange(event);
+                props.setFieldValue("name", event.currentTarget.dataset.name)
+            }}
+        >
+            {specimens.map(({ specimenID, name }) => (
+                <MenuItem key={specimenID} value={specimenID} data-name={name}>{name}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+
+const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
@@ -162,47 +196,13 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 </Field>
                 <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="schema"
-                    label="Schema"
-                    fullWidth 
-                    select={true}
-                    SelectProps={{
-                        multiple: false,
-                    }}
-                    disabled={false}
-                >
-                    {schemas.map(({ schemaID, title }) => (
-                        <MenuItem key={schemaID} value={schemaID}>{title}</MenuItem>
-                    ))}
-                </Field>
+                <SchemaSelect />
                 <br />
                 
                 {props.values.type === "specimen" &&
                     <div>
-                        <Field
-                            component={TextField}
-                            type="text"
-                            name="specimen"
-                            label="Specimen"
-                            fullWidth 
-                            select={true}
-                            SelectProps={{
-                                multiple: false,
-                            }}
-                            disabled={false}
-                            onChange={event => {
-                                props.handleChange(event);
-                                props.setFieldValue("name", event.currentTarget.dataset.name)
-                            }}
-                        >
-                            {specimens.map(({ specimenID, name }) => (
-                                <MenuItem key={specimenID} value={specimenID} data-name={name}>{name}</MenuItem>
-                            ))}
-                        </Field>
-                        <br />
+                    <SpecimenSelect handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                    <br />
                     </div>
                 }
                 
