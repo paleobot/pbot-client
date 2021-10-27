@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { alphabetize } from '../../util.js';
 
 import {
   useQuery,
@@ -42,24 +43,9 @@ const DescriptionSelect = (props) => {
                                  
     console.log(descriptionData);
     let descriptions = [...descriptionData.Description];
-    /*
-    descriptions = descriptions.map(description => {
-        const newDesc = {...description};
-        console.log(newDesc);
-        if (!newDesc.name || newDesc.name === " ") {
-            newDesc.name = null;
-            if (description.specimen) {
-                console.log(description.specimen.Specimen.name);
-                newDesc.name = description.specimen.Specimen.name;
-                newDesc.descriptionID = newDesc.descriptionID + "," + description.specimen.Specimen.specimenID;
-            } else {
-                newDesc.name = "ignore";
-            }
-        }
-        return newDesc;
-    });
-    */
     
+    //TODO: This was necessary because we initially did not have name fields in specimen Descriptions.
+    //I require that now, but there are still some that do not have this.
     descriptions = descriptions.reduce((acc, description) => {
         const newDesc = {...description};
         console.log(newDesc);
@@ -78,17 +64,7 @@ const DescriptionSelect = (props) => {
     }, []);
     
     console.log(descriptions);
-    descriptions.sort((a,b) => {
-        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
-        const nameB = b.name ? b.name.toUpperCase() : "z"; 
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
-        return 0;
-    });
+    descriptions = alphabetize(descriptions, "name");
     console.log(descriptions);
     
     const style = {minWidth: "12ch"}
@@ -137,18 +113,7 @@ const CharacterSelect = (props) => {
     if (characterError) return <p>Error :(</p>;
                                  
     console.log(characterData.Schema[0].characters);
-    const characters = [...characterData.Schema[0].characters];
-    characters.sort((a,b) => {
-        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
-        const nameB = b.name ? b.name.toUpperCase() : "z"; 
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
-        return 0;
-    });
+    const characters = alphabetize([...characterData.Schema[0].characters], "name");
     
     return (
         <Field
@@ -190,18 +155,7 @@ const StateSelect = (props) => {
     if (stateError) return <p>Error :(</p>;
                                  
     //console.log(stateData.Schema[0].characters);
-    const states = [...stateData.GetAllStates];
-    states.sort((a,b) => {
-        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
-        const nameB = b.name ? b.name.toUpperCase() : "z"; 
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
-        return 0;
-    });
+    const states = alphabetize([...stateData.GetAllStates], "name");
     
     return (
         <Field
@@ -225,7 +179,6 @@ const StateSelect = (props) => {
 }
 
 const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
-    //const [values, setValues] = useState({});
     
     const schemaGQL = gql`
             query {
@@ -279,25 +232,6 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
         >
             {props => (
             <Form>
-            {/*
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="schema"
-                    label="Schema"
-                    fullWidth 
-                    select={true}
-                    SelectProps={{
-                        multiple: false,
-                    }}
-                    disabled={false}
-                >
-                    {schemas.map(({ schemaID, title }) => (
-                        <MenuItem key={schemaID} value={schemaID}>{title}</MenuItem>
-                    ))}
-                </Field>
-                <br />
-            */}
                 <DescriptionSelect />
                 
                 {props.values.description !== '' &&

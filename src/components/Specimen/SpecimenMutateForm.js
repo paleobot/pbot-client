@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { alphabetize } from '../../util.js';
 
 import {
   useQuery,
@@ -29,18 +30,7 @@ const OrganSelect = (props) => {
     if (organError) return <p>Error :(</p>;
                                  
     console.log(organData.organs);
-    const organs = [...organData.Organ];
-    organs.sort((a,b) => {
-        const nameA = a.type ? a.type.toUpperCase() : "z"; //"z" forces null names to end of list
-        const nameB = b.type ? b.type.toUpperCase() : "z"; 
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
-        return 0;
-    });
+    const organs = alphabetize([...organData.Organ], "type");
     
     return (
         <Field
@@ -108,17 +98,7 @@ const DescriptionSelect = (props) => {
     }, []);
     
     console.log(descriptions);
-    descriptions.sort((a,b) => {
-        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
-        const nameB = b.name ? b.name.toUpperCase() : "z"; 
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
-        return 0;
-    });
+    descriptions = alphabetize(descriptions, "name");
     console.log(descriptions);
     
     if (props.type === "specimen") {

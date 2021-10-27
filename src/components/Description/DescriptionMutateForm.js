@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { alphabetize } from '../../util.js';
 
 import {
   useQuery,
@@ -26,18 +27,7 @@ const SchemaSelect = (props) => {
     if (schemaError) return <p>Error :(</p>;
                                  
     console.log(schemaData.Schema);
-    const schemas = [...schemaData.Schema];
-    schemas.sort((a,b) => {
-        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
-        const nameB = b.name ? b.name.toUpperCase() : "z"; 
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
-        return 0;
-    });
+    const schemas = alphabetize([...schemaData.Schema], "title");
     
     return (
         <Field
@@ -76,18 +66,7 @@ const SpecimenSelect = (props) => {
     if (specimenError) return <p>Error :(</p>;
                                  
     console.log(specimenData.Specimen);
-    const specimens = [...specimenData.Specimen];
-    specimens.sort((a,b) => {
-        const nameA = a.name ? a.name.toUpperCase() : "z"; //"z" forces null names to end of list
-        const nameB = b.name ? b.name.toUpperCase() : "z"; 
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
-        return 0;
-    });
+    const specimens = alphabetize([...specimenData.Specimen], "name");
     
     return (
         <Field
