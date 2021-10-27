@@ -7,7 +7,8 @@ import {
   createHttpLink,
   useQuery,
   useMutation,
-  gql
+  gql,
+  useApolloClient
 } from "@apollo/client";
 import { setContext } from '@apollo/client/link/context';
 
@@ -37,6 +38,9 @@ const mclient = new ApolloClient({
 function SpecimenCreate(props) {
     console.log(props);
     console.log(props.params.genus);
+    
+    const qclient = useApolloClient();
+    
     const specs = Object.keys(props.params).reduce((acc, key) => {
         console.log(key + ", " + props.params[key]);
         if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
@@ -76,6 +80,9 @@ function SpecimenCreate(props) {
         return <p>Error: {error.message}</p>;
     } else if (data) {
         console.log(data);
+        
+        //Force reload of cache
+        qclient.resetStore();        
         
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
         return (

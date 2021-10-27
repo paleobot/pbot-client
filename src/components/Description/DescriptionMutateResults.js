@@ -7,7 +7,8 @@ import {
   createHttpLink,
   useQuery,
   useMutation,
-  gql
+  gql,
+  useApolloClient
 } from "@apollo/client";
 import { setContext } from '@apollo/client/link/context';
 
@@ -38,6 +39,9 @@ function DescriptionCreate(props) {
     console.log("DescriptionCreate");
     console.log(props);
     console.log(props.params.genus);
+    
+    const qclient = useApolloClient();
+
     const specs = Object.keys(props.params).reduce((acc, key) => {
         console.log(key + ", " + props.params[key]);
         //if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
@@ -91,6 +95,9 @@ function DescriptionCreate(props) {
     } else if (data) {
         console.log(data);
         
+        //Force reload of cache
+        qclient.resetStore();
+
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
         return (
             <div key={data.CustomCreateDescription.descriptionID} style={style}>
@@ -98,7 +105,7 @@ function DescriptionCreate(props) {
                 <br />
             </div>
         );
-        
+                
     } else {
         return (<div></div>); //gotta return something until addDescription runs
     }
