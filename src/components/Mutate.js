@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button } from '@material-ui/core';
+import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider } from '@material-ui/core';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import DescriptionQueryForm from './Description/DescriptionQueryForm';
 import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
@@ -7,6 +7,7 @@ import SchemaQueryForm from './Schema/SchemaQueryForm';
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
 import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
+import ReferenceMutateForm from './Reference/ReferenceMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
@@ -47,7 +48,11 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
-                        {/*<FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" disabled />*/}
+                        <Divider />
+                        <FormControlLabel value="Reference-mutate" control={<Radio />} label="Reference" labelPlacement="end" />
+                        <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" disabled />
+                        <FormControlLabel value="Character-mutate" control={<Radio />} label="Character" labelPlacement="end" disabled />
+                        <FormControlLabel value="State-mutate" control={<Radio />} label="State" labelPlacement="end" disabled />
                         </RadioGroup>
                     </FormControl>
                 </Grid>
@@ -65,11 +70,9 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <SpecimenMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
 
-                    {/*
-                    <div hidden={selectedForm !== "Schema-mutate"}>
-                        <SchemaQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    <div hidden={selectedForm !== "Reference-mutate"}>
+                        <ReferenceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
-                    */}
                     
                 </Grid>
             </Grid>

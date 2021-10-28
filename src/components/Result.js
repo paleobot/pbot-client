@@ -6,6 +6,7 @@ import SchemaQueryResults from './Schema/SchemaQueryResults';
 import DescriptionMutateResults from './Description/DescriptionMutateResults';
 import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanceMutateResults';
 import SpecimenMutateResults from './Specimen/SpecimenMutateResults';
+import ReferenceMutateResults from './Reference/ReferenceMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -28,7 +29,10 @@ const Result = ({queryParams, queryEntity}) => {
         queryEntity === "Specimen-mutate" ? (
             <SpecimenMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
-        '';
+        queryEntity === "Reference-mutate" ? (
+            <ReferenceMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        'hi there';
         
     return (
         <Grid container spacing={3}>
