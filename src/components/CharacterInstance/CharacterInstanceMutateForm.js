@@ -218,13 +218,14 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 return errors;
             }}
             validationSchema={Yup.object({
-                schema: Yup.string().required(),
+                description: Yup.string().required(),
                 character: Yup.string().required(),
                 state: Yup.string().required(),
             })}
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                //console.log(">>>>>>>>>>>>>>>>>submitting<<<<<<<<<<<<<<<<<<<<<<<");
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);

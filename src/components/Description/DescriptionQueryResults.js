@@ -9,25 +9,15 @@ function DescriptionList(props) {
     console.log("DescriptionList");
     console.log(props);
     console.log(props.filters.genus);
-    
-    //TODO: Pretty sure these params can be passed through the gql rather than built into a string
-    let specs = Object.keys(props.filters).reduce((acc, key) => {
-        console.log(key + ", " + props.filters[key]);
-        if (key === "type" && props.filters[key] === "all") return acc;
-        if (props.filters[key]) acc += `, ${key}: "${props.filters[key]}"`;
-        return acc;
-    }, '');
-    console.log("specs");
-    console.log(specs);
-    specs = specs ? 
-                "(" + specs + ")" :
-                "";
+
+    //toss out falsy fields
+    let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
     let descriptionGQL;
     if (!props.includeComplex) {
         descriptionGQL = gql`
-            query {
-                Description ${specs} {
+            query ($type: String, $descriptionID: ID, $family: String, $genus: String, $species: String) {
+                Description (type: $type, descriptionID: $descriptionID, family: $family, genus: $genus, species: $species) {
                     descriptionID
                     name
                     family
@@ -38,8 +28,8 @@ function DescriptionList(props) {
         `;
     } else {
         descriptionGQL = gql`
-            query {
-                Description ${specs} {
+            query ($type: String, $descriptionID: ID, $family: String, $genus: String, $species: String) {
+                Description (type: $type, family: descriptionID: $descriptionID, $family, genus: $genus, species: $species) {
                     descriptionID
                     type
                     name
@@ -63,7 +53,12 @@ function DescriptionList(props) {
         `;
     }
     
-    const { loading, error, data } = useQuery(descriptionGQL, {fetchPolicy: "cache-and-network"});
+    const { loading, error, data } = useQuery(descriptionGQL, {
+        variables: {
+            ...filters
+        },
+        fetchPolicy: "cache-and-network"
+    });
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;

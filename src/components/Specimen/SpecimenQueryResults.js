@@ -8,19 +8,15 @@ import CharacterInstances from "../CharacterInstance/CharacterInstances";
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
     console.log(props);
-    let specs = Object.keys(props.filters).reduce((acc, key) => {
-        console.log(key + ", " + props.filters[key]);
-        if (props.filters[key]) acc += `, ${key}: "${props.filters[key]}"`;
-        return acc;
-    }, '');
-    specs = specs === '' ? '' : `(${specs})`;
-    console.log(specs);
-
-    let specimenGQL;
+ 
+    //toss out falsy fields
+    let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
+    
+    let gQL;
     if (!props.includeComplex) {
-        specimenGQL = gql`
-            query {
-                Specimen${specs} {
+        gQL = gql`
+            query ($specimenID: ID, $name: String, $locality: String) {
+                Specimen (specimenID: $specimenID, name: $name, locality: $locality) {
                     specimenID
                     name
                     organ {
@@ -40,9 +36,9 @@ function Specimens(props) {
             }
         `;
     } else {
-        specimenGQL = gql`
-            query {
-                Specimen${specs} {
+        gQL = gql`
+            query ($specimenID: ID, $name: String, $locality: String) {
+                Specimen (specimenID: $specimenID, name: $name, locality: $locality) {
                     specimenID
                     name
                     organ {
@@ -95,35 +91,14 @@ function Specimens(props) {
                 }            
             }
         `;
-        /*
-        otuGQL = gql`
-            query {
-                Description (${specs}) {
-                    descriptionID
-                    type
-                    name
-                    family
-                    genus
-                    species
-                    characterInstances {
-                        characterInstanceID
-                        character {
-                            name
-                        }
-                        state {
-                            State {
-                                name
-                            }
-                            value
-                        }
-                    }
-                }
-            }
-        `;
-        */
     }
     
-    const { loading, error, data } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
+    const { loading, error, data } = useQuery(gQL, {
+        variables: {
+            ...filters
+        },
+        fetchPolicy: "cache-and-network"
+    });
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -132,7 +107,12 @@ function Specimens(props) {
     return data.Specimen.map(({ specimenID, name, organ, description, archtypeDescription }) => (
         <div key={specimenID} style={style}>
             {specimenID}: {name}, {organ.type}{archtypeDescription ? `, ${archtypeDescription.Description.name}` : ""}{description ? "" : ", OTU specimen"}  <br />
-             <CharacterInstances characterInstances={description ? description.Description.characterInstances : archtypeDescription.Description.characterInstances} />
+             <CharacterInstances characterInstances={description ? 
+                 description.Description.characterInstances : 
+                 archtypeDescription ? 
+                    archtypeDescription.Description.characterInstances :
+                    ""
+            } />
            <br />
         </div>
     ));

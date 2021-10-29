@@ -41,32 +41,15 @@ function CharacterInstanceCreate(props) {
     
     const qclient = useApolloClient();
 
-    const specs = Object.keys(props.params).reduce((acc, key) => {
-        console.log(key + ", " + props.params[key]);
-        if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
-        return acc;
-    }, ''); //TODO: select these from form
-    console.log(specs);
-
-    let characterInstanceGQL;
-        /*
-        otuGQL = gql`
-            mutation {
-                CreateDescription(${specs}) {
-                    descriptionID
-                }      
-            }
-        `;
-        */
-        characterInstanceGQL = gql`
-            mutation {
-                CustomCreateCharacterInstance(data:{${specs}}) {
+    const gQL = gql`
+            mutation ($data: CharacterInstanceInput!) {
+                CustomCreateCharacterInstance(data: $data) {
                     characterInstanceID
                 }      
             }
         `;
-
-    const [addCharacterInstance, { data, loading, error }] = useMutation(characterInstanceGQL, {client: mclient});
+    
+    const [addCharacterInstance, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -113,7 +96,7 @@ const CharacterInstanceMutateResults = ({queryParams, queryEntity}) => {
     let characterInstances = queryEntity === "CharacterInstance-mutate" ? (
                     <CharacterInstanceCreate 
                         params={{
-                            descriptionID: queryParams.description,
+                            descriptionID: queryParams.description.split(",")[0],
                             characterID: queryParams.character, 
                             stateID: queryParams.state, 
                         }}

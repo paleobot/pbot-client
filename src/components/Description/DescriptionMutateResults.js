@@ -42,36 +42,15 @@ function DescriptionCreate(props) {
     
     const qclient = useApolloClient();
 
-    const specs = Object.keys(props.params).reduce((acc, key) => {
-        console.log(key + ", " + props.params[key]);
-        //if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
-        if (props.params[key]) {
-            acc = !acc ? '' : acc += ", ";
-            acc += `${key}: "${props.params[key]}"`;
-        }
-        return acc;
-    }, null); //TODO: select these from form
-    console.log(specs);
-
-    let descriptionGQL;
-        /*
-        otuGQL = gql`
-            mutation {
-                CreateDescription(${specs}) {
-                    descriptionID
-                }      
-            }
-        `;
-        */
-        descriptionGQL = gql`
-            mutation {
-                CustomCreateDescription(data:{${specs}}) {
+    const gQL = gql`
+            mutation ($data: DescriptionInput!) {
+                CustomCreateDescription(data: $data) {
                     descriptionID
                 }      
             }
         `;
 
-    const [addDescription, { data, loading, error }] = useMutation(descriptionGQL, {client: mclient});
+    const [addDescription, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.

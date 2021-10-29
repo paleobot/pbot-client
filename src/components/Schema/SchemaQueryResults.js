@@ -8,19 +8,15 @@ import Characters from "../Character/Characters";
 function Schemas(props) {
     console.log(props);
     console.log(props.filters.genus);
-    let specs = Object.keys(props.filters).reduce((acc, key) => {
-        console.log(key + ", " + props.filters[key]);
-        if (props.filters[key]) acc += `, ${key}: "${props.filters[key]}"`;
-        return acc;
-    }, '');
-    specs = specs === '' ? '' : `(${specs})`;
-    console.log(specs);
+    
+    //toss out falsy fields
+    let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
-    let schemaGQL;
+    let gQL;
     if (!props.includeCharacters) {
-        schemaGQL = gql`
-            query {
-                Schema${specs} {
+        gQL = gql`
+            query ($schemaID: ID, $title: String, $year: String) {
+                Schema (schemaID: $schemaID, title: $title, year: $year) {
                     schemaID
                     title
                     year
@@ -28,9 +24,9 @@ function Schemas(props) {
             }
         `;
     } else {
-        schemaGQL = gql`
-            query {
-                Schema ${specs} {
+        gQL = gql`
+            query ($schemaID: ID, $title: String, $year: String) {
+                Schema (schemaID: $schemaID, title: $title, year: $year) {
                     schemaID
                     title
                     year
@@ -47,7 +43,12 @@ function Schemas(props) {
         `;
     }
     
-    const { loading, error, data } = useQuery(schemaGQL, {fetchPolicy: "cache-and-network"});
+    const { loading, error, data } = useQuery(gQL, {
+        variables: {
+            ...filters
+        },
+        fetchPolicy: "cache-and-network"
+    });
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;

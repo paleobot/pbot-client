@@ -71,7 +71,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                         </Grid>
                         <Grid item>
                             <FormControlLabel
-                                value="all"
+                                value=""
                                 control={<Radio  />}
                                 label="All"
                                 disabled={false}

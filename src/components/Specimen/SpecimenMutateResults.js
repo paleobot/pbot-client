@@ -41,23 +41,15 @@ function SpecimenCreate(props) {
     
     const qclient = useApolloClient();
     
-    const specs = Object.keys(props.params).reduce((acc, key) => {
-        console.log(key + ", " + props.params[key]);
-        if (props.params[key]) acc += `, ${key}: "${props.params[key]}"`;
-        return acc;
-    }, ''); //TODO: select these from form
-    console.log(specs);
-
-    let specimenGQL;
-        specimenGQL = gql`
-            mutation {
-                CustomCreateSpecimen(data:{${specs}}) {
+    const gQL = gql`
+            mutation ($data: SpecimenInput!) {
+                CustomCreateSpecimen(data: $data) {
                     specimenID
                 }      
             }
         `;
-
-    const [addSpecimen, { data, loading, error }] = useMutation(specimenGQL, {client: mclient});
+    
+    const [addSpecimen, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
