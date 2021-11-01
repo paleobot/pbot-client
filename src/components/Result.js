@@ -7,6 +7,7 @@ import DescriptionMutateResults from './Description/DescriptionMutateResults';
 import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanceMutateResults';
 import SpecimenMutateResults from './Specimen/SpecimenMutateResults';
 import ReferenceMutateResults from './Reference/ReferenceMutateResults';
+import SchemaMutateResults from './Schema/SchemaMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -31,6 +32,9 @@ const Result = ({queryParams, queryEntity}) => {
         ) : 
         queryEntity === "Reference-mutate" ? (
             <ReferenceMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "Schema-mutate" ? (
+            <SchemaMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         'hi there';
         

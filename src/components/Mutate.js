@@ -8,6 +8,7 @@ import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
 import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
 import ReferenceMutateForm from './Reference/ReferenceMutateForm';
+import SchemaMutateForm from './Schema/SchemaMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
@@ -50,7 +51,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
                         <Divider />
                         <FormControlLabel value="Reference-mutate" control={<Radio />} label="Reference" labelPlacement="end" />
-                        <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" disabled />
+                        <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" />
                         <FormControlLabel value="Character-mutate" control={<Radio />} label="Character" labelPlacement="end" disabled />
                         <FormControlLabel value="State-mutate" control={<Radio />} label="State" labelPlacement="end" disabled />
                         </RadioGroup>
@@ -72,6 +73,10 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
 
                     <div hidden={selectedForm !== "Reference-mutate"}>
                         <ReferenceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    </div>
+
+                    <div hidden={selectedForm !== "Schema-mutate"}>
+                        <SchemaMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
                     
                 </Grid>
