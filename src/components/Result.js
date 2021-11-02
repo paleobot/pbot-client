@@ -8,6 +8,9 @@ import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanc
 import SpecimenMutateResults from './Specimen/SpecimenMutateResults';
 import ReferenceMutateResults from './Reference/ReferenceMutateResults';
 import SchemaMutateResults from './Schema/SchemaMutateResults';
+import CharacterMutateResults from './Character/CharacterMutateResults';
+import StateMutateResults from './State/StateMutateResults';
+import PersonMutateResults from './Person/PersonMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -35,6 +38,15 @@ const Result = ({queryParams, queryEntity}) => {
         ) : 
         queryEntity === "Schema-mutate" ? (
             <SchemaMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "Character-mutate" ? (
+            <CharacterMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "State-mutate" ? (
+            <StateMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "Person-mutate" ? (
+            <PersonMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         'hi there';
         

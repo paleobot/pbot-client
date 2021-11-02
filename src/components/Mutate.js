@@ -9,6 +9,9 @@ import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMu
 import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
 import ReferenceMutateForm from './Reference/ReferenceMutateForm';
 import SchemaMutateForm from './Schema/SchemaMutateForm';
+import CharacterMutateForm from './Character/CharacterMutateForm';
+import StateMutateForm from './State/StateMutateForm';
+import PersonMutateForm from './Person/PersonMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
@@ -52,8 +55,10 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <Divider />
                         <FormControlLabel value="Reference-mutate" control={<Radio />} label="Reference" labelPlacement="end" />
                         <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" />
-                        <FormControlLabel value="Character-mutate" control={<Radio />} label="Character" labelPlacement="end" disabled />
-                        <FormControlLabel value="State-mutate" control={<Radio />} label="State" labelPlacement="end" disabled />
+                        <FormControlLabel value="Character-mutate" control={<Radio />} label="Character" labelPlacement="end" />
+                        <FormControlLabel value="State-mutate" control={<Radio />} label="State" labelPlacement="end" />
+                        <Divider />
+                        <FormControlLabel value="Person-mutate" control={<Radio />} label="Person" labelPlacement="end" />
                         </RadioGroup>
                     </FormControl>
                 </Grid>
@@ -77,6 +82,18 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
 
                     <div hidden={selectedForm !== "Schema-mutate"}>
                         <SchemaMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    </div>
+                    
+                    <div hidden={selectedForm !== "Character-mutate"}>
+                        <CharacterMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    </div>
+                    
+                    <div hidden={selectedForm !== "State-mutate"}>
+                        <StateMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    </div>
+
+                    <div hidden={selectedForm !== "Person-mutate"}>
+                        <PersonMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                     </div>
                     
                 </Grid>
