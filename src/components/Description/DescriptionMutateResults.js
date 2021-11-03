@@ -92,7 +92,16 @@ function DescriptionCreate(props) {
 }
 
 const DescriptionMutateResults = ({queryParams, queryEntity}) => {
+    console.log("DescriptionMutateResults");
     console.log(queryParams);
+
+    if (queryParams.mode === "edit") {
+        return (
+            <div>
+            Result would go here
+            </div>
+        )
+    }
 
     let descriptions = queryEntity === "Description-mutate" ? (
                     <DescriptionCreate 
