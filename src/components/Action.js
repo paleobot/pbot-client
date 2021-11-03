@@ -32,7 +32,7 @@ const Action = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     Query
                 </ToggleButton>
                 <ToggleButton value="mutate" aria-label="mutate">
-                    Mutate
+                    Workbench
                 </ToggleButton>
             </ToggleButtonGroup>
             <Grid container spacing={3}>
