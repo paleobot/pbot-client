@@ -10,6 +10,111 @@ import {
   gql
 } from "@apollo/client";
 
+const DescriptionSelect = (props) => {
+    console.log("DescriptionSelect");
+    console.log(props);
+    console.log(props.values);
+    const descriptionGQL = gql`
+            query {
+                Description {
+                    descriptionID
+                    type
+                    name
+                    family
+                    genus
+                    species
+                  	schema {
+                      schemaID
+                      title
+                    }
+                  	specimen {
+                      Specimen {
+                        name
+                        specimenID
+                      }
+                    }
+                }            
+            }
+        `;
+        
+    //TODO: set global schema somehow, for use in getting Characters
+
+    const { loading: descriptionLoading, error: descriptionError, data: descriptionData } = useQuery(descriptionGQL, {fetchPolicy: "cache-and-network"});
+
+    if (descriptionLoading) return <p>Loading...</p>;
+    if (descriptionError) return <p>Error :(</p>;
+                                 
+    console.log(descriptionData);
+    let descriptions = [...descriptionData.Description];
+    
+    //TODO: This was necessary because we initially did not have name fields in specimen Descriptions.
+    //I require that now, but there are still some that do not have this.
+    descriptions = descriptions.reduce((acc, description) => {
+        const newDesc = {...description};
+        console.log(newDesc);
+
+        newDesc.descriptionID = newDesc.descriptionID + "," + description.schema.schemaID;
+        if (newDesc.name) {
+            acc.push(newDesc);
+        } else {
+            if (description.specimen) {
+                console.log(description.specimen.Specimen.name);
+                newDesc.name = description.specimen.Specimen.name;
+                acc.push(newDesc);
+            } 
+        }
+        return acc;
+    }, []);
+    
+    console.log(descriptions);
+    descriptions = alphabetize(descriptions, "name");
+    console.log(descriptions);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field 
+            style={style}
+            component={TextField}
+            type="text"
+            name="description"
+            label="Description"
+            fullWidth
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            defaultValue=""
+            onChange={event => {
+                props.values.schema = event.currentTarget.dataset.schema;//event.currentTarget.getAttribute('data-schema');//"b7cfe94e-7323-427c-8205-d0ec6aba81b1";
+                props.values.name = event.currentTarget.dataset.name;
+                props.values.type = event.currentTarget.dataset.type;
+                props.values.family = event.currentTarget.dataset.family;
+                props.values.genus = event.currentTarget.dataset.genus;
+                props.values.species = event.currentTarget.dataset.species;
+                props.values.specimen = event.currentTarget.dataset.specimen;
+                //props.resetForm();
+                props.handleChange(event);
+            }}
+        >
+            {descriptions.map(({ descriptionID, name, schema, type, family, genus, species, specimen }) => (
+                <MenuItem 
+                    key={descriptionID} 
+                    value={descriptionID} 
+                    data-schema={schema.schemaID} 
+                    data-name={name} 
+                    data-type={type}
+                    data-family={family}
+                    data-genus={genus}
+                    data-species={species}
+                    data-specimen={specimen ? specimen.Specimen.specimenID : ''}
+                >{name}</MenuItem>
+            ))}
+        </Field>
+    )
+        
+}
+
 const SchemaSelect = (props) => {
     console.log("SchemaSelect");
     const schemaGQL = gql`
@@ -93,12 +198,13 @@ const SpecimenSelect = (props) => {
 }
 
 
-const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
             initialValues={{
+                description: '',
                 type: '',
                 schema: '',
                 specimen: '',
@@ -139,6 +245,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                values.mode = mode;
                 if (values.type === "specimen") {
                     values.family = null;
                     values.genus = null;
@@ -154,6 +261,16 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
         >
             {props => (
             <Form>
+                {mode === "edit" &&
+                    <div>
+                        <DescriptionSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+                
+                {(mode === "create" || (mode === "edit" && props.values.description !== '')) &&
+                <div>
+                
                 <Field
                     component={TextField}
                     type="text"
@@ -231,7 +348,10 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     label="Name"
                     disabled={false}
                 />
-          
+                
+                </div>
+                }
+                
                 <br />
                 <br />
 
