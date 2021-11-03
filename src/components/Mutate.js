@@ -14,6 +14,10 @@ import StateMutateForm from './State/StateMutateForm';
 import PersonMutateForm from './Person/PersonMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import EditIcon from '@material-ui/icons/Edit';
+import AddIcon from '@material-ui/icons/Add';
+import { ToggleButtonGroup } from '@material-ui/lab';
+import { ToggleButton } from '@material-ui/lab';
 
 const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     /*
@@ -24,10 +28,15 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
        //console.log(selectedForm);
     };
     */
+    const [mode, setMode] = React.useState('create');
     
     const [showRegistration, setShowRegistration] = useState(false);
     
     const [token, setToken] = useState(localStorage.getItem('PBOTMutationToken'));
+    
+    const handleModeChange = (event, newMode) => {
+        setMode(newMode);
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('PBOTMutationToken');
@@ -64,8 +73,24 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                 </Grid>
                 
                 <Grid item>
+                    <ToggleButtonGroup
+                        value={mode}
+                        onChange={handleModeChange}
+                        exclusive
+                        aria-label="mutation type"
+                        orientation="horizontal"
+                        size="small"
+                    >
+                        <ToggleButton value="create" aria-label="create">
+                            <AddIcon />
+                        </ToggleButton>
+                        <ToggleButton value="edit" aria-label="edit" >
+                            <EditIcon />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                
                     <div hidden={selectedForm !== "Description-mutate"}>
-                        <DescriptionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                        <DescriptionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "CharacterInstance-mutate"}>
