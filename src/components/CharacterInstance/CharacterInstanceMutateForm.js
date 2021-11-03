@@ -171,7 +171,7 @@ const StateSelect = (props) => {
             disabled={false}
         >
             {states.map(({ stateID, name }) => (
-                <MenuItem key={stateID} value={stateID}>{name}</MenuItem>
+                <MenuItem key={stateID} value={name + "," + stateID}>{name}</MenuItem>
             ))}
         </Field>
     )
@@ -209,6 +209,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 description: '',
                 character: '',
                 state: '', 
+                quantity: '',
             }}
             validate={values => {
                 const errors = {};
@@ -221,6 +222,10 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 description: Yup.string().required(),
                 character: Yup.string().required(),
                 state: Yup.string().required(),
+                quantity: Yup.string().when("state", {
+                    is: (val) => val && val.split(",")[0] === "quantity",
+                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
+                }),
             })}
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
@@ -248,6 +253,21 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                         <br />
                     </div>
                 }
+                
+                {props.values.state && props.values.state.split(",")[0] === "quantity" &&
+                    <div>
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="quantity"
+                            label="Quantity"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
+                    </div>
+                }
+
                 <br />
                 <br />
 

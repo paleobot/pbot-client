@@ -98,7 +98,8 @@ const CharacterInstanceMutateResults = ({queryParams, queryEntity}) => {
                         params={{
                             descriptionID: queryParams.description.split(",")[0],
                             characterID: queryParams.character, 
-                            stateID: queryParams.state, 
+                            stateID: queryParams.state.split(",")[1],
+                            quantity: queryParams.quantity === '' ? null : queryParams.quantity,
                         }}
                     />
                 ) : 
