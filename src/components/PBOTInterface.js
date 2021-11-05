@@ -49,6 +49,7 @@ const PBOTInterface = ({setRotatePBOT}) => {
     };
 
     const handleQueryParamChange = (values) => {
+        console.log("handleQueryParamChange");
         console.log(values);
         setQueryParams(values);
         setSelectedTabDeco(1);
