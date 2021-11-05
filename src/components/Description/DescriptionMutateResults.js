@@ -91,31 +91,96 @@ function DescriptionCreate(props) {
 
 }
 
+function DescriptionUpdate(props) {
+    console.log("DescriptionUpdate");
+    console.log(props);
+    console.log(props.params.genus);
+    
+    const qclient = useApolloClient();
+
+    const gQL = gql`
+            mutation ($data: DescriptionInput!) {
+                CustomUpdateDescription(data: $data) {
+                    descriptionID
+                }      
+            }
+        `;
+
+    const [updateDescription, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+
+    //Apollo client mutations are a little weird. Rather than executing automatically on render, 
+    //the hook returns a function we have to manually execute, in this case addDescription.
+    //The idea is that this would be attached to a submit event, I guess, but that's not 
+    //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
+    //array option that causes it to only execute once.
+    useEffect(() => {
+            updateDescription().catch((err) => {
+                //Just eat it. The UI will get what it needs below through the error field defined on the hook.
+                console.log("catch");
+                console.log(err);
+            });
+    }, []);
+
+    if (loading) {
+        return <p>Loading...</p>;
+    } else if (error) {
+        console.log("ERROR!");
+        console.log(error);
+        return <p>Error: {error.message}</p>;
+    } else if (data) {
+        console.log(data);
+        
+        //Force reload of cache
+        qclient.resetStore();
+
+        const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
+        return (
+            <div key={data.CustomUpdateDescription.descriptionID} style={style}>
+                {data.CustomUpdateDescription.descriptionID} <br />
+                <br />
+            </div>
+        );
+                
+    } else {
+        return (<div></div>); //gotta return something until addDescription runs
+    }
+
+}
+
+
 const DescriptionMutateResults = ({queryParams, queryEntity}) => {
     console.log("DescriptionMutateResults");
     console.log(queryParams);
 
-    if (queryParams.mode === "edit") {
-        return (
-            <div>
-            Result would go here
-            </div>
-        )
-    }
-
-    let descriptions = queryEntity === "Description-mutate" ? (
-                    <DescriptionCreate 
-                        params={{
-                            type: queryParams.type,
-                            specimenID: queryParams.specimen,
-                            schemaID: queryParams.schema,
-                            family: queryParams.family, 
-                            genus: queryParams.genus, 
-                            species: queryParams.species, 
-                            name: queryParams.name,
-                        }}
-                    />
-                ) : 
+    let descriptions = queryEntity === "Description-mutate" ? 
+                queryParams.mode === "edit" ?
+                    (
+                        <DescriptionUpdate 
+                            params={{
+                                descriptionID: queryParams.description.split(',')[0],
+                                type: queryParams.type,
+                                specimenID: queryParams.specimen,
+                                schemaID: queryParams.schema,
+                                family: queryParams.family, 
+                                genus: queryParams.genus, 
+                                species: queryParams.species, 
+                                name: queryParams.name,
+                            }}
+                        />
+                    ) : 
+                    (
+                        <DescriptionCreate 
+                            params={{
+                                type: queryParams.type,
+                                specimenID: queryParams.specimen,
+                                schemaID: queryParams.schema,
+                                family: queryParams.family, 
+                                genus: queryParams.genus, 
+                                species: queryParams.species, 
+                                name: queryParams.name,
+                            }}
+                        />
+                    ) : 
                 '';
     
     return (
