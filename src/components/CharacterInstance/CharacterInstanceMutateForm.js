@@ -180,28 +180,6 @@ const StateSelect = (props) => {
 
 const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     
-    const schemaGQL = gql`
-            query {
-                Schema {
-                    schemaID
-                    title
-                }            
-            }
-        `;
-
-    const { loading: schemaLoading, error: schemaError, data: schemaData } = useQuery(schemaGQL, {fetchPolicy: "cache-and-network"});
-
-    if (schemaLoading) return <p>Loading...</p>;
-    if (schemaError) return <p>Error :(</p>;
-                                 
-    console.log(schemaData.Schema);
-    
-    const schemas = schemaData.Schema;
-    console.log(schemas);
-    
-    //const characters = [{characterID: "1", name:"Character 1"}, {characterID: "2", name: "Character 2"}];
-    const states = [{stateID: "1", name:"State 1"}, {stateID: "2", name: "State 2"}];
-    
     return (
        
         <Formik
@@ -227,12 +205,13 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
             })}
-            onSubmit={values => {
+            onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 //console.log(">>>>>>>>>>>>>>>>>submitting<<<<<<<<<<<<<<<<<<<<<<<");
                 handleQueryParamChange(values);
                 setShowResult(true);
+                resetForm();
                 //setShowOTUs(true);
             }}
         >
