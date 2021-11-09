@@ -10,11 +10,102 @@ import {
   gql
 } from "@apollo/client";
 
+const SpecimenSelect = (props) => {
+    console.log("SpecimenSelect");
+    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    const gQL = gql`
+            query {
+                Specimen {
+                    specimenID
+                    name
+                    locality
+                    organ {
+                        organID
+                        type
+                    }
+                    description {
+                      	Description {
+                        	descriptionID
+                        	name
+                      	}
+                    }
+                    archtypeDescription {
+                      	Description {
+                        	descriptionID
+                        	name
+                        }
+                    }
+                }            
+            }
+        `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                      
+    console.log(">>>>>>>>>>>>Specimen results<<<<<<<<<<<<<");
+    console.log(data.Specimen);
+    const specimens = alphabetize([...data.Specimen], "name");
+    console.log(specimens);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="specimen"
+            label="Specimen"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={event => {
+                //props.resetForm();
+                props.values.name = event.currentTarget.dataset.name;
+                props.values.locality = event.currentTarget.dataset.locality ? event.currentTarget.dataset.locality : '';
+                props.values.organ = event.currentTarget.dataset.organ ? event.currentTarget.dataset.organ : '';
+                props.values.preservationMode = event.currentTarget.dataset.preservationmode ? event.currentTarget.dataset.preservationmode : '';
+                props.values.describedBy = event.currentTarget.dataset.describedby ? event.currentTarget.dataset.describedby : '';
+                props.values.exampleOf = event.currentTarget.dataset.exampleof ? event.currentTarget.dataset.exampleof : '';
+                props.values.idigbiouuid = event.currentTarget.dataset.idigbiouuid ? event.currentTarget.dataset.idigbiouuid : '';
+                props.values.pbdbcid = event.currentTarget.dataset.pbdbcid ? event.currentTarget.dataset.pbdbcid : '';
+                props.values.pbdboccid = event.currentTarget.dataset.pbdboccid ? event.currentTarget.dataset.pbdboccid : '';
+                console.log("dataset");
+                console.log(event.currentTarget.dataset);
+                console.log("describedBy");
+                console.log(props.values.describedBy);
+                console.log("exampleOf");
+                console.log(props.values.exampleOf);
+               
+                props.handleChange(event);
+            }}
+        >
+            {specimens.map(({ specimenID, name, locality, organ, preservationMode, description, archtypeDescription, idigbiouuid, pbdbcid, pbdboccid }) => (
+                <MenuItem 
+                    key={specimenID} 
+                    value={specimenID}
+                    data-name={name}
+                    data-locality={locality}
+                    data-organ={organ.organID}
+                    data-preservationmode={preservationMode}
+                    data-describedby={description ? description.Description.descriptionID : ''}
+                    data-exampleof={archtypeDescription ? archtypeDescription.Description.descriptionID : ''}
+                    data-idigbiouuid={idigbiouuid}
+                    data-pbdbcid={pbdbcid}
+                    data-pbdboccid={pbdboccid}
+                >{name}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const OrganSelect = (props) => {
     console.log("OrganSelect");
     console.log(props);
-    console.log(props.schema);
     const organGQL = gql`
             query {
                 Organ {
@@ -146,13 +237,14 @@ const DescriptionSelect = (props) => {
 }
 
 
-const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     //const [values, setValues] = useState({});
         
     return (
        
         <Formik
             initialValues={{
+                specimen: '',
                 name: '',
                 locality: '',
                 organ: '',
@@ -186,6 +278,16 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
         >
             {props => (
             <Form>
+                {mode === "edit" &&
+                    <div>
+                        <SpecimenSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+                
+                {(mode === "create" || (mode === "edit" && props.values.specimen !== '')) &&
+                <div>
+                
                 <Field
                     component={TextField}
                     type="text"
@@ -222,10 +324,10 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 </Field>
                 <br />
                 
-                <DescriptionSelect type="specimen" />
+                <DescriptionSelect type="specimen"/>
                 <br />
 
-                <DescriptionSelect type="OTU" />
+                <DescriptionSelect type="OTU"/>
                 <br />
                 
                 <Field
@@ -260,6 +362,10 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 >
                 </Field>
                 <br />
+                
+                </div>
+                }
+                
                 <br />
                 <br />
 

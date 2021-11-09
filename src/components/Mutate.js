@@ -98,7 +98,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     </div>
                     
                     <div hidden={selectedForm !== "Specimen-mutate"}>
-                        <SpecimenMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                        <SpecimenMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "Reference-mutate"}>

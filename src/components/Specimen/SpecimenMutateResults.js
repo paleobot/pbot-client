@@ -35,21 +35,30 @@ const mclient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-function SpecimenCreate(props) {
+function SpecimenMutate(props) {
+    console.log("SpecimenMutate");
     console.log(props);
-    console.log(props.params.genus);
     
     const qclient = useApolloClient();
     
-    const gQL = gql`
+    let gQL;
+    gQL = props.params.specimenID ?
+        gql`
+            mutation ($data: SpecimenInput!) {
+                CustomUpdateSpecimen(data: $data) {
+                    specimenID
+                }      
+            }
+        ` :
+        gql`
             mutation ($data: SpecimenInput!) {
                 CustomCreateSpecimen(data: $data) {
                     specimenID
                 }      
             }
-        `;
+        `;        
     
-    const [addSpecimen, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutateSpecimen, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -57,7 +66,7 @@ function SpecimenCreate(props) {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-            addSpecimen().catch((err) => {
+            mutateSpecimen().catch((err) => {
                 //Just eat it. The UI will get what it needs below through the error field defined on the hook.
                 console.log("catch");
                 console.log(err);
@@ -77,12 +86,19 @@ function SpecimenCreate(props) {
         qclient.resetStore();        
         
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return (
-            <div key={data.CustomCreateSpecimen.specimenID} style={style}>
-                {data.CustomCreateSpecimen.specimenID} <br />
-                <br />
-            </div>
-        );
+        return props.params.specimenID ?
+            (
+                <div key={data.CustomUpdateSpecimen.specimenID} style={style}>
+                    {data.CustomUpdateSpecimen.specimenID} <br />
+                    <br />
+                </div>
+            ) :
+            (
+                <div key={data.CustomCreateSpecimen.specimenID} style={style}>
+                    {data.CustomCreateSpecimen.specimenID} <br />
+                    <br />
+                </div>
+            );
         
     } else {
         return (<div></div>); //gotta return something until addDescription runs
@@ -94,17 +110,18 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
     let specimens = queryEntity === "Specimen-mutate" ? (
-                    <SpecimenCreate 
+                    <SpecimenMutate 
                         params={{
-                            name: queryParams.name,
-                            locality: queryParams.locality,
-                            organID: queryParams.organ,
-                            perservationMode: queryParams.preservationMode,
-                            descriptionID: queryParams.describedBy,
-                            otuID: queryParams.exampleOf,
-                            idigbiouuid: queryParams.idigbiouuid,
-                            pbdbcid: queryParams.pbdbcid,
-                            pbdboccid: queryParams.pbdboccid,
+                            specimenID: queryParams.specimen || null,
+                            name: queryParams.name || null,
+                            locality: queryParams.locality || null,
+                            organID: queryParams.organ || null,
+                            preservationMode: queryParams.preservationMode || null,
+                            descriptionID: queryParams.describedBy || null,
+                            otuID: queryParams.exampleOf || null,
+                            idigbiouuid: queryParams.idigbiouuid || null,
+                            pbdbcid: queryParams.pbdbcid || null,
+                            pbdboccid: queryParams.pbdboccid || null,
                         }}
                     />
                 ) : 
