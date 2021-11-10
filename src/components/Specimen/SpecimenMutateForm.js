@@ -74,13 +74,6 @@ const SpecimenSelect = (props) => {
                 props.values.idigbiouuid = event.currentTarget.dataset.idigbiouuid ? event.currentTarget.dataset.idigbiouuid : '';
                 props.values.pbdbcid = event.currentTarget.dataset.pbdbcid ? event.currentTarget.dataset.pbdbcid : '';
                 props.values.pbdboccid = event.currentTarget.dataset.pbdboccid ? event.currentTarget.dataset.pbdboccid : '';
-                console.log("dataset");
-                console.log(event.currentTarget.dataset);
-                console.log("describedBy");
-                console.log(props.values.describedBy);
-                console.log("exampleOf");
-                console.log(props.values.exampleOf);
-               
                 props.handleChange(event);
             }}
         >
