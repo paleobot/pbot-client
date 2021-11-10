@@ -16,6 +16,7 @@ import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 import { ToggleButtonGroup } from '@material-ui/lab';
 import { ToggleButton } from '@material-ui/lab';
 
@@ -87,6 +88,9 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <ToggleButton value="edit" aria-label="edit" >
                             <EditIcon />
                         </ToggleButton>
+                        <ToggleButton value="delete" aria-label="edit" disabled>
+                            <RemoveIcon />
+                        </ToggleButton>
                     </ToggleButtonGroup>
                 
                     <div hidden={selectedForm !== "Description-mutate"}>
@@ -102,11 +106,11 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     </div>
 
                     <div hidden={selectedForm !== "Reference-mutate"}>
-                        <ReferenceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                        <ReferenceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "Schema-mutate"}>
-                        <SchemaMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                        <SchemaMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
                     <div hidden={selectedForm !== "Character-mutate"}>

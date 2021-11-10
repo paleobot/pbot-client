@@ -35,14 +35,23 @@ const mclient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-function ReferenceCreate(props) {
-    console.log("ReferenceCreate");
+function ReferenceMutate(props) {
+    console.log("ReferenceMutate");
     console.log(props);
     console.log(props.params.authors);
     
     const qclient = useApolloClient();
 
-    const gQL = gql`
+    let gQL;
+    gQL = props.params.referenceID ?
+        gql`
+            mutation ($data: ReferenceInput!) {
+                CustomUpdateReference(data: $data) {
+                    referenceID
+                }      
+            }
+        ` :
+        gql`
             mutation ($data: ReferenceInput!) {
                 CustomCreateReference(data: $data) {
                     referenceID
@@ -50,7 +59,7 @@ function ReferenceCreate(props) {
             }
         `;
 
-    const [addReference, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutateReference, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -58,7 +67,7 @@ function ReferenceCreate(props) {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-            addReference().catch((err) => {
+            mutateReference().catch((err) => {
                 //Just eat it. The UI will get what it needs below through the error field defined on the hook.
                 console.log("catch");
                 console.log(err);
@@ -78,7 +87,14 @@ function ReferenceCreate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return (
+        return props.params.referenceID ?
+        (
+            <div key={data.CustomUpdateReference.referenceID} style={style}>
+                {data.CustomUpdateReference.referenceID} <br />
+                <br />
+            </div>
+        ) :
+        (
             <div key={data.CustomCreateReference.referenceID} style={style}>
                 {data.CustomCreateReference.referenceID} <br />
                 <br />
@@ -97,13 +113,14 @@ const ReferenceMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams.authors);
 
     let references = queryEntity === "Reference-mutate" ? (
-                    <ReferenceCreate 
+                    <ReferenceMutate 
                         params={{
-                            title: queryParams.title,
-                            publisher: queryParams.publisher,
-                            year: queryParams.year,
-                            authors: queryParams.authors, //.split(", "),
-                            doi: queryParams.doi
+                            referenceID: queryParams.reference || null,
+                            title: queryParams.title || null,
+                            publisher: queryParams.publisher || null,
+                            year: queryParams.year || null,
+                            authors: queryParams.authors || null, //.split(", "),
+                            doi: queryParams.doi || null
                         }}
                     />
                 ) : 

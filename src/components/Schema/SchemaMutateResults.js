@@ -35,14 +35,23 @@ const mclient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-function SchemaCreate(props) {
-    console.log("SchemaCreate");
+function SchemaMutate(props) {
+    console.log("SchemaMutate");
     console.log(props);
     console.log(props.params.authors);
     
     const qclient = useApolloClient();
 
-    const gQL = gql`
+    let gQL;
+    gQL = props.params.schemaID ?
+        gql`
+            mutation ($data: SchemaInput!) {
+                CustomUpdateSchema(data: $data) {
+                    schemaID
+                }      
+            }
+        ` :
+        gql`
             mutation ($data: SchemaInput!) {
                 CustomCreateSchema(data: $data) {
                     schemaID
@@ -50,7 +59,7 @@ function SchemaCreate(props) {
             }
         `;
 
-    const [addSchema, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutateSchema, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -58,7 +67,7 @@ function SchemaCreate(props) {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-            addSchema().catch((err) => {
+            mutateSchema().catch((err) => {
                 //Just eat it. The UI will get what it needs below through the error field defined on the hook.
                 console.log("catch");
                 console.log(err);
@@ -78,7 +87,14 @@ function SchemaCreate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return (
+        return props.params.schemaID ?
+        (
+            <div key={data.CustomUpdateSchema.schemaID} style={style}>
+                {data.CustomUpdateSchema.schemaID} <br />
+                <br />
+            </div>
+        ) :
+        (
             <div key={data.CustomCreateSchema.schemaID} style={style}>
                 {data.CustomCreateSchema.schemaID} <br />
                 <br />
@@ -97,12 +113,13 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams.authors);
 
     let schemas = queryEntity === "Schema-mutate" ? (
-                    <SchemaCreate 
+                    <SchemaMutate 
                         params={{
-                            title: queryParams.title,
-                            year: queryParams.year,
-                            authors: queryParams.authors, //.split(", "),
-                            references: queryParams.references
+                            schemaID: queryParams.schema || null,
+                            title: queryParams.title || null,
+                            year: queryParams.year || null,
+                            authors: queryParams.authors || null, //.split(", "),
+                            references: queryParams.references || null
                         }}
                     />
                 ) : 

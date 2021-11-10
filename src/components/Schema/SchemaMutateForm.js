@@ -10,6 +10,72 @@ import {
   gql
 } from "@apollo/client";
 
+const SchemaSelect = (props) => {
+    console.log("SchemaSelect");
+    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    const gQL = gql`
+        query {
+            Schema {
+                schemaID
+                title
+                year
+                cites {
+                    referenceID
+                }
+                authoredBy {
+                    personID
+                }
+            }            
+        }
+    `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                      
+    console.log(">>>>>>>>>>>>Schema results<<<<<<<<<<<<<");
+    console.log(data.Schema);
+    const schemas = alphabetize([...data.Schema], "title");
+    console.log(schemas);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="schema"
+            label="Schema"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={event => {
+                //props.resetForm();
+                props.values.title = event.currentTarget.dataset.title || '';
+                props.values.year = event.currentTarget.dataset.year || '';
+                props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
+                props.values.authors = event.currentTarget.dataset.authors ? JSON.parse(event.currentTarget.dataset.authors) : [];
+                props.handleChange(event);
+            }}
+        >
+            {schemas.map((schema) => (
+                <MenuItem 
+                    key={schema.schemaID} 
+                    value={schema.schemaID}
+                    data-title={schema.title}
+                    data-year={schema.year}
+                    data-references={schema.cites ? JSON.stringify(schema.cites.map(reference => reference.referenceID)) : null}
+                    data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => author.personID)) : null}
+                >{schema.title}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
 const AuthorSelect = (props) => {
     console.log("AuthorSelect");
     const gQL = gql`
@@ -112,12 +178,13 @@ const ReferenceSelect = (props) => {
     )
 }
 
-const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
             initialValues={{
+                schema: '', 
                 title: '',
                 year: '',
                 references: [],
@@ -146,6 +213,16 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
         >
             {props => (
             <Form>
+
+                {mode === "edit" &&
+                    <div>
+                        <SchemaSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+                
+                {(mode === "create" || (mode === "edit" && props.values.schema !== '')) &&
+                <div>
                 <Field
                     component={TextField}
                     type="text"
@@ -172,6 +249,10 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
 
                 <AuthorSelect />
                 <br />
+
+                </div>
+                }
+                
                 <br />
                 <br />
 

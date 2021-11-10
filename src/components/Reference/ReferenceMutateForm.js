@@ -10,6 +10,75 @@ import {
   gql
 } from "@apollo/client";
 
+const ReferenceSelect = (props) => {
+    console.log("ReferenceSelect");
+    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    const gQL = gql`
+        query {
+            Reference {
+                referenceID
+                title
+                publisher
+                year
+                doi
+                authoredBy {
+                    personID
+                    given 
+                    surname
+                }
+            }            
+        }
+    `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                      
+    console.log(">>>>>>>>>>>>Reference results<<<<<<<<<<<<<");
+    console.log(data.Reference);
+    const references = alphabetize([...data.Reference], "title");
+    console.log(references);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="reference"
+            label="Reference"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={event => {
+                //props.resetForm();
+                props.values.title = event.currentTarget.dataset.title || '';
+                props.values.publisher = event.currentTarget.dataset.publisher || '';
+                props.values.year = event.currentTarget.dataset.year || '';
+                props.values.doi = event.currentTarget.dataset.doi || '';
+                props.values.authors = event.currentTarget.dataset.authors ? JSON.parse(event.currentTarget.dataset.authors) : [];
+                props.handleChange(event);
+            }}
+        >
+            {references.map((reference) => (
+                <MenuItem 
+                    key={reference.referenceID} 
+                    value={reference.referenceID}
+                    data-title={reference.title}
+                    data-publisher={reference.publisher}
+                    data-year={reference.year}
+                    data-doi={reference.doi}
+                    data-authors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => author.personID)) : null}
+                >{reference.title + ", " + reference.publisher + ", " + reference.year}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
 const AuthorSelect = (props) => {
     console.log("AuthorSelect");
     const gQL = gql`
@@ -61,12 +130,13 @@ const AuthorSelect = (props) => {
 }
 
 
-const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
             initialValues={{
+                reference: '',
                 title: '',
                 publisher: '',
                 year: '',
@@ -97,6 +167,16 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
         >
             {props => (
             <Form>
+
+                {mode === "edit" &&
+                    <div>
+                        <ReferenceSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+                
+                {(mode === "create" || (mode === "edit" && props.values.reference !== '')) &&
+                <div>
                 <Field
                     component={TextField}
                     type="text"
@@ -138,6 +218,10 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                     fullWidth 
                     disabled={false}
                 />
+
+                </div>
+                }
+                
                 <br />
                 <br />
 
