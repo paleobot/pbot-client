@@ -138,12 +138,13 @@ const StateSelect = (props) => {
         
 }
 
-const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
             initialValues={{
+                state: '',
                 name: '',
                 definition: '',
                 schema: '',
@@ -174,6 +175,15 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
         >
             {props => (
             <Form>
+                {mode === "edit" &&
+                    <div>
+                        <br />
+                        Not yet implemented
+                    </div>
+                }
+                
+                {(mode === "create" || (mode === "edit" && props.values.state !== '')) &&
+                <div>
                 <Field
                     component={TextField}
                     type="text"
@@ -210,6 +220,10 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                         <br />
                     </div>
                 }
+
+                </div>
+                }
+                
                 <br />
                 <br />
                 

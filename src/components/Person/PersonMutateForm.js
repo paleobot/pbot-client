@@ -11,12 +11,13 @@ import {
 } from "@apollo/client";
 
 
-const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
             initialValues={{
+                person: '',
                 given: '',
                 surname: '',
                 email: '',
@@ -45,6 +46,15 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
         >
             {props => (
             <Form>
+                {mode === "edit" &&
+                    <div>
+                        <br />
+                        Not yet implemented
+                    </div>
+                }
+                
+                {(mode === "create" || (mode === "edit" && props.values.person !== '')) &&
+                <div>
                 <Field
                     component={TextField}
                     type="text"
@@ -86,6 +96,9 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 <br />
 
 
+                </div>
+                }
+                
                 <br />
                 <br />
 
