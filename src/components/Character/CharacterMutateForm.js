@@ -10,6 +10,64 @@ import {
   gql
 } from "@apollo/client";
 
+const CharacterSelect = (props) => {
+    console.log("CharacterSelect");
+    console.log(props);
+    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    const gQL = gql`
+        query ($schemaID: ID) {
+            Schema (schemaID: $schemaID) {
+                characters {    
+                    characterID
+                    name
+                    definition
+                }
+            }            
+        }
+    `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.values.schema}});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                      
+    console.log(">>>>>>>>>>>>Results<<<<<<<<<<<<<");
+    console.log(data.Schema);
+    const characters = alphabetize([...data.Schema[0].characters], "name");
+    console.log(characters);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="character"
+            label="Character"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={event => {
+                //props.resetForm();
+                props.values.name = event.currentTarget.dataset.name || '';
+                props.values.definition = event.currentTarget.dataset.definition || '';
+                props.handleChange(event);
+            }}
+        >
+            {characters.map((character) => (
+                <MenuItem 
+                    key={character.characterID} 
+                    value={character.characterID}
+                    data-name={character.name}
+                    data-definition={character.definition}
+                >{character.name}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const SchemaSelect = (props) => {
     console.log("SchemaSelect");
@@ -44,6 +102,11 @@ const SchemaSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
+            onChange={event => {
+                //props.resetForm();
+                props.values.character =  '';
+                props.handleChange(event);
+            }}
         >
             {schemas.map(({ schemaID, title }) => (
                 <MenuItem key={schemaID} value={schemaID}>{title}</MenuItem>
@@ -52,12 +115,13 @@ const SchemaSelect = (props) => {
     )
 }
 
-const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
             initialValues={{
+                character: '',
                 name: '',
                 definition: '',
                 schema: '',
@@ -84,6 +148,18 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
         >
             {props => (
             <Form>
+                <SchemaSelect values={props.values} handleChange={props.handleChange}/>
+                <br />
+                
+                {mode === "edit" && props.values.schema !== '' &&
+                    <div>
+                        <CharacterSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+                
+                {(mode === "create" || (mode === "edit" && props.values.character !== '')) &&
+                <div>
                 <Field
                     component={TextField}
                     type="text"
@@ -104,8 +180,9 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 />
                 <br />
 
-                <SchemaSelect />
-                <br />
+                </div>
+                }
+                
                 <br />
                 <br />
 

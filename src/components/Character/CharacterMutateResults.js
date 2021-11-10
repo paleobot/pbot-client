@@ -35,13 +35,22 @@ const mclient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-function CharacterCreate(props) {
-    console.log("CharacterCreate");
+function CharacterMutate(props) {
+    console.log("CharacterMutate");
     console.log(props);
     
     const qclient = useApolloClient();
 
-    const gQL = gql`
+    let gQL;
+    gQL = props.params.characterID ?
+        gql`
+            mutation ($data: CharacterInput!) {
+                CustomUpdateCharacter(data: $data) {
+                    characterID
+                }      
+            }
+        ` :
+        gql`
             mutation ($data: CharacterInput!) {
                 CustomCreateCharacter(data: $data) {
                     characterID
@@ -49,7 +58,7 @@ function CharacterCreate(props) {
             }
         `;
 
-    const [addCharacter, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutateCharacter, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -57,7 +66,7 @@ function CharacterCreate(props) {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-            addCharacter().catch((err) => {
+            mutateCharacter().catch((err) => {
                 //Just eat it. The UI will get what it needs below through the error field defined on the hook.
                 console.log("catch");
                 console.log(err);
@@ -77,7 +86,14 @@ function CharacterCreate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return (
+        return props.params.characterID ?
+        (
+            <div key={data.CustomUpdateCharacter.characterID} style={style}>
+                {data.CustomUpdateCharacter.characterID} <br />
+                <br />
+            </div>
+        ) :
+        (
             <div key={data.CustomCreateCharacter.characterID} style={style}>
                 {data.CustomCreateCharacter.characterID} <br />
                 <br />
@@ -95,10 +111,11 @@ const CharacterMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
     let characters = queryEntity === "Character-mutate" ? (
-                    <CharacterCreate 
+                    <CharacterMutate 
                         params={{
+                            characterID: queryParams.character || null,
                             name: queryParams.name || null,
-                            defintion: queryParams.definion || null,
+                            definition: queryParams.definition || null,
                             schemaID: queryParams.schema || null,
                         }}
                     />
