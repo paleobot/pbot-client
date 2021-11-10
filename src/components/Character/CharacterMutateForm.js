@@ -59,6 +59,7 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
         <Formik
             initialValues={{
                 name: '',
+                definition: '',
                 schema: '',
             }}
             validate={values => {
@@ -93,6 +94,15 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 />
                 <br />
 
+                <Field
+                    component={TextField}
+                    type="text"
+                    name="definition"
+                    label="Definition"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
 
                 <SchemaSelect />
                 <br />

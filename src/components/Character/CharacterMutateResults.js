@@ -97,8 +97,9 @@ const CharacterMutateResults = ({queryParams, queryEntity}) => {
     let characters = queryEntity === "Character-mutate" ? (
                     <CharacterCreate 
                         params={{
-                            name: queryParams.name,
-                            schemaID: queryParams.schema,
+                            name: queryParams.name || null,
+                            defintion: queryParams.definion || null,
+                            schemaID: queryParams.schema || null,
                         }}
                     />
                 ) : 
