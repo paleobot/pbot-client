@@ -116,16 +116,17 @@ const SchemaSelect = (props) => {
 }
 
 const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
-    const style = {textAlign: "left", width: "60%", margin: "auto"}
-    return (
-       
-        <Formik
-            initialValues={{
+    const initValues = {
                 character: '',
                 name: '',
                 definition: '',
                 schema: '',
-            }}
+    };
+    const style = {textAlign: "left", width: "60%", margin: "auto"}
+    return (
+       
+        <Formik
+            initialValues={initValues}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -143,7 +144,7 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
-                resetForm();
+                resetForm({values: initValues});
             }}
         >
             {props => (

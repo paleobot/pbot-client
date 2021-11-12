@@ -179,17 +179,18 @@ const ReferenceSelect = (props) => {
 }
 
 const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
-    const style = {textAlign: "left", width: "60%", margin: "auto"}
-    return (
-       
-        <Formik
-            initialValues={{
+    const initValues = {
                 schema: '', 
                 title: '',
                 year: '',
                 references: [],
                 authors: [],
-            }}
+    };
+    const style = {textAlign: "left", width: "60%", margin: "auto"}
+    return (
+       
+        <Formik
+            initialValues={initValues}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -208,7 +209,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
-                resetForm();
+                resetForm({values: initValues});
             }}
         >
             {props => (

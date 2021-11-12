@@ -232,11 +232,7 @@ const DescriptionSelect = (props) => {
 
 const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     //const [values, setValues] = useState({});
-        
-    return (
-       
-        <Formik
-            initialValues={{
+    const initValues = {
                 specimen: '',
                 name: '',
                 locality: '',
@@ -248,7 +244,11 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
-            }}
+    };    
+    return (
+       
+        <Formik
+            initialValues={initValues}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -266,7 +266,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
-                resetForm();
+                resetForm({values: initValues});
             }}
         >
             {props => (

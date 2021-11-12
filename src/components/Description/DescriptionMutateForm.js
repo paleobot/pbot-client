@@ -199,11 +199,7 @@ const SpecimenSelect = (props) => {
 
 
 const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
-    const style = {textAlign: "left", width: "60%", margin: "auto"}
-    return (
-       
-        <Formik
-            initialValues={{
+    const initValues = {
                 description: '',
                 type: '',
                 schema: '',
@@ -212,7 +208,13 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 genus: '', 
                 species: '',
                 name: '',
-            }}
+    };
+            
+    const style = {textAlign: "left", width: "60%", margin: "auto"}
+    return (
+       
+        <Formik
+            initialValues={initValues}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -256,7 +258,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
-                resetForm();
+                resetForm({values:initValues});
             }}
         >
             {props => (
