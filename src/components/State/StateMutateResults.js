@@ -35,13 +35,22 @@ const mclient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-function StateCreate(props) {
-    console.log("StateCreate");
+function StateMutate(props) {
+    console.log("StateMutate");
     console.log(props);
     
     const qclient = useApolloClient();
 
-    const gQL = gql`
+    let gQL;
+    gQL = props.params.stateID ?
+        gql`
+            mutation ($data: StateInput!) {
+                CustomUpdateState(data: $data) {
+                    stateID
+                }      
+            }
+        ` :
+        gql`
             mutation ($data: StateInput!) {
                 CustomCreateState(data: $data) {
                     stateID
@@ -49,7 +58,7 @@ function StateCreate(props) {
             }
         `;
 
-    const [addState, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutateState, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -57,7 +66,7 @@ function StateCreate(props) {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-            addState().catch((err) => {
+            mutateState().catch((err) => {
                 //Just eat it. The UI will get what it needs below through the error field defined on the hook.
                 console.log("catch");
                 console.log(err);
@@ -77,7 +86,14 @@ function StateCreate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return (
+        return props.params.stateID ?
+        (
+            <div key={data.CustomUpdateState.stateID} style={style}>
+                {data.CustomUpdateState.stateID} <br />
+                <br />
+            </div>
+        ) :
+        (
             <div key={data.CustomCreateState.stateID} style={style}>
                 {data.CustomCreateState.stateID} <br />
                 <br />
@@ -95,12 +111,13 @@ const StateMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
     let states = queryEntity === "State-mutate" ? (
-                    <StateCreate 
+                    <StateMutate 
                         params={{
-                            name: queryParams.name,
-                            definition: queryParams.definition,
-                            characterID: queryParams.character,
-                            parentStateID: queryParams.state
+                            stateID: queryParams.state || null,
+                            name: queryParams.name || null,
+                            definition: queryParams.definition || null,
+                            characterID: queryParams.character || null,
+                            parentStateID: queryParams.state || null
                         }}
                     />
                 ) : 

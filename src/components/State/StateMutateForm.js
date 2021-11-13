@@ -10,7 +10,6 @@ import {
   gql
 } from "@apollo/client";
 
-
 const SchemaSelect = (props) => {
     console.log("SchemaSelect");
     const gQL = gql`
@@ -99,12 +98,13 @@ const CharacterSelect = (props) => {
 const StateSelect = (props) => {
     console.log("StateSelect");
     console.log(props);
-    console.log(props.character);
+    console.log(props.values.character);
     const stateGQL = gql`
         query {
-            GetAllStates (characterID: "${props.character}")  {
+            GetAllStates (characterID: "${props.values.character}")  {
                 stateID
                 name
+                definition
             }
         }
     `;
@@ -117,21 +117,38 @@ const StateSelect = (props) => {
     //console.log(stateData.Schema[0].characters);
     const states = alphabetize([...stateData.GetAllStates], "name");
     
+    const label = props.mode === "edit" ? "State" : "Parent state";
+    
     return (
         <Field
             component={TextField}
             type="text"
             name="state"
-            label="Parent State"
+            label={label}
             fullWidth 
             select={true}
             SelectProps={{
                 multiple: false,
             }}
             disabled={false}
+            onChange={event => {
+                console.log("State onChange");
+                console.log(props);
+                console.log(props.mode);
+                if (props.mode === "edit") {
+                    props.values.name = event.currentTarget.dataset.name || '';
+                    props.values.definition = event.currentTarget.dataset.definition || '';
+                }
+                props.handleChange(event);
+            }}
         >
-            {states.map(({ stateID, name }) => (
-                <MenuItem key={stateID} value={stateID}>{name}</MenuItem>
+            {states.map(({ stateID, name, definition }) => (
+                <MenuItem 
+                    key={stateID} 
+                    value={stateID}
+                    data-name={name}
+                    data-definition={definition}
+                >{name}</MenuItem>
             ))}
         </Field>
     )
@@ -139,18 +156,19 @@ const StateSelect = (props) => {
 }
 
 const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
-    const style = {textAlign: "left", width: "60%", margin: "auto"}
-    return (
-       
-        <Formik
-            initialValues={{
+    const initValues = {
                 state: '',
                 name: '',
                 definition: '',
                 schema: '',
                 character: '',
                 state: '',
-            }}
+    };
+    const style = {textAlign: "left", width: "60%", margin: "auto"}
+    return (
+       
+        <Formik
+            initialValues={initValues}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -170,15 +188,25 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
-                resetForm();
+                resetForm({values: initValues});
             }}
         >
             {props => (
             <Form>
-                {mode === "edit" &&
+                <SchemaSelect />
+                <br />
+
+                {props.values.schema !== '' &&
                     <div>
+                        <CharacterSelect schema={props.values.schema} />
                         <br />
-                        Not yet implemented
+                    </div>
+                }
+
+                {props.values.character !== "" &&
+                    <div>
+                        <StateSelect values={props.values} mode={mode} handleChange={props.handleChange}/>
+                        <br />
                     </div>
                 }
                 
@@ -203,23 +231,6 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     disabled={false}
                 />
                 <br />
-
-                <SchemaSelect />
-                <br />
-
-                {props.values.schema !== '' &&
-                    <div>
-                        <CharacterSelect schema={props.values.schema} />
-                        <br />
-                    </div>
-                }
-
-                {props.values.character !== "" &&
-                    <div>
-                        <StateSelect character={props.values.character} />
-                        <br />
-                    </div>
-                }
 
                 </div>
                 }
