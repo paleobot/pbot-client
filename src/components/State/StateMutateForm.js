@@ -105,6 +105,14 @@ const StateSelect = (props) => {
                 stateID
                 name
                 definition
+                stateOf {
+                  ... on Character {
+                    characterID
+                  }
+                  ... on State {
+                    stateID
+                  }
+                }
             }
         }
     `;
@@ -117,13 +125,14 @@ const StateSelect = (props) => {
     //console.log(stateData.Schema[0].characters);
     const states = alphabetize([...stateData.GetAllStates], "name");
     
-    const label = props.mode === "edit" ? "State" : "Parent state";
+    const label = props.parent ? "Parent state" : "State";
+    const name =  props.parent ? "parentState" : "state";
     
     return (
         <Field
             component={TextField}
             type="text"
-            name="state"
+            name={name}
             label={label}
             fullWidth 
             select={true}
@@ -134,21 +143,23 @@ const StateSelect = (props) => {
             onChange={event => {
                 console.log("State onChange");
                 console.log(props);
-                console.log(props.mode);
-                if (props.mode === "edit") {
+                console.log(props.parent);
+                if (!props.parent) {
                     props.values.name = event.currentTarget.dataset.name || '';
                     props.values.definition = event.currentTarget.dataset.definition || '';
+                    props.values.parentState = event.currentTarget.dataset.parentstate || '';
                 }
                 props.handleChange(event);
             }}
         >
-            {states.map(({ stateID, name, definition }) => (
+            {states.map((state) => (
                 <MenuItem 
-                    key={stateID} 
-                    value={stateID}
-                    data-name={name}
-                    data-definition={definition}
-                >{name}</MenuItem>
+                    key={state.stateID} 
+                    value={state.stateID}
+                    data-name={state.name}
+                    data-definition={state.definition}
+                    data-parentstate={state.stateOf.stateID}
+                >{state.name}</MenuItem>
             ))}
         </Field>
     )
@@ -162,7 +173,7 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 definition: '',
                 schema: '',
                 character: '',
-                state: '',
+                parentState: '',
     };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
@@ -203,12 +214,20 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     </div>
                 }
 
-                {props.values.character !== "" &&
+                {props.values.character !== "" && mode === "edit" &&
                     <div>
-                        <StateSelect values={props.values} mode={mode} handleChange={props.handleChange}/>
+                        <StateSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
                     </div>
                 }
+                
+                {(mode === "create" && props.values.character) || (mode !== "create" && props.values.state !== "") &&
+                    <div>
+                        <StateSelect values={props.values} parent handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+                
                 
                 {(mode === "create" || (mode === "edit" && props.values.state !== '')) &&
                 <div>

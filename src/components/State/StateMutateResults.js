@@ -117,7 +117,7 @@ const StateMutateResults = ({queryParams, queryEntity}) => {
                             name: queryParams.name || null,
                             definition: queryParams.definition || null,
                             characterID: queryParams.character || null,
-                            parentStateID: queryParams.state || null
+                            parentStateID: queryParams.parentState || null
                         }}
                     />
                 ) : 
