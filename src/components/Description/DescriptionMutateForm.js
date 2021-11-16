@@ -53,7 +53,6 @@ const DescriptionSelect = (props) => {
         const newDesc = {...description};
         console.log(newDesc);
 
-        newDesc.descriptionID = newDesc.descriptionID + "," + description.schema.schemaID;
         if (newDesc.name) {
             acc.push(newDesc);
         } else {
@@ -86,7 +85,7 @@ const DescriptionSelect = (props) => {
             disabled={false}
             defaultValue=""
             onChange={event => {
-                props.values.schema = event.currentTarget.dataset.schema;//event.currentTarget.getAttribute('data-schema');//"b7cfe94e-7323-427c-8205-d0ec6aba81b1";
+                props.values.schema = event.currentTarget.dataset.schema;
                 props.values.name = event.currentTarget.dataset.name;
                 props.values.type = event.currentTarget.dataset.type;
                 props.values.family = event.currentTarget.dataset.family;

@@ -114,16 +114,14 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                     (
                         <DescriptionMutate 
                             params={{
-                                descriptionID: queryParams.description ? 
-                                    queryParams.description.split(',')[0] :
-                                    null,
-                                type: queryParams.type,
-                                specimenID: queryParams.specimen,
-                                schemaID: queryParams.schema,
-                                family: queryParams.family, 
-                                genus: queryParams.genus, 
-                                species: queryParams.species, 
-                                name: queryParams.name,
+                                descriptionID: queryParams.description || null,
+                                type: queryParams.type || null,
+                                specimenID: queryParams.specimen || null,
+                                schemaID: queryParams.schema || null,
+                                family: queryParams.family || null, 
+                                genus: queryParams.genus || null, 
+                                species: queryParams.species || null, 
+                                name: queryParams.name || null,
                             }}
                         />
                     ) : 
