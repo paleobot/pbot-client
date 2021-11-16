@@ -10,6 +10,68 @@ import {
   gql
 } from "@apollo/client";
 
+const PersonSelect = (props) => {
+    console.log("PersonSelect");
+    console.log(props);
+    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    const gQL = gql`
+        query {
+            Person {
+                personID
+                given
+                surname
+                email
+                orcid
+            }            
+        }
+    `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.values.schema}});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                      
+    console.log(">>>>>>>>>>>>Results<<<<<<<<<<<<<");
+    console.log(data.Person);
+    const persons = alphabetize([...data.Person], "surname");
+    console.log(persons);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="person"
+            label="Person"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={event => {
+                //props.resetForm();
+                props.values.given = event.currentTarget.dataset.given || '';
+                props.values.surname = event.currentTarget.dataset.surname || '';
+                props.values.email = event.currentTarget.dataset.email || '';
+                props.values.orcid = event.currentTarget.dataset.orcid || '';
+                props.handleChange(event);
+            }}
+        >
+            {persons.map((person) => (
+                <MenuItem 
+                    key={person.personID} 
+                    value={person.personID}
+                    data-surname={person.surname}
+                    data-given={person.given}
+                    data-email={person.email}
+                    data-orcid={person.orcid}
+                >{person.surname}, {person.given}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -48,8 +110,8 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
             <Form>
                 {mode === "edit" &&
                     <div>
+                        <PersonSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
-                        Not yet implemented
                     </div>
                 }
                 

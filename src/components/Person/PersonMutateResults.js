@@ -35,13 +35,22 @@ const mclient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-function PersonCreate(props) {
-    console.log("PersonCreate");
+function PersonMutate(props) {
+    console.log("PersonMutate");
     console.log(props);
     
     const qclient = useApolloClient();
 
-    const gQL = gql`
+    let gQL;
+    gQL = props.params.personID ?
+        gql`
+            mutation ($data: PersonInput!) {
+                CustomUpdatePerson(data: $data) {
+                    personID
+                }      
+            }
+        ` :
+        gql`
             mutation ($data: PersonInput!) {
                 CustomCreatePerson(data: $data) {
                     personID
@@ -49,7 +58,7 @@ function PersonCreate(props) {
             }
         `;
 
-    const [addPerson, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutatePerson, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -57,7 +66,7 @@ function PersonCreate(props) {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-            addPerson().catch((err) => {
+            mutatePerson().catch((err) => {
                 //Just eat it. The UI will get what it needs below through the error field defined on the hook.
                 console.log("catch");
                 console.log(err);
@@ -77,7 +86,14 @@ function PersonCreate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return (
+        return props.params.personID ?
+        (
+            <div key={data.CustomUpdatePerson.personID} style={style}>
+                {data.CustomUpdatePerson.personID} <br />
+                <br />
+            </div>
+        ) :
+        (
             <div key={data.CustomCreatePerson.personID} style={style}>
                 {data.CustomCreatePerson.personID} <br />
                 <br />
@@ -95,8 +111,9 @@ const PersonMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
     let persons = queryEntity === "Person-mutate" ? (
-                    <PersonCreate 
+                    <PersonMutate 
                         params={{
+                            personID: queryParams.person || null,
                             given: queryParams.given,
                             surname: queryParams.surname,
                             email: queryParams.email,
