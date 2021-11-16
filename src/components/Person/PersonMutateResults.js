@@ -114,10 +114,10 @@ const PersonMutateResults = ({queryParams, queryEntity}) => {
                     <PersonMutate 
                         params={{
                             personID: queryParams.person || null,
-                            given: queryParams.given,
-                            surname: queryParams.surname,
-                            email: queryParams.email,
-                            orcid: queryParams.orcid,
+                            given: queryParams.given || null,
+                            surname: queryParams.surname || null,
+                            email: queryParams.email || null,
+                            orcid: queryParams.orcid || null,
                         }}
                     />
                 ) : 
