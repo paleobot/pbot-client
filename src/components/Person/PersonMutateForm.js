@@ -67,7 +67,7 @@ const PersonSelect = (props) => {
                     data-given={person.given}
                     data-email={person.email}
                     data-orcid={person.orcid}
-                >{person.surname}, {person.given}</MenuItem>
+                >{person.given} {person.surname}</MenuItem>
             ))}
         </Field>
     )
