@@ -35,13 +35,22 @@ const mclient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-function CharacterInstanceCreate(props) {
+function CharacterInstanceMutate(props) {
+    console.log("CharacterInstanceMutate");
     console.log(props);
-    console.log(props.params.genus);
     
     const qclient = useApolloClient();
 
-    const gQL = gql`
+    let gQL;
+    gQL = props.params.characterInstanceID ?
+        gql`
+            mutation ($data: CharacterInstanceInput!) {
+                CustomUpdateCharacterInstance(data: $data) {
+                    characterInstanceID
+                }      
+            }
+        ` :
+        gql`
             mutation ($data: CharacterInstanceInput!) {
                 CustomCreateCharacterInstance(data: $data) {
                     characterInstanceID
@@ -49,7 +58,7 @@ function CharacterInstanceCreate(props) {
             }
         `;
     
-    const [addCharacterInstance, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutateCharacterInstance, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -57,7 +66,7 @@ function CharacterInstanceCreate(props) {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-            addCharacterInstance().catch((err) => {
+            mutateCharacterInstance().catch((err) => {
                 //Just eat it. The UI will get what it needs below through the error field defined on the hook.
                 console.log("catch");
                 console.log(err);
@@ -77,13 +86,19 @@ function CharacterInstanceCreate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return (
-            <div key={data.CustomCreateCharacterInstance.characterInstanceID} style={style}>
-                {data.CustomCreateCharacterInstance.characterInstanceID} <br />
-                <br />
-            </div>
-        );
-        
+        return props.params.characterInstanceID ?
+            (
+                <div key={data.CustomUpdateCharacterInstance.characterInstanceID} style={style}>
+                    {data.CustomUpdateCharacterInstance.characterInstanceID} <br />
+                    <br />
+                </div>
+            ) :
+            (
+                <div key={data.CustomCreateCharacterInstance.characterInstanceID} style={style}>
+                    {data.CustomCreateCharacterInstance.characterInstanceID} <br />
+                    <br />
+                </div>
+            );
     } else {
         return (<div></div>); //gotta return something until addDescription runs
     }
@@ -94,12 +109,13 @@ const CharacterInstanceMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
 
     let characterInstances = queryEntity === "CharacterInstance-mutate" ? (
-                    <CharacterInstanceCreate 
+                    <CharacterInstanceMutate 
                         params={{
-                            descriptionID: queryParams.description.split(",")[0],
-                            characterID: queryParams.character, 
-                            stateID: queryParams.state.split(",")[1],
-                            quantity: queryParams.quantity === '' ? null : queryParams.quantity,
+                            characterInstanceID: queryParams.characterInstance || null,
+                            descriptionID: queryParams.description || null,
+                            characterID: queryParams.character || null, 
+                            stateID: queryParams.state.split(",")[1] || null,
+                            quantity: queryParams.quantity || null,
                         }}
                     />
                 ) : 

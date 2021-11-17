@@ -14,7 +14,6 @@ import {
 const DescriptionSelect = (props) => {
     console.log("DescriptionSelect");
     console.log(props);
-    console.log(props.schema);
     const descriptionGQL = gql`
             query {
                 Description {
@@ -50,7 +49,6 @@ const DescriptionSelect = (props) => {
         const newDesc = {...description};
         console.log(newDesc);
 
-        newDesc.descriptionID = newDesc.descriptionID + "," + description.schema.schemaID;
         if (newDesc.name) {
             acc.push(newDesc);
         } else {
@@ -82,23 +80,106 @@ const DescriptionSelect = (props) => {
             }}
             disabled={false}
             defaultValue=""
+            onChange={event => {
+                //props.resetForm();
+                console.log("Description selected");
+                console.log(event.currentTarget.dataset.schemaid);
+                props.values.schema = event.currentTarget.dataset.schemaid || '';
+                props.handleChange(event);
+            }}
         >
-            {descriptions.map(({ descriptionID, name }) => (
-                <MenuItem key={descriptionID} value={descriptionID}>{name}</MenuItem>
+            {descriptions.map((description) => (
+                <MenuItem 
+                    key={description.descriptionID} 
+                    value={description.descriptionID} 
+                    data-schemaid={description.schema.schemaID}
+                >{description.name}</MenuItem>
             ))}
         </Field>
     )
         
 }
 
+const CharacterInstanceSelect = (props) => {
+    console.log("CharacterInstanceSelect");
+    console.log(props);
+    const gQL = gql`
+            query {
+                Description (descriptionID: "${props.values.description}") {
+                    characterInstances {
+                        characterInstanceID
+                        character {
+                            characterID
+                            name
+                        }
+                        state {
+                            State {
+                                stateID
+                                name
+                            }
+                        }
+                    }
+                }            
+            }
+        `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                 
+    console.log(data.Description);
+    
+    const characterInstances = alphabetize(data.Description[0].characterInstances.map((cI) => {
+        const newCI = {...cI};
+        console.log(newCI);
+        
+        newCI.name = newCI.name || newCI.character.name + "-" + newCI.state.State.name;
+
+        return newCI;
+    }), "name");
+    console.log(characterInstances)
+
+    const style = {minWidth: "18ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="characterInstance"
+            label="CharacterInstance"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={event => {
+                //props.resetForm();
+                props.values.character = event.currentTarget.dataset.characterid || '';
+                props.values.state = event.currentTarget.dataset.stateid || '';
+                props.handleChange(event);
+            }}
+        >
+            {characterInstances.map((cI) => (
+                <MenuItem 
+                    key={cI.characterInstanceID} 
+                    value={cI.characterInstanceID}
+                    data-characterid={cI.character.characterID}
+                    data-stateid={cI.state.State.name + "," + cI.state.State.stateID}
+                >{cI.name}</MenuItem>
+            ))}
+        </Field>
+    )
+        
+}
 
 const CharacterSelect = (props) => {
     console.log("CharacterSelect");
     console.log(props);
-    console.log(props.schema);
     const characterGQL = gql`
             query {
-                Schema (schemaID: "${props.schema}") {
+                Schema (schemaID: "${props.values.schema}") {
                     characters {
                         characterID
                         name
@@ -139,10 +220,9 @@ const CharacterSelect = (props) => {
 const StateSelect = (props) => {
     console.log("StateSelect");
     console.log(props);
-    console.log(props.character);
     const stateGQL = gql`
         query {
-            GetAllStates (characterID: "${props.character}")  {
+            GetAllStates (characterID: "${props.values.character}")  {
                 stateID
                 name
             }
@@ -178,12 +258,13 @@ const StateSelect = (props) => {
         
 }
 
-const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     
     return (
        
         <Formik
             initialValues={{
+                characterInstance: '',
                 description: '',
                 character: '',
                 state: '', 
@@ -217,18 +298,32 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
         >
             {props => (
             <Form>
-                <DescriptionSelect />
-                
+                <Field
+                    component={TextField}
+                    type="hidden"
+                    name="schema"
+                    disabled={false}
+                />
+
+                <DescriptionSelect values={props.values} handleChange={props.handleChange}/>
+                                
+                {mode === "edit" && props.values.description !== '' &&
+                    <div>
+                        <CharacterInstanceSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+
                 {props.values.description !== '' &&
                     <div>
-                        <CharacterSelect schema={props.values.description.split(",")[1]} />
+                        <CharacterSelect values={props.values} />
                         <br />
                     </div>
                 }
                 
                 {props.values.character !== "" &&
                     <div>
-                        <StateSelect character={props.values.character} />
+                        <StateSelect values={props.values} />
                         <br />
                     </div>
                 }
