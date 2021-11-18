@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid } from '@material-ui/core';
+import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Divider } from '@material-ui/core';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import DescriptionQueryForm from './Description/DescriptionQueryForm';
 import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
@@ -28,7 +28,11 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                     <FormControlLabel value="Description" control={<Radio />} label="Description" labelPlacement="end"/>
                     <FormControlLabel value="Specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
+                    <Divider />
+                    <FormControlLabel value="Reference" control={<Radio />} label="Reference" labelPlacement="end" disabled/>
                     <FormControlLabel value="Schema" control={<Radio />} label="Schema" labelPlacement="end" />
+                    <Divider />
+                    <FormControlLabel value="Person-mutate" control={<Radio />} label="Person" labelPlacement="end" disabled/>
                     </RadioGroup>
                 </FormControl>
             </Grid>
