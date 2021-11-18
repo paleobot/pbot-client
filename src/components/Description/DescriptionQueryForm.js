@@ -71,7 +71,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                         </Grid>
                         <Grid item>
                             <FormControlLabel
-                                value=""
+                                value="all"
                                 control={<Radio  />}
                                 label="All"
                                 disabled={false}
@@ -89,12 +89,14 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 />
                 <br />
                 
+                {props.values.type === 'OTU' &&    
+                <div>
                 <Field 
                     component={TextField}
                     name="family" 
                     type="text" 
                     label="Family"
-                    disabled={props.values.type !== "OTU"}
+                    disabled={false}
                 />
                 <br />
                 
@@ -103,7 +105,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                     name="genus" 
                     type="text" 
                     label="Genus"
-                    disabled={props.values.type !== "OTU"}
+                    disabled={false}
                 />
                 <br />
                 <Field 
@@ -111,9 +113,12 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                     name="species" 
                     type="text" 
                     label="Species"
-                    disabled={props.values.type !== "OTU"}
+                    disabled={false}
                 />
                 <br />
+                </div>
+                }
+                
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeComplex" 
