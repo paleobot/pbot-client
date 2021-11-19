@@ -2,7 +2,9 @@ import React, { useState }from 'react';
 import { Grid } from '@material-ui/core';
 import DescriptionQueryResults from './Description/DescriptionQueryResults';
 import SpecimenQueryResults from './Specimen/SpecimenQueryResults';
+import ReferenceQueryResults from './Reference/ReferenceQueryResults';
 import SchemaQueryResults from './Schema/SchemaQueryResults';
+import PersonQueryResults from './Person/PersonQueryResults';
 import DescriptionMutateResults from './Description/DescriptionMutateResults';
 import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanceMutateResults';
 import SpecimenMutateResults from './Specimen/SpecimenMutateResults';
@@ -21,8 +23,14 @@ const Result = ({queryParams, queryEntity}) => {
         queryEntity === "Specimen" ? (
             <SpecimenQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) :
+        queryEntity === "Reference" ? (
+            <ReferenceQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) :
         queryEntity === "Schema" ? (
             <SchemaQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) :
+        queryEntity === "Person" ? (
+            <PersonQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) :
         queryEntity === "Description-mutate" ? (
             <DescriptionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>

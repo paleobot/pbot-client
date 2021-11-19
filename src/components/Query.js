@@ -3,7 +3,9 @@ import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Divi
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import DescriptionQueryForm from './Description/DescriptionQueryForm';
 import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
+import ReferenceQueryForm from './Reference/ReferenceQueryForm';
 import SchemaQueryForm from './Schema/SchemaQueryForm';
+import PersonQueryForm from './Person/PersonQueryForm';
 
 const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     /*
@@ -29,10 +31,10 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
                     <FormControlLabel value="Description" control={<Radio />} label="Description" labelPlacement="end"/>
                     <FormControlLabel value="Specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
                     <Divider />
-                    <FormControlLabel value="Reference" control={<Radio />} label="Reference" labelPlacement="end" disabled/>
+                    <FormControlLabel value="Reference" control={<Radio />} label="Reference" labelPlacement="end"/>
                     <FormControlLabel value="Schema" control={<Radio />} label="Schema" labelPlacement="end" />
                     <Divider />
-                    <FormControlLabel value="Person-mutate" control={<Radio />} label="Person" labelPlacement="end" disabled/>
+                    <FormControlLabel value="Person" control={<Radio />} label="Person" labelPlacement="end"/>
                     </RadioGroup>
                 </FormControl>
             </Grid>
@@ -46,8 +48,16 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
                     <SpecimenQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>
 
+                <div hidden={selectedForm !== "Reference"}>
+                    <ReferenceQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                </div>
+
                 <div hidden={selectedForm !== "Schema"}>
                     <SchemaQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                </div>
+
+                <div hidden={selectedForm !== "Person"}>
+                    <PersonQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>
                 
             </Grid>
