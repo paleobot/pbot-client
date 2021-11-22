@@ -36,12 +36,13 @@ const mclient = new ApolloClient({
 });
 
 function DescriptionMutate(props) {
-    console.log("DescriptionUpdate");
+    console.log("DescriptionMutate");
     console.log(props);
     
     const qclient = useApolloClient();
 
     let gQL;
+    /*
     gQL = props.params.descriptionID ?
         gql`
             mutation ($data: DescriptionInput!) {
@@ -57,8 +58,34 @@ function DescriptionMutate(props) {
                 }      
             }
         `;
-
-    const [mutateDescription, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    */
+    gQL = props.mode === "edit" ?
+        gql`
+            mutation ($data: DescriptionInput!) {
+                CustomUpdateDescription(data: $data) {
+                    descriptionID
+                }      
+            }
+        ` :
+        props.mode === "create" ?
+        gql`
+            mutation ($data: DescriptionInput!) {
+                CustomCreateDescription(data: $data) {
+                    descriptionID
+                }      
+            }
+        ` :
+        props.mode === "delete" ?
+        gql`
+            mutation ($data: DescriptionInput!) {
+                CustomDeleteDescription(data: $data) {
+                    descriptionID
+                }      
+            }
+        ` :
+        '';
+   
+    const [mutateDescription, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient}); //TODO: need data so that shield can set enteredByPersonID
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -80,25 +107,34 @@ function DescriptionMutate(props) {
         console.log(error);
         return <p>Error: {error.message}</p>;
     } else if (data) {
+        console.log(">>>>>>>>>>>>>>return data<<<<<<<<<<<<<<<<<<<");
         console.log(data);
         
         //Force reload of cache
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return props.params.descriptionID ?
+        return props.mode === "edit" ?
             (
                 <div key={data.CustomUpdateDescription.descriptionID} style={style}>
                     {data.CustomUpdateDescription.descriptionID} <br />
                     <br />
                 </div>
             ) :
+            props.mode === "create" ?
             (   
                 <div key={data.CustomCreateDescription.descriptionID} style={style}>
                     {data.CustomCreateDescription.descriptionID} <br />
                     <br />
                 </div>
-            );
+            ) :
+            props.mode === "delete" ?
+            (   
+                <div key={data.CustomDeleteDescription.descriptionID} style={style}>
+                    {data.CustomDeleteDescription.descriptionID} <br />
+                    <br />
+                </div>
+            ) : ''
     } else {
         return (<div></div>); //gotta return something until addDescription runs
     }
@@ -123,6 +159,7 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                                 species: queryParams.species || null, 
                                 name: queryParams.name || null,
                             }}
+                            mode={queryParams.mode}
                         />
                     ) : 
                     '';

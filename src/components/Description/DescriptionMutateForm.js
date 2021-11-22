@@ -207,6 +207,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 genus: '', 
                 species: '',
                 name: '',
+                mode: mode,
     };
             
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -262,7 +263,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
         >
             {props => (
             <Form>
-                {mode === "edit" &&
+                {(mode === "edit" || mode === "delete") &&
                     <div>
                         <DescriptionSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
@@ -353,6 +354,13 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 </div>
                 }
                 
+                <Field 
+                    component={TextField}
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+
                 <br />
                 <br />
 

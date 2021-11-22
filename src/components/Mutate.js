@@ -88,7 +88,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <ToggleButton value="edit" aria-label="edit" >
                             <EditIcon />
                         </ToggleButton>
-                        <ToggleButton value="delete" aria-label="edit" disabled>
+                        <ToggleButton value="delete" aria-label="delete" >
                             <RemoveIcon />
                         </ToggleButton>
                     </ToggleButtonGroup>
