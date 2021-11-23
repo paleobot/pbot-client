@@ -138,6 +138,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 year: '',
                 authors: [],
                 doi: '',
+                mode: mode,
     };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
@@ -160,6 +161,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
@@ -169,7 +171,14 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
             {props => (
             <Form>
 
-                {mode === "edit" &&
+                <Field 
+                    component={TextField}
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+                
+                {(mode === "edit" || mode === "delete") &&
                     <div>
                         <ReferenceSelect values={props.values} handleChange={props.handleChange}/>
                         <br />

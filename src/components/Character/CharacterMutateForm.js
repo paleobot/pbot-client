@@ -121,6 +121,7 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 name: '',
                 definition: '',
                 schema: '',
+                mode: mode,
     };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
@@ -141,6 +142,7 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
@@ -149,10 +151,17 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
         >
             {props => (
             <Form>
+                <Field 
+                    component={TextField}
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+                
                 <SchemaSelect values={props.values} handleChange={props.handleChange}/>
                 <br />
                 
-                {mode === "edit" && props.values.schema !== '' &&
+                {(mode === "edit" || mode === "delete") && props.values.schema !== '' &&
                     <div>
                         <CharacterSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
@@ -160,28 +169,28 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.character !== '')) &&
-                <div>
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="name"
-                    label="Name"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                    <div>
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="name"
+                        label="Name"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="definition"
-                    label="Definition"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="definition"
+                        label="Definition"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
 
-                </div>
+                    </div>
                 }
                 
                 <br />

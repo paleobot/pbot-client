@@ -43,7 +43,7 @@ function SchemaMutate(props) {
     const qclient = useApolloClient();
 
     let gQL;
-    gQL = props.params.schemaID ?
+    gQL = props.mode === "edit" ?
         gql`
             mutation ($data: SchemaInput!) {
                 CustomUpdateSchema(data: $data) {
@@ -51,13 +51,23 @@ function SchemaMutate(props) {
                 }      
             }
         ` :
+        props.mode === "create" ?
         gql`
             mutation ($data: SchemaInput!) {
                 CustomCreateSchema(data: $data) {
                     schemaID
                 }      
             }
-        `;
+        ` :
+        props.mode === "delete" ?
+        gql`
+            mutation ($data: SchemaInput!) {
+                CustomDeleteSchema(data: $data) {
+                    schemaID
+                }      
+            }
+        ` :
+        '';
 
     const [mutateSchema, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
@@ -87,19 +97,28 @@ function SchemaMutate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return props.params.schemaID ?
+        return props.mode === "edit" ?
         (
             <div key={data.CustomUpdateSchema.schemaID} style={style}>
                 {data.CustomUpdateSchema.schemaID} <br />
                 <br />
             </div>
         ) :
+        props.mode === "create" ?
         (
             <div key={data.CustomCreateSchema.schemaID} style={style}>
                 {data.CustomCreateSchema.schemaID} <br />
                 <br />
             </div>
-        );
+        ) :
+        props.mode === "delete" ?
+        (
+            <div key={data.CustomDeleteSchema.schemaID} style={style}>
+                {data.CustomDeleteSchema.schemaID} <br />
+                <br />
+            </div>
+        ) :
+        '';
                 
     } else {
         return (<div></div>); //gotta return something until addDescription runs
@@ -121,6 +140,7 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
                             authors: queryParams.authors || null, //.split(", "),
                             references: queryParams.references || null
                         }}
+                        mode={queryParams.mode}
                     />
                 ) : 
                 '';

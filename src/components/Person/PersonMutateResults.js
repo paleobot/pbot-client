@@ -42,7 +42,7 @@ function PersonMutate(props) {
     const qclient = useApolloClient();
 
     let gQL;
-    gQL = props.params.personID ?
+    gQL = props.mode === "edit" ?
         gql`
             mutation ($data: PersonInput!) {
                 CustomUpdatePerson(data: $data) {
@@ -50,13 +50,23 @@ function PersonMutate(props) {
                 }      
             }
         ` :
+        props.mode === "create" ?
         gql`
             mutation ($data: PersonInput!) {
                 CustomCreatePerson(data: $data) {
                     personID
                 }      
             }
-        `;
+        ` :
+        props.mode === "delete" ?
+        gql`
+            mutation ($data: PersonInput!) {
+                CustomDeletePerson(data: $data) {
+                    personID
+                }      
+            }
+        ` :
+        '';
 
     const [mutatePerson, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
@@ -86,19 +96,28 @@ function PersonMutate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return props.params.personID ?
+        return props.mode === "edit" ?
         (
             <div key={data.CustomUpdatePerson.personID} style={style}>
                 {data.CustomUpdatePerson.personID} <br />
                 <br />
             </div>
         ) :
+        props.mode === "create" ?
         (
             <div key={data.CustomCreatePerson.personID} style={style}>
                 {data.CustomCreatePerson.personID} <br />
                 <br />
             </div>
-        );
+        ) :
+        props.mode === "delete" ?
+        (
+            <div key={data.CustomDeletePerson.personID} style={style}>
+                {data.CustomDeletePerson.personID} <br />
+                <br />
+            </div>
+        ) :
+        '';
                 
     } else {
         return (<div></div>); //gotta return something until addDescription runs
@@ -119,6 +138,7 @@ const PersonMutateResults = ({queryParams, queryEntity}) => {
                             email: queryParams.email || null,
                             orcid: queryParams.orcid || null,
                         }}
+                        mode={queryParams.mode}
                     />
                 ) : 
                 '';

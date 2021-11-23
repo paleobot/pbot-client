@@ -174,6 +174,7 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 schema: '',
                 character: '',
                 parentState: '',
+                mode: mode,
     };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
@@ -196,6 +197,7 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
@@ -204,6 +206,14 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
         >
             {props => (
             <Form>
+            
+                <Field 
+                    component={TextField}
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+                
                 <SchemaSelect />
                 <br />
 
@@ -214,14 +224,14 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     </div>
                 }
 
-                {props.values.character !== "" && mode === "edit" &&
+                {props.values.character !== "" && (mode === "edit" || mode === "delete") &&
                     <div>
                         <StateSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
                     </div>
                 }
                 
-                {(mode === "create" && props.values.character) || (mode !== "create" && props.values.state !== "") &&
+                {(mode === "create" && props.values.character) || (mode === "edit" && props.values.state) &&
                     <div>
                         <StateSelect values={props.values} parent handleChange={props.handleChange}/>
                         <br />

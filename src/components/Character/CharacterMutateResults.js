@@ -42,7 +42,7 @@ function CharacterMutate(props) {
     const qclient = useApolloClient();
 
     let gQL;
-    gQL = props.params.characterID ?
+    gQL = props.mode === "edit" ?
         gql`
             mutation ($data: CharacterInput!) {
                 CustomUpdateCharacter(data: $data) {
@@ -50,13 +50,23 @@ function CharacterMutate(props) {
                 }      
             }
         ` :
+        props.mode === "create" ?
         gql`
             mutation ($data: CharacterInput!) {
                 CustomCreateCharacter(data: $data) {
                     characterID
                 }      
             }
-        `;
+        ` :
+        props.mode === "delete" ?        
+        gql`
+            mutation ($data: CharacterInput!) {
+                CustomDeleteCharacter(data: $data) {
+                    characterID
+                }      
+            }
+        ` :
+        '';
 
     const [mutateCharacter, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
@@ -86,19 +96,28 @@ function CharacterMutate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return props.params.characterID ?
+        return props.mode === "edit" ?
         (
             <div key={data.CustomUpdateCharacter.characterID} style={style}>
                 {data.CustomUpdateCharacter.characterID} <br />
                 <br />
             </div>
         ) :
+        props.mode === "create" ?
         (
             <div key={data.CustomCreateCharacter.characterID} style={style}>
                 {data.CustomCreateCharacter.characterID} <br />
                 <br />
             </div>
-        );
+        ) :
+        props.mode === "delete" ?
+        (
+            <div key={data.CustomDeleteCharacter.characterID} style={style}>
+                {data.CustomDeleteCharacter.characterID} <br />
+                <br />
+            </div>
+        ) :
+        '';
                 
     } else {
         return (<div></div>); //gotta return something until addDescription runs
@@ -118,6 +137,7 @@ const CharacterMutateResults = ({queryParams, queryEntity}) => {
                             definition: queryParams.definition || null,
                             schemaID: queryParams.schema || null,
                         }}
+                        mode={queryParams.mode}
                     />
                 ) : 
                 '';

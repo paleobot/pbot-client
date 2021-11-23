@@ -42,7 +42,7 @@ function CharacterInstanceMutate(props) {
     const qclient = useApolloClient();
 
     let gQL;
-    gQL = props.params.characterInstanceID ?
+    gQL = props.mode === "edit" ?
         gql`
             mutation ($data: CharacterInstanceInput!) {
                 CustomUpdateCharacterInstance(data: $data) {
@@ -50,13 +50,23 @@ function CharacterInstanceMutate(props) {
                 }      
             }
         ` :
+        props.mode === "create" ?
         gql`
             mutation ($data: CharacterInstanceInput!) {
                 CustomCreateCharacterInstance(data: $data) {
                     characterInstanceID
                 }      
             }
-        `;
+        ` :
+        props.mode === "delete" ?
+        gql`
+            mutation ($data: CharacterInstanceInput!) {
+                CustomDeleteCharacterInstance(data: $data) {
+                    characterInstanceID
+                }      
+            }
+        ` :
+        '';
     
     const [mutateCharacterInstance, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
@@ -86,19 +96,28 @@ function CharacterInstanceMutate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return props.params.characterInstanceID ?
+        return  props.mode === "edit" ?
             (
                 <div key={data.CustomUpdateCharacterInstance.characterInstanceID} style={style}>
                     {data.CustomUpdateCharacterInstance.characterInstanceID} <br />
                     <br />
                 </div>
             ) :
+            props.mode === "create" ?
             (
                 <div key={data.CustomCreateCharacterInstance.characterInstanceID} style={style}>
                     {data.CustomCreateCharacterInstance.characterInstanceID} <br />
                     <br />
                 </div>
-            );
+            ) :
+            props.mode === "delete" ?
+            (
+                <div key={data.CustomDeleteCharacterInstance.characterInstanceID} style={style}>
+                    {data.CustomDeleteCharacterInstance.characterInstanceID} <br />
+                    <br />
+                </div>
+            ) : 
+            '';
     } else {
         return (<div></div>); //gotta return something until addDescription runs
     }
@@ -117,6 +136,7 @@ const CharacterInstanceMutateResults = ({queryParams, queryEntity}) => {
                             stateID: queryParams.state.split(",")[1] || null,
                             quantity: queryParams.quantity || null,
                         }}
+                        mode={queryParams.mode}
                     />
                 ) : 
                 '';

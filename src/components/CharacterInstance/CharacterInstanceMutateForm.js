@@ -269,6 +269,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 character: '',
                 state: '', 
                 quantity: '',
+                mode: mode,
             }}
             validate={values => {
                 const errors = {};
@@ -290,6 +291,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 //console.log(">>>>>>>>>>>>>>>>>submitting<<<<<<<<<<<<<<<<<<<<<<<");
+                values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
                 resetForm();
@@ -305,30 +307,37 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                     disabled={false}
                 />
 
+                <Field 
+                    component={TextField}
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+                
                 <DescriptionSelect values={props.values} handleChange={props.handleChange}/>
                                 
-                {mode === "edit" && props.values.description !== '' &&
+                {(mode === "edit" || mode === "delete") && props.values.description !== '' &&
                     <div>
                         <CharacterInstanceSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
                     </div>
                 }
 
-                {props.values.description !== '' &&
+                {(mode === "create" || mode === "edit") && props.values.description !== '' &&
                     <div>
                         <CharacterSelect values={props.values} />
                         <br />
                     </div>
                 }
                 
-                {props.values.character !== "" &&
+                {(mode === "create" || mode === "edit") && props.values.character !== "" &&
                     <div>
                         <StateSelect values={props.values} />
                         <br />
                     </div>
                 }
                 
-                {props.values.state && props.values.state.split(",")[0] === "quantity" &&
+                {(mode === "create" || mode === "edit") && props.values.state && props.values.state.split(",")[0] === "quantity" &&
                     <div>
                         <Field
                             component={TextField}

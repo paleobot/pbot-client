@@ -43,7 +43,7 @@ function ReferenceMutate(props) {
     const qclient = useApolloClient();
 
     let gQL;
-    gQL = props.params.referenceID ?
+    gQL = props.mode === "edit" ?
         gql`
             mutation ($data: ReferenceInput!) {
                 CustomUpdateReference(data: $data) {
@@ -51,13 +51,23 @@ function ReferenceMutate(props) {
                 }      
             }
         ` :
+        props.mode === "create" ?
         gql`
             mutation ($data: ReferenceInput!) {
                 CustomCreateReference(data: $data) {
                     referenceID
                 }      
             }
-        `;
+        ` :
+        props.mode === "delete" ?
+        gql`
+            mutation ($data: ReferenceInput!) {
+                CustomDeleteReference(data: $data) {
+                    referenceID
+                }      
+            }
+        ` :
+        '';
 
     const [mutateReference, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
@@ -87,19 +97,28 @@ function ReferenceMutate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return props.params.referenceID ?
+        return props.mode === "edit" ?
         (
             <div key={data.CustomUpdateReference.referenceID} style={style}>
                 {data.CustomUpdateReference.referenceID} <br />
                 <br />
             </div>
         ) :
+        props.mode === "create" ?
         (
             <div key={data.CustomCreateReference.referenceID} style={style}>
                 {data.CustomCreateReference.referenceID} <br />
                 <br />
             </div>
-        );
+        ) :
+        props.mode === "delete" ?
+        (
+            <div key={data.CustomDeleteReference.referenceID} style={style}>
+                {data.CustomDeleteReference.referenceID} <br />
+                <br />
+            </div>
+        ) :
+        '';
                 
     } else {
         return (<div></div>); //gotta return something until addDescription runs
@@ -122,6 +141,7 @@ const ReferenceMutateResults = ({queryParams, queryEntity}) => {
                             authors: queryParams.authors || null, //.split(", "),
                             doi: queryParams.doi || null
                         }}
+                        mode={queryParams.mode}
                     />
                 ) : 
                 '';

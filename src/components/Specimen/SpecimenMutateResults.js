@@ -42,7 +42,7 @@ function SpecimenMutate(props) {
     const qclient = useApolloClient();
     
     let gQL;
-    gQL = props.params.specimenID ?
+    gQL = props.mode === "edit" ?
         gql`
             mutation ($data: SpecimenInput!) {
                 CustomUpdateSpecimen(data: $data) {
@@ -50,13 +50,23 @@ function SpecimenMutate(props) {
                 }      
             }
         ` :
+        props.mode === "create" ?
         gql`
             mutation ($data: SpecimenInput!) {
                 CustomCreateSpecimen(data: $data) {
                     specimenID
                 }      
             }
-        `;        
+        ` :        
+        props.mode === "delete" ?
+        gql`
+            mutation ($data: SpecimenInput!) {
+                CustomDeleteSpecimen(data: $data) {
+                    specimenID
+                }      
+            }
+        ` : 
+        '';
     
     const [mutateSpecimen, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
@@ -86,19 +96,28 @@ function SpecimenMutate(props) {
         qclient.resetStore();        
         
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return props.params.specimenID ?
+        return props.mode === "edit" ?
             (
                 <div key={data.CustomUpdateSpecimen.specimenID} style={style}>
                     {data.CustomUpdateSpecimen.specimenID} <br />
                     <br />
                 </div>
             ) :
+            props.mode === "create" ?
             (
                 <div key={data.CustomCreateSpecimen.specimenID} style={style}>
                     {data.CustomCreateSpecimen.specimenID} <br />
                     <br />
                 </div>
-            );
+            ) :
+            props.mode === "delete" ?
+            (
+                <div key={data.CustomDeleteSpecimen.specimenID} style={style}>
+                    {data.CustomDeleteSpecimen.specimenID} <br />
+                    <br />
+                </div>
+            ) :
+            '';
         
     } else {
         return (<div></div>); //gotta return something until addDescription runs
@@ -123,6 +142,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                             pbdbcid: queryParams.pbdbcid || null,
                             pbdboccid: queryParams.pbdboccid || null,
                         }}
+                        mode={queryParams.mode}
                     />
                 ) : 
                 '';

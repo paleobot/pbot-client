@@ -244,6 +244,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
+                mode: mode,
     };    
     return (
        
@@ -263,6 +264,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
@@ -271,7 +273,14 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
         >
             {props => (
             <Form>
-                {mode === "edit" &&
+                <Field 
+                    component={TextField}
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+                
+                {(mode === "edit" || mode === "delete") &&
                     <div>
                         <SpecimenSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
@@ -279,84 +288,84 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.specimen !== '')) &&
-                <div>
-                
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="name"
-                    label="Name"
-                    fullWidth 
-                    disabled={false}
-                >
-                </Field>
-                <br />
-                
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="locality"
-                    label="Locality"
-                    fullWidth 
-                    disabled={false}
-                >
-                </Field>
-                <br />
+                    <div>
+                    
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="name"
+                        label="Name"
+                        fullWidth 
+                        disabled={false}
+                    >
+                    </Field>
+                    <br />
+                    
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="locality"
+                        label="Locality"
+                        fullWidth 
+                        disabled={false}
+                    >
+                    </Field>
+                    <br />
 
-                <OrganSelect />
-                <br />
+                    <OrganSelect />
+                    <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="perservationMode"
-                    label="Preservation mode"
-                    fullWidth 
-                    disabled={false}
-                >
-                </Field>
-                <br />
-                
-                <DescriptionSelect type="specimen"/>
-                <br />
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="perservationMode"
+                        label="Preservation mode"
+                        fullWidth 
+                        disabled={false}
+                    >
+                    </Field>
+                    <br />
+                    
+                    <DescriptionSelect type="specimen"/>
+                    <br />
 
-                <DescriptionSelect type="OTU"/>
-                <br />
-                
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="idigbiouuid"
-                    label="iDigBio UUID"
-                    fullWidth 
-                    disabled={false}
-                >
-                </Field>
-                <br />
+                    <DescriptionSelect type="OTU"/>
+                    <br />
+                    
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="idigbiouuid"
+                        label="iDigBio UUID"
+                        fullWidth 
+                        disabled={false}
+                    >
+                    </Field>
+                    <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="pbdbcid"
-                    label="PBDB cid"
-                    fullWidth 
-                    disabled={false}
-                >
-                </Field>
-                <br />
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="pbdbcid"
+                        label="PBDB cid"
+                        fullWidth 
+                        disabled={false}
+                    >
+                    </Field>
+                    <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="pbdboccid"
-                    label="PBDB occid"
-                    fullWidth 
-                    disabled={false}
-                >
-                </Field>
-                <br />
-                
-                </div>
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="pbdboccid"
+                        label="PBDB occid"
+                        fullWidth 
+                        disabled={false}
+                    >
+                    </Field>
+                    <br />
+                    
+                    </div>
                 }
                 
                 <br />

@@ -84,6 +84,7 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 surname: '',
                 email: '',
                 orcid: '',
+                mode: mode,
             }}
             validate={values => {
                 const errors = {};
@@ -100,6 +101,7 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
@@ -108,7 +110,14 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
         >
             {props => (
             <Form>
-                {mode === "edit" &&
+                <Field 
+                    component={TextField}
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+                
+                {(mode === "edit" || mode === "delete") &&
                     <div>
                         <PersonSelect values={props.values} handleChange={props.handleChange}/>
                         <br />

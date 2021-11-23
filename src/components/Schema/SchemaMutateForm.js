@@ -185,6 +185,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 year: '',
                 references: [],
                 authors: [],
+                mode: mode,
     };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
@@ -206,6 +207,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
@@ -215,7 +217,14 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
             {props => (
             <Form>
 
-                {mode === "edit" &&
+                <Field 
+                    component={TextField}
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+                
+                {(mode === "edit" || mode === "delete") &&
                     <div>
                         <SchemaSelect values={props.values} handleChange={props.handleChange}/>
                         <br />

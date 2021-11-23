@@ -42,23 +42,6 @@ function DescriptionMutate(props) {
     const qclient = useApolloClient();
 
     let gQL;
-    /*
-    gQL = props.params.descriptionID ?
-        gql`
-            mutation ($data: DescriptionInput!) {
-                CustomUpdateDescription(data: $data) {
-                    descriptionID
-                }      
-            }
-        ` :
-        gql`
-            mutation ($data: DescriptionInput!) {
-                CustomCreateDescription(data: $data) {
-                    descriptionID
-                }      
-            }
-        `;
-    */
     gQL = props.mode === "edit" ?
         gql`
             mutation ($data: DescriptionInput!) {
@@ -134,7 +117,8 @@ function DescriptionMutate(props) {
                     {data.CustomDeleteDescription.descriptionID} <br />
                     <br />
                 </div>
-            ) : ''
+            ) : 
+            '';
     } else {
         return (<div></div>); //gotta return something until addDescription runs
     }

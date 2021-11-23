@@ -42,7 +42,7 @@ function StateMutate(props) {
     const qclient = useApolloClient();
 
     let gQL;
-    gQL = props.params.stateID ?
+    gQL = props.mode === "edit" ?
         gql`
             mutation ($data: StateInput!) {
                 CustomUpdateState(data: $data) {
@@ -50,13 +50,23 @@ function StateMutate(props) {
                 }      
             }
         ` :
+        props.mode === "create" ?
         gql`
             mutation ($data: StateInput!) {
                 CustomCreateState(data: $data) {
                     stateID
                 }      
             }
-        `;
+        ` :
+        props.mode === "delete" ?
+        gql`
+            mutation ($data: StateInput!) {
+                CustomDeleteState(data: $data) {
+                    stateID
+                }      
+            }
+        ` :
+        '';
 
     const [mutateState, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
@@ -86,19 +96,28 @@ function StateMutate(props) {
         qclient.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return props.params.stateID ?
+        return props.mode === "edit" ?
         (
             <div key={data.CustomUpdateState.stateID} style={style}>
                 {data.CustomUpdateState.stateID} <br />
                 <br />
             </div>
         ) :
+        props.mode === "create" ?
         (
             <div key={data.CustomCreateState.stateID} style={style}>
                 {data.CustomCreateState.stateID} <br />
                 <br />
             </div>
-        );
+        ) :
+        props.mode === "delete" ?
+        (
+            <div key={data.CustomDeleteState.stateID} style={style}>
+                {data.CustomDeleteState.stateID} <br />
+                <br />
+            </div>
+        ) :
+        '';
                 
     } else {
         return (<div></div>); //gotta return something until addDescription runs
@@ -119,6 +138,7 @@ const StateMutateResults = ({queryParams, queryEntity}) => {
                             characterID: queryParams.character || null,
                             parentStateID: queryParams.parentState || null
                         }}
+                        mode={queryParams.mode}
                     />
                 ) : 
                 '';
