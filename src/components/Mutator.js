@@ -40,13 +40,15 @@ const Mutator = (props) => {
     console.log(props);
     
     const qclient = useApolloClient();
+    
+    const entityID=`${props.entity[0].toLowerCase()}${props.entity.slice(1)}ID`;
 
     let gQL;
     gQL = props.mode === "edit" ?
         gql`
             mutation ($data: ${props.entity}Input!) {
                 CustomUpdate${props.entity}(data: $data) {
-                    ${props.entity.toLowerCase()}ID
+                    ${entityID}
                 }      
             }
         ` :
@@ -54,7 +56,7 @@ const Mutator = (props) => {
         gql`
             mutation ($data: ${props.entity}Input!) {
                 CustomCreate${props.entity}(data: $data) {
-                    ${props.entity.toLowerCase()}ID
+                    ${entityID}
                 }      
             }
         ` :
@@ -62,7 +64,7 @@ const Mutator = (props) => {
         gql`
             mutation ($data: ${props.entity}Input!) {
                 CustomDelete${props.entity}(data: $data) {
-                    ${props.entity.toLowerCase()}ID
+                    ${entityID}
                 }      
             }
         ` :
@@ -98,22 +100,22 @@ const Mutator = (props) => {
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
         return props.mode === "edit" ?
         (
-            <div key={data[`CustomUpdate${props.entity}`][`${props.entity.toLowerCase()}ID`]} style={style}>
-                {data[`CustomUpdate${props.entity}`][`${props.entity.toLowerCase()}ID`]} <br />
+            <div key={data[`CustomUpdate${props.entity}`][`${entityID}`]} style={style}>
+                {data[`CustomUpdate${props.entity}`][`${entityID}`]} <br />
                 <br />
             </div>
         ) :
         props.mode === "create" ?
         (
-            <div key={data[`CustomCreate${props.entity}`][`${props.entity.toLowerCase()}ID`]} style={style}>
-                {data[`CustomCreate${props.entity}`][`${props.entity.toLowerCase()}ID`]} <br />
+            <div key={data[`CustomCreate${props.entity}`][`${entityID}`]} style={style}>
+                {data[`CustomCreate${props.entity}`][`${entityID}`]} <br />
                 <br />
             </div>
         ) :
         props.mode === "delete" ?
         (
-            <div key={data[`CustomDelete${props.entity}`][`${props.entity.toLowerCase()}ID`]} style={style}>
-                {data[`CustomDelete${props.entity}`][`${props.entity.toLowerCase()}ID`]} <br />
+            <div key={data[`CustomDelete${props.entity}`][`${entityID}`]} style={style}>
+                {data[`CustomDelete${props.entity}`][`${entityID}`]} <br />
                 <br />
             </div>
         ) :
