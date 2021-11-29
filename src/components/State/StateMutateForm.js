@@ -216,7 +216,7 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 
                 <SchemaSelect />
                 <br />
-
+                
                 {props.values.schema !== '' &&
                     <div>
                         <CharacterSelect schema={props.values.schema} />
@@ -224,20 +224,19 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     </div>
                 }
 
-                {props.values.character !== "" && (mode === "edit" || mode === "delete") &&
+                {(props.values.character !== "" && (mode === "edit" || mode === "delete")) &&
                     <div>
                         <StateSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
                     </div>
                 }
                 
-                {(mode === "create" && props.values.character) || (mode === "edit" && props.values.state) &&
+                {((mode === "create" && props.values.character) || (mode === "edit" && props.values.state)) &&
                     <div>
                         <StateSelect values={props.values} parent handleChange={props.handleChange}/>
                         <br />
                     </div>
                 }
-                
                 
                 {(mode === "create" || (mode === "edit" && props.values.state !== '')) &&
                 <div>
