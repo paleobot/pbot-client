@@ -11,9 +11,9 @@ function References(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
     const gQL = gql`
-            query ($referenceID: ID, $title: String, $year: String, $publisher: String) {
-                Reference (referenceID: $referenceID, title: $title, year: $year, publisher: $publisher) {
-                    referenceID
+            query ($pbotID: ID, $title: String, $year: String, $publisher: String) {
+                Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher) {
+                    pbotID
                     title
                     year
                     publisher
@@ -32,9 +32,9 @@ function References(props) {
     if (error) return <p>Error :(</p>;
            
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return data.Reference.map(({ referenceID, title, year, publisher }) => (
-        <div key={referenceID} style={style}>
-            {referenceID}, {title}, {year}, {publisher} <br />
+    return data.Reference.map(({ pbotID, title, year, publisher }) => (
+        <div key={pbotID} style={style}>
+            {pbotID}, {title}, {year}, {publisher} <br />
             <br />
         </div>
     ));
@@ -47,7 +47,7 @@ const ReferenceQueryResults = ({queryParams, queryEntity}) => {
     let references = queryEntity === "Reference" ? (
                     <References 
                         filters={{
-                            referenceID: queryParams.referenceID || null,
+                            pbotID: queryParams.referenceID || null,
                             title: queryParams.title || null, 
                             year: queryParams.year || null, 
                             publisher: queryParams.publisher || null, 
