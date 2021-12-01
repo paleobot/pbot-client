@@ -9,7 +9,7 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                     (
                         <Mutator 
                             params={{
-                                descriptionID: queryParams.description || null,
+                                pbotID: queryParams.description || null,
                                 type: queryParams.type || null,
                                 specimenID: queryParams.specimen || null,
                                 schemaID: queryParams.schema || null,

@@ -15,9 +15,9 @@ function Schemas(props) {
     let gQL;
     if (!props.includeCharacters) {
         gQL = gql`
-            query ($schemaID: ID, $title: String, $year: String) {
-                Schema (schemaID: $schemaID, title: $title, year: $year) {
-                    schemaID
+            query ($pbotID: ID, $title: String, $year: String) {
+                Schema (pbotID: $pbotID, title: $title, year: $year) {
+                    pbotID
                     title
                     year
                 }            
@@ -25,13 +25,13 @@ function Schemas(props) {
         `;
     } else {
         gQL = gql`
-            query ($schemaID: ID, $title: String, $year: String) {
-                Schema (schemaID: $schemaID, title: $title, year: $year) {
-                    schemaID
+            query ($pbotID: ID, $title: String, $year: String) {
+                Schema (pbotID: $pbotID, title: $title, year: $year) {
+                    pbotID
                     title
                     year
                     characters {
-                        characterID
+                        pbotID
                         name
                         states {
                             name
@@ -54,9 +54,9 @@ function Schemas(props) {
     if (error) return <p>Error :(</p>;
            
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return data.Schema.map(({ schemaID, title, year, characters }) => (
-        <div key={schemaID} style={style}>
-            {schemaID}: {title}, {year} <br />
+    return data.Schema.map(({ pbotID, title, year, characters }) => (
+        <div key={pbotID} style={style}>
+            {pbotID}: {title}, {year} <br />
             <Characters characters={characters} />
             <br />
         </div>
@@ -70,7 +70,7 @@ const SchemaQueryResults = ({queryParams, queryEntity}) => {
     let schemas = queryEntity === "Schema" ? (
                     <Schemas 
                         filters={{
-                            schemaID: queryParams.schemaID,
+                            pbotID: queryParams.schemaID,
                             title: queryParams.title, 
                             year: queryParams.year, 
                         }}

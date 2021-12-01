@@ -17,9 +17,9 @@ function Descriptions(props) {
     });
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return descriptions.map(({ descriptionID, name, family, genus, species, characterInstances }) => (
-        <div key={descriptionID} style={style}>
-            {descriptionID}: {name}, {family}, {genus}, {species} <br />
+    return descriptions.map(({ pbotID, name, family, genus, species, characterInstances }) => (
+        <div key={pbotID} style={style}>
+            {pbotID}: {name}, {family}, {genus}, {species} <br />
             <CharacterInstances characterInstances={characterInstances} />
             <br />
         </div>

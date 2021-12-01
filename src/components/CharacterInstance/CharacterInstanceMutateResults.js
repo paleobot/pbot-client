@@ -7,7 +7,7 @@ const CharacterInstanceMutateResults = ({queryParams, queryEntity}) => {
     let characterInstances = queryEntity === "CharacterInstance-mutate" ? (
                     <Mutator
                         params={{
-                            characterInstanceID: queryParams.characterInstance || null,
+                            pbotID: queryParams.characterInstance || null,
                             descriptionID: queryParams.description || null,
                             characterID: queryParams.character || null, 
                             stateID: queryParams.state.split(",")[1] || null,

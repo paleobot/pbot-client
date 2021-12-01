@@ -9,7 +9,7 @@ const ReferenceMutateResults = ({queryParams, queryEntity}) => {
     let references = queryEntity === "Reference-mutate" ? (
                     <Mutator
                         params={{
-                            referenceID: queryParams.reference || null,
+                            pbotID: queryParams.reference || null,
                             title: queryParams.title || null,
                             publisher: queryParams.publisher || null,
                             year: queryParams.year || null,

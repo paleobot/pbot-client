@@ -9,7 +9,7 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
     let schemas = queryEntity === "Schema-mutate" ? (
                     <Mutator
                         params={{
-                            schemaID: queryParams.schema || null,
+                            pbotID: queryParams.schema || null,
                             title: queryParams.title || null,
                             year: queryParams.year || null,
                             authors: queryParams.authors || null, //.split(", "),

@@ -17,8 +17,8 @@ function CharacterInstances(props) {
         return 0;
     });
     const style = {marginLeft:"2em"}
-    return characterInstances.map(({characterInstanceID, character, state}) => (
-        <div key={characterInstanceID}  style={style}>
+    return characterInstances.map(({pbotID, character, state}) => (
+        <div key={pbotID}  style={style}>
             {character.name}: {state.value !== null ? `${state.value}` : `${state.State.name}`}<br />
         </div>
     ));

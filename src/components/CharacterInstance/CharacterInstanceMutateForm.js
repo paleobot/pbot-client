@@ -17,16 +17,16 @@ const DescriptionSelect = (props) => {
     const descriptionGQL = gql`
             query {
                 Description {
-                    descriptionID
+                    pbotID
                     name
                   	schema {
-                      schemaID
+                      pbotID
                       title
                     }
                   	specimen {
                       Specimen {
                         name
-                        specimenID
+                        pbotID
                       }
                     }
                 }            
@@ -90,9 +90,9 @@ const DescriptionSelect = (props) => {
         >
             {descriptions.map((description) => (
                 <MenuItem 
-                    key={description.descriptionID} 
-                    value={description.descriptionID} 
-                    data-schemaid={description.schema.schemaID}
+                    key={description.pbotID} 
+                    value={description.pbotID} 
+                    data-schemaid={description.schema.pbotID}
                 >{description.name}</MenuItem>
             ))}
         </Field>
@@ -105,16 +105,16 @@ const CharacterInstanceSelect = (props) => {
     console.log(props);
     const gQL = gql`
             query {
-                Description (descriptionID: "${props.values.description}") {
+                Description (pbotID: "${props.values.description}") {
                     characterInstances {
-                        characterInstanceID
+                        pbotID
                         character {
-                            characterID
+                            pbotID
                             name
                         }
                         state {
                             State {
-                                stateID
+                                pbotID
                                 name
                             }
                         }
@@ -163,10 +163,10 @@ const CharacterInstanceSelect = (props) => {
         >
             {characterInstances.map((cI) => (
                 <MenuItem 
-                    key={cI.characterInstanceID} 
-                    value={cI.characterInstanceID}
-                    data-characterid={cI.character.characterID}
-                    data-stateid={cI.state.State.name + "," + cI.state.State.stateID}
+                    key={cI.pbotID} 
+                    value={cI.pbotID}
+                    data-characterid={cI.character.pbotID}
+                    data-stateid={cI.state.State.name + "," + cI.state.State.pbotID}
                 >{cI.name}</MenuItem>
             ))}
         </Field>
@@ -179,9 +179,9 @@ const CharacterSelect = (props) => {
     console.log(props);
     const characterGQL = gql`
             query {
-                Schema (schemaID: "${props.values.schema}") {
+                Schema (pbotID: "${props.values.schema}") {
                     characters {
-                        characterID
+                        pbotID
                         name
                     }
                 }            
@@ -209,8 +209,8 @@ const CharacterSelect = (props) => {
             }}
             disabled={false}
         >
-            {characters.map(({ characterID, name }) => (
-                <MenuItem key={characterID} value={characterID}>{name}</MenuItem>
+            {characters.map(({ pbotID, name }) => (
+                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
             ))}
         </Field>
     )
@@ -223,7 +223,7 @@ const StateSelect = (props) => {
     const stateGQL = gql`
         query {
             GetAllStates (characterID: "${props.values.character}")  {
-                stateID
+                pbotID
                 name
             }
         }
@@ -250,8 +250,8 @@ const StateSelect = (props) => {
             }}
             disabled={false}
         >
-            {states.map(({ stateID, name }) => (
-                <MenuItem key={stateID} value={name + "," + stateID}>{name}</MenuItem>
+            {states.map(({ pbotID, name }) => (
+                <MenuItem key={pbotID} value={name + "," + pbotID}>{name}</MenuItem>
             ))}
         </Field>
     )

@@ -15,9 +15,9 @@ function Specimens(props) {
     let gQL;
     if (!props.includeComplex) {
         gQL = gql`
-            query ($specimenID: ID, $name: String, $locality: String) {
-                Specimen (specimenID: $specimenID, name: $name, locality: $locality) {
-                    specimenID
+            query ($pbotID: ID, $name: String, $locality: String) {
+                Specimen (pbotID: $pbotID, name: $name, locality: $locality) {
+                    pbotID
                     name
                     organ {
                         type
@@ -29,7 +29,7 @@ function Specimens(props) {
                     }
                     description {
                         Description {
-                            descriptionID
+                            pbotID
                         }
                     }
                 }            
@@ -37,23 +37,23 @@ function Specimens(props) {
         `;
     } else {
         gQL = gql`
-            query ($specimenID: ID, $name: String, $locality: String) {
-                Specimen (specimenID: $specimenID, name: $name, locality: $locality) {
-                    specimenID
+            query ($pbotID: ID, $name: String, $locality: String) {
+                Specimen (pbotID: $pbotID, name: $name, locality: $locality) {
+                    pbotID
                     name
                     organ {
                         type
                     }
                     archtypeDescription {
                         Description {
-                            descriptionID
+                            pbotID
                             type
                             name
                             family
                             genus
                             species
                             characterInstances {
-                                characterInstanceID
+                                pbotID
                                 character {
                                     name
                                 }
@@ -68,14 +68,14 @@ function Specimens(props) {
                     }
                     description {
                         Description {
-                            descriptionID
+                            pbotID
                             type
                             name
                             family
                             genus
                             species
                             characterInstances {
-                                characterInstanceID
+                                pbotID
                                 character {
                                     name
                                 }
@@ -104,9 +104,9 @@ function Specimens(props) {
     if (error) return <p>Error :(</p>;
            
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return data.Specimen.map(({ specimenID, name, organ, description, archtypeDescription }) => (
-        <div key={specimenID} style={style}>
-            {specimenID}: {name}, {organ.type}{archtypeDescription ? `, ${archtypeDescription.Description.name}` : ""}{description ? "" : ", OTU specimen"}  <br />
+    return data.Specimen.map(({ pbotID, name, organ, description, archtypeDescription }) => (
+        <div key={pbotID} style={style}>
+            {pbotID}: {name}, {organ.type}{archtypeDescription ? `, ${archtypeDescription.Description.name}` : ""}{description ? "" : ", OTU specimen"}  <br />
              <CharacterInstances characterInstances={description ? 
                  description.Description.characterInstances : 
                  archtypeDescription ? 
@@ -126,7 +126,7 @@ const SpecimenQueryResults = ({queryParams, queryEntity}) => {
     let specimens = queryEntity === "Specimen" ? (
                     <Specimens 
                         filters={{
-                            specimenID: queryParams.specimenID,
+                            pbotID: queryParams.specimenID,
                             name: queryParams.name, 
                             locality: queryParams.locality, 
                         }}

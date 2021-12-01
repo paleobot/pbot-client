@@ -41,7 +41,8 @@ const Mutator = (props) => {
     
     const qclient = useApolloClient();
     
-    const entityID=`${props.entity[0].toLowerCase()}${props.entity.slice(1)}ID`;
+    //const entityID=`${props.entity[0].toLowerCase()}${props.entity.slice(1)}ID`;
+    const entityID="pbotID";
 
     let gQL;
     gQL = props.mode === "edit" ?

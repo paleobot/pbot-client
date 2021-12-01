@@ -8,7 +8,7 @@ const PersonMutateResults = ({queryParams, queryEntity}) => {
     let persons = queryEntity === "Person-mutate" ? (
                     <Mutator 
                         params={{
-                            personID: queryParams.person || null,
+                            pbotID: queryParams.person || null,
                             given: queryParams.given || null,
                             surname: queryParams.surname || null,
                             email: queryParams.email || null,

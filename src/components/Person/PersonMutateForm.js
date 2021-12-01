@@ -17,7 +17,7 @@ const PersonSelect = (props) => {
     const gQL = gql`
         query {
             Person {
-                personID
+                pbotID
                 given
                 surname
                 email
@@ -61,8 +61,8 @@ const PersonSelect = (props) => {
         >
             {persons.map((person) => (
                 <MenuItem 
-                    key={person.personID} 
-                    value={person.personID}
+                    key={person.pbotID} 
+                    value={person.pbotID}
                     data-surname={person.surname}
                     data-given={person.given}
                     data-email={person.email}

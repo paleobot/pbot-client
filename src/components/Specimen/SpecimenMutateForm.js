@@ -16,22 +16,22 @@ const SpecimenSelect = (props) => {
     const gQL = gql`
             query {
                 Specimen {
-                    specimenID
+                    pbotID
                     name
                     locality
                     organ {
-                        organID
+                        pbotID
                         type
                     }
                     description {
                       	Description {
-                        	descriptionID
+                        	pbotID
                         	name
                       	}
                     }
                     archtypeDescription {
                       	Description {
-                        	descriptionID
+                        	pbotID
                         	name
                         }
                     }
@@ -77,16 +77,16 @@ const SpecimenSelect = (props) => {
                 props.handleChange(event);
             }}
         >
-            {specimens.map(({ specimenID, name, locality, organ, preservationMode, description, archtypeDescription, idigbiouuid, pbdbcid, pbdboccid }) => (
+            {specimens.map(({ pbotID, name, locality, organ, preservationMode, description, archtypeDescription, idigbiouuid, pbdbcid, pbdboccid }) => (
                 <MenuItem 
-                    key={specimenID} 
-                    value={specimenID}
+                    key={pbotID} 
+                    value={pbotID}
                     data-name={name}
                     data-locality={locality}
                     data-organ={organ.organID}
                     data-preservationmode={preservationMode}
-                    data-describedby={description ? description.Description.descriptionID : ''}
-                    data-exampleof={archtypeDescription ? archtypeDescription.Description.descriptionID : ''}
+                    data-describedby={description ? description.Description.pbotID : ''}
+                    data-exampleof={archtypeDescription ? archtypeDescription.Description.pbotID : ''}
                     data-idigbiouuid={idigbiouuid}
                     data-pbdbcid={pbdbcid}
                     data-pbdboccid={pbdboccid}
@@ -103,7 +103,7 @@ const OrganSelect = (props) => {
             query {
                 Organ {
                     type
-                    organID
+                    pbotID
                 }            
             }
         `;
@@ -129,8 +129,8 @@ const OrganSelect = (props) => {
             }}
             disabled={false}
         >
-            {organs.map(({ organID, type }) => (
-                <MenuItem key={organID} value={organID}>{type}</MenuItem>
+            {organs.map(({ pbotID, type }) => (
+                <MenuItem key={pbotID} value={pbotID}>{type}</MenuItem>
             ))}
         </Field>
     )
@@ -144,7 +144,7 @@ const DescriptionSelect = (props) => {
     const descriptionGQL = gql`
             query {
                 Description (type: "${props.type}") {
-                    descriptionID
+                    pbotID
                     name
                   	specimen {
                       Specimen {
@@ -200,8 +200,8 @@ const DescriptionSelect = (props) => {
                 disabled={false}
                 defaultValue=""
             >
-                {descriptions.map(({ descriptionID, name }) => (
-                    <MenuItem key={descriptionID} value={descriptionID}>{name}</MenuItem>
+                {descriptions.map(({ pbotID, name }) => (
+                    <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
                 ))}
             </Field>
         )
@@ -220,8 +220,8 @@ const DescriptionSelect = (props) => {
                 disabled={false}
                 defaultValue=""
             >
-                {descriptions.map(({ descriptionID, name }) => (
-                    <MenuItem key={descriptionID} value={descriptionID}>{name}</MenuItem>
+                {descriptions.map(({ pbotID, name }) => (
+                    <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
                 ))}
             </Field>
         )

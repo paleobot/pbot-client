@@ -11,9 +11,9 @@ function Persons(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
     const gQL = gql`
-            query ($personID: ID, $given: String, $surname: String, $email: String, $orcid: String) {
-                Person (personID: $personID, given: $given, surname: $surname, email: $email, orcid: $orcid) {
-                    personID
+            query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String) {
+                Person (pbotID: $pbotID, given: $given, surname: $surname, email: $email, orcid: $orcid) {
+                    pbotID
                     given
                     surname
                     email
@@ -34,8 +34,8 @@ function Persons(props) {
            
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     return data.Person.map((person) => (
-        <div key={person.personID} style={style}>
-            {person.personID}, {person.given} {person.surname}, {person.email}, {person.orcid} <br />
+        <div key={person.pbotID} style={style}>
+            {person.pbotID}, {person.given} {person.surname}, {person.email}, {person.orcid} <br />
             <br />
         </div>
     ));
@@ -48,7 +48,7 @@ const PersonQueryResults = ({queryParams, queryEntity}) => {
     let persons = queryEntity === "Person" ? (
                     <Persons 
                         filters={{
-                            personID: queryParams.personID || null,
+                            pbotID: queryParams.personID || null,
                             given: queryParams.given || null, 
                             surname: queryParams.surname || null, 
                             email: queryParams.email || null, 

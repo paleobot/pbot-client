@@ -16,9 +16,9 @@ const CharacterSelect = (props) => {
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
     const gQL = gql`
         query ($schemaID: ID) {
-            Schema (schemaID: $schemaID) {
+            Schema (pbotID: $schemaID) {
                 characters {    
-                    characterID
+                    pbotID
                     name
                     definition
                 }
@@ -59,8 +59,8 @@ const CharacterSelect = (props) => {
         >
             {characters.map((character) => (
                 <MenuItem 
-                    key={character.characterID} 
-                    value={character.characterID}
+                    key={character.pbotID} 
+                    value={character.pbotID}
                     data-name={character.name}
                     data-definition={character.definition}
                 >{character.name}</MenuItem>
@@ -74,7 +74,7 @@ const SchemaSelect = (props) => {
     const gQL = gql`
             query {
                 Schema {
-                    schemaID
+                    pbotID
                     title
                 }            
             }
@@ -108,8 +108,8 @@ const SchemaSelect = (props) => {
                 props.handleChange(event);
             }}
         >
-            {schemas.map(({ schemaID, title }) => (
-                <MenuItem key={schemaID} value={schemaID}>{title}</MenuItem>
+            {schemas.map(({ pbotID, title }) => (
+                <MenuItem key={pbotID} value={pbotID}>{title}</MenuItem>
             ))}
         </Field>
     )

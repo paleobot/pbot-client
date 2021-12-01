@@ -16,14 +16,14 @@ const SchemaSelect = (props) => {
     const gQL = gql`
         query {
             Schema {
-                schemaID
+                pbotID
                 title
                 year
                 cites {
-                    referenceID
+                    pbotID
                 }
                 authoredBy {
-                    personID
+                    pbotID
                 }
             }            
         }
@@ -64,12 +64,12 @@ const SchemaSelect = (props) => {
         >
             {schemas.map((schema) => (
                 <MenuItem 
-                    key={schema.schemaID} 
-                    value={schema.schemaID}
+                    key={schema.pbotID} 
+                    value={schema.pbotID}
                     data-title={schema.title}
                     data-year={schema.year}
-                    data-references={schema.cites ? JSON.stringify(schema.cites.map(reference => reference.referenceID)) : null}
-                    data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => author.personID)) : null}
+                    data-references={schema.cites ? JSON.stringify(schema.cites.map(reference => reference.pbotID)) : null}
+                    data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => author.pbotID)) : null}
                 >{schema.title}</MenuItem>
             ))}
         </Field>
@@ -81,7 +81,7 @@ const AuthorSelect = (props) => {
     const gQL = gql`
             query {
                 Person {
-                    personID
+                    pbotID
                     given
                     surname
                 }            
@@ -119,8 +119,8 @@ const AuthorSelect = (props) => {
             }}
             disabled={false}
         >
-            {authors.map(({ personID, name }) => (
-                <MenuItem key={personID} value={personID}>{name}</MenuItem>
+            {authors.map(({ pbotID, name }) => (
+                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
             ))}
         </Field>
     )
@@ -131,7 +131,7 @@ const ReferenceSelect = (props) => {
     const gQL = gql`
             query {
                 Reference {
-                    referenceID
+                    pbotID
                     title
                     publisher
                     year
@@ -171,8 +171,8 @@ const ReferenceSelect = (props) => {
             }}
             disabled={false}
         >
-            {references.map(({ referenceID, name }) => (
-                <MenuItem key={referenceID} value={referenceID}>{name}</MenuItem>
+            {references.map(({ pbotID, name }) => (
+                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
             ))}
         </Field>
     )

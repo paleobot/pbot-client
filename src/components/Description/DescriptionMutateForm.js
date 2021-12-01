@@ -17,20 +17,20 @@ const DescriptionSelect = (props) => {
     const descriptionGQL = gql`
             query {
                 Description {
-                    descriptionID
+                    pbotID
                     type
                     name
                     family
                     genus
                     species
                   	schema {
-                      schemaID
+                      pbotID
                       title
                     }
                   	specimen {
                       Specimen {
                         name
-                        specimenID
+                        pbotID
                       }
                     }
                 }            
@@ -96,17 +96,17 @@ const DescriptionSelect = (props) => {
                 props.handleChange(event);
             }}
         >
-            {descriptions.map(({ descriptionID, name, schema, type, family, genus, species, specimen }) => (
+            {descriptions.map(({ pbotID, name, schema, type, family, genus, species, specimen }) => (
                 <MenuItem 
-                    key={descriptionID} 
-                    value={descriptionID} 
-                    data-schema={schema.schemaID} 
+                    key={pbotID} 
+                    value={pbotID} 
+                    data-schema={schema.pbotID} 
                     data-name={name} 
                     data-type={type}
                     data-family={family}
                     data-genus={genus}
                     data-species={species}
-                    data-specimen={specimen ? specimen.Specimen.specimenID : ''}
+                    data-specimen={specimen ? specimen.Specimen.pbotID : ''}
                 >{name}</MenuItem>
             ))}
         </Field>
@@ -119,7 +119,7 @@ const SchemaSelect = (props) => {
     const schemaGQL = gql`
             query {
                 Schema {
-                    schemaID
+                    pbotID
                     title
                 }            
             }
@@ -146,8 +146,8 @@ const SchemaSelect = (props) => {
             }}
             disabled={false}
         >
-            {schemas.map(({ schemaID, title }) => (
-                <MenuItem key={schemaID} value={schemaID}>{title}</MenuItem>
+            {schemas.map(({ pbotID, title }) => (
+                <MenuItem key={pbotID} value={pbotID}>{title}</MenuItem>
             ))}
         </Field>
     )
@@ -158,7 +158,7 @@ const SpecimenSelect = (props) => {
     const specimenGQL = gql`
             query {
                 Specimen {
-                    specimenID
+                    pbotID
                     name
                 }            
             }
@@ -189,8 +189,8 @@ const SpecimenSelect = (props) => {
                 props.setFieldValue("name", event.currentTarget.dataset.name)
             }}
         >
-            {specimens.map(({ specimenID, name }) => (
-                <MenuItem key={specimenID} value={specimenID} data-name={name}>{name}</MenuItem>
+            {specimens.map(({ pbotID, name }) => (
+                <MenuItem key={pbotID} value={pbotID} data-name={name}>{name}</MenuItem>
             ))}
         </Field>
     )

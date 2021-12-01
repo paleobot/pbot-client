@@ -16,9 +16,9 @@ function DescriptionList(props) {
     let descriptionGQL;
     if (!props.includeComplex) {
         descriptionGQL = gql`
-            query ($type: String, $descriptionID: ID, $family: String, $genus: String, $species: String) {
-                Description (type: $type, descriptionID: $descriptionID, family: $family, genus: $genus, species: $species) {
-                    descriptionID
+            query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String) {
+                Description (type: $type, pbotID: $pbotID, family: $family, genus: $genus, species: $species) {
+                    pbotID
                     name
                     family
                     genus
@@ -28,9 +28,9 @@ function DescriptionList(props) {
         `;
     } else {
         descriptionGQL = gql`
-            query ($type: String, $descriptionID: ID, $family: String, $genus: String, $species: String) {
-                Description (type: $type, family: descriptionID: $descriptionID, $family, genus: $genus, species: $species) {
-                    descriptionID
+            query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String) {
+                Description (type: $type, family: pbotID: $pbotID, $family, genus: $genus, species: $species) {
+                    pbotID
                     type
                     name
                     family
@@ -76,7 +76,7 @@ const DescriptionQueryResults = ({queryParams, queryEntity}) => {
                     <DescriptionList 
                         filters={{
                             type: queryParams.type,
-                            descriptionID: queryParams.descriptionID,
+                            pbotID: queryParams.descriptionID,
                             family: queryParams.family, 
                             genus: queryParams.genus, 
                             species: queryParams.species, 

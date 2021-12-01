@@ -15,8 +15,8 @@ function States(props) {
         return 0;
     });
     const style = {marginLeft:"4em"}
-    return states.map(({stateID, name, definition}) => (
-        <div key={stateID}  style={style}>
+    return states.map(({pbotID, name, definition}) => (
+        <div key={pbotID}  style={style}>
             {name}, {definition}
         </div>
     ));

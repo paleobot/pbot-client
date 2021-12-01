@@ -7,7 +7,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
     let specimens = queryEntity === "Specimen-mutate" ? (
                     <Mutator
                         params={{
-                            specimenID: queryParams.specimen || null,
+                            pbotID: queryParams.specimen || null,
                             name: queryParams.name || null,
                             locality: queryParams.locality || null,
                             organID: queryParams.organ || null,

@@ -17,8 +17,8 @@ function Characters(props) {
         return 0;
     });
     const style = {marginLeft:"2em"}
-    return characters.map(({characterID, name, states}) => (
-        <div key={characterID}  style={style}>
+    return characters.map(({pbotID, name, states}) => (
+        <div key={pbotID}  style={style}>
             {name}
             <States states={states} />
         </div>

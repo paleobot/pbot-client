@@ -15,7 +15,7 @@ const SchemaSelect = (props) => {
     const gQL = gql`
             query {
                 Schema {
-                    schemaID
+                    pbotID
                     title
                 }            
             }
@@ -44,8 +44,8 @@ const SchemaSelect = (props) => {
             }}
             disabled={false}
         >
-            {schemas.map(({ schemaID, title }) => (
-                <MenuItem key={schemaID} value={schemaID}>{title}</MenuItem>
+            {schemas.map(({ pbotID, title }) => (
+                <MenuItem key={pbotID} value={pbotID}>{title}</MenuItem>
             ))}
         </Field>
     )
@@ -57,9 +57,9 @@ const CharacterSelect = (props) => {
     console.log(props.schema);
     const characterGQL = gql`
             query {
-                Schema (schemaID: "${props.schema}") {
+                Schema (pbotID: "${props.schema}") {
                     characters {
-                        characterID
+                        pbotID
                         name
                     }
                 }            
@@ -87,8 +87,8 @@ const CharacterSelect = (props) => {
             }}
             disabled={false}
         >
-            {characters.map(({ characterID, name }) => (
-                <MenuItem key={characterID} value={characterID}>{name}</MenuItem>
+            {characters.map(({ pbotID, name }) => (
+                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
             ))}
         </Field>
     )
@@ -99,24 +99,39 @@ const StateSelect = (props) => {
     console.log("StateSelect");
     console.log(props);
     console.log(props.values.character);
+    
     const stateGQL = gql`
         query {
             GetAllStates (characterID: "${props.values.character}")  {
-                stateID
+                pbotID
                 name
                 definition
                 stateOf {
                   ... on Character {
-                    characterID
+                    pbotID
                   }
                   ... on State {
-                    stateID
+                    pbotID
                   }
                 }
             }
         }
     `;
-
+    /*
+     * Should be able to do this, in theory. But graphql forces you to use fragments as above. I don't know why.
+    const stateGQL = gql`
+        query {
+            GetAllStates (characterID: "${props.values.character}")  {
+                pbotID
+                name
+                definition
+                stateOf {
+                    pbotID
+                }
+            }
+        }
+    `;
+    */
     const { loading: stateLoading, error: stateError, data: stateData } = useQuery(stateGQL, {fetchPolicy: "cache-and-network"});
 
     if (stateLoading) return <p>Loading...</p>;
@@ -154,11 +169,11 @@ const StateSelect = (props) => {
         >
             {states.map((state) => (
                 <MenuItem 
-                    key={state.stateID} 
-                    value={state.stateID}
+                    key={state.pbotID} 
+                    value={state.pbotID}
                     data-name={state.name}
                     data-definition={state.definition}
-                    data-parentstate={state.stateOf.stateID}
+                    data-parentstate={state.stateOf.pbotID}
                 >{state.name}</MenuItem>
             ))}
         </Field>

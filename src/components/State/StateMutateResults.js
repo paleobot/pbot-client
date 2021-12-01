@@ -8,7 +8,7 @@ const StateMutateResults = ({queryParams, queryEntity}) => {
     let states = queryEntity === "State-mutate" ? (
                     <Mutator
                         params={{
-                            stateID: queryParams.state || null,
+                            pbotID: queryParams.state || null,
                             name: queryParams.name || null,
                             definition: queryParams.definition || null,
                             characterID: queryParams.character || null,
