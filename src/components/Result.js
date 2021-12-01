@@ -8,6 +8,7 @@ import PersonQueryResults from './Person/PersonQueryResults';
 import DescriptionMutateResults from './Description/DescriptionMutateResults';
 import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanceMutateResults';
 import SpecimenMutateResults from './Specimen/SpecimenMutateResults';
+import OrganMutateResults from './Organ/OrganMutateResults';
 import ReferenceMutateResults from './Reference/ReferenceMutateResults';
 import SchemaMutateResults from './Schema/SchemaMutateResults';
 import CharacterMutateResults from './Character/CharacterMutateResults';
@@ -40,6 +41,9 @@ const Result = ({queryParams, queryEntity}) => {
         ) : 
         queryEntity === "Specimen-mutate" ? (
             <SpecimenMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "Organ-mutate" ? (
+            <OrganMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         queryEntity === "Reference-mutate" ? (
             <ReferenceMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
