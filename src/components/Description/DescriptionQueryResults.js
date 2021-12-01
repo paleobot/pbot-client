@@ -29,7 +29,7 @@ function DescriptionList(props) {
     } else {
         descriptionGQL = gql`
             query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String) {
-                Description (type: $type, family: pbotID: $pbotID, $family, genus: $genus, species: $species) {
+                Description (type: $type, pbotID: $pbotID, family: $family, genus: $genus, species: $species) {
                     pbotID
                     type
                     name
@@ -37,7 +37,7 @@ function DescriptionList(props) {
                     genus
                     species
                     characterInstances {
-                        characterInstanceID
+                        pbotID
                         character {
                             name
                         }
@@ -75,11 +75,11 @@ const DescriptionQueryResults = ({queryParams, queryEntity}) => {
     let descriptions = queryEntity === "Description" ? (
                     <DescriptionList 
                         filters={{
-                            type: queryParams.type,
-                            pbotID: queryParams.descriptionID,
-                            family: queryParams.family, 
-                            genus: queryParams.genus, 
-                            species: queryParams.species, 
+                            type: queryParams.type || null,
+                            pbotID: queryParams.descriptionID || null,
+                            family: queryParams.family || null, 
+                            genus: queryParams.genus || null, 
+                            species: queryParams.species || null, 
                         }}
                         includeComplex={queryParams.includeComplex} 
                     />

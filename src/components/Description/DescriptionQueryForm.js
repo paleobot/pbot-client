@@ -39,6 +39,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
+                values.type = values.type === "all" ? '' : values.type
                 handleQueryParamChange(values)
                 setShowResult(true);
                 //setShowOTUs(true);
