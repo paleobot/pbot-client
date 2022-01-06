@@ -102,21 +102,21 @@ const Mutator = (props) => {
         return props.mode === "edit" ?
         (
             <div key={data[`CustomUpdate${props.entity}`][`${entityID}`]} style={style}>
-                {data[`CustomUpdate${props.entity}`][`${entityID}`]} <br />
+                {data[`CustomUpdate${props.entity}`][`${entityID}`]} updated<br />
                 <br />
             </div>
         ) :
         props.mode === "create" ?
         (
             <div key={data[`CustomCreate${props.entity}`][`${entityID}`]} style={style}>
-                {data[`CustomCreate${props.entity}`][`${entityID}`]} <br />
+                {data[`CustomCreate${props.entity}`][`${entityID}`]} created<br />
                 <br />
             </div>
         ) :
         props.mode === "delete" ?
         (
             <div key={data[`CustomDelete${props.entity}`][`${entityID}`]} style={style}>
-                {data[`CustomDelete${props.entity}`][`${entityID}`]} <br />
+                {data[`CustomDelete${props.entity}`][`${entityID}`]} deleted<br />
                 <br />
             </div>
         ) :
