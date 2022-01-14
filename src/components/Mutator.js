@@ -64,7 +64,7 @@ const Mutator = (props) => {
         props.mode === "delete" ?
         gql`
             mutation ($data: ${props.entity}Input!) {
-                CustomDelete${props.entity}(data: $data) {
+                Delete${props.entity}(data: $data) {
                     ${entityID}
                 }      
             }
@@ -115,8 +115,8 @@ const Mutator = (props) => {
         ) :
         props.mode === "delete" ?
         (
-            <div key={data[`CustomDelete${props.entity}`][`${entityID}`]} style={style}>
-                {data[`CustomDelete${props.entity}`][`${entityID}`]} deleted<br />
+            <div key={data[`Delete${props.entity}`][`${entityID}`]} style={style}>
+                {data[`Delete${props.entity}`][`${entityID}`]} deleted<br />
                 <br />
             </div>
         ) :
