@@ -12,7 +12,8 @@ const StateMutateResults = ({queryParams, queryEntity}) => {
                             name: queryParams.name || null,
                             definition: queryParams.definition || null,
                             characterID: queryParams.character || null,
-                            parentStateID: queryParams.parentState || null
+                            parentStateID: queryParams.parentState || null,
+                            cascade: queryParams.cascade || false
                         }}
                         entity="State"
                         mode={queryParams.mode}

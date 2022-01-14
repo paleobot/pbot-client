@@ -185,6 +185,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 year: '',
                 references: [],
                 authors: [],
+                cascade: false,
                 mode: mode,
     };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -260,6 +261,19 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 <AuthorSelect />
                 <br />
 
+                </div>
+                }
+
+                {(mode === "delete") &&
+                <div>
+                    <Field
+                        type="checkbox"
+                        component={CheckboxWithLabel}
+                        name="cascade"
+                        type="checkbox" 
+                        Label={{ label: 'Cascade' }}
+                    />
+                  <br />
                 </div>
                 }
                 

@@ -13,7 +13,8 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
                             title: queryParams.title || null,
                             year: queryParams.year || null,
                             authors: queryParams.authors || null, //.split(", "),
-                            references: queryParams.references || null
+                            references: queryParams.references || null,
+                            cascade: queryParams.cascade || false
                         }}
                         entity="Schema"
                         mode={queryParams.mode}

@@ -12,6 +12,7 @@ const CharacterMutateResults = ({queryParams, queryEntity}) => {
                             name: queryParams.name || null,
                             definition: queryParams.definition || null,
                             schemaID: queryParams.schema || null,
+                            cascade: queryParams.cascade || false
                         }}
                         entity="Character"
                         mode={queryParams.mode}

@@ -207,6 +207,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 genus: '', 
                 species: '',
                 name: '',
+                cascade: false,
                 mode: mode,
     };
             
@@ -361,7 +362,20 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     disabled={false}
                 />
 
-                <br />
+                {(mode === "delete") &&
+                <div>
+                    <Field
+                        type="checkbox"
+                        component={CheckboxWithLabel}
+                        name="cascade"
+                        type="checkbox" 
+                        Label={{ label: 'Cascade' }}
+                    />
+                  <br />
+                </div>
+                }
+                
+               <br />
                 <br />
 
                 <Button type="submit" variant="contained" color="primary">Submit</Button>

@@ -189,6 +189,7 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 schema: '',
                 character: '',
                 parentState: '',
+                cascade: false,
                 mode: mode,
     };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -275,6 +276,19 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 />
                 <br />
 
+                </div>
+                }
+                
+                {(mode === "delete") &&
+                <div>
+                    <Field
+                        type="checkbox"
+                        component={CheckboxWithLabel}
+                        name="cascade"
+                        type="checkbox" 
+                        Label={{ label: 'Cascade' }}
+                    />
+                  <br />
                 </div>
                 }
                 
