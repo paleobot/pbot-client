@@ -14,6 +14,7 @@ import SchemaMutateResults from './Schema/SchemaMutateResults';
 import CharacterMutateResults from './Character/CharacterMutateResults';
 import StateMutateResults from './State/StateMutateResults';
 import PersonMutateResults from './Person/PersonMutateResults';
+import GroupMutateResults from './Group/GroupMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -60,7 +61,10 @@ const Result = ({queryParams, queryEntity}) => {
         queryEntity === "Person-mutate" ? (
             <PersonMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
-        'hi there';
+        queryEntity === "Group-mutate" ? (
+            <GroupMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        'sumptin wrong';
         
     return (
         <Grid container spacing={3}>

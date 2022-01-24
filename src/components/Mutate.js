@@ -13,6 +13,7 @@ import SchemaMutateForm from './Schema/SchemaMutateForm';
 import CharacterMutateForm from './Character/CharacterMutateForm';
 import StateMutateForm from './State/StateMutateForm';
 import PersonMutateForm from './Person/PersonMutateForm';
+import GroupMutateForm from './Group/GroupMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import EditIcon from '@material-ui/icons/Edit';
@@ -70,6 +71,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <FormControlLabel value="Character-mutate" control={<Radio />} label="Character" labelPlacement="end" />
                         <FormControlLabel value="State-mutate" control={<Radio />} label="State" labelPlacement="end" />
                         <Divider />
+                        <FormControlLabel value="Group-mutate" control={<Radio />} label="Group" labelPlacement="end" />
                         <FormControlLabel value="Person-mutate" control={<Radio />} label="Person" labelPlacement="end" />
                         </RadioGroup>
                     </FormControl>
@@ -127,7 +129,11 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <StateMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Person-mutate"}>
+                    <div hidden={selectedForm !== "Group-mutate"}>
+                        <GroupMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                    </div>
+                    
+                   <div hidden={selectedForm !== "Person-mutate"}>
                         <PersonMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     

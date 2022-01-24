@@ -71,7 +71,7 @@ const Mutator = (props) => {
         ` :
         '';
 
-    const [mutatePerson, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutateNode, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -79,7 +79,7 @@ const Mutator = (props) => {
     //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
     //array option that causes it to only execute once.
     useEffect(() => {
-            mutatePerson().catch((err) => {
+            mutateNode().catch((err) => {
                 //Just eat it. The UI will get what it needs below through the error field defined on the hook.
                 console.log("catch");
                 console.log(err);
