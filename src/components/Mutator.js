@@ -48,7 +48,7 @@ const Mutator = (props) => {
     gQL = props.mode === "edit" ?
         gql`
             mutation ($data: ${props.entity}Input!) {
-                CustomUpdate${props.entity}(data: $data) {
+                Update${props.entity}(data: $data) {
                     ${entityID}
                 }      
             }
@@ -56,7 +56,7 @@ const Mutator = (props) => {
         props.mode === "create" ?
         gql`
             mutation ($data: ${props.entity}Input!) {
-                CustomCreate${props.entity}(data: $data) {
+                Create${props.entity}(data: $data) {
                     ${entityID}
                 }      
             }
@@ -101,15 +101,15 @@ const Mutator = (props) => {
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
         return props.mode === "edit" ?
         (
-            <div key={data[`CustomUpdate${props.entity}`][`${entityID}`]} style={style}>
-                {data[`CustomUpdate${props.entity}`][`${entityID}`]} updated<br />
+            <div key={data[`Update${props.entity}`][`${entityID}`]} style={style}>
+                {data[`Update${props.entity}`][`${entityID}`]} updated<br />
                 <br />
             </div>
         ) :
         props.mode === "create" ?
         (
-            <div key={data[`CustomCreate${props.entity}`][`${entityID}`]} style={style}>
-                {data[`CustomCreate${props.entity}`][`${entityID}`]} created<br />
+            <div key={data[`Create${props.entity}`][`${entityID}`]} style={style}>
+                {data[`Create${props.entity}`][`${entityID}`]} created<br />
                 <br />
             </div>
         ) :
