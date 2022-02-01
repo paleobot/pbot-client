@@ -259,6 +259,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
             }}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
+                organ: Yup.string().required(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
             })}
             onSubmit={(values, {resetForm}) => {
