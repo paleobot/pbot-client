@@ -113,6 +113,7 @@ const CharacterInstanceSelect = (props) => {
                             name
                         }
                         state {
+                            value
                             State {
                                 pbotID
                                 name
@@ -158,6 +159,7 @@ const CharacterInstanceSelect = (props) => {
                 //props.resetForm();
                 props.values.character = event.currentTarget.dataset.characterid || '';
                 props.values.state = event.currentTarget.dataset.stateid || '';
+                props.values.quantity = event.currentTarget.dataset.quantity || '';
                 props.handleChange(event);
             }}
         >
@@ -167,6 +169,7 @@ const CharacterInstanceSelect = (props) => {
                     value={cI.pbotID}
                     data-characterid={cI.character.pbotID}
                     data-stateid={cI.state.State.name + "," + cI.state.State.pbotID}
+                    data-quantity={cI.state.value}
                 >{cI.name}</MenuItem>
             ))}
         </Field>
