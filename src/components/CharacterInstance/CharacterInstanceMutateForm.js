@@ -262,18 +262,20 @@ const StateSelect = (props) => {
 }
 
 const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
-    
-    return (
-       
-        <Formik
-            initialValues={{
+    const initValues = {
                 characterInstance: '',
                 description: '',
                 character: '',
                 state: '', 
                 quantity: '',
                 mode: mode,
-            }}
+    };
+            
+    const style = {textAlign: "left", width: "60%", margin: "auto"}    
+    return (
+       
+        <Formik
+            initialValues={initValues}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -297,7 +299,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
-                resetForm();
+                resetForm({values: initValues});
                 //setShowOTUs(true);
             }}
         >
