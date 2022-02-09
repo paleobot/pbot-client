@@ -75,22 +75,30 @@ const PersonSelect = (props) => {
 
 const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const initValues = {
-                person: '',
-                given: '',
-                surname: '',
-                email: '',
-                orcid: '',
-                mode: mode,
-     };
+        person: '',
+        given: '',
+        surname: '',
+        email: '',
+        orcid: '',
+        mode: mode,
+    };
+    
+    //To clear form when mode changes (this and the innerRef below)
+    const formikRef = React.useRef();
+    React.useEffect(() => {
+        if (formikRef.current) {
+            formikRef.current.resetForm({values:initValues});
+        }
+    });
             
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
-            initialValues={initValues}
+          innerRef={formikRef}
+          initialValues={initValues}
             validate={values => {
                 const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
                 //handleQueryParamChange(values);
                 setShowResult(false);
                 return errors;
@@ -101,12 +109,9 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 email: Yup.string().email(),
             })}
             onSubmit={(values, {resetForm}) => {
-                //alert(JSON.stringify(values, null, 2));
-                //setValues(values);
                 values.mode = mode;
                 handleQueryParamChange(values);
                 setShowResult(true);
-                //setShowOTUs(true);
                 resetForm({values:initValues});
             }}
         >
