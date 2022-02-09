@@ -83,7 +83,8 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
         mode: mode,
     };
     
-    //To clear form when mode changes (this and the innerRef below)
+    //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
+    //allowing useEffect to call resetForm
     const formikRef = React.useRef();
     React.useEffect(() => {
         if (formikRef.current) {
