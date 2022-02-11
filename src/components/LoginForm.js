@@ -4,12 +4,14 @@ import * as Yup from 'yup';
 import { Button, Box } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
 
+const host = window.location.host;
+
 const LoginForm = ({ setToken, setShowRegistration }) => {
     //const [username, setUserName] = useState();
     //const [password, setPassword] = useState();
-    
+    console.log(host);
     const loginUser = async (credentials) => {
-        return fetch('http://localhost:3000/login', {
+        return fetch('http://' + host + '/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -39,7 +41,7 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
 
     const [resetStatus, setResetStatus] = useState();
     const resetPassword = async (credentials) => {
-        return fetch('http://localhost:3000/reset', {
+        return fetch('http://' + host + '/lreset', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
