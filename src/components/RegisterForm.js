@@ -4,13 +4,15 @@ import * as Yup from 'yup';
 import { Button } from '@material-ui/core';
 import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 
+const host = window.location.host;
+
 const RegisterForm = ({ setShowRegistration }) => {
     //const [username, setUserName] = useState();
     //const [password, setPassword] = useState();
     const [showUseExistingUser, setshowUseExistingUser] = useState(false);
     
     const registerUser = async (credentials) => {
-        return fetch('http://localhost:3000/register', {
+        return fetch('http://' + host + '/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
