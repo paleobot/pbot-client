@@ -146,7 +146,7 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
                     component={TextField}
                     name="userName" 
                     type="text"
-                    label="User Name"
+                    label="Email"
                     disabled={false}
                 />
                 <br />
