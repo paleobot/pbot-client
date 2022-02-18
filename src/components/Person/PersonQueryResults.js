@@ -3,6 +3,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import { alphabetize } from '../../util.js';
 
 function Persons(props) {
     console.log(props);
@@ -31,11 +32,17 @@ function Persons(props) {
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-           
+
+    const people = alphabetize([...data.Person], "surname");
+
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return data.Person.map((person) => (
+    const indent = {marginLeft:"2em"}
+    return people.map((person) => (
         <div key={person.pbotID} style={style}>
-            {person.pbotID}, {person.given} {person.surname}, {person.email}, {person.orcid} <br />
+            <b>{person.given} {person.surname}</b>
+            <div style={indent}><b>pbotID:</b> {person.pbotID}</div>
+            <div style={indent}><b>email:</b> {person.email}</div> 
+            <div style={indent}><b>orcid:</b> {person.orcid} </div>
             <br />
         </div>
     ));

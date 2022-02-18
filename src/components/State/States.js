@@ -14,12 +14,17 @@ function States(props) {
         }
         return 0;
     });
-    const style = {marginLeft:"4em"}
-    return states.map(({pbotID, name, definition}) => (
-        <div key={pbotID}  style={style}>
-            {name}, {definition}
-        </div>
-    ));
+    const myUL = {marginTop:"0"}
+    return (
+        <ul style={myUL}>
+        {states.map(({pbotID, name, definition}) => (
+            <li key={pbotID}>
+                {name}, {definition}
+            </li>
+        ))}
+        </ul>
+    )
+    
 }
 
 export default States;

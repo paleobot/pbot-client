@@ -17,10 +17,24 @@ function Descriptions(props) {
     });
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return descriptions.map(({ pbotID, name, family, genus, species, characterInstances }) => (
+    const indent = {marginLeft:"2em"}
+    return descriptions.map(({ pbotID, name, type, family, genus, species, characterInstances }) => (
         <div key={pbotID} style={style}>
-            {pbotID}: {name}, {family}, {genus}, {species} <br />
-            <CharacterInstances characterInstances={characterInstances} />
+            <b>{name || "(name missing)"}</b>
+            <div style={indent}><b>pbotID:</b>{pbotID}</div>
+            {type === "OTU" &&
+            <div>
+                <div style={indent}><b>family:</b>{family}</div>
+                <div style={indent}><b>genus:</b>{genus}</div>
+                <div style={indent}><b>species:</b>{species}</div>
+            </div>
+            }
+            {characterInstances && characterInstances.length > 0 &&
+            <div>
+                <div style={indent}><b>character instances:</b></div>
+                <CharacterInstances characterInstances={characterInstances} />
+            </div>
+            }
             <br />
         </div>
     ));

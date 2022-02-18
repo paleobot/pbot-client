@@ -3,6 +3,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import { alphabetize } from '../../util.js';
 
 function References(props) {
     console.log(props);
@@ -31,10 +32,16 @@ function References(props) {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
            
+    const references = alphabetize([...data.Reference], "title");
+
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
+    const indent = {marginLeft:"2em"}
     return data.Reference.map(({ pbotID, title, year, publisher }) => (
         <div key={pbotID} style={style}>
-            {pbotID}, {title}, {year}, {publisher} <br />
+            <b>{title}</b>
+            <div style={indent}><b>pbotID:</b> {pbotID}</div>
+            <div style={indent}><b>publisher:</b> {publisher}</div> 
+            <div style={indent}><b>year:</b> {year} </div>
             <br />
         </div>
     ));

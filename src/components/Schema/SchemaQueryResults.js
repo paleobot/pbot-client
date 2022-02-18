@@ -4,6 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import Characters from "../Character/Characters";
+import { alphabetize } from '../../util.js';
 
 function Schemas(props) {
     console.log(props);
@@ -53,11 +54,21 @@ function Schemas(props) {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
            
+    const schemas = alphabetize([...data.Schema], "title");
+
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return data.Schema.map(({ pbotID, title, year, characters }) => (
+    const indent = {marginLeft:"2em"}
+    return schemas.map(({ pbotID, title, year, characters }) => (
         <div key={pbotID} style={style}>
-            {pbotID}: {title}, {year} <br />
-            <Characters characters={characters} />
+            <b>{title}</b>
+            <div style={indent}><b>pbotID:</b> {pbotID}</div>
+            <div style={indent}><b>year:</b> {year} </div>
+            {characters && characters.length > 0 &&
+            <div>
+                <div style={indent}><b>characters:</b></div>
+                <Characters characters={characters} />
+            </div>
+            }
             <br />
         </div>
     ));

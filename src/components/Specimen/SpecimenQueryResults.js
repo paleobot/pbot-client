@@ -4,6 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
+import { alphabetize } from '../../util.js';
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
@@ -103,17 +104,30 @@ function Specimens(props) {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
            
+    const specimens = alphabetize([...data.Specimen], "name");
+
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
-    return data.Specimen.map(({ pbotID, name, organ, description, archtypeDescription }) => (
+    const indent = {marginLeft:"2em"}
+    return specimens.map(({ pbotID, name, organ, description, archtypeDescription }) => (
         <div key={pbotID} style={style}>
-            {pbotID}: {name}, {organ.type}{archtypeDescription ? `, ${archtypeDescription.Description.name}` : ""}{description ? "" : ", OTU specimen"}  <br />
-             <CharacterInstances characterInstances={description ? 
-                 description.Description.characterInstances : 
-                 archtypeDescription ? 
-                    archtypeDescription.Description.characterInstances :
-                    ""
-            } />
-           <br />
+            <b>{name || "(name missing)"}</b>
+            <div style={indent}><b>pbotID:</b> {pbotID}</div>
+            <div style={indent}><b>organ:</b> {organ.type}</div>
+            <div style={indent}><b>archtype description:</b> {archtypeDescription ? `${archtypeDescription.Description.name}` : ""}</div>
+            <div style={indent}><b>description:</b> {description ? "" : "OTU specimen"}</div>
+            {((description && description.Description.characterInstances && description.Description.characterInstances.length > 0) || (archtypeDescription && archtypeDescription.Description.characterInstances && archtypeDescription.Description.characterInstances.length > 0)) &&
+            <div>
+                <div style={indent}><b>character instances:</b></div>
+                <CharacterInstances characterInstances={description ? 
+                    description.Description.characterInstances : 
+                    archtypeDescription ? 
+                        archtypeDescription.Description.characterInstances :
+                        ""
+                } />
+            </div>
+            }
+        
+            <br />
         </div>
     ));
 
