@@ -28,6 +28,7 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
             <Grid item>
                 <FormControl component="fieldset">
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
+                    <FormControlLabel value="Dummy" control={<Radio />} label="Dummy" labelPlacement="end"/>
                     <FormControlLabel value="Description" control={<Radio />} label="Description" labelPlacement="end"/>
                     <FormControlLabel value="Specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
                     <Divider />
