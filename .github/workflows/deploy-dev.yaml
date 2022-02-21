@@ -23,15 +23,15 @@ jobs:
           END
         env:
           SSH_USER: ${{ secrets.DEV_SSH_USER }}
-          SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+          SSH_KEY: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
 
-      - name: Stop the server
-        run: ssh dev 'sudo systemctl stop my-application'
+      #- name: Stop the server
+      #  run: ssh dev 'sudo systemctl stop my-application'
 
       - name: Check out the source
-        run: ssh dev 'cd my-application && git fetch && git reset --hard origin/master'
+        run: ssh dev 'cd repos/pbot-api/client && git fetch && git reset --hard origin/master'
 
-      - name: Start the server
-        if: ${{ always() }}
-        run: ssh dev 'sudo systemctl start my-application'
+      #- name: Start the server
+      #  if: ${{ always() }}
+      #  run: ssh dev 'sudo systemctl start my-application'
