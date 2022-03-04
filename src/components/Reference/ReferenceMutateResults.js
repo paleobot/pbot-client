@@ -14,7 +14,8 @@ const ReferenceMutateResults = ({queryParams, queryEntity}) => {
                             publisher: queryParams.publisher || null,
                             year: queryParams.year || null,
                             authors: queryParams.authors || null, //.split(", "),
-                            doi: queryParams.doi || null
+                            doi: queryParams.doi || null,
+                            group: queryParams.group || null,
                         }}
                         entity="Reference"
                         mode={queryParams.mode}

@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 import { alphabetize } from '../../util.js';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 import {
   useQuery,
@@ -129,7 +130,6 @@ const AuthorSelect = (props) => {
     )
 }
 
-
 const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const initValues = {
                 reference: '',
@@ -138,6 +138,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 year: '',
                 authors: [],
                 doi: '',
+                group: '',
                 mode: mode,
     };
 
@@ -168,6 +169,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 publisher: Yup.string().required(),
                 year: Yup.date().required(),
                 authors: Yup.array().of(Yup.string()).required(),
+                group: Yup.string().required(),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -240,6 +242,9 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                     disabled={false}
                 />
 
+                <GroupSelect />
+                <br />
+                
                 </div>
                 }
                 
