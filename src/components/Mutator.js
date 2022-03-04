@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+
+
 import {
   ApolloClient,
   InMemoryCache,
@@ -9,37 +11,13 @@ import {
   gql,
   useApolloClient
 } from "@apollo/client";
-import { setContext } from '@apollo/client/link/context';
-
-const httpLink = createHttpLink({
-  uri: '/graphql',
-});
-const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('PBOTMutationToken');
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    }
-  }
-});
-//Create new client. This will be passed explicitly to useMutation, since we already have a 
-//client defined in the context from ApolloProvider. 
-//TODO: Look into loading the ApolloProvider client on the fly using something like the 
-//method described in https://github.com/apollographql/apollo-client/issues/2897.
-const mclient = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
-});
 
 const Mutator = (props) => {
 //function Mutater(props) {
     console.log("Mutater");
     console.log(props);
     
-    const qclient = useApolloClient();
+    const client = useApolloClient();
     
     //const entityID=`${props.entity[0].toLowerCase()}${props.entity.slice(1)}ID`;
     const entityID="pbotID";
@@ -71,7 +49,7 @@ const Mutator = (props) => {
         ` :
         '';
 
-    const [mutateNode, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}, client: mclient});
+    const [mutateNode, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
@@ -96,7 +74,7 @@ const Mutator = (props) => {
         console.log(data);
         
         //Force reload of cache
-        qclient.resetStore();
+        client.resetStore();
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
         return props.mode === "edit" ?
