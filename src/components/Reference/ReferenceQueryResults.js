@@ -21,7 +21,7 @@ function References(props) {
                 }
             }
         `;
-    
+        
     const { loading, error, data } = useQuery(gQL, {
         variables: {
             ...filters
@@ -36,7 +36,7 @@ function References(props) {
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
-    return data.Reference.map(({ pbotID, title, year, publisher }) => (
+    return references.map(({ pbotID, title, year, publisher }) => (
         <div key={pbotID} style={style}>
             <b>{title}</b>
             <div style={indent}><b>pbotID:</b> {pbotID}</div>
