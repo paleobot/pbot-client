@@ -24,8 +24,9 @@ const ReferenceSelect = (props) => {
                 doi
                 authoredBy {
                     pbotID
-                    given 
-                    surname
+                }
+                elementOf {
+                    pbotID
                 }
             }            
         }
@@ -62,6 +63,7 @@ const ReferenceSelect = (props) => {
                 props.values.year = event.currentTarget.dataset.year || '';
                 props.values.doi = event.currentTarget.dataset.doi || '';
                 props.values.authors = event.currentTarget.dataset.authors ? JSON.parse(event.currentTarget.dataset.authors) : [];
+                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
                 props.handleChange(event);
             }}
         >
@@ -74,6 +76,7 @@ const ReferenceSelect = (props) => {
                     data-year={reference.year}
                     data-doi={reference.doi}
                     data-authors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => author.pbotID)) : null}
+                    data-groups={reference.elementOf ? JSON.stringify(reference.elementOf.map(group => group.pbotID)) : null}
                 >{reference.title + ", " + reference.publisher + ", " + reference.year}</MenuItem>
             ))}
         </Field>
@@ -138,7 +141,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 year: '',
                 authors: [],
                 doi: '',
-                group: '',
+                groups: [],
                 mode: mode,
     };
 
@@ -169,7 +172,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 publisher: Yup.string().required(),
                 year: Yup.date().required(),
                 authors: Yup.array().of(Yup.string()).required(),
-                group: Yup.string().required(),
+                groups: Yup.array().of(Yup.string()).required(),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));

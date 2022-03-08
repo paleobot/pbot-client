@@ -17,6 +17,7 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                                 genus: queryParams.genus || null, 
                                 species: queryParams.species || null, 
                                 name: queryParams.name || null,
+                                groups: queryParams.groups || null,
                                 cascade: queryParams.cascade || false
                             }}
                             entity="Description"

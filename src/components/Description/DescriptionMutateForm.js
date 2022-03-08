@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 import { alphabetize } from '../../util.js';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 import {
   useQuery,
@@ -25,13 +26,15 @@ const DescriptionSelect = (props) => {
                     species
                   	schema {
                       pbotID
-                      title
                     }
                   	specimen {
                       Specimen {
                         name
                         pbotID
                       }
+                    }
+                    elementOf {
+                        pbotID
                     }
                 }            
             }
@@ -92,22 +95,24 @@ const DescriptionSelect = (props) => {
                 props.values.genus = event.currentTarget.dataset.genus;
                 props.values.species = event.currentTarget.dataset.species;
                 props.values.specimen = event.currentTarget.dataset.specimen;
+                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
                 //props.resetForm();
                 props.handleChange(event);
             }}
         >
-            {descriptions.map(({ pbotID, name, schema, type, family, genus, species, specimen }) => (
+            {descriptions.map((description) => (
                 <MenuItem 
-                    key={pbotID} 
-                    value={pbotID} 
-                    data-schema={schema.pbotID} 
-                    data-name={name} 
-                    data-type={type}
-                    data-family={family}
-                    data-genus={genus}
-                    data-species={species}
-                    data-specimen={specimen ? specimen.Specimen.pbotID : ''}
-                >{name}</MenuItem>
+                    key={description.pbotID} 
+                    value={description.pbotID} 
+                    data-schema={description.schema.pbotID} 
+                    data-name={description.name} 
+                    data-type={description.type}
+                    data-family={description.family}
+                    data-genus={description.genus}
+                    data-species={description.species}
+                    data-specimen={description.specimen ? description.specimen.Specimen.pbotID : ''}
+                    data-groups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
+                >{description.name}</MenuItem>
             ))}
         </Field>
     )
@@ -207,6 +212,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 genus: '', 
                 species: '',
                 name: '',
+                groups: [],
                 cascade: false,
                 mode: mode,
     };
@@ -254,6 +260,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
                 name: Yup.string().required(),
+                groups: Yup.array().of(Yup.string()).required(),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -361,6 +368,9 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     label="Name"
                     disabled={false}
                 />
+                
+                <GroupSelect />
+                <br />
                 
                 </div>
                 }

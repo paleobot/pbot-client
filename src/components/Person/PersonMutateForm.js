@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 import { alphabetize } from '../../util.js';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 import {
   useQuery,
@@ -22,6 +23,9 @@ const PersonSelect = (props) => {
                 surname
                 email
                 orcid
+                memberOf {
+                    pbotID
+                }
             }            
         }
     `;
@@ -56,6 +60,7 @@ const PersonSelect = (props) => {
                 props.values.surname = event.currentTarget.dataset.surname || '';
                 props.values.email = event.currentTarget.dataset.email || '';
                 props.values.orcid = event.currentTarget.dataset.orcid || '';
+                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
                 props.handleChange(event);
             }}
         >
@@ -67,6 +72,7 @@ const PersonSelect = (props) => {
                     data-given={person.given}
                     data-email={person.email}
                     data-orcid={person.orcid}
+                    data-groups={person.memberOf ? JSON.stringify(person.memberOf.map(group => group.pbotID)) : null}
                 >{person.given} {person.surname}</MenuItem>
             ))}
         </Field>
@@ -80,6 +86,7 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
         surname: '',
         email: '',
         orcid: '',
+        groups: [],
         mode: mode,
     };
     
@@ -108,6 +115,7 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 given: Yup.string().required(),
                 surname: Yup.string().required(),
                 email: Yup.string().email(),
+                groups: Yup.array().of(Yup.string()).required(),
             })}
             onSubmit={(values, {resetForm}) => {
                 values.mode = mode;
@@ -175,6 +183,9 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 <br />
 
 
+                <GroupSelect />
+                <br />
+                
                 </div>
                 }
                 

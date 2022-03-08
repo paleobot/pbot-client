@@ -7,7 +7,6 @@ import SchemaQueryForm from './Schema/SchemaQueryForm';
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
 import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
-import OrganMutateForm from './Organ/OrganMutateForm';
 import ReferenceMutateForm from './Reference/ReferenceMutateForm';
 import SchemaMutateForm from './Schema/SchemaMutateForm';
 import CharacterMutateForm from './Character/CharacterMutateForm';
@@ -64,7 +63,6 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
-                        <FormControlLabel value="Organ-mutate" control={<Radio />} label="Organ" labelPlacement="end" />
                         <Divider />
                         <FormControlLabel value="Reference-mutate" control={<Radio />} label="Reference" labelPlacement="end" />
                         <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" />
@@ -107,10 +105,6 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     
                     <div hidden={selectedForm !== "Specimen-mutate"}>
                         <SpecimenMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
-                    </div>
-
-                    <div hidden={selectedForm !== "Organ-mutate"}>
-                        <OrganMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "Reference-mutate"}>

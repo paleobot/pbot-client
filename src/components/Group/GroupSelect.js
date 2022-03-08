@@ -39,12 +39,12 @@ export const GroupSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="group"
-            label="Group"
+            name="groups"
+            label="Groups"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: false,
+                multiple: true,
             }}
             disabled={false}
         >

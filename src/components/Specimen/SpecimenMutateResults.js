@@ -17,6 +17,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                             idigbiouuid: queryParams.idigbiouuid || null,
                             pbdbcid: queryParams.pbdbcid || null,
                             pbdboccid: queryParams.pbdboccid || null,
+                            groups: queryParams.groups || null,
                         }}
                         entity="Specimen"
                         mode={queryParams.mode}

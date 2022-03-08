@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 import { alphabetize } from '../../util.js';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 import {
   useQuery,
@@ -34,6 +35,9 @@ const SpecimenSelect = (props) => {
                         	pbotID
                         	name
                         }
+                    }
+                    elementOf {
+                        pbotID
                     }
                 }            
             }
@@ -74,23 +78,25 @@ const SpecimenSelect = (props) => {
                 props.values.idigbiouuid = event.currentTarget.dataset.idigbiouuid ? event.currentTarget.dataset.idigbiouuid : '';
                 props.values.pbdbcid = event.currentTarget.dataset.pbdbcid ? event.currentTarget.dataset.pbdbcid : '';
                 props.values.pbdboccid = event.currentTarget.dataset.pbdboccid ? event.currentTarget.dataset.pbdboccid : '';
+                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
                 props.handleChange(event);
             }}
         >
-            {specimens.map(({ pbotID, name, locality, organ, preservationMode, description, archtypeDescription, idigbiouuid, pbdbcid, pbdboccid }) => (
+            {specimens.map((specimen) => (
                 <MenuItem 
-                    key={pbotID} 
-                    value={pbotID}
-                    data-name={name}
-                    data-locality={locality}
-                    data-organ={organ.organID}
-                    data-preservationmode={preservationMode}
-                    data-describedby={description ? description.Description.pbotID : ''}
-                    data-exampleof={archtypeDescription ? archtypeDescription.Description.pbotID : ''}
-                    data-idigbiouuid={idigbiouuid}
-                    data-pbdbcid={pbdbcid}
-                    data-pbdboccid={pbdboccid}
-                >{name}</MenuItem>
+                    key={specimen.pbotID} 
+                    value={specimen.pbotID}
+                    data-name={specimen.name}
+                    data-locality={specimen.locality}
+                    data-organ={specimen.organ.organID}
+                    data-preservationmode={specimen.preservationMode}
+                    data-describedby={specimen.description ? specimen.description.Description.pbotID : ''}
+                    data-exampleof={specimen.archtypeDescription ? specimen.archtypeDescription.Description.pbotID : ''}
+                    data-idigbiouuid={specimen.idigbiouuid}
+                    data-pbdbcid={specimen.pbdbcid}
+                    data-pbdboccid={specimen.pbdboccid}
+                    data-groups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
+                >{specimen.name}</MenuItem>
             ))}
         </Field>
     )
@@ -244,6 +250,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
+                groups: [],
                 mode: mode,
     };    
 
@@ -272,7 +279,8 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 name: Yup.string().required(),
                 organ: Yup.string().required(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
-            })}
+                groups: Yup.array().of(Yup.string()).required(),
+           })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
@@ -377,6 +385,9 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     </Field>
                     <br />
                     
+                    <GroupSelect />
+                    <br />
+                
                     </div>
                 }
                 

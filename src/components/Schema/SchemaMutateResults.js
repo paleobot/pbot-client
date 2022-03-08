@@ -14,6 +14,7 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
                             year: queryParams.year || null,
                             authors: queryParams.authors || null, //.split(", "),
                             references: queryParams.references || null,
+                            groups: queryParams.groups || null,
                             cascade: queryParams.cascade || false
                         }}
                         entity="Schema"

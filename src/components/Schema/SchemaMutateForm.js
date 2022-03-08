@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 import { alphabetize } from '../../util.js';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 import {
   useQuery,
@@ -23,6 +24,9 @@ const SchemaSelect = (props) => {
                     pbotID
                 }
                 authoredBy {
+                    pbotID
+                }
+                elementOf {
                     pbotID
                 }
             }            
@@ -59,6 +63,7 @@ const SchemaSelect = (props) => {
                 props.values.year = event.currentTarget.dataset.year || '';
                 props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
                 props.values.authors = event.currentTarget.dataset.authors ? JSON.parse(event.currentTarget.dataset.authors) : [];
+                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
                 props.handleChange(event);
             }}
         >
@@ -70,6 +75,7 @@ const SchemaSelect = (props) => {
                     data-year={schema.year}
                     data-references={schema.cites ? JSON.stringify(schema.cites.map(reference => reference.pbotID)) : null}
                     data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => author.pbotID)) : null}
+                    data-groups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
                 >{schema.title}</MenuItem>
             ))}
         </Field>
@@ -185,6 +191,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 year: '',
                 references: [],
                 authors: [],
+                groups: [],
                 cascade: false,
                 mode: mode,
     };
@@ -215,9 +222,9 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 title: Yup.string().required(),
                 year: Yup.date().required(),
                 authors: Yup.array().of(Yup.string()).required(),
+                groups: Yup.array().of(Yup.string()).required(),
             })}
             onSubmit={(values, {resetForm}) => {
-                //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.mode = mode;
                 handleQueryParamChange(values);
@@ -272,6 +279,9 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 <AuthorSelect />
                 <br />
 
+                <GroupSelect />
+                <br />
+                
                 </div>
                 }
 
