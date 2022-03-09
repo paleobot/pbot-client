@@ -366,6 +366,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     name="name" 
                     type="text" 
                     label="Name"
+                    fullWidth
                     disabled={false}
                 />
                 
