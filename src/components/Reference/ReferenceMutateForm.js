@@ -87,7 +87,7 @@ const AuthorSelect = (props) => {
     console.log("AuthorSelect");
     const gQL = gql`
             query {
-                Person {
+                Person (filter: {AND: [{given_not: "guest"}, {surname_not: "guest"}]}) {
                     pbotID
                     given
                     surname
