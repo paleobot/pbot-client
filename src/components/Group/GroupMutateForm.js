@@ -150,7 +150,7 @@ const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             }}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
-                members: Yup.array().of(Yup.string()).required(),
+                members: Yup.array().of(Yup.string()).min(1, "at least one member required"),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
