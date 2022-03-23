@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
+import {publicGroupID} from '../Group/GroupSelect.js';
 
 const SchemaMutateResults = ({queryParams, queryEntity}) => {
     console.log("SchemaMutateResults");
@@ -14,7 +15,8 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
                             year: queryParams.year || null,
                             authors: queryParams.authors || null, //.split(", "),
                             references: queryParams.references || null,
-                            groups: queryParams.groups || null,
+                            groups: queryParams.public ? 
+                                [publicGroupID] : queryParams.groups || null,
                             cascade: queryParams.cascade || false
                         }}
                         entity="Schema"

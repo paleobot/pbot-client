@@ -34,6 +34,7 @@ const DescriptionSelect = (props) => {
                       }
                     }
                     elementOf {
+                        name
                         pbotID
                     }
                 }            
@@ -95,6 +96,8 @@ const DescriptionSelect = (props) => {
                 props.values.genus = event.currentTarget.dataset.genus;
                 props.values.species = event.currentTarget.dataset.species;
                 props.values.specimen = event.currentTarget.dataset.specimen;
+                props.values.public = "true"=== event.currentTarget.dataset.public || false;
+                props.values.origPublic = props.values.public;
                 props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
                 //props.resetForm();
                 props.handleChange(event);
@@ -111,6 +114,7 @@ const DescriptionSelect = (props) => {
                     data-genus={description.genus}
                     data-species={description.species}
                     data-specimen={description.specimen ? description.specimen.Specimen.pbotID : ''}
+                    data-public={description.elementOf && description.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
                 >{description.name}</MenuItem>
             ))}
@@ -212,6 +216,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 genus: '', 
                 species: '',
                 name: '',
+                public: true,
                 groups: [],
                 cascade: false,
                 mode: mode,
@@ -260,7 +265,11 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
                 name: Yup.string().required(),
-                groups: Yup.array().of(Yup.string()).required(),
+                public: Yup.boolean(),
+                groups: Yup.array().of(Yup.string()).when('public', {
+                    is: false,
+                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
+                })
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -290,6 +299,15 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 
                 {(mode === "create" || (mode === "edit" && props.values.description !== '')) &&
                 <div>
+                
+                <Field 
+                    component={TextField}
+                    name="name" 
+                    type="text" 
+                    label="Name"
+                    fullWidth
+                    disabled={false}
+                />
                 
                 <Field
                     component={TextField}
@@ -362,16 +380,20 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 }
           
                 <Field 
-                    component={TextField}
-                    name="name" 
-                    type="text" 
-                    label="Name"
-                    fullWidth
-                    disabled={false}
+                    component={CheckboxWithLabel}
+                    name="public" 
+                    type="checkbox"
+                    Label={{label:"Public"}}
+                    disabled={(mode === "edit" && props.values.origPublic)}
                 />
-                
-                <GroupSelect />
                 <br />
+                
+                {!props.values.public &&
+                <div>
+                    <GroupSelect />
+                    <br />
+                </div>
+                }
                 
                 </div>
                 }

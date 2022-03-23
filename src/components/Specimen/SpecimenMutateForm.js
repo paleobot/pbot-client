@@ -13,13 +13,17 @@ import {
 
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
-    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    //TODO: look into https://www.graphql-scalars.dev/docs/scalars/uuid for managing idigbiouuid
     const gQL = gql`
             query {
                 Specimen {
                     pbotID
                     name
                     locality
+                    preservationMode
+                    idigbiouuid
+                    pbdbcid
+                    pbdboccid
                     organ {
                         pbotID
                         type
@@ -37,6 +41,7 @@ const SpecimenSelect = (props) => {
                         }
                     }
                     elementOf {
+                        name
                         pbotID
                     }
                 }            
@@ -78,6 +83,8 @@ const SpecimenSelect = (props) => {
                 props.values.idigbiouuid = event.currentTarget.dataset.idigbiouuid ? event.currentTarget.dataset.idigbiouuid : '';
                 props.values.pbdbcid = event.currentTarget.dataset.pbdbcid ? event.currentTarget.dataset.pbdbcid : '';
                 props.values.pbdboccid = event.currentTarget.dataset.pbdboccid ? event.currentTarget.dataset.pbdboccid : '';
+                props.values.public = "true"=== event.currentTarget.dataset.public || false;
+                props.values.origPublic = props.values.public;
                 props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
                 props.handleChange(event);
             }}
@@ -88,13 +95,14 @@ const SpecimenSelect = (props) => {
                     value={specimen.pbotID}
                     data-name={specimen.name}
                     data-locality={specimen.locality}
-                    data-organ={specimen.organ.organID}
+                    data-organ={specimen.organ.pbotID}
                     data-preservationmode={specimen.preservationMode}
                     data-describedby={specimen.description ? specimen.description.Description.pbotID : ''}
                     data-exampleof={specimen.archtypeDescription ? specimen.archtypeDescription.Description.pbotID : ''}
                     data-idigbiouuid={specimen.idigbiouuid}
                     data-pbdbcid={specimen.pbdbcid}
                     data-pbdboccid={specimen.pbdboccid}
+                    data-public={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
                 >{specimen.name}</MenuItem>
             ))}
@@ -243,13 +251,14 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 name: '',
                 locality: '',
                 organ: '',
-                perservationMode: '',
+                preservationMode: '',
                 describedBy: '',
                 exampleOf: '',
                 otu: '',
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
+                public: true,
                 groups: [],
                 mode: mode,
     };    
@@ -278,8 +287,14 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 organ: Yup.string().required(),
+                preservationMode: Yup.string(),
+                locality: Yup.string(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
-                groups: Yup.array().of(Yup.string()).required(),
+                public: Yup.boolean(),
+                groups: Yup.array().of(Yup.string()).when('public', {
+                    is: false,
+                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
+                })
            })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -338,7 +353,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     <Field
                         component={TextField}
                         type="text"
-                        name="perservationMode"
+                        name="preservationMode"
                         label="Preservation mode"
                         fullWidth 
                         disabled={false}
@@ -385,8 +400,21 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     </Field>
                     <br />
                     
-                    <GroupSelect />
+                    <Field 
+                        component={CheckboxWithLabel}
+                        name="public" 
+                        type="checkbox"
+                        Label={{label:"Public"}}
+                        disabled={(mode === "edit" && props.values.origPublic)}
+                    />
                     <br />
+                    
+                    {!props.values.public &&
+                    <div>
+                        <GroupSelect />
+                        <br />
+                    </div>
+                    }
                 
                     </div>
                 }

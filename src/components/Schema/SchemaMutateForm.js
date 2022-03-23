@@ -27,6 +27,7 @@ const SchemaSelect = (props) => {
                     pbotID
                 }
                 elementOf {
+                    name
                     pbotID
                 }
             }            
@@ -63,6 +64,8 @@ const SchemaSelect = (props) => {
                 props.values.year = event.currentTarget.dataset.year || '';
                 props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
                 props.values.authors = event.currentTarget.dataset.authors ? JSON.parse(event.currentTarget.dataset.authors) : [];
+                props.values.public = "true"=== event.currentTarget.dataset.public || false;
+                props.values.origPublic = props.values.public;
                 props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
                 props.handleChange(event);
             }}
@@ -75,6 +78,7 @@ const SchemaSelect = (props) => {
                     data-year={schema.year}
                     data-references={schema.cites ? JSON.stringify(schema.cites.map(reference => reference.pbotID)) : null}
                     data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => author.pbotID)) : null}
+                    data-public={schema.elementOf && schema.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
                 >{schema.title}</MenuItem>
             ))}
@@ -191,6 +195,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 year: '',
                 references: [],
                 authors: [],
+                public: true,
                 groups: [],
                 cascade: false,
                 mode: mode,
@@ -222,7 +227,11 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 title: Yup.string().required(),
                 year: Yup.date().required(),
                 authors: Yup.array().of(Yup.string()).required(),
-                groups: Yup.array().of(Yup.string()).required(),
+                public: Yup.boolean(),
+                groups: Yup.array().of(Yup.string()).when('public', {
+                    is: false,
+                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
+                })
             })}
             onSubmit={(values, {resetForm}) => {
                 //setValues(values);
@@ -279,8 +288,21 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 <AuthorSelect />
                 <br />
 
-                <GroupSelect />
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="public" 
+                    type="checkbox"
+                    Label={{label:"Public"}}
+                    disabled={(mode === "edit" && props.values.origPublic)}
+                />
                 <br />
+                
+                {!props.values.public &&
+                <div>
+                    <GroupSelect />
+                    <br />
+                </div>
+                }
                 
                 </div>
                 }

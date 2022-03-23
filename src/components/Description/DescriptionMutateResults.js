@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
+import {publicGroupID} from '../Group/GroupSelect.js';
 
 const DescriptionMutateResults = ({queryParams, queryEntity}) => {
     console.log("DescriptionMutateResults");
@@ -17,7 +18,8 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                                 genus: queryParams.genus || null, 
                                 species: queryParams.species || null, 
                                 name: queryParams.name || null,
-                                groups: queryParams.groups || null,
+                                groups: queryParams.public ? 
+                                    [publicGroupID] : queryParams.groups || null,
                                 cascade: queryParams.cascade || false
                             }}
                             entity="Description"

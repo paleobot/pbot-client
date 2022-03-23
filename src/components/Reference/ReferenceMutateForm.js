@@ -177,7 +177,6 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 publisher: Yup.string().required(),
                 year: Yup.date().required(),
                 authors: Yup.array().of(Yup.string()).required(),
-                //groups: Yup.array().of(Yup.string()).required(),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
