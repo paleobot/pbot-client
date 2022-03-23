@@ -8,6 +8,8 @@ import {
   gql
 } from "@apollo/client";
 
+export let publicGroupID;
+
 export const GroupSelect = (props) => {
     console.log("GroupSelect");
     const gQL = gql`
@@ -26,14 +28,21 @@ export const GroupSelect = (props) => {
                                  
     console.log(data.Group);
     
+    
     const groups = alphabetize(
-        data.Group.map(group => {
+        data.Group.reduce((acc, group) => {
             const newGroup = {...group};
             console.log(newGroup);
-            return newGroup;
-        }), 
+            if ("public" === newGroup.name) {
+                publicGroupID = newGroup.pbotID;
+                return acc;
+            } else {
+                return acc.concat(newGroup);
+            }
+        }, []), 
     "name");
     console.log(groups)
+    console.log(publicGroupID);
     
     return (
         <Field
