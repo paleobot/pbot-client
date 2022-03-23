@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
+import {publicGroupID} from '../Group/GroupSelect.js';
 
 const ReferenceMutateResults = ({queryParams, queryEntity}) => {
     console.log("ReferenceMutateResults");
@@ -15,7 +16,8 @@ const ReferenceMutateResults = ({queryParams, queryEntity}) => {
                             year: queryParams.year || null,
                             authors: queryParams.authors || null, //.split(", "),
                             doi: queryParams.doi || null,
-                            groups: queryParams.groups || null,
+                            groups: queryParams.public ? 
+                                [publicGroupID] : queryParams.groups || null,
                         }}
                         entity="Reference"
                         mode={queryParams.mode}
