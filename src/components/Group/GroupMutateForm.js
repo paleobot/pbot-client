@@ -69,9 +69,18 @@ const GroupSelect = (props) => {
 }
 const MemberSelect = (props) => {
     console.log("MemberSelect");
+
     const gQL = gql`
             query {
-                Person {
+                Person (
+                    filter: {
+                        AND: [
+                            {password_regexp: ".*"}, 
+                            {
+                                AND: [{given_not: "guest"}, {surname_not: "guest"}]
+                            }
+                        ]
+                }) {
                     pbotID
                     given
                     surname
