@@ -108,7 +108,11 @@ function Specimens(props) {
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
-    return specimens.map(({ pbotID, name, organ, description, archtypeDescription }) => (
+    return (specimens.length === 0) ? (
+        <div style={style}>
+            No public results were found.
+        </div>
+    ) : specimens.map(({ pbotID, name, organ, description, archtypeDescription }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
             <div style={indent}><b>pbotID:</b> {pbotID}</div>

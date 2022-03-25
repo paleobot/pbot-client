@@ -18,7 +18,11 @@ function Descriptions(props) {
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
-    return descriptions.map(({ pbotID, name, type, family, genus, species, characterInstances }) => (
+    return (descriptions.length === 0) ? (
+        <div style={style}>
+            No public results were found.
+        </div>
+    ) : descriptions.map(({ pbotID, name, type, family, genus, species, characterInstances }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
             <div style={indent}><b>pbotID:</b>{pbotID}</div>

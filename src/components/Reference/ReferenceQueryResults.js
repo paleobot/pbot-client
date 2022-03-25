@@ -36,7 +36,11 @@ function References(props) {
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
-    return references.map(({ pbotID, title, year, publisher }) => (
+    return (references.length === 0) ? (
+        <div style={style}>
+            No public results were found.
+        </div>
+    ) : references.map(({ pbotID, title, year, publisher }) => (
         <div key={pbotID} style={style}>
             <b>{title}</b>
             <div style={indent}><b>pbotID:</b> {pbotID}</div>
