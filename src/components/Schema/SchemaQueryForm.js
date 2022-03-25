@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
 import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 
 const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
@@ -16,6 +17,7 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 schemaID: '', 
                 title: '', 
                 year: '', 
+                groups: [],
                 includeCharacters: false}}
             validate={values => {
                 const errors = {};
@@ -31,6 +33,7 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 .max(100, 'Must be 100 characters or less'),
                 year: Yup.string()
                 .max(4, 'Must be 4 characters or less'),
+                groups: Yup.array().of(Yup.string())
             })}
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
@@ -67,6 +70,10 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     disabled={false}
                 />
                 <br />
+                
+                <GroupSelect/>
+                <br />
+                
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeCharacters" 

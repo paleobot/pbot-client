@@ -5,6 +5,7 @@ import {
 } from "@apollo/client";
 import Characters from "../Character/Characters";
 import { alphabetize } from '../../util.js';
+import {publicGroupID} from '../Group/GroupSelect.js';
 
 function Schemas(props) {
     console.log(props);
@@ -16,21 +17,29 @@ function Schemas(props) {
     let gQL;
     if (!props.includeCharacters) {
         gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String) {
-                Schema (pbotID: $pbotID, title: $title, year: $year) {
+            query ($pbotID: ID, $title: String, $year: String, $groups: [ID!]) {
+                Schema (pbotID: $pbotID, title: $title, year: $year, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
                     title
                     year
+                    authoredBy {
+                        given
+                        surname
+                    }
                 }            
             }
         `;
     } else {
         gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String) {
-                Schema (pbotID: $pbotID, title: $title, year: $year) {
+            query ($pbotID: ID, $title: String, $year: String, $groups: [ID!]) {
+                Schema (pbotID: $pbotID, title: $title, year: $year, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
                     title
                     year
+                    authoredBy {
+                        given
+                        surname
+                    }
                     characters {
                         pbotID
                         name
@@ -58,19 +67,24 @@ function Schemas(props) {
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
+    const indent2 = {marginLeft:"4em"}
     return (schemas.length === 0) ? (
         <div style={style}>
-            No public results were found.
+            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
-    ) : schemas.map(({ pbotID, title, year, characters }) => (
-        <div key={pbotID} style={style}>
-            <b>{title}</b>
-            <div style={indent}><b>pbotID:</b> {pbotID}</div>
-            <div style={indent}><b>year:</b> {year} </div>
-            {characters && characters.length > 0 &&
+    ) : schemas.map((schema) => (
+        <div key={schema.pbotID} style={style}>
+            <b>{schema.title}</b>
+            <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
+            <div style={indent}><b>year:</b> {schema.year} </div>
+            <div style={indent}><b>authors:</b></div>
+                {alphabetize([...schema.authoredBy], "surname").map(author => (
+                    <div style={indent2}>{author.given} {author.surname}</div>
+                ))}
+            {schema.characters && schema.characters.length > 0 &&
             <div>
                 <div style={indent}><b>characters:</b></div>
-                <Characters characters={characters} />
+                <Characters characters={schema.characters} />
             </div>
             }
             <br />
@@ -88,6 +102,7 @@ const SchemaQueryResults = ({queryParams, queryEntity}) => {
                             pbotID: queryParams.schemaID,
                             title: queryParams.title, 
                             year: queryParams.year, 
+                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
                         includeCharacters={queryParams.includeCharacters} 
                     />

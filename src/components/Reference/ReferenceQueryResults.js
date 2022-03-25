@@ -75,7 +75,6 @@ const ReferenceQueryResults = ({queryParams, queryEntity}) => {
                             title: queryParams.title || null, 
                             year: queryParams.year || null, 
                             publisher: queryParams.publisher || null, 
-                            //groups: queryParams.groups || null, 
                             groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
                     />
