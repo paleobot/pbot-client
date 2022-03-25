@@ -4,6 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import { alphabetize } from '../../util.js';
+import {publicGroupID} from '../Group/GroupSelect.js';
 
 function References(props) {
     console.log(props);
@@ -12,12 +13,17 @@ function References(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
     const gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String, $publisher: String) {
-                Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher) {
+            query ($pbotID: ID, $title: String, $year: String, $publisher: String, $groups: [ID!]) {
+                Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
                     title
                     year
                     publisher
+                    doi
+                    authoredBy {
+                        given
+                        surname
+                    }
                 }
             }
         `;
@@ -36,16 +42,23 @@ function References(props) {
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
+    const indent2 = {marginLeft:"4em"}
     return (references.length === 0) ? (
         <div style={style}>
-            No public results were found.
+            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
-    ) : references.map(({ pbotID, title, year, publisher }) => (
-        <div key={pbotID} style={style}>
-            <b>{title}</b>
-            <div style={indent}><b>pbotID:</b> {pbotID}</div>
-            <div style={indent}><b>publisher:</b> {publisher}</div> 
-            <div style={indent}><b>year:</b> {year} </div>
+    ) : references.map((reference) => (
+        <div key={reference.pbotID} style={style}>
+            <b>{reference.title}</b>
+            <div style={indent}><b>pbotID:</b> {reference.pbotID}</div>
+            <div style={indent}><b>publisher:</b> {reference.publisher}</div> 
+            <div style={indent}><b>year:</b> {reference.year} </div>
+            <div style={indent}><b>doi:</b> {reference.doi || "not specified"} </div>
+            <div style={indent}><b>authors:</b></div>
+                {alphabetize([...reference.authoredBy], "surname").map(author => (
+                    <div style={indent2}>{author.given} {author.surname}</div>
+                ))}
+            
             <br />
         </div>
     ));
@@ -62,6 +75,8 @@ const ReferenceQueryResults = ({queryParams, queryEntity}) => {
                             title: queryParams.title || null, 
                             year: queryParams.year || null, 
                             publisher: queryParams.publisher || null, 
+                            //groups: queryParams.groups || null, 
+                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
                     />
                 ) : 
