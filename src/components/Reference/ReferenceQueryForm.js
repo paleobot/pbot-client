@@ -3,11 +3,11 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
 import { TextField, CheckboxWithLabel } from 'formik-material-ui';
-
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
-   
+    
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
@@ -17,6 +17,7 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
                 title: '', 
                 year: '', 
                 publisher: '',
+                groups: [],
             }}
             validate={values => {
                 const errors = {};
@@ -34,6 +35,7 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
                 .max(4, 'Must be 4 characters or less'),
                 publisher: Yup.string()
                 .max(50, 'Must be 50 characters or less'),
+                groups: Yup.array().of(Yup.string())
             })}
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
@@ -80,6 +82,9 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
                 />
                 <br />
                 
+                <GroupSelect/>
+                <br />
+
                 <br />
                 <br />
 
