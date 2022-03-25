@@ -70,12 +70,16 @@ const GroupSelect = (props) => {
 const MemberSelect = (props) => {
     console.log("MemberSelect");
 
+    const me = localStorage.getItem('PBOTMe');
+    console.log(me);
+    
     const gQL = gql`
             query {
                 Person (
                     filter: {
                         AND: [
-                            {password_regexp: ".*"}, 
+                            {password_regexp: ".*"},
+                            {email_not: "${me}"},
                             {
                                 AND: [{given_not: "guest"}, {surname_not: "guest"}]
                             }
@@ -159,7 +163,7 @@ const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             }}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
-                members: Yup.array().of(Yup.string()).min(1, "at least one member required"),
+                members: Yup.array().of(Yup.string())//.min(1, "at least one member required"),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));

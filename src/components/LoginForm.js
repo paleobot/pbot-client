@@ -85,6 +85,7 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
         if (loginResult.ok) {
             localStorage.setItem('PBOTMutationToken', loginResult.token);
             setToken(loginResult.token);
+            localStorage.setItem('PBOTMe', values.userName);
         } else {
             console.log("else");
             setStatus({error: loginResult.message}); //TODO: figure out how Formik setStatus works

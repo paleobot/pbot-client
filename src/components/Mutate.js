@@ -43,6 +43,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
     const handleLogout = () => {
         localStorage.removeItem('PBOTMutationToken');
         setToken(localStorage.getItem('PBOTMutationToken'));
+        localStorage.removeItem('PBOTMe');
     }
 
     if(!token) {
