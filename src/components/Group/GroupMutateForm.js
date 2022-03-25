@@ -15,7 +15,7 @@ const GroupSelect = (props) => {
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
     const gQL = gql`
         query {
-            Group {
+            Group (filter: {name_not: "public"}) {
                 pbotID
                 name
                 members {
@@ -67,6 +67,7 @@ const GroupSelect = (props) => {
         </Field>
     )
 }
+
 const MemberSelect = (props) => {
     console.log("MemberSelect");
 
