@@ -20,7 +20,7 @@ function Descriptions(props) {
     const indent = {marginLeft:"2em"}
     return (descriptions.length === 0) ? (
         <div style={style}>
-            No public results were found.
+            No {(props.public) ? "public" : ""} results were found.
         </div>
     ) : descriptions.map(({ pbotID, name, type, family, genus, species, characterInstances }) => (
         <div key={pbotID} style={style}>

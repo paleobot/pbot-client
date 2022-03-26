@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup } from 'formik-material-ui';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 
 const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
@@ -18,6 +19,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 family: '', 
                 genus: '', 
                 species: '',
+                groups: [],
                 includeComplex: false}}
             validate={values => {
                 const errors = {};
@@ -35,6 +37,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 .max(30, 'Must be 30 characters or less'),
                 species: Yup.string()
                 .max(30, 'Must be 30 characters or less'),
+                groups: Yup.array().of(Yup.string())
             })}
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
@@ -120,6 +123,9 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 </div>
                 }
                 
+                <GroupSelect/>
+                <br />
+
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeComplex" 

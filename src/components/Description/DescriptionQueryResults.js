@@ -4,6 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import Descriptions from "./Descriptions.js";
+import {publicGroupID} from '../Group/GroupSelect.js';
 
 function DescriptionList(props) {
     console.log("DescriptionList");
@@ -16,8 +17,8 @@ function DescriptionList(props) {
     let descriptionGQL;
     if (!props.includeComplex) {
         descriptionGQL = gql`
-            query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String) {
-                Description (type: $type, pbotID: $pbotID, family: $family, genus: $genus, species: $species) {
+            query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!]) {
+                Description (type: $type, pbotID: $pbotID, family: $family, genus: $genus, species: $species, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
                     name
                     family
@@ -28,8 +29,8 @@ function DescriptionList(props) {
         `;
     } else {
         descriptionGQL = gql`
-            query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String) {
-                Description (type: $type, pbotID: $pbotID, family: $family, genus: $genus, species: $species) {
+            query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!]) {
+                Description (type: $type, pbotID: $pbotID, family: $family, genus: $genus, species: $species, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
                     type
                     name
@@ -64,7 +65,7 @@ function DescriptionList(props) {
     if (error) return <p>Error :(</p>;
            
     return (
-        <Descriptions descriptions={data.Description}/>
+        <Descriptions public={(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0])} descriptions={data.Description}/>
     );
 
 }
@@ -80,6 +81,7 @@ const DescriptionQueryResults = ({queryParams, queryEntity}) => {
                             family: queryParams.family || null, 
                             genus: queryParams.genus || null, 
                             species: queryParams.species || null, 
+                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
                         includeComplex={queryParams.includeComplex} 
                     />
