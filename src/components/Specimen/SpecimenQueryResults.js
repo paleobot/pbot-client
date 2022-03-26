@@ -5,6 +5,7 @@ import {
 } from "@apollo/client";
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize } from '../../util.js';
+import {publicGroupID} from '../Group/GroupSelect.js';
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
@@ -16,8 +17,8 @@ function Specimens(props) {
     let gQL;
     if (!props.includeComplex) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $locality: String) {
-                Specimen (pbotID: $pbotID, name: $name, locality: $locality) {
+            query ($pbotID: ID, $name: String, $locality: String, $groups: [ID!]) {
+                Specimen (pbotID: $pbotID, name: $name, locality: $locality, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
                     name
                     organ {
@@ -38,8 +39,8 @@ function Specimens(props) {
         `;
     } else {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $locality: String) {
-                Specimen (pbotID: $pbotID, name: $name, locality: $locality) {
+            query ($pbotID: ID, $name: String, $locality: String, $groups: [ID!]) {
+                Specimen (pbotID: $pbotID, name: $name, locality: $locality, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
                     name
                     organ {
@@ -110,7 +111,7 @@ function Specimens(props) {
     const indent = {marginLeft:"2em"}
     return (specimens.length === 0) ? (
         <div style={style}>
-            No public results were found.
+            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
     ) : specimens.map(({ pbotID, name, organ, description, archtypeDescription }) => (
         <div key={pbotID} style={style}>
@@ -147,6 +148,7 @@ const SpecimenQueryResults = ({queryParams, queryEntity}) => {
                             pbotID: queryParams.specimenID,
                             name: queryParams.name, 
                             locality: queryParams.locality, 
+                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
                         includeComplex={queryParams.includeComplex} 
                     />

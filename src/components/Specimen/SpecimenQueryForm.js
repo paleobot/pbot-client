@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
 import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 
 const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
@@ -16,6 +17,7 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 specimenID: '', 
                 name: '', 
                 locality: '', 
+                groups: [],
                 includeComplex: false}}
             validate={values => {
                 const errors = {};
@@ -31,6 +33,7 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 .max(30, 'Must be 30 characters or less'),
                 locality: Yup.string()
                 .max(30, 'Must be 30 characters or less'),
+                groups: Yup.array().of(Yup.string())
             })}
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
@@ -67,6 +70,10 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                     disabled={false}
                 />
                 <br />
+                
+                <GroupSelect/>
+                <br />
+                
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeComplex" 
