@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
 import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import {GroupSelect} from '../Group/GroupSelect.js';
 
 
 const PersonQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
@@ -18,6 +19,7 @@ const PersonQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 surname: '', 
                 email: '',
                 orcid: '',
+                groups: [],
             }}
             validate={values => {
                 const errors = {};
@@ -37,6 +39,7 @@ const PersonQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 .max(50, 'Must be 50 characters or less'),
                 orcid: Yup.string()
                 .max(50, 'Must be 50 characters or less'),
+                groups: Yup.array().of(Yup.string())
             })}
             onSubmit={values => {
                 //alert(JSON.stringify(values, null, 2));
@@ -92,6 +95,9 @@ const PersonQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 />
                 <br />
                 
+                <GroupSelect/>
+                <br />
+
                 <br />
                 <br />
 

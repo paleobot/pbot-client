@@ -4,6 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import { alphabetize } from '../../util.js';
+import {publicGroupID} from '../Group/GroupSelect.js';
 
 function Persons(props) {
     console.log(props);
@@ -12,8 +13,8 @@ function Persons(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
     const gQL = gql`
-            query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String) {
-                Person (pbotID: $pbotID, given: $given, surname: $surname, email: $email, orcid: $orcid) {
+            query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String, $groups: [ID!]) {
+                Person (pbotID: $pbotID, given: $given, surname: $surname, email: $email, orcid: $orcid, filter:{memberOf_some: {pbotID_in: $groups}}) {
                     pbotID
                     given
                     surname
@@ -39,7 +40,7 @@ function Persons(props) {
     const indent = {marginLeft:"2em"}
     return (people.length === 0) ? (
         <div style={style}>
-            No public results were found.
+            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
     ) : people.map((person) => (
         <div key={person.pbotID} style={style}>
@@ -64,6 +65,7 @@ const PersonQueryResults = ({queryParams, queryEntity}) => {
                             surname: queryParams.surname || null, 
                             email: queryParams.email || null, 
                             orcid: queryParams.orcid || null, 
+                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
                     />
                 ) : 
