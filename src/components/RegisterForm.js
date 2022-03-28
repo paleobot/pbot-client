@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button } from '@material-ui/core';
+import { Grid, Button } from '@material-ui/core';
 import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 
 const host = window.location.host;
@@ -39,6 +39,10 @@ const RegisterForm = ({ setShowRegistration }) => {
         })
     }
     
+    const handleCancel = () => {       
+        setShowRegistration(false);
+    }
+            
     const handleSubmit = async (values, {setStatus}) => {
         console.log(values.givenName);
         
@@ -172,7 +176,15 @@ const RegisterForm = ({ setShowRegistration }) => {
                 <br />
                 <br />
 
-                <Button type="submit" variant="contained" color="primary">Register</Button>
+                <Grid container spacing={1}>
+                    <Grid item>
+                    <Button type="submit" variant="contained" color="primary">Register</Button>
+                    </Grid>
+                    <Grid item>
+                    <Button type="button" variant="text" color="secondary" onClick={handleCancel}>Cancel</Button>
+                    </Grid>
+                </Grid>
+            
                 <br />
                 <br />
                 {status && status.error && (
