@@ -15,6 +15,7 @@ import CharacterMutateResults from './Character/CharacterMutateResults';
 import StateMutateResults from './State/StateMutateResults';
 import PersonMutateResults from './Person/PersonMutateResults';
 import GroupMutateResults from './Group/GroupMutateResults';
+import CollectionMutateResults from './Collection/CollectionMutateResults';
 
 const Result = ({queryParams, queryEntity}) => {
 
@@ -42,6 +43,9 @@ const Result = ({queryParams, queryEntity}) => {
         ) : 
         queryEntity === "Specimen-mutate" ? (
             <SpecimenMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "Collection-mutate" ? (
+            <CollectionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         queryEntity === "Organ-mutate" ? (
             <OrganMutateResults queryParams={queryParams} queryEntity={queryEntity}/>

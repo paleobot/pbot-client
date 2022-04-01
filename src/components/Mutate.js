@@ -13,6 +13,7 @@ import CharacterMutateForm from './Character/CharacterMutateForm';
 import StateMutateForm from './State/StateMutateForm';
 import PersonMutateForm from './Person/PersonMutateForm';
 import GroupMutateForm from './Group/GroupMutateForm';
+import CollectionMutateForm from './Collection/CollectionMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import EditIcon from '@material-ui/icons/Edit';
@@ -64,6 +65,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
+                        <FormControlLabel value="Collection-mutate" control={<Radio />} label="Collection" labelPlacement="end" />
                         <Divider />
                         <FormControlLabel value="Reference-mutate" control={<Radio />} label="Reference" labelPlacement="end" />
                         <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" />
@@ -106,6 +108,10 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     
                     <div hidden={selectedForm !== "Specimen-mutate"}>
                         <SpecimenMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                    </div>
+
+                    <div hidden={selectedForm !== "Collection-mutate"}>
+                        <CollectionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "Reference-mutate"}>
