@@ -21,7 +21,7 @@ const SchemaSelect = (props) => {
                 pbotID
                 title
                 year
-                cites {
+                references {
                     pbotID
                 }
                 authoredBy {
