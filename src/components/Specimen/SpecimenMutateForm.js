@@ -27,22 +27,25 @@ const SpecimenSelect = (props) => {
                     pbdboccid
                     organ {
                         pbotID
-                        type
                     }
                     description {
                       	Description {
                         	pbotID
-                        	name
                       	}
                     }
                     archtypeDescription {
                       	Description {
                         	pbotID
-                        	name
                         }
                     }
                     elementOf {
                         name
+                        pbotID
+                    }
+                    collection {
+                        pbotID
+                    }
+                    references {
                         pbotID
                     }
                 }            
@@ -87,6 +90,8 @@ const SpecimenSelect = (props) => {
                 props.values.public = "true"=== event.currentTarget.dataset.public || false;
                 props.values.origPublic = props.values.public;
                 props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
+                props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
+                props.values.collection = event.currentTarget.dataset.collection ? event.currentTarget.dataset.collection : '';
                 props.handleChange(event);
             }}
         >
@@ -105,6 +110,8 @@ const SpecimenSelect = (props) => {
                     data-pbdboccid={specimen.pbdboccid}
                     data-public={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
+                    data-references={specimen.references ? JSON.stringify(specimen.references.map(reference => reference.pbotID)) : null}
+                    data-collection={specimen.collection ? specimen.collection.pbotID : ''}
                 >{specimen.name}</MenuItem>
             ))}
         </Field>

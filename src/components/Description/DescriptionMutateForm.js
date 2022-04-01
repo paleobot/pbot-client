@@ -38,6 +38,9 @@ const DescriptionSelect = (props) => {
                         name
                         pbotID
                     }
+                    references {
+                        pbotID
+                    }
                 }            
             }
         `;
@@ -100,6 +103,7 @@ const DescriptionSelect = (props) => {
                 props.values.public = "true"=== event.currentTarget.dataset.public || false;
                 props.values.origPublic = props.values.public;
                 props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
+                props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
                 //props.resetForm();
                 props.handleChange(event);
             }}
@@ -117,6 +121,7 @@ const DescriptionSelect = (props) => {
                     data-specimen={description.specimen ? description.specimen.Specimen.pbotID : ''}
                     data-public={description.elementOf && description.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
+                    data-references={description.references ? JSON.stringify(description.references.map(reference => reference.pbotID)) : null}
                 >{description.name}</MenuItem>
             ))}
         </Field>
