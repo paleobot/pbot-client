@@ -10,6 +10,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                         params={{
                             pbotID: queryParams.specimen || null,
                             name: queryParams.name || null,
+                            references: queryParams.references || null,
                             locality: queryParams.locality || null,
                             organID: queryParams.organ || null,
                             preservationMode: queryParams.preservationMode || null,
@@ -18,6 +19,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                             idigbiouuid: queryParams.idigbiouuid || null,
                             pbdbcid: queryParams.pbdbcid || null,
                             pbdboccid: queryParams.pbdboccid || null,
+                            collection: queryParams.collection || null,
                             groups: queryParams.public ? 
                                 [publicGroupID] : queryParams.groups || null,
                         }}

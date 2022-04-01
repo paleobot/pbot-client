@@ -14,6 +14,7 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                                 type: queryParams.type || null,
                                 specimenID: queryParams.specimen || null,
                                 schemaID: queryParams.schema || null,
+                                references: queryParams.references || null,
                                 family: queryParams.family || null, 
                                 genus: queryParams.genus || null, 
                                 species: queryParams.species || null, 

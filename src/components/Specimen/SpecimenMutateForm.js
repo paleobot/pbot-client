@@ -5,6 +5,7 @@ import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, M
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
+import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
 
 import {
   useQuery,
@@ -105,6 +106,50 @@ const SpecimenSelect = (props) => {
                     data-public={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
                 >{specimen.name}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const CollectionSelect = (props) => {
+    console.log("CollectionSelect");
+    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    const gQL = gql`
+        query {
+            Collection {
+                pbotID
+                name
+            }            
+        }
+    `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                      
+    const collections = alphabetize([...data.Collection], "name");
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="collection"
+            label="Collection"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {collections.map((collection) => (
+                <MenuItem 
+                    key={collection.pbotID} 
+                    value={collection.pbotID}
+                >{collection.name}</MenuItem>
             ))}
         </Field>
     )
@@ -258,7 +303,9 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
+                references: [],
                 public: true,
+                collection: '',
                 groups: [],
                 mode: mode,
     };    
@@ -290,6 +337,8 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 preservationMode: Yup.string(),
                 locality: Yup.string(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
+                references: Yup.array().of(Yup.string()),
+                collection: Yup.string(),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -336,6 +385,9 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     </Field>
                     <br />
                     
+                    <ReferenceSelect />
+                    <br />
+
                     <Field
                         component={TextField}
                         type="text"
@@ -400,6 +452,9 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     </Field>
                     <br />
                     
+                    <CollectionSelect />
+                    <br />
+
                     <Field 
                         component={CheckboxWithLabel}
                         name="public" 

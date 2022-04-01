@@ -5,6 +5,7 @@ import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, M
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
+import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
 
 import {
   useQuery,
@@ -211,6 +212,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 description: '',
                 type: '',
                 schema: '',
+                references: [],
                 specimen: '',
                 family: '', 
                 genus: '', 
@@ -252,6 +254,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 //    is: (val) => val === "specimen",
                 //    then: Yup.string().required()
                 //}),
+                references: Yup.array().of(Yup.string()),
                 family: Yup.string().when("type", {
                     is: (val) => val === "OTU",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
@@ -333,6 +336,9 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 <SchemaSelect />
                 <br />
                 
+                <ReferenceSelect />
+                <br />
+
                 {props.values.type === "specimen" &&
                     <div>
                     <SpecimenSelect handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
