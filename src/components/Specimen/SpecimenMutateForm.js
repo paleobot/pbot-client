@@ -6,6 +6,7 @@ import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-materia
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
+import {CollectionSelect} from '../Collection/CollectionSelect.js';
 
 import {
   useQuery,
@@ -113,50 +114,6 @@ const SpecimenSelect = (props) => {
                     data-references={specimen.references ? JSON.stringify(specimen.references.map(reference => reference.pbotID)) : null}
                     data-collection={specimen.collection ? specimen.collection.pbotID : ''}
                 >{specimen.name}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
-const CollectionSelect = (props) => {
-    console.log("CollectionSelect");
-    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
-    const gQL = gql`
-        query {
-            Collection {
-                pbotID
-                name
-            }            
-        }
-    `;
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                      
-    const collections = alphabetize([...data.Collection], "name");
-    
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="collection"
-            label="Collection"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {collections.map((collection) => (
-                <MenuItem 
-                    key={collection.pbotID} 
-                    value={collection.pbotID}
-                >{collection.name}</MenuItem>
             ))}
         </Field>
     )
