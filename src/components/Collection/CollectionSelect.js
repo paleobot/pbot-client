@@ -42,6 +42,10 @@ export const CollectionSelect = (props) => {
             }}
             disabled={false}
         >
+                <MenuItem 
+                    key="" 
+                    value=""
+                >&nbsp;</MenuItem>
             {collections.map((collection) => (
                 <MenuItem 
                     key={collection.pbotID} 
