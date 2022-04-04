@@ -8,57 +8,45 @@ import {
   gql
 } from "@apollo/client";
 
-export let publicGroupID;
-
-export const GroupSelect = (props) => {
-    console.log("GroupSelect");
+export const CollectionSelect = (props) => {
+    console.log("CollectionSelect");
+    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
     const gQL = gql`
-            query {
-                Group {
-                    pbotID
-                    name
-                }            
-            }
-        `;
+        query {
+            Collection {
+                pbotID
+                name
+            }            
+        }
+    `;
 
     const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-                                 
-    console.log(data.Group);
+                      
+    const collections = alphabetize([...data.Collection], "name");
     
-    
-    const groups = alphabetize(
-        data.Group.reduce((acc, group) => {
-            const newGroup = {...group};
-            console.log(newGroup);
-            if ("public" === newGroup.name) {
-                publicGroupID = newGroup.pbotID;
-                return acc;
-            } else {
-                return acc.concat(newGroup);
-            }
-        }, []), 
-    "name");
-    console.log(groups)
-    console.log(publicGroupID);
-    
+    const style = {minWidth: "12ch"}
     return (
         <Field
+            style={style}
             component={TextField}
             type="text"
-            name="groups"
-            label="Groups"
+            name="collection"
+            label="Collection"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: true,
+                multiple: false,
             }}
             disabled={false}
         >
-            {groups.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
+            {collections.map((collection) => (
+                <MenuItem 
+                    key={collection.pbotID} 
+                    value={collection.pbotID}
+                >{collection.name}</MenuItem>
             ))}
         </Field>
     )
