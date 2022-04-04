@@ -17,8 +17,13 @@ function Specimens(props) {
     let gQL;
     if (!props.includeComplex) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $locality: String, $groups: [ID!]) {
-                Specimen (pbotID: $pbotID, name: $name, locality: $locality, filter:{elementOf_some: {pbotID_in: $groups}}) {
+            query ($pbotID: ID, $name: String, $locality: String, $groups: [ID!] ${filters.collection ? ", $collection: ID" : ""}) {
+                Specimen (pbotID: $pbotID, name: $name, locality: $locality, filter: {
+                    ${filters.collection ?
+                        "AND: [{elementOf_some: {pbotID_in: $groups}}, {collection: {pbotID: $collection}}]" : 
+                        "elementOf_some: {pbotID_in: $groups}"
+                    }
+                }) {
                     pbotID
                     name
                     organ {
@@ -39,8 +44,13 @@ function Specimens(props) {
         `;
     } else {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $locality: String, $groups: [ID!]) {
-                Specimen (pbotID: $pbotID, name: $name, locality: $locality, filter:{elementOf_some: {pbotID_in: $groups}}) {
+            query ($pbotID: ID, $name: String, $locality: String, $groups: [ID!] ${filters.collection ? ", $collection: ID" : ""}) {
+                Specimen (pbotID: $pbotID, name: $name, locality: $locality, filter: {
+                    ${filters.collection ?
+                        "AND: [{elementOf_some: {pbotID_in: $groups}}, {collection: {pbotID: $collection}}]" : 
+                        "elementOf_some: {pbotID_in: $groups}"
+                    }
+                }) {
                     pbotID
                     name
                     organ {
@@ -148,6 +158,7 @@ const SpecimenQueryResults = ({queryParams, queryEntity}) => {
                             pbotID: queryParams.specimenID,
                             name: queryParams.name, 
                             locality: queryParams.locality, 
+                            collection: queryParams.collection || null, 
                             groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
                         includeComplex={queryParams.includeComplex} 

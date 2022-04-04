@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
 import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import {GroupSelect} from '../Group/GroupSelect.js';
-
+import {CollectionSelect} from '../Collection/CollectionSelect.js';
 
 const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
@@ -17,6 +17,7 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 specimenID: '', 
                 name: '', 
                 locality: '', 
+                collection: '',
                 groups: [],
                 includeComplex: false}}
             validate={values => {
@@ -33,6 +34,7 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 .max(30, 'Must be 30 characters or less'),
                 locality: Yup.string()
                 .max(30, 'Must be 30 characters or less'),
+                collection: Yup.string(),
                 groups: Yup.array().of(Yup.string())
             })}
             onSubmit={values => {
@@ -71,6 +73,9 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 />
                 <br />
                 
+                <CollectionSelect />
+                <br />
+
                 <GroupSelect/>
                 <br />
                 
