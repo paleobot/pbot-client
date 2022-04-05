@@ -156,8 +156,11 @@ const CollectionMutateForm = ({queryParams, handleQueryParamChange, showResult, 
             }}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
-                specimens: Yup.array().of(Yup.string()),//.min(1, "at least one member required"),
-                references: Yup.array().of(Yup.string())//.min(1, "at least one member required"),
+                specimens: Yup.array().of(Yup.string()).when('public', {
+                    is: true,
+                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one specimen for a public collection")
+                }),
+                references: Yup.array().of(Yup.string()).min(1, "At least one reference required"),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
