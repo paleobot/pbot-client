@@ -143,6 +143,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 schema: '', 
                 title: '',
                 year: '',
+                acknowledgments: '',
                 references: [],
                 authors: [],
                 public: true,
@@ -176,6 +177,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
             validationSchema={Yup.object({
                 title: Yup.string().required(),
                 year: Yup.date().required(),
+                acknowledgments: Yup.string(),
                 authors: Yup.array().of(Yup.string()).required(),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
@@ -226,6 +228,16 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                     type="text"
                     name="year"
                     label="Year"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
+
+                <Field
+                    component={TextField}
+                    type="text"
+                    name="acknowledgments"
+                    label="Acknowledgments"
                     fullWidth 
                     disabled={false}
                 />

@@ -22,6 +22,7 @@ function Schemas(props) {
                     pbotID
                     title
                     year
+                    acknowledgments
                     authoredBy {
                         given
                         surname
@@ -36,6 +37,7 @@ function Schemas(props) {
                     pbotID
                     title
                     year
+                    acknowledgments
                     authoredBy {
                         given
                         surname
@@ -77,15 +79,20 @@ function Schemas(props) {
             <b>{schema.title}</b>
             <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
             <div style={indent}><b>year:</b> {schema.year} </div>
-            <div style={indent}><b>authors:</b></div>
-                {alphabetize([...schema.authoredBy], "surname").map(author => (
-                    <div style={indent2}>{author.given} {author.surname}</div>
-                ))}
+            {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
+            {schema.authoredBy && schema.authoredBy.length > 0 &&
+                <div>
+                    <div style={indent}><b>authors:</b></div>
+                    {alphabetize([...schema.authoredBy], "surname").map(author => (
+                        <div style={indent2}>{author.given} {author.surname}</div>
+                    ))}
+                </div>
+            }
             {schema.characters && schema.characters.length > 0 &&
-            <div>
-                <div style={indent}><b>characters:</b></div>
-                <Characters characters={schema.characters} />
-            </div>
+                <div>
+                    <div style={indent}><b>characters:</b></div>
+                    <Characters characters={schema.characters} />
+                </div>
             }
             <br />
         </div>

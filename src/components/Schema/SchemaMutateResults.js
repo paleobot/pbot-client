@@ -13,6 +13,7 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
                             pbotID: queryParams.schema || null,
                             title: queryParams.title || null,
                             year: queryParams.year || null,
+                            acknowledgments: queryParams.acknowledgments || null,
                             authors: queryParams.authors || null, //.split(", "),
                             references: queryParams.references || null,
                             groups: queryParams.public ? 
