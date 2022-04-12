@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
@@ -89,6 +89,8 @@ const SchemaSelect = (props) => {
 
 const AuthorSelect = (props) => {
     console.log("AuthorSelect");
+    console.log(props);
+    console.log(props.name);
     const gQL = gql`
             query {
                 Person (filter: {AND: [{given_not: "guest"}, {surname_not: "guest"}]}) {
@@ -121,12 +123,12 @@ const AuthorSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="authors"
-            label="Authors"
+            name={props.name}
+            label="Name"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: true,
+                multiple: false,
             }}
             disabled={false}
         >
@@ -145,7 +147,10 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 year: '',
                 acknowledgments: '',
                 references: [],
-                authors: [],
+                authors: [{
+                    name: '',
+                    order:'',
+                }],
                 public: true,
                 groups: [],
                 cascade: false,
@@ -178,7 +183,15 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 title: Yup.string().required(),
                 year: Yup.date().required(),
                 acknowledgments: Yup.string(),
-                authors: Yup.array().of(Yup.string()).required(),
+                //authors: Yup.array().of(Yup.string()).min(1, "Must specify at least one author"),
+                authors: Yup.array().of(
+                    Yup.object().shape({
+                        name: Yup.string()
+                            .required('Author name is required'),
+                        order: Yup.string()
+                            .required('Author order is required')
+                    })
+                ).min(1, "Must specify at least one author"),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -246,9 +259,61 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 <ReferenceSelect />
                 <br />
                 
-
-                <AuthorSelect />
                 <br />
+                <InputLabel>
+                    Authors
+                </InputLabel>
+                <FieldArray name="authors">
+                    {({ insert, remove, push }) => (
+                    <div>
+                    <Grid container direction="column">
+                        {props.values.authors.length > 0 &&
+                            props.values.authors.map((author, index) => { 
+                                //props.values.authors[index].order = index+1; 
+                                return (
+                                    <Grid container spacing={2} direction="row" key={index}>
+                                        <Grid item xs={6}>
+                                            <AuthorSelect name={`authors.${index}.name`}/>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <Field
+                                                component={TextField}
+                                                name={`authors.${index}.order`}
+                                                label="Order"
+                                                type="text"
+                                                //disabled={props.values.authors[index].name === ''}
+                                            />
+                                        </Grid>
+                                        {index > 0 &&
+                                        <Grid item xs={3}>
+                                            <Button
+                                                type="button"
+                                                variant="text" 
+                                                color="secondary" 
+                                                size="large"
+                                                onClick={() => remove(index)}
+                                                //disabled={props.values.authors[index].name === ''}
+                                            >
+                                                X
+                                            </Button>
+                                        </Grid>
+                                        }
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                        <Button
+                            type="button"
+                            variant="text" 
+                            color="secondary" 
+                            onClick={() => push({ name: '', order: '' })}
+                            disabled={props.values.authors.length !== 0 && props.values.authors[props.values.authors.length-1].name === ''}
+                        >
+                            Add author
+                        </Button>
+                    </div>
+                    )}
+                </FieldArray>
 
                 <Field 
                     component={CheckboxWithLabel}
