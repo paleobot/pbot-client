@@ -6,7 +6,7 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
     console.log("SchemaMutateResults");
     console.log(queryParams);
     console.log(queryParams.authors);
-
+    
     let schemas = queryEntity === "Schema-mutate" ? (
                     <Mutator
                         params={{
@@ -14,8 +14,8 @@ const SchemaMutateResults = ({queryParams, queryEntity}) => {
                             title: queryParams.title || null,
                             year: queryParams.year || null,
                             acknowledgments: queryParams.acknowledgments || null,
-                            //authors: queryParams.authors || null, 
-                            authors: queryParams.authors.map(author => author.name) || null, 
+                            authors: queryParams.authors || null, 
+                            //authors: queryParams.authors.map(author => author.name) || null, 
                             references: queryParams.references || null,
                             groups: queryParams.public ? 
                                 [publicGroupID] : queryParams.groups || null,

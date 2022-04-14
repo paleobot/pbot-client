@@ -148,7 +148,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 acknowledgments: '',
                 references: [],
                 authors: [{
-                    name: '',
+                    pbotID: '',
                     order:'',
                 }],
                 public: true,
@@ -186,7 +186,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 //authors: Yup.array().of(Yup.string()).min(1, "Must specify at least one author"),
                 authors: Yup.array().of(
                     Yup.object().shape({
-                        name: Yup.string()
+                        pbotID: Yup.string()
                             .required('Author name is required'),
                         order: Yup.string()
                             .required('Author order is required')
@@ -273,7 +273,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                                 return (
                                     <Grid container spacing={2} direction="row" key={index}>
                                         <Grid item xs={6}>
-                                            <AuthorSelect name={`authors.${index}.name`}/>
+                                            <AuthorSelect name={`authors.${index}.pbotID`}/>
                                         </Grid>
                                         <Grid item xs={3}>
                                             <Field
@@ -306,8 +306,8 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                             type="button"
                             variant="text" 
                             color="secondary" 
-                            onClick={() => push({ name: '', order: '' })}
-                            disabled={props.values.authors.length !== 0 && props.values.authors[props.values.authors.length-1].name === ''}
+                            onClick={() => push({ pbotID: '', order: '' })}
+                            disabled={props.values.authors.length !== 0 && props.values.authors[props.values.authors.length-1].pbotID === ''}
                         >
                             Add author
                         </Button>
