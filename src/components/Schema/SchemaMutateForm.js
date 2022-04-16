@@ -25,7 +25,10 @@ const SchemaSelect = (props) => {
                     pbotID
                 }
                 authoredBy {
-                    pbotID
+                    Person {
+                        pbotID
+                    }
+                    order
                 }
                 elementOf {
                     name
@@ -77,8 +80,8 @@ const SchemaSelect = (props) => {
                     value={schema.pbotID}
                     data-title={schema.title}
                     data-year={schema.year}
-                    data-references={schema.cites ? JSON.stringify(schema.cites.map(reference => reference.pbotID)) : null}
-                    data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => author.pbotID)) : null}
+                    data-references={schema.references ? JSON.stringify(schema.references.map(reference => reference.pbotID)) : null}
+                    data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
                     data-public={schema.elementOf && schema.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
                 >{schema.title}</MenuItem>
