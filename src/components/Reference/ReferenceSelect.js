@@ -45,12 +45,12 @@ export const ReferenceSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="references"
+            name={props.name || "references"}
             label="Reference"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: true,
+                multiple: false,
             }}
             disabled={false}
         >

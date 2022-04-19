@@ -22,7 +22,10 @@ const SchemaSelect = (props) => {
                 title
                 year
                 references {
-                    pbotID
+                    Reference {
+                        pbotID
+                    }
+                    order
                 }
                 authoredBy {
                     Person {
@@ -80,7 +83,7 @@ const SchemaSelect = (props) => {
                     value={schema.pbotID}
                     data-title={schema.title}
                     data-year={schema.year}
-                    data-references={schema.references ? JSON.stringify(schema.references.map(reference => reference.pbotID)) : null}
+                    data-references={schema.references ? JSON.stringify(schema.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                     data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
                     data-public={schema.elementOf && schema.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
@@ -149,7 +152,10 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 title: '',
                 year: '',
                 acknowledgments: '',
-                references: [],
+                references: [{
+                    pbotID: '',
+                    order:'',
+                }],
                 authors: [{
                     pbotID: '',
                     order:'',
@@ -186,6 +192,14 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 title: Yup.string().required(),
                 year: Yup.date().required(),
                 acknowledgments: Yup.string(),
+                references: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Reference name is required'),
+                        order: Yup.string()
+                            .required('Reference order is required')
+                    })
+                ),
                 //authors: Yup.array().of(Yup.string()).min(1, "Must specify at least one author"),
                 authors: Yup.array().of(
                     Yup.object().shape({
@@ -259,8 +273,58 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 />
                 <br />
 
-                <ReferenceSelect />
                 <br />
+                <InputLabel>
+                    References
+                </InputLabel>
+                <FieldArray name="references">
+                    {({ insert, remove, push }) => (
+                    <div>
+                    <Grid container direction="column">
+                        {props.values.references.length > 0 &&
+                            props.values.references.map((reference, index) => { 
+                                return (
+                                    <Grid container spacing={2} direction="row" key={index}>
+                                        <Grid item xs={6}>
+                                            <ReferenceSelect name={`references.${index}.pbotID`}/>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <Field
+                                                component={TextField}
+                                                name={`references.${index}.order`}
+                                                label="Order"
+                                                type="text"
+                                            />
+                                        </Grid>
+                                        {index > 0 &&
+                                        <Grid item xs={3}>
+                                            <Button
+                                                type="button"
+                                                variant="text" 
+                                                color="secondary" 
+                                                size="large"
+                                                onClick={() => remove(index)}
+                                            >
+                                                X
+                                            </Button>
+                                        </Grid>
+                                        }
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                        <Button
+                            type="button"
+                            variant="text" 
+                            color="secondary" 
+                            onClick={() => push({ pbotID: '', order: '' })}
+                            disabled={props.values.references.length !== 0 && props.values.references[props.values.references.length-1].pbotID === ''}
+                        >
+                            Add reference
+                        </Button>
+                    </div>
+                    )}
+                </FieldArray>
                 
                 <br />
                 <InputLabel>
