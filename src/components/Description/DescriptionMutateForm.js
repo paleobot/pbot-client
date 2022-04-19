@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
@@ -39,7 +39,10 @@ const DescriptionSelect = (props) => {
                         pbotID
                     }
                     references {
-                        pbotID
+                        Reference {
+                            pbotID
+                        }
+                        order
                     }
                 }            
             }
@@ -121,7 +124,7 @@ const DescriptionSelect = (props) => {
                     data-specimen={description.specimen ? description.specimen.Specimen.pbotID : ''}
                     data-public={description.elementOf && description.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
-                    data-references={description.references ? JSON.stringify(description.references.map(reference => reference.pbotID)) : null}
+                    data-references={description.references ? JSON.stringify(description.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                 >{description.name}</MenuItem>
             ))}
         </Field>
@@ -217,7 +220,10 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 description: '',
                 type: '',
                 schema: '',
-                references: [],
+                references: [{
+                    pbotID: '',
+                    order:'',
+                }],
                 specimen: '',
                 family: '', 
                 genus: '', 
@@ -259,7 +265,14 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 //    is: (val) => val === "specimen",
                 //    then: Yup.string().required()
                 //}),
-                references: Yup.array().of(Yup.string()),
+                references: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Reference name is required'),
+                        order: Yup.string()
+                            .required('Reference order is required')
+                    })
+                ),
                 family: Yup.string().when("type", {
                     is: (val) => val === "OTU",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
@@ -308,15 +321,6 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 {(mode === "create" || (mode === "edit" && props.values.description !== '')) &&
                 <div>
                 
-                <Field 
-                    component={TextField}
-                    name="name" 
-                    type="text" 
-                    label="Name"
-                    fullWidth
-                    disabled={false}
-                />
-                
                 <Field
                     component={TextField}
                     type="text"
@@ -338,11 +342,70 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 </Field>
                 <br />
 
+                <Field 
+                    component={TextField}
+                    name="name" 
+                    type="text" 
+                    label="Name"
+                    fullWidth
+                    disabled={false}
+                />
+                
                 <SchemaSelect />
                 <br />
                 
-                <ReferenceSelect />
                 <br />
+                <InputLabel>
+                    References
+                </InputLabel>
+                <FieldArray name="references">
+                    {({ insert, remove, push }) => (
+                    <div>
+                    <Grid container direction="column">
+                        {props.values.references.length > 0 &&
+                            props.values.references.map((reference, index) => { 
+                                return (
+                                    <Grid container spacing={2} direction="row" key={index}>
+                                        <Grid item xs={6}>
+                                            <ReferenceSelect name={`references.${index}.pbotID`}/>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <Field
+                                                component={TextField}
+                                                name={`references.${index}.order`}
+                                                label="Order"
+                                                type="text"
+                                            />
+                                        </Grid>
+                                        {index > 0 &&
+                                        <Grid item xs={3}>
+                                            <Button
+                                                type="button"
+                                                variant="text" 
+                                                color="secondary" 
+                                                size="large"
+                                                onClick={() => remove(index)}
+                                            >
+                                                X
+                                            </Button>
+                                        </Grid>
+                                        }
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                        <Button
+                            type="button"
+                            variant="text" 
+                            color="secondary" 
+                            onClick={() => push({ pbotID: '', order: '' })}
+                            disabled={props.values.references.length !== 0 && props.values.references[props.values.references.length-1].pbotID === ''}
+                        >
+                            Add reference
+                        </Button>
+                    </div>
+                    )}
+                </FieldArray>
 
                 {props.values.type === "specimen" &&
                     <div>

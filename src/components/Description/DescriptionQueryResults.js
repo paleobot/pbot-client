@@ -24,6 +24,14 @@ function DescriptionList(props) {
                     family
                     genus
                     species
+                    references {
+                        Reference {
+                            title
+                            publisher
+                            year
+                        }
+                        order
+                    }
                 }            
             }
         `;
@@ -37,6 +45,14 @@ function DescriptionList(props) {
                     family
                     genus
                     species
+                    references {
+                        Reference {
+                            title
+                            publisher
+                            year
+                        }
+                        order
+                    }
                     characterInstances {
                         pbotID
                         character {
