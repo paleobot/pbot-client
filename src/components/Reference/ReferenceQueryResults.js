@@ -21,8 +21,11 @@ function References(props) {
                     publisher
                     doi
                     authoredBy {
-                        given
-                        surname
+                        Person {
+                            given
+                            surname
+                        }
+                        order
                     }
                 }
             }
@@ -55,8 +58,8 @@ function References(props) {
             <div style={indent}><b>year:</b> {reference.year} </div>
             <div style={indent}><b>doi:</b> {reference.doi || "not specified"} </div>
             <div style={indent}><b>authors:</b></div>
-                {alphabetize([...reference.authoredBy], "surname").map(author => (
-                    <div style={indent2}>{author.given} {author.surname}</div>
+                {alphabetize([...reference.authoredBy], "order").map(author => (
+                    <div style={indent2}>{author.Person.given} {author.Person.surname}</div>
                 ))}
             
             <br />
