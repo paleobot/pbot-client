@@ -39,6 +39,14 @@ function Specimens(props) {
                             pbotID
                         }
                     }
+                    references {
+                        Reference {
+                            title
+                            publisher
+                            year
+                        }
+                        order
+                    }
                 }            
             }
         `;
@@ -55,6 +63,14 @@ function Specimens(props) {
                     name
                     organ {
                         type
+                    }
+                    references {
+                        Reference {
+                            title
+                            publisher
+                            year
+                        }
+                        order
                     }
                     archtypeDescription {
                         Description {
@@ -119,17 +135,26 @@ function Specimens(props) {
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
+    const indent2 = {marginLeft:"4em"}
     return (specimens.length === 0) ? (
         <div style={style}>
             No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
-    ) : specimens.map(({ pbotID, name, organ, description, archtypeDescription }) => (
+    ) : specimens.map(({ pbotID, name, organ, description, archtypeDescription, references }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
             <div style={indent}><b>pbotID:</b> {pbotID}</div>
             <div style={indent}><b>organ:</b> {organ.type}</div>
-            <div style={indent}><b>archtype description:</b> {archtypeDescription ? `${archtypeDescription.Description.name}` : ""}</div>
+            <div style={indent}><b>archetype description:</b> {archtypeDescription ? `${archtypeDescription.Description.name}` : ""}</div>
             <div style={indent}><b>description:</b> {description ? "" : "OTU specimen"}</div>
+            {references && references.length > 0 &&
+                <div>
+                    <div style={indent}><b>references:</b></div>
+                    {alphabetize([...references], "order").map(reference => (
+                        <div style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                    ))}
+                </div>
+            }
             {((description && description.Description.characterInstances && description.Description.characterInstances.length > 0) || (archtypeDescription && archtypeDescription.Description.characterInstances && archtypeDescription.Description.characterInstances.length > 0)) &&
             <div>
                 <div style={indent}><b>character instances:</b></div>

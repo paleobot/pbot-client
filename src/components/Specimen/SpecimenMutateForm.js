@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
@@ -47,7 +47,10 @@ const SpecimenSelect = (props) => {
                         pbotID
                     }
                     references {
-                        pbotID
+                        Reference {
+                            pbotID
+                        }
+                        order
                     }
                 }            
             }
@@ -111,7 +114,7 @@ const SpecimenSelect = (props) => {
                     data-pbdboccid={specimen.pbdboccid}
                     data-public={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
-                    data-references={specimen.references ? JSON.stringify(specimen.references.map(reference => reference.pbotID)) : null}
+                    data-references={specimen.references ? JSON.stringify(specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                     data-collection={specimen.collection ? specimen.collection.pbotID : ''}
                 >{specimen.name}</MenuItem>
             ))}
@@ -267,7 +270,10 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
-                references: [],
+                references: [{
+                    pbotID: '',
+                    order:'',
+                }],
                 public: true,
                 collection: '',
                 groups: [],
@@ -301,7 +307,14 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 preservationMode: Yup.string(),
                 locality: Yup.string(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
-                references: Yup.array().of(Yup.string()),
+                references: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Reference name is required'),
+                        order: Yup.string()
+                            .required('Reference order is required')
+                    })
+                ),
                 collection: Yup.string(),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
@@ -349,8 +362,58 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     </Field>
                     <br />
                     
-                    <ReferenceSelect />
                     <br />
+                    <InputLabel>
+                        References
+                    </InputLabel>
+                    <FieldArray name="references">
+                        {({ insert, remove, push }) => (
+                        <div>
+                        <Grid container direction="column">
+                            {props.values.references.length > 0 &&
+                                props.values.references.map((reference, index) => { 
+                                    return (
+                                        <Grid container spacing={2} direction="row" key={index}>
+                                            <Grid item xs={6}>
+                                                <ReferenceSelect name={`references.${index}.pbotID`}/>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Field
+                                                    component={TextField}
+                                                    name={`references.${index}.order`}
+                                                    label="Order"
+                                                    type="text"
+                                                />
+                                            </Grid>
+                                            {index > 0 &&
+                                            <Grid item xs={3}>
+                                                <Button
+                                                    type="button"
+                                                    variant="text" 
+                                                    color="secondary" 
+                                                    size="large"
+                                                    onClick={() => remove(index)}
+                                                >
+                                                    X
+                                                </Button>
+                                            </Grid>
+                                            }
+                                        </Grid>
+                                    )
+                                })}
+                            </Grid>
+                            <Button
+                                type="button"
+                                variant="text" 
+                                color="secondary" 
+                                onClick={() => push({ pbotID: '', order: '' })}
+                                disabled={props.values.references.length !== 0 && props.values.references[props.values.references.length-1].pbotID === ''}
+                            >
+                                Add reference
+                            </Button>
+                        </div>
+                        )}
+                    </FieldArray>
 
                     <Field
                         component={TextField}
