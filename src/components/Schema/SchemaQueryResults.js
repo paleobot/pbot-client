@@ -23,6 +23,14 @@ function Schemas(props) {
                     title
                     year
                     acknowledgments
+                    references {
+                        Reference {
+                            title
+                            publisher
+                            year
+                        }
+                        order
+                    }
                     authoredBy {
                         Person {
                             given
@@ -41,6 +49,14 @@ function Schemas(props) {
                     title
                     year
                     acknowledgments
+                    references {
+                        Reference {
+                            title
+                            publisher
+                            year
+                        }
+                        order
+                    }
                     authoredBy {
                         Person {
                             given
@@ -86,6 +102,14 @@ function Schemas(props) {
             <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
             <div style={indent}><b>year:</b> {schema.year} </div>
             {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
+            {schema.references && schema.references.length > 0 &&
+                <div>
+                    <div style={indent}><b>references:</b></div>
+                    {alphabetize([...schema.references], "order").map(reference => (
+                        <div style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                    ))}
+                </div>
+            }
             {schema.authoredBy && schema.authoredBy.length > 0 &&
                 <div>
                     <div style={indent}><b>authors:</b></div>
