@@ -24,8 +24,11 @@ function Schemas(props) {
                     year
                     acknowledgments
                     authoredBy {
-                        given
-                        surname
+                        Person {
+                            given
+                            surname
+                        }
+                        order
                     }
                 }            
             }
@@ -39,8 +42,11 @@ function Schemas(props) {
                     year
                     acknowledgments
                     authoredBy {
-                        given
-                        surname
+                        Person {
+                            given
+                            surname
+                        }
+                        order
                     }
                     characters {
                         pbotID
@@ -83,8 +89,8 @@ function Schemas(props) {
             {schema.authoredBy && schema.authoredBy.length > 0 &&
                 <div>
                     <div style={indent}><b>authors:</b></div>
-                    {alphabetize([...schema.authoredBy], "surname").map(author => (
-                        <div style={indent2}>{author.given} {author.surname}</div>
+                    {alphabetize([...schema.authoredBy], "order").map(author => (
+                        <div style={indent2}>{author.Person.given} {author.Person.surname}</div>
                     ))}
                 </div>
             }
