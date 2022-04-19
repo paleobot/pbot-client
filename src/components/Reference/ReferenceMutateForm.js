@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
@@ -23,7 +23,10 @@ const ReferenceSelect = (props) => {
                 year
                 doi
                 authoredBy {
-                    pbotID
+                    Person {
+                        pbotID
+                    }
+                    order
                 }
                 elementOf {
                     name
@@ -78,7 +81,7 @@ const ReferenceSelect = (props) => {
                     data-publisher={reference.publisher}
                     data-year={reference.year}
                     data-doi={reference.doi}
-                    data-authors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => author.pbotID)) : null}
+                    data-authors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
                     data-public={reference.elementOf && reference.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     data-groups={reference.elementOf ? JSON.stringify(reference.elementOf.map(group => group.pbotID)) : null}
                 >{reference.title + ", " + reference.publisher + ", " + reference.year}</MenuItem>
@@ -121,12 +124,12 @@ const AuthorSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="authors"
-            label="Authors"
+            name={props.name}
+            label="Name"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: true,
+                multiple: false,
             }}
             disabled={false}
         >
@@ -143,7 +146,10 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 title: '',
                 publisher: '',
                 year: '',
-                authors: [],
+                authors: [{
+                    pbotID: '',
+                    order:'',
+                }],
                 doi: '',
                 public: true,
                 groups: [],
@@ -176,7 +182,15 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 title: Yup.string().required(),
                 publisher: Yup.string().required(),
                 year: Yup.date().required(),
-                authors: Yup.array().of(Yup.string()).required(),
+                //authors: Yup.array().of(Yup.string()).min(1, "Must specify at least one author"),
+                authors: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Author name is required'),
+                        order: Yup.string()
+                            .required('Author order is required')
+                    })
+                ).min(1, "Must specify at least one author"),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -242,9 +256,62 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 />
                 <br />
 
-                <AuthorSelect />
                 <br />
-                
+                <InputLabel>
+                    Authors
+                </InputLabel>
+                <FieldArray name="authors">
+                    {({ insert, remove, push }) => (
+                    <div>
+                    <Grid container direction="column">
+                        {props.values.authors.length > 0 &&
+                            props.values.authors.map((author, index) => { 
+                                //props.values.authors[index].order = index+1; 
+                                return (
+                                    <Grid container spacing={2} direction="row" key={index}>
+                                        <Grid item xs={6}>
+                                            <AuthorSelect name={`authors.${index}.pbotID`}/>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <Field
+                                                component={TextField}
+                                                name={`authors.${index}.order`}
+                                                label="Order"
+                                                type="text"
+                                                //disabled={props.values.authors[index].name === ''}
+                                            />
+                                        </Grid>
+                                        {index > 0 &&
+                                        <Grid item xs={3}>
+                                            <Button
+                                                type="button"
+                                                variant="text" 
+                                                color="secondary" 
+                                                size="large"
+                                                onClick={() => remove(index)}
+                                                //disabled={props.values.authors[index].name === ''}
+                                            >
+                                                X
+                                            </Button>
+                                        </Grid>
+                                        }
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                        <Button
+                            type="button"
+                            variant="text" 
+                            color="secondary" 
+                            onClick={() => push({ pbotID: '', order: '' })}
+                            disabled={props.values.authors.length !== 0 && props.values.authors[props.values.authors.length-1].pbotID === ''}
+                        >
+                            Add author
+                        </Button>
+                    </div>
+                    )}
+                </FieldArray>
+
                 <Field
                     component={TextField}
                     type="text"
