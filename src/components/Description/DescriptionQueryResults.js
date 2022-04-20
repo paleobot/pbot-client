@@ -63,6 +63,7 @@ function DescriptionList(props) {
                                 name
                             }
                             value
+                            order
                         }
                     }
                 }

@@ -12,6 +12,7 @@ const CharacterInstanceMutateResults = ({queryParams, queryEntity}) => {
                             characterID: queryParams.character || null, 
                             stateID: queryParams.state.split(",")[1] || null,
                             quantity: queryParams.quantity || null,
+                            order: queryParams.order || null,
                         }}
                         entity="CharacterInstance"
                         mode={queryParams.mode}

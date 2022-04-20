@@ -114,6 +114,7 @@ const CharacterInstanceSelect = (props) => {
                         }
                         state {
                             value
+                            order
                             State {
                                 pbotID
                                 name
@@ -160,6 +161,7 @@ const CharacterInstanceSelect = (props) => {
                 props.values.character = event.currentTarget.dataset.characterid || '';
                 props.values.state = event.currentTarget.dataset.stateid || '';
                 props.values.quantity = event.currentTarget.dataset.quantity || '';
+                props.values.order = event.currentTarget.dataset.order || '';
                 props.handleChange(event);
             }}
         >
@@ -170,6 +172,7 @@ const CharacterInstanceSelect = (props) => {
                     data-characterid={cI.character.pbotID}
                     data-stateid={cI.state.State.name + "," + cI.state.State.pbotID}
                     data-quantity={cI.state.value}
+                    data-order={cI.state.order}
                 >{cI.name}</MenuItem>
             ))}
         </Field>
@@ -268,6 +271,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 character: '',
                 state: '', 
                 quantity: '',
+                order: '',
                 mode: mode,
     };
             
@@ -301,6 +305,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                     is: (val) => val && val.split(",")[0] === "quantity",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
+                order: Yup.number().integer().typeError("Must be an integer"),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -366,6 +371,20 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                     </div>
                 }
 
+                {(mode === "create" || mode === "edit") && props.values.state &&
+                    <div>
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="order"
+                            label="Order"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
+                    </div>
+                }
+                
                 <br />
                 <br />
 

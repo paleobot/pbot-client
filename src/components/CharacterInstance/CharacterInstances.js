@@ -19,7 +19,7 @@ function CharacterInstances(props) {
     const style = {marginLeft:"4em"}
     return characterInstances.map(({pbotID, character, state}) => (
         <div key={pbotID}  style={style}>
-            {character.name}: {state.value !== null ? `${state.value}` : `${state.State.name}`}<br />
+            {character.name}: {state.value !== null ? `${state.value}` : `${state.State.name}`}{state.order !== null ? `, order: ${state.order}` : ``}<br />
         </div>
     ));
 }
