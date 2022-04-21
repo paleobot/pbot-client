@@ -5,7 +5,7 @@ import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, M
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
-import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
+import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
 
 import {
@@ -310,7 +310,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
-                            .required('Reference name is required'),
+                            .required('Reference title is required'),
                         order: Yup.string()
                             .required('Reference order is required')
                     })
@@ -362,58 +362,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     </Field>
                     <br />
                     
-                    <br />
-                    <InputLabel>
-                        References
-                    </InputLabel>
-                    <FieldArray name="references">
-                        {({ insert, remove, push }) => (
-                        <div>
-                        <Grid container direction="column">
-                            {props.values.references.length > 0 &&
-                                props.values.references.map((reference, index) => { 
-                                    return (
-                                        <Grid container spacing={2} direction="row" key={index}>
-                                            <Grid item xs={6}>
-                                                <ReferenceSelect name={`references.${index}.pbotID`}/>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <Field
-                                                    component={TextField}
-                                                    name={`references.${index}.order`}
-                                                    label="Order"
-                                                    type="text"
-                                                />
-                                            </Grid>
-                                            {index > 0 &&
-                                            <Grid item xs={3}>
-                                                <Button
-                                                    type="button"
-                                                    variant="text" 
-                                                    color="secondary" 
-                                                    size="large"
-                                                    onClick={() => remove(index)}
-                                                >
-                                                    X
-                                                </Button>
-                                            </Grid>
-                                            }
-                                        </Grid>
-                                    )
-                                })}
-                            </Grid>
-                            <Button
-                                type="button"
-                                variant="text" 
-                                color="secondary" 
-                                onClick={() => push({ pbotID: '', order: '' })}
-                                disabled={props.values.references.length !== 0 && props.values.references[props.values.references.length-1].pbotID === ''}
-                            >
-                                Add reference
-                            </Button>
-                        </div>
-                        )}
-                    </FieldArray>
+                    <ReferenceManager values={props.values}/>
 
                     <Field
                         component={TextField}
