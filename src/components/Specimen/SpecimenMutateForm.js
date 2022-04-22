@@ -313,6 +313,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                             .required('Reference title is required'),
                         order: Yup.string()
                             .required('Reference order is required')
+                            .typeError('Reference order is required')
                     })
                 ),
                 collection: Yup.string(),

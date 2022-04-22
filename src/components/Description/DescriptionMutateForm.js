@@ -271,6 +271,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                             .required('Reference title is required'),
                         order: Yup.string()
                             .required('Reference order is required')
+                            .typeError('Reference order is required')
                     })
                 ),
                 family: Yup.string().when("type", {

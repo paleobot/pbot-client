@@ -140,6 +140,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                             .required('Author name is required'),
                         order: Yup.string()
                             .required('Author order is required')
+                            .typeError('Author order is required')
                     })
                 ).min(1, "Must specify at least one author"),
                 public: Yup.boolean(),

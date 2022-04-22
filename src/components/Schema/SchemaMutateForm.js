@@ -146,6 +146,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                             .required('Reference title is required'),
                         order: Yup.string()
                             .required('Reference order is required')
+                            .typeError('Reference order is required')
                     })
                 ),
                 //authors: Yup.array().of(Yup.string()).min(1, "Must specify at least one author"),
@@ -155,6 +156,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                             .required('Author name is required'),
                         order: Yup.string()
                             .required('Author order is required')
+                            .typeError('Author order is required')
                     })
                 ).min(1, "Must specify at least one author"),
                 public: Yup.boolean(),
