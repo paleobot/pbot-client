@@ -196,20 +196,13 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 />
                 
                 <SchemaSelect values={props.values} handleChange={props.handleChange}/>
-                <br />
                 
                 {(mode === "edit" || mode === "delete") && props.values.schema !== '' &&
-                    <div>
-                        <CharacterSelect values={props.values} handleChange={props.handleChange}/>
-                        <br />
-                    </div>
+                    <CharacterSelect values={props.values} handleChange={props.handleChange}/>
                 }
                 
                 {((mode === "create" && props.values.schema) || (mode === "edit" && props.values.character)) &&
-                    <div>
-                        <CharacterSelect values={props.values} parent handleChange={props.handleChange}/>
-                        <br />
-                    </div>
+                    <CharacterSelect values={props.values} parent handleChange={props.handleChange}/>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.character !== '')) &&
@@ -222,7 +215,6 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                         fullWidth 
                         disabled={false}
                     />
-                    <br />
 
                     <Field
                         component={TextField}
@@ -232,13 +224,10 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                         fullWidth 
                         disabled={false}
                     />
-                    <br />
-
                     </div>
                 }
                 
                 {(mode === "delete") &&
-                <div>
                     <Field
                         type="checkbox"
                         component={CheckboxWithLabel}
@@ -246,11 +235,8 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                         type="checkbox" 
                         Label={{ label: 'Cascade' }}
                     />
-                  <br />
-                </div>
                 }
 
-                <br />
                 <br />
 
                 <Button type="submit" variant="contained" color="primary">Submit</Button>

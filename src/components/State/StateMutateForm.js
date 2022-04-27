@@ -55,6 +55,7 @@ const CharacterSelect = (props) => {
     console.log("CharacterSelect");
     console.log(props);
     console.log(props.schema);
+    /*
     const characterGQL = gql`
             query {
                 Schema (pbotID: "${props.schema}") {
@@ -65,14 +66,32 @@ const CharacterSelect = (props) => {
                 }            
             }
         `;
+    */
+    const characterGQL = gql`
+        query ($schemaID: String!) {
+            GetAllCharacters (schemaID: $schemaID)  {
+                pbotID
+                name
+                definition
+                characterOf {
+                  ... on Character {
+                    pbotID
+                  }
+                  ... on Schema {
+                    pbotID
+                  }
+                }
+            }
+        }
+    `;
 
-    const { loading: characterLoading, error: characterError, data: characterData } = useQuery(characterGQL, {fetchPolicy: "cache-and-network"});
+    const { loading: characterLoading, error: characterError, data: characterData } = useQuery(characterGQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.schema}});
 
     if (characterLoading) return <p>Loading...</p>;
     if (characterError) return <p>Error :(</p>;
                                  
-    console.log(characterData.Schema[0].characters);
-    const characters = alphabetize([...characterData.Schema[0].characters], "name");
+    //console.log(characterData.Schema[0].characters);
+    const characters = alphabetize([...characterData.GetAllCharacters], "name");
     
     return (
         <Field
@@ -117,21 +136,6 @@ const StateSelect = (props) => {
             }
         }
     `;
-    /*
-     * Should be able to do this, in theory. But graphql forces you to use fragments as above. I don't know why.
-    const stateGQL = gql`
-        query {
-            GetAllStates (characterID: "${props.values.character}")  {
-                pbotID
-                name
-                definition
-                stateOf {
-                    pbotID
-                }
-            }
-        }
-    `;
-    */
     const { loading: stateLoading, error: stateError, data: stateData } = useQuery(stateGQL, {fetchPolicy: "cache-and-network"});
 
     if (stateLoading) return <p>Loading...</p>;
@@ -143,7 +147,7 @@ const StateSelect = (props) => {
     const label = props.parent ? "Parent state" : "State";
     const name =  props.parent ? "parentState" : "state";
     
-    return (
+    return states.length === 0 ? null : (
         <Field
             component={TextField}
             type="text"
