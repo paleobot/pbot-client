@@ -28,7 +28,7 @@ const CharacterSelect = (props) => {
     `;
     */
     const gQL = gql`
-        query ($schemaID: ID) {
+        query ($schemaID: String!) {
             GetAllCharacters (schemaID: $schemaID)  {
                 pbotID
                 name
@@ -55,14 +55,17 @@ const CharacterSelect = (props) => {
     const characters = alphabetize([...data.GetAllCharacters], "name");
     console.log(characters);
     
+    const label = props.parent ? "Parent character" : "Character";
+    const name =  props.parent ? "parentCharacter" : "character";
+    
     const style = {minWidth: "12ch"}
-    return (
+    return characters.length === 0 ? null : (
         <Field
             style={style}
             component={TextField}
             type="text"
-            name="character"
-            label="Character"
+            name={name}
+            label={label}
             fullWidth 
             select={true}
             SelectProps={{
@@ -73,6 +76,7 @@ const CharacterSelect = (props) => {
                 //props.resetForm();
                 props.values.name = event.currentTarget.dataset.name || '';
                 props.values.definition = event.currentTarget.dataset.definition || '';
+                props.values.parentCharacter = event.currentTarget.dataset.parentcharacter || '';
                 props.handleChange(event);
             }}
         >
@@ -82,6 +86,7 @@ const CharacterSelect = (props) => {
                     value={character.pbotID}
                     data-name={character.name}
                     data-definition={character.definition}
+                    data-parentcharacter={character.characterOf.pbotID}
                 >{character.name}</MenuItem>
             ))}
         </Field>
@@ -140,6 +145,7 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 name: '',
                 definition: '',
                 schema: '',
+                parentCharacter: '',
                 cascade: false,
                 mode: mode,
     };
@@ -195,6 +201,13 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 {(mode === "edit" || mode === "delete") && props.values.schema !== '' &&
                     <div>
                         <CharacterSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+                
+                {((mode === "create" && props.values.schema) || (mode === "edit" && props.values.character)) &&
+                    <div>
+                        <CharacterSelect values={props.values} parent handleChange={props.handleChange}/>
                         <br />
                     </div>
                 }
