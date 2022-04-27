@@ -215,6 +215,7 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                         fullWidth 
                         disabled={false}
                     />
+                    <br />
 
                     <Field
                         component={TextField}
@@ -237,6 +238,7 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                     />
                 }
 
+                <br />
                 <br />
 
                 <Button type="submit" variant="contained" color="primary">Submit</Button>

@@ -246,56 +246,43 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 />
                 
                 <SchemaSelect />
-                <br />
                 
                 {props.values.schema !== '' &&
-                    <div>
-                        <CharacterSelect schema={props.values.schema} />
-                        <br />
-                    </div>
+                    <CharacterSelect schema={props.values.schema} />
                 }
 
                 {(props.values.character !== "" && (mode === "edit" || mode === "delete")) &&
-                    <div>
-                        <StateSelect values={props.values} handleChange={props.handleChange}/>
-                        <br />
-                    </div>
+                    <StateSelect values={props.values} handleChange={props.handleChange}/>
                 }
                 
                 {((mode === "create" && props.values.character) || (mode === "edit" && props.values.state)) &&
-                    <div>
-                        <StateSelect values={props.values} parent handleChange={props.handleChange}/>
-                        <br />
-                    </div>
+                    <StateSelect values={props.values} parent handleChange={props.handleChange}/>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.state !== '')) &&
-                <div>
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="name"
-                    label="Name"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                    <div>
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="name"
+                        label="Name"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="definition"
-                    label="Definition"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
-
-                </div>
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="definition"
+                        label="Definition"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    </div>
                 }
                 
                 {(mode === "delete") &&
-                <div>
                     <Field
                         type="checkbox"
                         component={CheckboxWithLabel}
@@ -303,8 +290,6 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                         type="checkbox" 
                         Label={{ label: 'Cascade' }}
                     />
-                  <br />
-                </div>
                 }
                 
                 <br />
