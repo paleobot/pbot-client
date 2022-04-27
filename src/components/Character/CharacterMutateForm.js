@@ -14,6 +14,7 @@ const CharacterSelect = (props) => {
     console.log("CharacterSelect");
     console.log(props);
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    /*
     const gQL = gql`
         query ($schemaID: ID) {
             Schema (pbotID: $schemaID) {
@@ -25,6 +26,24 @@ const CharacterSelect = (props) => {
             }            
         }
     `;
+    */
+    const gQL = gql`
+        query ($schemaID: ID) {
+            GetAllCharacters (schemaID: $schemaID)  {
+                pbotID
+                name
+                definition
+                characterOf {
+                  ... on Character {
+                    pbotID
+                  }
+                  ... on Schema {
+                    pbotID
+                  }
+                }
+            }
+        }
+    `;
 
     const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.values.schema}});
 
@@ -32,8 +51,8 @@ const CharacterSelect = (props) => {
     if (error) return <p>Error :(</p>;
                       
     console.log(">>>>>>>>>>>>Results<<<<<<<<<<<<<");
-    console.log(data.Schema);
-    const characters = alphabetize([...data.Schema[0].characters], "name");
+    console.log(data.GetAllCharacters);
+    const characters = alphabetize([...data.GetAllCharacters], "name");
     console.log(characters);
     
     const style = {minWidth: "12ch"}

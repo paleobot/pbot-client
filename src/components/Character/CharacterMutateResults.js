@@ -11,6 +11,7 @@ const CharacterMutateResults = ({queryParams, queryEntity}) => {
                             pbotID: queryParams.character || null,
                             name: queryParams.name || null,
                             definition: queryParams.definition || null,
+                            parentID: queryParams.schema || null, //TODO: this will be changed to accommodate substates
                             schemaID: queryParams.schema || null,
                             cascade: queryParams.cascade || false
                         }}
