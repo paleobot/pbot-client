@@ -43,6 +43,16 @@ const SchemaSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
+            onChange={event => {
+                console.log("State onChange");
+                console.log(props);
+                console.log(props.parent);
+                if (!props.parent) {
+                    props.values.character = '';
+                    props.values.parentState = '';
+                }
+                props.handleChange(event);
+            }}
         >
             {schemas.map(({ pbotID, title }) => (
                 <MenuItem key={pbotID} value={pbotID}>{title}</MenuItem>
@@ -85,7 +95,7 @@ const CharacterSelect = (props) => {
         }
     `;
 
-    const { loading: characterLoading, error: characterError, data: characterData } = useQuery(characterGQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.schema}});
+    const { loading: characterLoading, error: characterError, data: characterData } = useQuery(characterGQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.values.schema}});
 
     if (characterLoading) return <p>Loading...</p>;
     if (characterError) return <p>Error :(</p>;
@@ -105,6 +115,15 @@ const CharacterSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
+            onChange={event => {
+                console.log("State onChange");
+                console.log(props);
+                console.log(props.parent);
+                if (!props.parent) {
+                    props.values.parentState = '';
+                }
+                props.handleChange(event);
+            }}
         >
             {characters.map(({ pbotID, name }) => (
                 <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
@@ -120,8 +139,8 @@ const StateSelect = (props) => {
     console.log(props.values.character);
     
     const stateGQL = gql`
-        query {
-            GetAllStates (characterID: "${props.values.character}")  {
+        query ($characterID: String!) {
+            GetAllStates (characterID: $characterID)  {
                 pbotID
                 name
                 definition
@@ -136,7 +155,7 @@ const StateSelect = (props) => {
             }
         }
     `;
-    const { loading: stateLoading, error: stateError, data: stateData } = useQuery(stateGQL, {fetchPolicy: "cache-and-network"});
+    const { loading: stateLoading, error: stateError, data: stateData } = useQuery(stateGQL, {fetchPolicy: "cache-and-network", variables: {characterID: props.values.character}});
 
     if (stateLoading) return <p>Loading...</p>;
     if (stateError) return <p>Error :(</p>;
@@ -245,10 +264,10 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     disabled={false}
                 />
                 
-                <SchemaSelect />
+                <SchemaSelect values={props.values} handleChange={props.handleChange}/>
                 
                 {props.values.schema !== '' &&
-                    <CharacterSelect schema={props.values.schema} />
+                    <CharacterSelect values={props.values} handleChange={props.handleChange} />
                 }
 
                 {(props.values.character !== "" && (mode === "edit" || mode === "delete")) &&

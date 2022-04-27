@@ -129,6 +129,7 @@ const SchemaSelect = (props) => {
             onChange={event => {
                 //props.resetForm();
                 props.values.character =  '';
+                props.values.parentCharacter =  '';
                 props.handleChange(event);
             }}
         >
