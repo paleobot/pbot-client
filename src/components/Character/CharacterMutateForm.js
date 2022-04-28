@@ -74,8 +74,10 @@ const CharacterSelect = (props) => {
             disabled={false}
             onChange={event => {
                 //props.resetForm();
-                props.values.name = event.currentTarget.dataset.name || '';
-                props.values.definition = event.currentTarget.dataset.definition || '';
+                if (!props.parent) {
+                    props.values.name = event.currentTarget.dataset.name || '';
+                    props.values.definition = event.currentTarget.dataset.definition || '';
+                }
                 props.values.parentCharacter = event.currentTarget.dataset.parentcharacter || '';
                 props.handleChange(event);
             }}
