@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Grid, Button } from '@material-ui/core';
-import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import { Grid, Button } from '@mui/material';
+import { TextField, CheckboxWithLabel } from 'formik-mui';
 
 const host = window.location.host;
 

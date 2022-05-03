@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
-import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab } from '@mui/material';
+import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 
 const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
@@ -52,6 +52,7 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
                     type="text"
                     label="Reference ID"
                     disabled={false}
+                    variant="standard"
                 />
                 <br />
                 
@@ -61,6 +62,7 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
                     type="text" 
                     label="Title"
                     disabled={false}
+                    variant="standard"
                 />
                 <br />
                 
@@ -70,6 +72,7 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
                     type="text" 
                     label="Year"
                     disabled={false}
+                    variant="standard"
                 />
                 <br />
                 
@@ -79,6 +82,7 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
                     type="text" 
                     label="Publisher"
                     disabled={false}
+                    variant="standard"
                 />
                 <br />
                 

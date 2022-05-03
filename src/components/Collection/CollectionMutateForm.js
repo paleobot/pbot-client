@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
@@ -54,13 +54,13 @@ const CollectionSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
                 console.log("Collection onChange");
-                console.log(event.currentTarget.dataset.specimens);
-                props.values.name = event.currentTarget.dataset.name || '';
-                props.values.specimens = event.currentTarget.dataset.specimens ? JSON.parse(event.currentTarget.dataset.specimens) : [];
-                props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
+                console.log(child.props.dspecimens);
+                props.values.name = child.props.dname || '';
+                props.values.specimens = child.props.dspecimens ? JSON.parse(child.props.dspecimens) : [];
+                props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 console.log(props.values.specimens);
                 props.handleChange(event);
             }}
@@ -69,9 +69,9 @@ const CollectionSelect = (props) => {
                 <MenuItem 
                     key={collection.pbotID} 
                     value={collection.pbotID}
-                    data-name={collection.name}
-                    data-specimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
-                    data-references={collection.references ? JSON.stringify(collection.references.map(reference => reference.pbotID)) : null}
+                    dname={collection.name}
+                    dspecimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
+                    dreferences={collection.references ? JSON.stringify(collection.references.map(reference => reference.pbotID)) : null}
                 >{collection.name}</MenuItem>
             ))}
         </Field>
@@ -176,7 +176,6 @@ const CollectionMutateForm = ({queryParams, handleQueryParamChange, showResult, 
             <Form>
 
                 <Field 
-                    component={TextField}
                     name="mode" 
                     type="hidden" 
                     disabled={false}

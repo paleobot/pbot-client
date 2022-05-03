@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 import { Field, FieldArray } from 'formik';
-import { Button, Grid, InputLabel } from '@material-ui/core';
-import { TextField } from 'formik-material-ui';
+import { Button, Grid, InputLabel } from '@mui/material';
+import { TextField } from 'formik-mui';
 import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
 
 export const ReferenceManager = (props) => {

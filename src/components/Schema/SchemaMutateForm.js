@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
@@ -66,15 +66,15 @@ const SchemaSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
-                props.values.title = event.currentTarget.dataset.title || '';
-                props.values.year = event.currentTarget.dataset.year || '';
-                props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
-                props.values.authors = event.currentTarget.dataset.authors ? JSON.parse(event.currentTarget.dataset.authors) : [];
-                props.values.public = "true"=== event.currentTarget.dataset.public || false;
+                props.values.title = child.props.dtitle || '';
+                props.values.year = child.props.dyear || '';
+                props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
+                props.values.authors = child.props.dauthors ? JSON.parse(child.props.dauthors) : [];
+                props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
-                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
+                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.handleChange(event);
             }}
         >
@@ -82,12 +82,12 @@ const SchemaSelect = (props) => {
                 <MenuItem 
                     key={schema.pbotID} 
                     value={schema.pbotID}
-                    data-title={schema.title}
-                    data-year={schema.year}
-                    data-references={schema.references ? JSON.stringify(schema.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
-                    data-authors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
-                    data-public={schema.elementOf && schema.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
-                    data-groups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
+                    dtitle={schema.title}
+                    dyear={schema.year}
+                    dreferences={schema.references ? JSON.stringify(schema.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
+                    dauthors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
+                    dpublic={schema.elementOf && schema.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
+                    dgroups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
                 >{schema.title}</MenuItem>
             ))}
         </Field>

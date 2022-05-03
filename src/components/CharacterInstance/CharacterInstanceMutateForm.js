@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 
 import {
@@ -80,11 +80,11 @@ const DescriptionSelect = (props) => {
             }}
             disabled={false}
             defaultValue=""
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
                 console.log("Description selected");
-                console.log(event.currentTarget.dataset.schemaid);
-                props.values.schema = event.currentTarget.dataset.schemaid || '';
+                console.log(child.props.dschemaid);
+                props.values.schema = child.props.dschemaid || '';
                 props.handleChange(event);
             }}
         >
@@ -92,7 +92,7 @@ const DescriptionSelect = (props) => {
                 <MenuItem 
                     key={description.pbotID} 
                     value={description.pbotID} 
-                    data-schemaid={description.schema.pbotID}
+                    dschemaid={description.schema.pbotID}
                 >{description.name}</MenuItem>
             ))}
         </Field>
@@ -156,12 +156,12 @@ const CharacterInstanceSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
-                props.values.character = event.currentTarget.dataset.characterid || '';
-                props.values.state = event.currentTarget.dataset.stateid || '';
-                props.values.quantity = event.currentTarget.dataset.quantity || '';
-                props.values.order = event.currentTarget.dataset.order || '';
+                props.values.character = child.props.dcharacterid || '';
+                props.values.state = child.props.dstateid || '';
+                props.values.quantity = child.props.dquantity || '';
+                props.values.order = child.props.dorder || '';
                 props.handleChange(event);
             }}
         >
@@ -169,10 +169,10 @@ const CharacterInstanceSelect = (props) => {
                 <MenuItem 
                     key={cI.pbotID} 
                     value={cI.pbotID}
-                    data-characterid={cI.character.pbotID}
-                    data-stateid={cI.state.State.name + "," + cI.state.State.pbotID}
-                    data-quantity={cI.state.value}
-                    data-order={cI.state.order}
+                    dcharacterid={cI.character.pbotID}
+                    dstateid={cI.state.State.name + "," + cI.state.State.pbotID}
+                    dquantity={cI.state.value}
+                    dorder={cI.state.order}
                 >{cI.name}</MenuItem>
             ))}
         </Field>
@@ -321,7 +321,6 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
             {props => (
             <Form>
                 <Field
-                    component={TextField}
                     type="hidden"
                     name="schema"
                     disabled={false}

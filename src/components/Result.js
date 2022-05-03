@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import DescriptionQueryResults from './Description/DescriptionQueryResults';
 import SpecimenQueryResults from './Specimen/SpecimenQueryResults';
 import ReferenceQueryResults from './Reference/ReferenceQueryResults';

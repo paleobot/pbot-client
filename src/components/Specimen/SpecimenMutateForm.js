@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
@@ -80,22 +80,22 @@ const SpecimenSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
-                props.values.name = event.currentTarget.dataset.name;
-                props.values.locality = event.currentTarget.dataset.locality ? event.currentTarget.dataset.locality : '';
-                props.values.organ = event.currentTarget.dataset.organ ? event.currentTarget.dataset.organ : '';
-                props.values.preservationMode = event.currentTarget.dataset.preservationmode ? event.currentTarget.dataset.preservationmode : '';
-                props.values.describedBy = event.currentTarget.dataset.describedby ? event.currentTarget.dataset.describedby : '';
-                props.values.exampleOf = event.currentTarget.dataset.exampleof ? event.currentTarget.dataset.exampleof : '';
-                props.values.idigbiouuid = event.currentTarget.dataset.idigbiouuid ? event.currentTarget.dataset.idigbiouuid : '';
-                props.values.pbdbcid = event.currentTarget.dataset.pbdbcid ? event.currentTarget.dataset.pbdbcid : '';
-                props.values.pbdboccid = event.currentTarget.dataset.pbdboccid ? event.currentTarget.dataset.pbdboccid : '';
-                props.values.public = "true"=== event.currentTarget.dataset.public || false;
+                props.values.name = child.props.dname;
+                props.values.locality = child.props.dlocality ? child.props.dlocality : '';
+                props.values.organ = child.props.dorgan ? child.props.dorgan : '';
+                props.values.preservationMode = child.props.dpreservationmode ? child.props.dpreservationmode : '';
+                props.values.describedBy = child.props.ddescribedby ? child.props.ddescribedby : '';
+                props.values.exampleOf = child.props.dexampleof ? child.props.dexampleof : '';
+                props.values.idigbiouuid = child.props.didigbiouuid ? child.props.didigbiouuid : '';
+                props.values.pbdbcid = child.props.dpbdbcid ? child.props.dpbdbcid : '';
+                props.values.pbdboccid = child.props.dpbdboccid ? child.props.dpbdboccid : '';
+                props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
-                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
-                props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
-                props.values.collection = event.currentTarget.dataset.collection ? event.currentTarget.dataset.collection : '';
+                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
+                props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
+                props.values.collection = child.props.dcollection ? child.props.dcollection : '';
                 props.handleChange(event);
             }}
         >
@@ -103,19 +103,19 @@ const SpecimenSelect = (props) => {
                 <MenuItem 
                     key={specimen.pbotID} 
                     value={specimen.pbotID}
-                    data-name={specimen.name}
-                    data-locality={specimen.locality}
-                    data-organ={specimen.organ.pbotID}
-                    data-preservationmode={specimen.preservationMode}
-                    data-describedby={specimen.description ? specimen.description.Description.pbotID : ''}
-                    data-exampleof={specimen.archtypeDescription ? specimen.archtypeDescription.Description.pbotID : ''}
-                    data-idigbiouuid={specimen.idigbiouuid}
-                    data-pbdbcid={specimen.pbdbcid}
-                    data-pbdboccid={specimen.pbdboccid}
-                    data-public={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
-                    data-groups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
-                    data-references={specimen.references ? JSON.stringify(specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
-                    data-collection={specimen.collection ? specimen.collection.pbotID : ''}
+                    dname={specimen.name}
+                    dlocality={specimen.locality}
+                    dorgan={specimen.organ.pbotID}
+                    dpreservationmode={specimen.preservationMode}
+                    ddescribedby={specimen.description ? specimen.description.Description.pbotID : ''}
+                    dexampleof={specimen.archtypeDescription ? specimen.archtypeDescription.Description.pbotID : ''}
+                    didigbiouuid={specimen.idigbiouuid}
+                    dpbdbcid={specimen.pbdbcid}
+                    dpbdboccid={specimen.pbdboccid}
+                    dpublic={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
+                    dgroups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
+                    dreferences={specimen.references ? JSON.stringify(specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
+                    dcollection={specimen.collection ? specimen.collection.pbotID : ''}
                 >{specimen.name}</MenuItem>
             ))}
         </Field>

@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { AppBar, Tabs, Tab } from '@material-ui/core';
+import { AppBar, Tabs, Tab } from '@mui/material';
 import Result from './Result';
 import Action from './Action';
 
@@ -86,7 +86,7 @@ const PBOTInterface = ({setRotatePBOT}) => {
         <ApolloProvider client={client}>
         <div style={style}>
             <AppBar position="static">
-                <Tabs value={selectedTab} onChange={handleTabChange} variant="fullWidth">
+                <Tabs value={selectedTab} onChange={handleTabChange} variant="fullWidth" textColor="inherit" indicatorColor="secondary">
                     <Tab label="Action"  />
                     <Tab label="Results"  />
                 </Tabs>

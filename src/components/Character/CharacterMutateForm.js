@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 
 import {
@@ -72,13 +72,13 @@ const CharacterSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
                 if (!props.parent) {
-                    props.values.name = event.currentTarget.dataset.name || '';
-                    props.values.definition = event.currentTarget.dataset.definition || '';
+                    props.values.name = child.props.dname || '';
+                    props.values.definition = child.props.ddefinition || '';
                 }
-                props.values.parentCharacter = event.currentTarget.dataset.parentcharacter || '';
+                props.values.parentCharacter = child.props.dparentcharacter || '';
                 props.handleChange(event);
             }}
         >
@@ -86,9 +86,9 @@ const CharacterSelect = (props) => {
                 <MenuItem 
                     key={character.pbotID} 
                     value={character.pbotID}
-                    data-name={character.name}
-                    data-definition={character.definition}
-                    data-parentcharacter={character.characterOf.pbotID}
+                    dname={character.name}
+                    ddefinition={character.definition}
+                    dparentcharacter={character.characterOf.pbotID}
                 >{character.name}</MenuItem>
             ))}
         </Field>
@@ -192,7 +192,6 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
             {props => (
             <Form>
                 <Field 
-                    component={TextField}
                     name="mode" 
                     type="hidden" 
                     disabled={false}

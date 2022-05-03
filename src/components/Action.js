@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
-import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid } from '@material-ui/core';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid } from '@mui/material';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Query from './Query';
 import Mutate from './Mutate';
 

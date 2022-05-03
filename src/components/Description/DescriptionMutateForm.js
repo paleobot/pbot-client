@@ -1,8 +1,8 @@
-import React, { useState }from 'react';
+﻿import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
@@ -94,19 +94,20 @@ const DescriptionSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            defaultValue=""
-            onChange={event => {
-                props.values.schema = event.currentTarget.dataset.schema;
-                props.values.name = event.currentTarget.dataset.name;
-                props.values.type = event.currentTarget.dataset.type;
-                props.values.family = event.currentTarget.dataset.family;
-                props.values.genus = event.currentTarget.dataset.genus;
-                props.values.species = event.currentTarget.dataset.species;
-                props.values.specimen = event.currentTarget.dataset.specimen;
-                props.values.public = "true"=== event.currentTarget.dataset.public || false;
+            onChange={(event,child) => {
+                console.log(child.props);
+                console.log(child.props.dtype);
+                props.values.schema = child.props.dschema;
+                props.values.name = child.props.dname;
+                props.values.type = child.props.dtype;
+                props.values.family = child.props.dfamily;
+                props.values.genus = child.props.dgenus;
+                props.values.species = child.props.dspecies;
+                props.values.specimen = child.props.dspecimen;
+                props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
-                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
-                props.values.references = event.currentTarget.dataset.references ? JSON.parse(event.currentTarget.dataset.references) : [];
+                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
+                props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 //props.resetForm();
                 props.handleChange(event);
             }}
@@ -115,16 +116,16 @@ const DescriptionSelect = (props) => {
                 <MenuItem 
                     key={description.pbotID} 
                     value={description.pbotID} 
-                    data-schema={description.schema.pbotID} 
-                    data-name={description.name} 
-                    data-type={description.type}
-                    data-family={description.family}
-                    data-genus={description.genus}
-                    data-species={description.species}
-                    data-specimen={description.specimen ? description.specimen.Specimen.pbotID : ''}
-                    data-public={description.elementOf && description.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
-                    data-groups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
-                    data-references={description.references ? JSON.stringify(description.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
+                    dschema={description.schema.pbotID} 
+                    dname={description.name} 
+                    dtype={description.type}
+                    dfamily={description.family}
+                    dgenus={description.genus}
+                    dspecies={description.species}
+                    dspecimen={description.specimen ? description.specimen.Specimen.pbotID : ''}
+                    dpublic={description.elementOf && description.elementOf.reduce((acc,group) => {return ("public" === group.name).toString()}, "false")}
+                    dgroups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
+                    dreferences={description.references ? JSON.stringify(description.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                 >{description.name}</MenuItem>
             ))}
         </Field>
@@ -274,19 +275,19 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                             .typeError('Reference order is required')
                     })
                 ),
-                family: Yup.string().when("type", {
+                family: Yup.string().nullable().when("type", {
                     is: (val) => val === "OTU",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
-                genus: Yup.string().when("type", {
+                genus: Yup.string().nullable().when("type", {
                     is: (val) => val === "OTU",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
-                species: Yup.string().when("type", {
+                species: Yup.string().nullable().when("type", {
                     is: (val) => val === "OTU",
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
-                name: Yup.string().required(),
+                name: Yup.string().nullable().required(),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -423,7 +424,6 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 }
                 
                 <Field 
-                    component={TextField}
                     name="mode" 
                     type="hidden" 
                     disabled={false}

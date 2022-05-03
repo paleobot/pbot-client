@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider } from '@material-ui/core';
+import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider } from '@mui/material';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import DescriptionQueryForm from './Description/DescriptionQueryForm';
 import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
@@ -16,11 +16,11 @@ import GroupMutateForm from './Group/GroupMutateForm';
 import CollectionMutateForm from './Collection/CollectionMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
-import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
-import { ToggleButtonGroup } from '@material-ui/lab';
-import { ToggleButton } from '@material-ui/lab';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { ToggleButtonGroup } from '@mui/material';
+import { ToggleButton } from '@mui/material';
 
 const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     /*

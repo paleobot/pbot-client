@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 
 import {
@@ -178,14 +178,14 @@ const StateSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 console.log("State onChange");
                 console.log(props);
                 console.log(props.parent);
                 if (!props.parent) {
-                    props.values.name = event.currentTarget.dataset.name || '';
-                    props.values.definition = event.currentTarget.dataset.definition || '';
-                    props.values.parentState = event.currentTarget.dataset.parentstate || '';
+                    props.values.name = child.props.dname || '';
+                    props.values.definition = child.props.ddefinition || '';
+                    props.values.parentState = child.props.dparentstate || '';
                 }
                 props.handleChange(event);
             }}
@@ -194,9 +194,9 @@ const StateSelect = (props) => {
                 <MenuItem 
                     key={state.pbotID} 
                     value={state.pbotID}
-                    data-name={state.name}
-                    data-definition={state.definition}
-                    data-parentstate={state.stateOf.pbotID}
+                    dname={state.name}
+                    ddefinition={state.definition}
+                    dparentstate={state.stateOf.pbotID}
                 >{state.name}</MenuItem>
             ))}
         </Field>

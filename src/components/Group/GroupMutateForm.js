@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 
 import {
@@ -49,10 +49,10 @@ const GroupSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
-                props.values.name = event.currentTarget.dataset.name || '';
-                props.values.members = event.currentTarget.dataset.members ? JSON.parse(event.currentTarget.dataset.members) : [];
+                props.values.name = child.props.dname || '';
+                props.values.members = child.props.dmembers ? JSON.parse(child.props.dmembers) : [];
                 props.handleChange(event);
             }}
         >
@@ -60,8 +60,8 @@ const GroupSelect = (props) => {
                 <MenuItem 
                     key={group.pbotID} 
                     value={group.pbotID}
-                    data-name={group.name}
-                    data-members={group.members ? JSON.stringify(group.members.map(member => member.pbotID)) : null}
+                    dname={group.name}
+                    dmembers={group.members ? JSON.stringify(group.members.map(member => member.pbotID)) : null}
                 >{group.name}</MenuItem>
             ))}
         </Field>
@@ -180,7 +180,6 @@ const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             <Form>
 
                 <Field 
-                    component={TextField}
                     name="mode" 
                     type="hidden" 
                     disabled={false}

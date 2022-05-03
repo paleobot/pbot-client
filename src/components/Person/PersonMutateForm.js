@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 
@@ -54,13 +54,13 @@ const PersonSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
-                props.values.given = event.currentTarget.dataset.given || '';
-                props.values.surname = event.currentTarget.dataset.surname || '';
-                props.values.email = event.currentTarget.dataset.email || '';
-                props.values.orcid = event.currentTarget.dataset.orcid || '';
-                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
+                props.values.given = child.props.dgiven || '';
+                props.values.surname = child.props.dsurname || '';
+                props.values.email = child.props.demail || '';
+                props.values.orcid = child.props.dorcid || '';
+                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.handleChange(event);
             }}
         >
@@ -68,11 +68,11 @@ const PersonSelect = (props) => {
                 <MenuItem 
                     key={person.pbotID} 
                     value={person.pbotID}
-                    data-surname={person.surname}
-                    data-given={person.given}
-                    data-email={person.email}
-                    data-orcid={person.orcid}
-                    data-groups={person.memberOf ? JSON.stringify(person.memberOf.map(group => group.pbotID)) : null}
+                    dsurname={person.surname}
+                    dgiven={person.given}
+                    demail={person.email}
+                    dorcid={person.orcid}
+                    dgroups={person.memberOf ? JSON.stringify(person.memberOf.map(group => group.pbotID)) : null}
                 >{person.given} {person.surname}</MenuItem>
             ))}
         </Field>

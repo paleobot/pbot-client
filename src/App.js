@@ -6,18 +6,29 @@ import './App.css';
 //import ApolloQuery from './components/ApolloQuery';
 //import OTUQueryForm from './components/OTUQueryForm';
 import PBOTInterface from './components/PBOTInterface';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core';
+import { createTheme, ThemeProvider, StyledEngineProvider, adaptV4Theme } from '@mui/material';
 
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: "#bdbdbd"
+const theme = createTheme(adaptV4Theme({
+    palette: {
+        primary: {
+        main: "#bdbdbd"
+        },
+        secondary: {
+        main: "#66bb6a"
+        }
     },
-    secondary: {
-      main: "#66bb6a"
+    props: {
+        MuiTextField: {
+            variant: "standard",
+        },
+        MuiCheckbox: {
+            color: "secondary"
+        },
+        MuiRadio: {
+            color: "secondary"
+        }
     }
-  }
-});
+}));
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -30,16 +41,18 @@ function App() {
     const [rotatePBOT, setRotatePBOT] = useState(true);
     //localStorage.removeItem('PBOTMutationToken');
     return (
-    <ThemeProvider theme={theme}>
-    <div className="App">
-        <header className="App-header">
-        <PBOTIcon rotatePBOT={rotatePBOT} />
-        </header>
-        <PBOTInterface setRotatePBOT={setRotatePBOT}/>
-        <br />
-        <br />
-    </div>
-    </ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+        <div className="App">
+            <header className="App-header">
+            <PBOTIcon rotatePBOT={rotatePBOT} />
+            </header>
+            <PBOTInterface setRotatePBOT={setRotatePBOT}/>
+            <br />
+            <br />
+        </div>
+        </ThemeProvider>
+      </StyledEngineProvider>
     );
 }
 

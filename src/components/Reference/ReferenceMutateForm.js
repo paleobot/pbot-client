@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@material-ui/core';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {AuthorManager} from '../Person/AuthorManager.js';
@@ -61,16 +61,16 @@ const ReferenceSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 //props.resetForm();
-                props.values.title = event.currentTarget.dataset.title || '';
-                props.values.publisher = event.currentTarget.dataset.publisher || '';
-                props.values.year = event.currentTarget.dataset.year || '';
-                props.values.doi = event.currentTarget.dataset.doi || '';
-                props.values.authors = event.currentTarget.dataset.authors ? JSON.parse(event.currentTarget.dataset.authors) : [];
-                props.values.public = "true"=== event.currentTarget.dataset.public || false;
+                props.values.title = child.props.dtitle || '';
+                props.values.publisher = child.props.dpublisher || '';
+                props.values.year = child.props.dyear || '';
+                props.values.doi = child.props.ddoi || '';
+                props.values.authors = child.props.dauthors ? JSON.parse(child.props.dauthors) : [];
+                props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
-                props.values.groups = event.currentTarget.dataset.groups ? JSON.parse(event.currentTarget.dataset.groups) : [];
+                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                  props.handleChange(event);
             }}
         >
@@ -78,13 +78,13 @@ const ReferenceSelect = (props) => {
                 <MenuItem 
                     key={reference.pbotID} 
                     value={reference.pbotID}
-                    data-title={reference.title}
-                    data-publisher={reference.publisher}
-                    data-year={reference.year}
-                    data-doi={reference.doi}
-                    data-authors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
-                    data-public={reference.elementOf && reference.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
-                    data-groups={reference.elementOf ? JSON.stringify(reference.elementOf.map(group => group.pbotID)) : null}
+                    dtitle={reference.title}
+                    dpublisher={reference.publisher}
+                    dyear={reference.year}
+                    ddoi={reference.doi}
+                    dauthors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
+                    dpublic={reference.elementOf && reference.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
+                    dgroups={reference.elementOf ? JSON.stringify(reference.elementOf.map(group => group.pbotID)) : null}
                 >{reference.title + ", " + reference.publisher + ", " + reference.year}</MenuItem>
             ))}
         </Field>
@@ -163,7 +163,6 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
             <Form>
 
                 <Field 
-                    component={TextField}
                     name="mode" 
                     type="hidden" 
                     disabled={false}

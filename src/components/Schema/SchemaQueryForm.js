@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab } from '@material-ui/core';
-import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import { Button, AppBar, Tabs, Tab } from '@mui/material';
+import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 
 
@@ -50,6 +50,7 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     type="text"
                     label="Schema ID"
                     disabled={false}
+                    variant="standard"
                 />
                 <br />
                 
@@ -59,6 +60,7 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     type="text" 
                     label="Title"
                     disabled={false}
+                    variant="standard"
                 />
                 <br />
                 
@@ -68,6 +70,7 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     type="text" 
                     label="Year"
                     disabled={false}
+                    variant="standard"
                 />
                 <br />
                 
@@ -80,6 +83,7 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     type="checkbox" 
                     Label={{ label: 'Include characters' }}
                     disabled={false}
+                    variant="standard"
                 />
                 <br />
                 <br />
