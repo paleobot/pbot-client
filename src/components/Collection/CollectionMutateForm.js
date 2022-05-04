@@ -5,7 +5,7 @@ import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, M
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
-import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
+import {ReferenceManager} from '../Reference/ReferenceManager.js';
 
 import {
   useQuery,
@@ -21,7 +21,10 @@ const CollectionSelect = (props) => {
                 pbotID
                 name
                 references {
-                    pbotID
+                    Reference {
+                        pbotID
+                    }
+                    order
                 }
                 specimens {
                     pbotID
@@ -71,7 +74,7 @@ const CollectionSelect = (props) => {
                     value={collection.pbotID}
                     dname={collection.name}
                     dspecimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
-                    dreferences={collection.references ? JSON.stringify(collection.references.map(reference => reference.pbotID)) : null}
+                    dreferences={collection.references ? JSON.stringify(collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                 >{collection.name}</MenuItem>
             ))}
         </Field>
@@ -126,7 +129,10 @@ const CollectionMutateForm = ({queryParams, handleQueryParamChange, showResult, 
                 collection: '', 
                 name: '',
                 specimens: [],
-                references: [],
+                references: [{
+                    pbotID: '',
+                    order:'',
+                }],
                 public: true,
                 groups: [],
                 mode: mode,
@@ -160,7 +166,15 @@ const CollectionMutateForm = ({queryParams, handleQueryParamChange, showResult, 
                     is: true,
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one specimen for a public collection")
                 }),
-                references: Yup.array().of(Yup.string()).min(1, "At least one reference required"),
+                references: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Reference title is required'),
+                        order: Yup.string()
+                            .required('Reference order is required')
+                            .typeError('Reference order is required')
+                    })
+                ),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -203,9 +217,8 @@ const CollectionMutateForm = ({queryParams, handleQueryParamChange, showResult, 
                     <SpecimenSelect values={props.values}/>
                     <br />
 
-                    <ReferenceSelect />
-                    <br />
-
+                    <ReferenceManager values={props.values}/>
+                
                     <Field 
                         component={CheckboxWithLabel}
                         name="public" 
