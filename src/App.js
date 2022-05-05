@@ -7,6 +7,7 @@ import './App.css';
 //import OTUQueryForm from './components/OTUQueryForm';
 import PBOTInterface from './components/PBOTInterface';
 import { createTheme, ThemeProvider, StyledEngineProvider, adaptV4Theme } from '@mui/material';
+import Footer from "./components/Footer";
 
 const theme = createTheme(adaptV4Theme({
     palette: {
@@ -50,6 +51,7 @@ function App() {
             <PBOTInterface setRotatePBOT={setRotatePBOT}/>
             <br />
             <br />
+           <Footer />
         </div>
         </ThemeProvider>
       </StyledEngineProvider>
