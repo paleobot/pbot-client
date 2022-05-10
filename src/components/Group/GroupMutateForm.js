@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Autocomplete } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 
@@ -13,12 +13,17 @@ import {
 const GroupSelect = (props) => {
     console.log("GroupSelect");
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
+    
+    const me = localStorage.getItem('PBOTMe');
+
     const gQL = gql`
         query {
             Group (filter: {name_not: "public"}) {
                 pbotID
                 name
                 members {
+                    given
+                    surname
                     pbotID
                 }
             }            
@@ -61,7 +66,7 @@ const GroupSelect = (props) => {
                     key={group.pbotID} 
                     value={group.pbotID}
                     dname={group.name}
-                    dmembers={group.members ? JSON.stringify(group.members.map(member => member.pbotID)) : null}
+                    dmembers={group.members ? JSON.stringify(group.members.map(member => {return {pbotID: member.pbotID, name: member.given + " " + member.surname}})) : null}
                 >{group.name}</MenuItem>
             ))}
         </Field>
@@ -80,7 +85,6 @@ const MemberSelect = (props) => {
                     filter: {
                         AND: [
                             {password_regexp: ".*"},
-                            {email_not: "${me}"},
                             {
                                 AND: [{given_not: "guest"}, {surname_not: "guest"}]
                             }
@@ -112,22 +116,25 @@ const MemberSelect = (props) => {
     console.log(members)
     
     return (
-        <Field
-            component={TextField}
-            type="text"
+        <Autocomplete
+            multiple
+            id="members"
             name="members"
-            label="Members"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: true,
+            options={members}
+            getOptionLabel={option => option.name}
+            isOptionEqualToValue={(option, value) => option.pbotID === value.pbotID}
+            defaultValue={props.values.members}
+            onChange={(e, value) => {
+                console.log("value!!!!");
+                console.log(value)
+                const ids = value.map(member => member.pbotID);
+                console.log(ids);
+                props.setFieldValue("members", value)
             }}
-            disabled={false}
-        >
-            {members.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
-            ))}
-        </Field>
+            renderInput={params => (
+                <Field component={TextField} {...params} name="members" label="Members" variant="standard" fullWidth/>
+            )}
+        />    
     )
 }
 
@@ -164,7 +171,7 @@ const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             }}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
-                members: Yup.array().of(Yup.string())//.min(1, "at least one member required"),
+                members: Yup.array().of(Yup.object())//.min(1, "at least one member required"),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -176,7 +183,7 @@ const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 resetForm({values: initValues});
             }}
         >
-            {props => (
+            {(props, setFieldValue) => (
             <Form>
 
                 <Field 
@@ -204,7 +211,7 @@ const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     />
                     <br />
 
-                    <MemberSelect />
+                    <MemberSelect values={props.values} setFieldValue={props.setFieldValue} />
                     <br />
 
                     </div>
