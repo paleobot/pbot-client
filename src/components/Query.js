@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Divider } from '@mui/material';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
-import DescriptionQueryForm from './Description/DescriptionQueryForm';
+import OTUQueryForm from './OTU/OTUQueryForm';
 import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
 import ReferenceQueryForm from './Reference/ReferenceQueryForm';
 import SchemaQueryForm from './Schema/SchemaQueryForm';
@@ -28,7 +28,7 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
             <Grid item>
                 <FormControl component="fieldset">
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                    <FormControlLabel value="Description" control={<Radio />} label="Description" labelPlacement="end"/>
+                    <FormControlLabel value="OTU" control={<Radio />} label="OTU" labelPlacement="end"/>
                     <FormControlLabel value="Specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
                     <Divider />
                     <FormControlLabel value="Reference" control={<Radio />} label="Reference" labelPlacement="end"/>
@@ -40,8 +40,8 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
             </Grid>
             
             <Grid item>
-                <div hidden={selectedForm !== "Description"}>
-                    <DescriptionQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                <div hidden={selectedForm !== "OTU"}>
+                    <OTUQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>
                     
                 <div hidden={selectedForm !== "Specimen"}>
