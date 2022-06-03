@@ -5,6 +5,7 @@ import { alphabetize } from '../../util.js';
 function OTUs(props) {
     console.log("OTUs");
     let otus = alphabetize([...props.otus], "name");
+    console.log(otus);
     
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -13,7 +14,7 @@ function OTUs(props) {
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : otus.map(({ pbotID, name, family, genus, species, holotype, exampleSpecimens }) => (
+    ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
             <div style={indent}><b>pbotID:</b>{pbotID}</div>
@@ -29,10 +30,12 @@ function OTUs(props) {
             </div>
             }
             {//TODO:This is all just placeholder until I figure out how to handle it.
-            exampleSpecimens && exampleSpecimens[0].Specimen.describedBy[0].Description.characterInstances && exampleSpecimens[0].Specimen.describedBy[0].Description.characterInstances.length > 0 &&
+            mergedDescription && mergedDescription.length > 0 &&
             <div>
                 <div style={indent}><b>merged description:</b></div>
-                <CharacterInstances characterInstances={exampleSpecimens[0].Specimen.describedBy[0].Description.characterInstances} />
+                {alphabetize([...mergedDescription], "characterName").map((d, i) => (
+                    <div style={indent2} key={i}>{d.characterName}:{"quantity" === d.stateName ? d.stateValue : d.stateName}{d.stateOrder  ? ', order:' + d.stateOrder : ''}</div>
+                ))}
             </div>
             }
             <br />

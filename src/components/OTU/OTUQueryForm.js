@@ -19,7 +19,9 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 genus: '', 
                 species: '',
                 groups: [],
-                includeHolotypeDescription: false}}
+                includeHolotypeDescription: false,
+                includeMergedDescription: false
+            }}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -130,6 +132,17 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                     disabled={false}
                 />
                 <br />
+
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="includeMergedDescription" 
+                    type="checkbox" 
+                    Label={{ label: 'Include merged description' }}
+                    disabled={false}
+                />
+                <br />
+                
+                
                 <br />
                 <br />
 
