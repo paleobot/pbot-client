@@ -27,7 +27,7 @@ function OTUs(props) {
                 <div style={indent}><b>holotype description:</b></div>
                 {alphabetize([...holotype.Specimen.describedBy], "Description.schema.title").map((d, i) => (
                     <div key={d.Description.schema.pbotID}>
-                        <div style={indent2}><b>From schema "{d.Description.schema.title}":</b></div>
+                        <div style={indent2}><b>from schema "{d.Description.schema.title}":</b></div>
                         <CharacterInstances characterInstances={d.Description.characterInstances} />
                     </div>
                 ))}
@@ -39,7 +39,7 @@ function OTUs(props) {
                 <div style={indent}><b>merged description:</b></div>
                 {alphabetize([...mergedDescription], "schema").reduce((acc, ci) => acc.includes(ci.schema) ? acc : acc.concat(ci.schema),[]).map((s,i) => (
                     <div key={i}>
-                        <div style={indent2}><b>From schema "{s}":</b></div>
+                        <div style={indent2}><b>from schema "{s}":</b></div>
                         {alphabetize(mergedDescription.filter(ci => ci.schema === s), "characterName").map ((ci, i) =>  (
                             <div style={indent2} key={i}>{ci.characterName}:{"quantity" === ci.stateName ? ci.stateValue : ci.stateName}{ci.stateOrder  ? ', order:' + ci.stateOrder : ''}</div>
                         ))}
