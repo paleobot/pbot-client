@@ -23,6 +23,7 @@ function OTUList(props) {
                 genus
                 species
                 mergedDescription @include(if: $includeMergedDescription) {
+                    schema
                     characterName
                     stateName
                     stateValue
@@ -34,7 +35,12 @@ function OTUList(props) {
                         describedBy {
                             Description {
                                 name
+                                schema {
+                                    pbotID
+                                    title
+                                }
                                 characterInstances {
+                                    pbotID
                                     character {
                                         name
                                     }

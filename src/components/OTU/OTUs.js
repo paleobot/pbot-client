@@ -22,19 +22,28 @@ function OTUs(props) {
             <div style={indent}><b>genus:</b>{genus}</div>
             <div style={indent}><b>species:</b>{species}</div>
             
-            {//TODO:Could be multiple Descriptions. Need to iterate describedBy. Also, this is brittle if Specimen or describedBy are missing.
-            holotype && holotype.Specimen.describedBy[0].Description.characterInstances && holotype.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
+            {holotype && holotype.Specimen.describedBy && holotype.Specimen.describedBy[0].Description.characterInstances && holotype.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
             <div>
                 <div style={indent}><b>holotype description:</b></div>
-                <CharacterInstances characterInstances={holotype.Specimen.describedBy[0].Description.characterInstances} />
+                {alphabetize([...holotype.Specimen.describedBy], "Description.schema.title").map((d, i) => (
+                    <div key={d.Description.schema.pbotID}>
+                        <div style={indent2}><b>From schema "{d.Description.schema.title}":</b></div>
+                        <CharacterInstances characterInstances={d.Description.characterInstances} />
+                    </div>
+                ))}
             </div>
             }
-            {//TODO:This is all just placeholder until I figure out how to handle it.
-            mergedDescription && mergedDescription.length > 0 &&
+            
+            {mergedDescription && mergedDescription.length > 0 &&
             <div>
                 <div style={indent}><b>merged description:</b></div>
-                {alphabetize([...mergedDescription], "characterName").map((d, i) => (
-                    <div style={indent2} key={i}>{d.characterName}:{"quantity" === d.stateName ? d.stateValue : d.stateName}{d.stateOrder  ? ', order:' + d.stateOrder : ''}</div>
+                {alphabetize([...mergedDescription], "schema").reduce((acc, ci) => acc.includes(ci.schema) ? acc : acc.concat(ci.schema),[]).map((s,i) => (
+                    <div key={i}>
+                        <div style={indent2}><b>From schema "{s}":</b></div>
+                        {alphabetize(mergedDescription.filter(ci => ci.schema === s), "characterName").map ((ci, i) =>  (
+                            <div style={indent2} key={i}>{ci.characterName}:{"quantity" === ci.stateName ? ci.stateValue : ci.stateName}{ci.stateOrder  ? ', order:' + ci.stateOrder : ''}</div>
+                        ))}
+                    </div>
                 ))}
             </div>
             }
