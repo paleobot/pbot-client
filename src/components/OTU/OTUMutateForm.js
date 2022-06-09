@@ -1,0 +1,364 @@
+﻿import React, { useState }from 'react';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+import * as Yup from 'yup';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
+import { alphabetize } from '../../util.js';
+import {GroupSelect} from '../Group/GroupSelect.js';
+import {ReferenceManager} from '../Reference/ReferenceManager.js';
+
+import {
+  useQuery,
+  gql
+} from "@apollo/client";
+
+const OTUSelect = (props) => {
+    console.log("OTUSelect");
+    console.log(props);
+    console.log(props.values);
+    const gQL = gql`
+            query {
+                OTU {
+                    pbotID
+                    name
+                    family
+                    genus
+                    species
+                  	exampleSpecimens {
+                      Specimen {
+                        name
+                        pbotID
+                      }
+                    }
+                    holotype {
+                        Specimen {
+                            name
+                            pbotID
+                        }
+                    }
+                    elementOf {
+                        name
+                        pbotID
+                    }
+                }            
+            }
+        `;
+        
+    //TODO: set global schema somehow, for use in getting Characters
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                 
+    console.log(data);
+    let otus = [...data.OTU];
+        
+    console.log(otus);
+    otus = alphabetize(otus, "name");
+    console.log(otus);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field 
+            style={style}
+            component={TextField}
+            type="text"
+            name="otu"
+            label="OTU"
+            fullWidth
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={(event,child) => {
+                console.log("onChange");
+                console.log(child.props);
+                console.log(child.props.dexampleSpecimens);
+                props.values.name = child.props.dname;
+                props.values.family = child.props.dfamily;
+                props.values.genus = child.props.dgenus;
+                props.values.species = child.props.dspecies;
+                props.values.exampleSpecimens = child.props.dexampleSpecimens ? JSON.parse(child.props.dexampleSpecimens) : [];
+                props.values.holotypeSpecimen = child.props.dholotypeSpecimen;
+                props.values.public = "true"=== child.props.dpublic || false;
+                props.values.origPublic = props.values.public;
+                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
+                //props.resetForm();
+                props.handleChange(event);
+            }}
+        >
+            {otus.map((otu) => (
+                <MenuItem 
+                    key={otu.pbotID} 
+                    value={otu.pbotID} 
+                    dname={otu.name} 
+                    dfamily={otu.family}
+                    dgenus={otu.genus}
+                    dspecies={otu.species}
+                    dexampleSpecimens={otu.exampleSpecimens ? JSON.stringify(otu.exampleSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
+                    dholotypeSpecimen={otu.holotype.Specimen.pbotID}
+                    dpublic={otu.elementOf && otu.elementOf.reduce((acc,group) => {return ("public" === group.name).toString()}, "false")}
+                    dgroups={otu.elementOf ? JSON.stringify(otu.elementOf.map(group => group.pbotID)) : null}
+                >{otu.name}</MenuItem>
+            ))}
+        </Field>
+    )
+        
+}
+
+const SpecimenSelect = (props) => {
+    console.log("SpecimenSelect");
+    const specimenGQL = gql`
+            query {
+                Specimen {
+                    pbotID
+                    name
+                }            
+            }
+        `;
+
+    const { loading: specimenLoading, error: specimenError, data: specimenData } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
+
+    if (specimenLoading) return <p>Loading...</p>;
+    if (specimenError) return <p>Error :(</p>;
+                                 
+    console.log(specimenData.Specimen);
+    const specimens = alphabetize([...specimenData.Specimen], "name");
+    
+    if (props.type === "holotype") {
+        return (
+            <Field
+                component={TextField}
+                type="text"
+                name="holotypeSpecimen"
+                label="Holotype specimen"
+                fullWidth 
+                select={true}
+                SelectProps={{
+                    multiple: false,
+                }}
+                disabled={false}
+                onChange={(event,child) => {
+                    props.handleChange(event);
+                    props.setFieldValue("name", child.props.dname)
+                }}
+            >
+                <MenuItem key="0" value=""><i>none</i></MenuItem>
+                {specimens.map(({ pbotID, name }) => (
+                    <MenuItem key={pbotID} value={pbotID} dname={name}>{name}</MenuItem>
+                ))}
+            </Field>
+        )
+    } else {
+        return (
+            <Field
+                component={TextField}
+                type="text"
+                name="exampleSpecimens"
+                label="Example specimens"
+                fullWidth 
+                select={true}
+                SelectProps={{
+                    multiple: true,
+                }}
+                disabled={false}
+                onChange={(event,child) => {
+                    props.handleChange(event);
+                }}
+            >
+                {specimens.map(({ pbotID, name }) => (
+                    <MenuItem key={pbotID} value={pbotID} dname={name}>{name}</MenuItem>
+                ))}
+            </Field>
+        )
+    }
+}
+
+
+const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+    const initValues = {
+                otu: '',
+                exampleSpecimens: [],
+                holotypeSpecimen: '',
+                family: '', 
+                genus: '', 
+                species: '',
+                name: '',
+                public: true,
+                groups: [],
+                cascade: false,
+                mode: mode,
+    };
+            
+    //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
+    //allowing useEffect to call resetForm
+    const formikRef = React.useRef();
+    React.useEffect(() => {
+        if (formikRef.current) {
+            formikRef.current.resetForm({values:initValues});
+        }
+    });
+    
+    const style = {textAlign: "left", width: "60%", margin: "auto"}
+    return (
+       
+        <Formik
+            innerRef={formikRef}
+            initialValues={initValues}
+            validate={values => {
+                const errors = {};
+                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
+                //handleQueryParamChange(values);
+                setShowResult(false);
+                return errors;
+            }}
+            validationSchema={Yup.object({
+                family: Yup.string().nullable().when("type", {
+                    is: (val) => val === "OTU",
+                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
+                }),
+                genus: Yup.string().nullable().when("type", {
+                    is: (val) => val === "OTU",
+                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
+                }),
+                species: Yup.string().nullable().when("type", {
+                    is: (val) => val === "OTU",
+                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
+                }),
+                name: Yup.string().nullable().required(),
+                public: Yup.boolean(),
+                groups: Yup.array().of(Yup.string()).when('public', {
+                    is: false,
+                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
+                })
+            })}
+            onSubmit={(values, {resetForm}) => {
+                //alert(JSON.stringify(values, null, 2));
+                //setValues(values);
+                values.mode = mode;
+                //values.family = null;
+                //values.genus = null;
+                //values.species = null;
+                //values.specimen = null;
+                handleQueryParamChange(values);
+                setShowResult(true);
+                //setShowOTUs(true);
+                resetForm({values:initValues});
+            }}
+        >
+            {props => (
+            <Form>
+                {(mode === "edit" || mode === "delete") &&
+                    <div>
+                        <OTUSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />
+                    </div>
+                }
+                
+                {(mode === "create" || (mode === "edit" && props.values.otu !== '')) &&
+                <div>
+                
+                <Field 
+                    component={TextField}
+                    name="name" 
+                    type="text" 
+                    label="Name"
+                    fullWidth
+                    disabled={false}
+                />
+                
+                <Field 
+                    component={TextField}
+                    name="family" 
+                    type="text" 
+                    label="Family"
+                    disabled={false}
+                />
+                <br />
+                
+                <Field 
+                    component={TextField}                
+                    name="genus" 
+                    type="text" 
+                    label="Genus"
+                    disabled={false}
+                    onChange={event => {
+                        props.handleChange(event)
+                        props.setFieldValue("name", event.target.value + " " + props.values.species)
+                    }}
+                />
+                <br />
+                
+                <Field 
+                    component={TextField}
+                    name="species" 
+                    type="text" 
+                    label="Species"
+                    disabled={false}
+                    onChange={event => {
+                        props.handleChange(event)
+                        props.setFieldValue("name", props.values.genus + " " + event.target.value)
+                    }}
+                />
+                <br />
+          
+                <SpecimenSelect type="example" handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                <br />
+                
+                <SpecimenSelect type="holotype" handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                <br />
+                
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="public" 
+                    type="checkbox"
+                    Label={{label:"Public"}}
+                    disabled={(mode === "edit" && props.values.origPublic)}
+                />
+                <br />
+                
+                {!props.values.public &&
+                <div>
+                    <GroupSelect />
+                    <br />
+                </div>
+                }
+                
+                </div>
+                }
+                
+                <Field 
+                    name="mode" 
+                    type="hidden" 
+                    disabled={false}
+                />
+
+                {(mode === "delete") &&
+                <div>
+                    <Field
+                        type="checkbox"
+                        component={CheckboxWithLabel}
+                        name="cascade"
+                        type="checkbox" 
+                        Label={{ label: 'Cascade' }}
+                    />
+                  <br />
+                </div>
+                }
+                
+               <br />
+                <br />
+
+                <Button type="submit" variant="contained" color="primary">Submit</Button>
+                <br />
+                <br />
+            </Form>
+            )}
+        </Formik>
+    
+    );
+};
+
+export default OTUMutateForm;
