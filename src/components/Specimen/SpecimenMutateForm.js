@@ -29,14 +29,21 @@ const SpecimenSelect = (props) => {
                     organ {
                         pbotID
                     }
-                    description {
+                    describedBy {
                       	Description {
                         	pbotID
                       	}
                     }
-                    archtypeDescription {
-                      	Description {
-                        	pbotID
+                    exampleOf {
+                        OTU {
+                            name
+                            pbotID
+                        }
+                    }
+                    holotypeOf {
+                        OTU {
+                            name
+                            pbotID
                         }
                     }
                     elementOf {
@@ -86,8 +93,9 @@ const SpecimenSelect = (props) => {
                 props.values.locality = child.props.dlocality ? child.props.dlocality : '';
                 props.values.organ = child.props.dorgan ? child.props.dorgan : '';
                 props.values.preservationMode = child.props.dpreservationmode ? child.props.dpreservationmode : '';
-                props.values.describedBy = child.props.ddescribedby ? child.props.ddescribedby : '';
-                props.values.exampleOf = child.props.dexampleof ? child.props.dexampleof : '';
+                props.values.describedBy = child.props.ddescribedby ? JSON.parse(child.props.ddescribedby) : [];
+                props.values.exampleOf = child.props.dexampleOf ? child.props.dexampleOf : '';
+                props.values.holotypeOf = child.props.dholotypeOf ? child.props.dholotypeOf : '';
                 props.values.idigbiouuid = child.props.didigbiouuid ? child.props.didigbiouuid : '';
                 props.values.pbdbcid = child.props.dpbdbcid ? child.props.dpbdbcid : '';
                 props.values.pbdboccid = child.props.dpbdboccid ? child.props.dpbdboccid : '';
@@ -107,8 +115,9 @@ const SpecimenSelect = (props) => {
                     dlocality={specimen.locality}
                     dorgan={specimen.organ.pbotID}
                     dpreservationmode={specimen.preservationMode}
-                    ddescribedby={specimen.description ? specimen.description.Description.pbotID : ''}
-                    dexampleof={specimen.archtypeDescription ? specimen.archtypeDescription.Description.pbotID : ''}
+                    ddescribedby={specimen.describedBy ? JSON.stringify(specimen.describedBy.map(d => d.Description.pbotID)) : ''}
+                    dexampleOf={specimen.exampleOf ? specimen.exampleOf.OTU.pbotID : ''}
+                    dholotypeOf={specimen.holotypeOf ? specimen.holotypeOf.OTU.pbotID : ''}
                     didigbiouuid={specimen.idigbiouuid}
                     dpbdbcid={specimen.pbdbcid}
                     dpbdboccid={specimen.pbdboccid}
@@ -164,19 +173,14 @@ const OrganSelect = (props) => {
 }
 
 const DescriptionSelect = (props) => {
-    console.log("SpecimenDescriptionSelect");
+    console.log("DescriptionSelect");
     console.log(props);
     console.log(props.type);
     const descriptionGQL = gql`
             query {
-                Description (type: "${props.type}") {
+                Description {
                     pbotID
                     name
-                  	specimen {
-                      Specimen {
-                        name
-                      }
-                    }
                 }            
             }
         `;
@@ -191,46 +195,87 @@ const DescriptionSelect = (props) => {
     console.log(descriptionData);
     let descriptions = [...descriptionData.Description];
     
-    descriptions = descriptions.reduce((acc, description) => {
-        const newDesc = {...description};
-        console.log(newDesc);
+    return (
+        <Field 
+            component={TextField}
+            type="text"
+            name="describedBy"
+            label="Described by"
+            fullWidth
+            select={true}
+            SelectProps={{
+                multiple: true,
+            }}
+            disabled={false}
+            defaultValue=""
+        >
+            {alphabetize(descriptions, "name").map(({ pbotID, name }) => (
+                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
+            ))}
+        </Field>
+    )        
+}
 
-        if (newDesc.name) {
-            acc.push(newDesc);
-        } else {
-            if (description.specimen) {
-                console.log(description.specimen.Specimen.name);
-                newDesc.name = description.specimen.Specimen.name;
-                acc.push(newDesc);
-            } 
-        }
-        return acc;
-    }, []);
+const OTUSelect = (props) => {
+    console.log("OTUSelect");
+    console.log(props);
+    console.log(props.type);
+    let gQL;
+    //TODO: Commenting this out for now. The intent was to limit holotype options to otus not already holotypes. But this doesn't work well with the edit functionality (not populated with holotype, since not returned from query).
+    /* 
+    if ("holotype" === props.type) {
+        gQL= gql`
+            query {
+                OTU (filter: { holotype: null }) {
+                    pbotID
+                    name
+                }            
+            }
+        `;
+    } else {
+        */
+        gQL = gql`
+           query {
+                OTU {
+                    pbotID
+                    name
+                }            
+            }
+         `;
+    //}
+       
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                 
+    console.log(data);
+    let otus = [...data.OTU];
     
-    console.log(descriptions);
-    descriptions = alphabetize(descriptions, "name");
-    console.log(descriptions);
+    console.log("otus && otus.length > 0");
+    console.log(otus && otus.length > 0);
     
-    if (props.type === "specimen") {
+    if (props.type === "holotype") {
         return (
             <Field 
-               component={TextField}
+                component={TextField}
                 type="text"
-                name="describedBy"
-                label="Described by"
+                name="holotypeOf"
+                label="Holotype of"
                 fullWidth
                 select={true}
                 SelectProps={{
                     multiple: false,
                 }}
-                disabled={false}
+                disabled={!(otus && otus.length > 0)}
                 defaultValue=""
             >
-                {descriptions.map(({ pbotID, name }) => (
+                <MenuItem key="0" value=""><i>nothing</i></MenuItem>
+                {alphabetize(otus, "name").map(({ pbotID, name }) => (
                     <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
                 ))}
             </Field>
-        )
+        )        
     } else {
         return (
             <Field 
@@ -246,15 +291,14 @@ const DescriptionSelect = (props) => {
                 disabled={false}
                 defaultValue=""
             >
-                {descriptions.map(({ pbotID, name }) => (
+                <MenuItem key="0" value=""><i>nothing</i></MenuItem>
+                {alphabetize(otus, "name").map(({ pbotID, name }) => (
                     <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
                 ))}
             </Field>
         )
     }
-        
 }
-
 
 const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     //const [values, setValues] = useState({});
@@ -264,8 +308,9 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 locality: '',
                 organ: '',
                 preservationMode: '',
-                describedBy: '',
+                describedBy: [],
                 exampleOf: '',
+                holotypeOf: '',
                 otu: '',
                 idigbiouuid: '',
                 pbdbcid: '',
@@ -324,7 +369,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 })
            })}
             onSubmit={(values, {resetForm}) => {
-                //alert(JSON.stringify(values, null, 2));
+                alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.mode = mode;
                 handleQueryParamChange(values);
@@ -390,10 +435,13 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     </Field>
                     <br />
                     
-                    <DescriptionSelect type="specimen"/>
+                    <DescriptionSelect/>
                     <br />
 
-                    <DescriptionSelect type="OTU"/>
+                    <OTUSelect type="holotype"/>
+                    <br />
+                    
+                    <OTUSelect type="example"/>
                     <br />
                     
                     <Field
