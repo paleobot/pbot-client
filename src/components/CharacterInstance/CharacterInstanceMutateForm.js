@@ -23,12 +23,6 @@ const DescriptionSelect = (props) => {
                       pbotID
                       title
                     }
-                  	specimen {
-                      Specimen {
-                        name
-                        pbotID
-                      }
-                    }
                 }            
             }
         `;
@@ -40,29 +34,7 @@ const DescriptionSelect = (props) => {
     if (descriptionLoading) return <p>Loading...</p>;
     if (descriptionError) return <p>Error :(</p>;
                                  
-    console.log(descriptionData);
-    let descriptions = [...descriptionData.Description];
-    
-    //TODO: This was necessary because we initially did not have name fields in specimen Descriptions.
-    //I require that now, but there are still some that do not have this.
-    descriptions = descriptions.reduce((acc, description) => {
-        const newDesc = {...description};
-        console.log(newDesc);
-
-        if (newDesc.name) {
-            acc.push(newDesc);
-        } else {
-            if (description.specimen) {
-                console.log(description.specimen.Specimen.name);
-                newDesc.name = description.specimen.Specimen.name;
-                acc.push(newDesc);
-            } 
-        }
-        return acc;
-    }, []);
-    
-    console.log(descriptions);
-    descriptions = alphabetize(descriptions, "name");
+    const descriptions = alphabetize([...descriptionData.Description], "name");
     console.log(descriptions);
     
     const style = {minWidth: "12ch"}
