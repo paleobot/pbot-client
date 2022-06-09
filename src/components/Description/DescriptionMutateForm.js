@@ -20,15 +20,11 @@ const DescriptionSelect = (props) => {
             query {
                 Description {
                     pbotID
-                    type
                     name
-                    family
-                    genus
-                    species
                   	schema {
                       pbotID
                     }
-                  	specimen {
+                  	specimens {
                       Specimen {
                         name
                         pbotID
@@ -99,11 +95,7 @@ const DescriptionSelect = (props) => {
                 console.log(child.props.dtype);
                 props.values.schema = child.props.dschema;
                 props.values.name = child.props.dname;
-                props.values.type = child.props.dtype;
-                props.values.family = child.props.dfamily;
-                props.values.genus = child.props.dgenus;
-                props.values.species = child.props.dspecies;
-                props.values.specimen = child.props.dspecimen;
+                props.values.specimens = child.props.dspecimens ? JSON.parse(child.props.dspecimens) : [];
                 props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
@@ -118,11 +110,7 @@ const DescriptionSelect = (props) => {
                     value={description.pbotID} 
                     dschema={description.schema.pbotID} 
                     dname={description.name} 
-                    dtype={description.type}
-                    dfamily={description.family}
-                    dgenus={description.genus}
-                    dspecies={description.species}
-                    dspecimen={description.specimen ? description.specimen.Specimen.pbotID : ''}
+                    dspecimens={description.specimens ? JSON.stringify(description.specimens.map(specimen => specimen.Specimen.pbotID)) : []}
                     dpublic={description.elementOf && description.elementOf.reduce((acc,group) => {return ("public" === group.name).toString()}, "false")}
                     dgroups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
                     dreferences={description.references ? JSON.stringify(description.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
@@ -195,21 +183,21 @@ const SpecimenSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="specimen"
-            label="Specimen"
+            name="specimens"
+            label="Specimens"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: false,
+                multiple: true,
             }}
             disabled={false}
-            onChange={event => {
+            onChange={(event,child) => {
                 props.handleChange(event);
-                props.setFieldValue("name", event.currentTarget.dataset.name)
+                //props.setFieldValue("name", child.props.dname) TODO:With multiple:true, this no longer works properly
             }}
         >
             {specimens.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={pbotID} data-name={name}>{name}</MenuItem>
+                <MenuItem key={pbotID} value={pbotID} dname={name}>{name}</MenuItem>
             ))}
         </Field>
     )
@@ -219,16 +207,12 @@ const SpecimenSelect = (props) => {
 const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const initValues = {
                 description: '',
-                type: '',
                 schema: '',
                 references: [{
                     pbotID: '',
                     order:'',
                 }],
-                specimen: '',
-                family: '', 
-                genus: '', 
-                species: '',
+                specimens: [],
                 name: '',
                 public: true,
                 groups: [],
@@ -259,7 +243,6 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 return errors;
             }}
             validationSchema={Yup.object({
-                type: Yup.string().required(),
                 schema: Yup.string().required(),
                 //TODO: decide if specimen is required for specimen types                         
                 //specimen: Yup.string().when("type", {
@@ -275,18 +258,6 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                             .typeError('Reference order is required')
                     })
                 ),
-                family: Yup.string().nullable().when("type", {
-                    is: (val) => val === "OTU",
-                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
-                }),
-                genus: Yup.string().nullable().when("type", {
-                    is: (val) => val === "OTU",
-                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
-                }),
-                species: Yup.string().nullable().when("type", {
-                    is: (val) => val === "OTU",
-                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
-                }),
                 name: Yup.string().nullable().required(),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
@@ -298,13 +269,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.mode = mode;
-                if (values.type === "specimen") {
-                    values.family = null;
-                    values.genus = null;
-                    values.species = null;
-                } else {
-                    values.specimen = null;
-                }
+                values.specimen = null;
                 handleQueryParamChange(values);
                 setShowResult(true);
                 //setShowOTUs(true);
@@ -323,27 +288,6 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 {(mode === "create" || (mode === "edit" && props.values.description !== '')) &&
                 <div>
                 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="type"
-                    label="Type"
-                    fullWidth 
-                    disabled={false}
-                    select={true}
-                    SelectProps={{
-                        multiple: false,
-                    }}
-                    onChange={event => {
-                        props.resetForm();
-                        props.handleChange(event);
-                    }}
-                >
-                    <MenuItem value="OTU">OTU</MenuItem>
-                    <MenuItem value="specimen">Specimen</MenuItem>
-                </Field>
-                <br />
-
                 <Field 
                     component={TextField}
                     name="name" 
@@ -358,52 +302,11 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 
                 <ReferenceManager values={props.values}/>
 
-                {props.values.type === "specimen" &&
-                    <div>
-                    <SpecimenSelect handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
-                    <br />
-                    </div>
-                }
-                
-                {props.values.type === "OTU" &&
-                    <div>
-                        <Field 
-                            component={TextField}
-                            name="family" 
-                            type="text" 
-                            label="Family"
-                            disabled={false}
-                        />
-                        <br />
-                        
-                        <Field 
-                            component={TextField}                
-                            name="genus" 
-                            type="text" 
-                            label="Genus"
-                            disabled={false}
-                            onChange={event => {
-                                props.handleChange(event)
-                                props.setFieldValue("name", event.target.value + " " + props.values.species)
-                            }}
-                        />
-                        <br />
-                        
-                        <Field 
-                            component={TextField}
-                            name="species" 
-                            type="text" 
-                            label="Species"
-                            disabled={false}
-                            onChange={event => {
-                                props.handleChange(event)
-                                props.setFieldValue("name", props.values.genus + " " + event.target.value)
-                            }}
-                        />
-                        <br />
-                    </div>
-                }
-          
+                <div>
+                <SpecimenSelect handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                <br />
+                </div>
+                          
                 <Field 
                     component={CheckboxWithLabel}
                     name="public" 

@@ -11,13 +11,9 @@ const DescriptionMutateResults = ({queryParams, queryEntity}) => {
                         <Mutator 
                             params={{
                                 pbotID: queryParams.description || null,
-                                type: queryParams.type || null,
-                                specimenID: queryParams.specimen || null,
+                                specimenIDs: queryParams.specimens || null,
                                 schemaID: queryParams.schema || null,
                                 references: queryParams.references || null,
-                                family: queryParams.family || null, 
-                                genus: queryParams.genus || null, 
-                                species: queryParams.species || null, 
                                 name: queryParams.name || null,
                                 groups: queryParams.public ? 
                                     [publicGroupID] : queryParams.groups || null,
