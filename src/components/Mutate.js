@@ -5,6 +5,7 @@ import DescriptionQueryForm from './Description/DescriptionQueryForm';
 import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
 import SchemaQueryForm from './Schema/SchemaQueryForm';
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
+import OTUMutateForm from './OTU/OTUMutateForm';
 import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
 import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
 import ReferenceMutateForm from './Reference/ReferenceMutateForm';
@@ -62,6 +63,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                 <Grid item>
                     <FormControl component="fieldset">
                         <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
+                        <FormControlLabel value="OTU-mutate" control={<Radio />} label="OTU" labelPlacement="end"/>
                         <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
@@ -98,6 +100,10 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         </ToggleButton>
                     </ToggleButtonGroup>
                 
+                    <div hidden={selectedForm !== "OTU-mutate"}>
+                        <OTUMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                    </div>
+
                     <div hidden={selectedForm !== "Description-mutate"}>
                         <DescriptionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>

@@ -5,6 +5,7 @@ import SpecimenQueryResults from './Specimen/SpecimenQueryResults';
 import ReferenceQueryResults from './Reference/ReferenceQueryResults';
 import SchemaQueryResults from './Schema/SchemaQueryResults';
 import PersonQueryResults from './Person/PersonQueryResults';
+import OTUMutateResults from './OTU/OTUMutateResults';
 import DescriptionMutateResults from './Description/DescriptionMutateResults';
 import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanceMutateResults';
 import SpecimenMutateResults from './Specimen/SpecimenMutateResults';
@@ -35,6 +36,9 @@ const Result = ({queryParams, queryEntity}) => {
         queryEntity === "Person" ? (
             <PersonQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) :
+        queryEntity === "OTU-mutate" ? (
+            <OTUMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
         queryEntity === "Description-mutate" ? (
             <DescriptionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
