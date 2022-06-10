@@ -36,6 +36,12 @@ const OTUSelect = (props) => {
                             pbotID
                         }
                     }
+                    references {
+                        Reference {
+                            pbotID
+                        }
+                        order
+                    }
                     elementOf {
                         name
                         pbotID
@@ -82,6 +88,7 @@ const OTUSelect = (props) => {
                 props.values.species = child.props.dspecies;
                 props.values.exampleSpecimens = child.props.dexampleSpecimens ? JSON.parse(child.props.dexampleSpecimens) : [];
                 props.values.holotypeSpecimen = child.props.dholotypeSpecimen;
+                props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
@@ -99,6 +106,7 @@ const OTUSelect = (props) => {
                     dspecies={otu.species}
                     dexampleSpecimens={otu.exampleSpecimens ? JSON.stringify(otu.exampleSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
                     dholotypeSpecimen={otu.holotype.Specimen.pbotID}
+                    dreferences={otu.references ? JSON.stringify(otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                     dpublic={otu.elementOf && otu.elementOf.reduce((acc,group) => {return ("public" === group.name).toString()}, "false")}
                     dgroups={otu.elementOf ? JSON.stringify(otu.elementOf.map(group => group.pbotID)) : null}
                 >{otu.name}</MenuItem>
@@ -142,7 +150,6 @@ const SpecimenSelect = (props) => {
                 disabled={false}
                 onChange={(event,child) => {
                     props.handleChange(event);
-                    props.setFieldValue("name", child.props.dname)
                 }}
             >
                 <MenuItem key="0" value=""><i>none</i></MenuItem>
@@ -186,6 +193,10 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 genus: '', 
                 species: '',
                 name: '',
+                references: [{
+                    pbotID: '',
+                    order:'',
+                }],
                 public: true,
                 groups: [],
                 cascade: false,
@@ -228,6 +239,15 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                     then: Yup.string().required().max(30, 'Must be 30 characters or less')
                 }),
                 name: Yup.string().nullable().required(),
+                references: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Reference title is required'),
+                        order: Yup.string()
+                            .required('Reference order is required')
+                            .typeError('Reference order is required')
+                    })
+                ),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -286,7 +306,6 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                     disabled={false}
                     onChange={event => {
                         props.handleChange(event)
-                        props.setFieldValue("name", event.target.value + " " + props.values.species)
                     }}
                 />
                 <br />
@@ -299,7 +318,6 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                     disabled={false}
                     onChange={event => {
                         props.handleChange(event)
-                        props.setFieldValue("name", props.values.genus + " " + event.target.value)
                     }}
                 />
                 <br />
@@ -308,6 +326,9 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 <br />
                 
                 <SpecimenSelect type="holotype" handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                <br />
+                
+                <ReferenceManager values={props.values}/>
                 <br />
                 
                 <Field 
@@ -348,7 +369,7 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 </div>
                 }
                 
-               <br />
+                <br />
                 <br />
 
                 <Button type="submit" variant="contained" color="primary">Submit</Button>

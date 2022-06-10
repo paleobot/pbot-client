@@ -17,6 +17,7 @@ const OTUMutateResults = ({queryParams, queryEntity}) => {
                                 genus: queryParams.genus || null, 
                                 species: queryParams.species || null, 
                                 name: queryParams.name || null,
+                                references: queryParams.references || null,
                                 groups: queryParams.public ? 
                                     [publicGroupID] : queryParams.groups || null,
                             }}
