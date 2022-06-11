@@ -118,7 +118,29 @@ const OTUSelect = (props) => {
 
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
+    /*
+    //TODO: Now that I'm filtering in the query, this isn't needed. Keeping it here for now in case I change my mind.
     const specimenGQL = gql`
+        query {
+            Specimen {
+                pbotID
+                name
+            }            
+        }
+    `;
+    */
+    let specimenGQL;
+    if ("holotype" === props.type) {
+        specimenGQL = gql`
+            query {
+                Specimen (filter: {pbotID_in: ${JSON.stringify(props.values.exampleSpecimens)}}) {
+                    pbotID
+                    name
+                }            
+            }
+        `;
+    } else {
+        specimenGQL = gql`
             query {
                 Specimen {
                     pbotID
@@ -126,16 +148,21 @@ const SpecimenSelect = (props) => {
                 }            
             }
         `;
-
+    }
+    
     const { loading: specimenLoading, error: specimenError, data: specimenData } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
 
     if (specimenLoading) return <p>Loading...</p>;
     if (specimenError) return <p>Error :(</p>;
                                  
     console.log(specimenData.Specimen);
-    const specimens = alphabetize([...specimenData.Specimen], "name");
-    
+    let specimens = alphabetize([...specimenData.Specimen], "name");
+
     if (props.type === "holotype") {
+        //TODO: Now that I'm filtering in the query, this isn't needed. Keeping it here for now in case I change my mind.
+        //Only want to offer example of specimens as holotype.
+        //specimens = specimens.reduce((acc,specimen) => (props.values.exampleSpecimens.includes(specimen.pbotID) ? acc.concat(specimen) : acc),[]);
+        //console.log(specimens);
         return (
             <Field
                 component={TextField}
@@ -152,7 +179,7 @@ const SpecimenSelect = (props) => {
                     props.handleChange(event);
                 }}
             >
-                <MenuItem key="0" value=""><i>none</i></MenuItem>
+                <MenuItem key="0" value="">&nbsp;</MenuItem>
                 {specimens.map(({ pbotID, name }) => (
                     <MenuItem key={pbotID} value={pbotID} dname={name}>{name}</MenuItem>
                 ))}
@@ -172,6 +199,7 @@ const SpecimenSelect = (props) => {
                 }}
                 disabled={false}
                 onChange={(event,child) => {
+                    if (child.props.value === props.values.holotypeSpecimen) props.values.holotypeSpecimen = ''; //clear holotype if it is the example getting touched here
                     props.handleChange(event);
                 }}
             >
@@ -252,7 +280,9 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
-                })
+                }),
+                holotypeSpecimen: Yup.string().required("Holotype specimen required"),
+                exampleSpecimens: Yup.array().min(1, "At least one example specimen required"),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -322,10 +352,10 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 />
                 <br />
           
-                <SpecimenSelect type="example" handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                <SpecimenSelect type="example" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
                 <br />
                 
-                <SpecimenSelect type="holotype" handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                <SpecimenSelect type="holotype" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
                 <br />
                 
                 <ReferenceManager values={props.values}/>
