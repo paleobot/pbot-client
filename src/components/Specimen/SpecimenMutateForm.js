@@ -216,102 +216,14 @@ const DescriptionSelect = (props) => {
     )        
 }
 
-const OTUSelect = (props) => {
-    console.log("OTUSelect");
-    console.log(props);
-    console.log(props.type);
-    let gQL;
-    //TODO: Commenting this out for now. The intent was to limit holotype options to otus not already holotypes. But this doesn't work well with the edit functionality (not populated with holotype, since not returned from query).
-    /* 
-    if ("holotype" === props.type) {
-        gQL= gql`
-            query {
-                OTU (filter: { holotype: null }) {
-                    pbotID
-                    name
-                }            
-            }
-        `;
-    } else {
-        */
-        gQL = gql`
-           query {
-                OTU {
-                    pbotID
-                    name
-                }            
-            }
-         `;
-    //}
-       
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                                 
-    console.log(data);
-    let otus = [...data.OTU];
-    
-    console.log("otus && otus.length > 0");
-    console.log(otus && otus.length > 0);
-    
-    if (props.type === "holotype") {
-        return (
-            <Field 
-                component={TextField}
-                type="text"
-                name="holotypeOf"
-                label="Holotype of"
-                fullWidth
-                select={true}
-                SelectProps={{
-                    multiple: false,
-                }}
-                disabled={!(otus && otus.length > 0)}
-                defaultValue=""
-            >
-                <MenuItem key="0" value=""><i>nothing</i></MenuItem>
-                {alphabetize(otus, "name").map(({ pbotID, name }) => (
-                    <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
-                ))}
-            </Field>
-        )        
-    } else {
-        return (
-            <Field 
-                component={TextField}
-                type="text"
-                name="exampleOf"
-                label="Example of"
-                fullWidth
-                select={true}
-                SelectProps={{
-                    multiple: false,
-                }}
-                disabled={false}
-                defaultValue=""
-            >
-                <MenuItem key="0" value=""><i>nothing</i></MenuItem>
-                {alphabetize(otus, "name").map(({ pbotID, name }) => (
-                    <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
-                ))}
-            </Field>
-        )
-    }
-}
-
 const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     //const [values, setValues] = useState({});
     const initValues = {
                 specimen: '',
                 name: '',
-                locality: '',
                 organ: '',
                 preservationMode: '',
                 describedBy: [],
-                exampleOf: '',
-                holotypeOf: '',
-                otu: '',
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
@@ -350,7 +262,6 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 name: Yup.string().required(),
                 organ: Yup.string().required(),
                 preservationMode: Yup.string(),
-                locality: Yup.string(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
                 references: Yup.array().of(
                     Yup.object().shape({
@@ -410,17 +321,6 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     
                     <ReferenceManager values={props.values}/>
 
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="locality"
-                        label="Locality"
-                        fullWidth 
-                        disabled={false}
-                    >
-                    </Field>
-                    <br />
-
                     <OrganSelect />
                     <br />
 
@@ -438,12 +338,6 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     <DescriptionSelect/>
                     <br />
 
-                    <OTUSelect type="holotype"/>
-                    <br />
-                    
-                    <OTUSelect type="example"/>
-                    <br />
-                    
                     <Field
                         component={TextField}
                         type="text"
