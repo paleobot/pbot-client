@@ -16,10 +16,11 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
             initialValues={{
                 specimenID: '', 
                 name: '', 
-                locality: '', 
                 collection: '',
                 groups: [],
-                includeComplex: false}}
+                includeDescriptions: false,
+                includeOTUs: false
+            }}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -31,8 +32,6 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 specimenID: Yup.string()
                 .uuid('Must be a valid uuid'),
                 name: Yup.string()
-                .max(30, 'Must be 30 characters or less'),
-                locality: Yup.string()
                 .max(30, 'Must be 30 characters or less'),
                 collection: Yup.string(),
                 groups: Yup.array().of(Yup.string())
@@ -64,15 +63,6 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 />
                 <br />
                 
-                <Field 
-                    component={TextField}                
-                    name="locality" 
-                    type="text" 
-                    label="Locality"
-                    disabled={false}
-                />
-                <br />
-                
                 <CollectionSelect />
                 <br />
 
@@ -81,9 +71,18 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 
                 <Field 
                     component={CheckboxWithLabel}
-                    name="includeComplex" 
+                    name="includeDescriptions" 
                     type="checkbox" 
-                    Label={{ label: 'Include complex' }}
+                    Label={{ label: 'Include descriptions' }}
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="includeOTUs" 
+                    type="checkbox" 
+                    Label={{ label: 'Include OTUs' }}
                     disabled={false}
                 />
                 <br />
