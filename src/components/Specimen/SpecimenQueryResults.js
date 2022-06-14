@@ -14,11 +14,9 @@ function Specimens(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
-    let gQL;
-    if (!props.includeComplex) {
-        gQL = gql`
-            query ($pbotID: ID, $name: String, $locality: String, $groups: [ID!] ${filters.collection ? ", $collection: ID" : ""}) {
-                Specimen (pbotID: $pbotID, name: $name, locality: $locality, filter: {
+    const gQL = gql`
+            query ($pbotID: ID, $name: String, $groups: [ID!], $includeDescriptions: Boolean!, $includeOTUs: Boolean! ${filters.collection ? ", $collection: ID" : ""}) {
+                Specimen (pbotID: $pbotID, name: $name, filter: {
                     ${filters.collection ?
                         "AND: [{elementOf_some: {pbotID_in: $groups}}, {collection: {pbotID: $collection}}]" : 
                         "elementOf_some: {pbotID_in: $groups}"
@@ -26,41 +24,10 @@ function Specimens(props) {
                 }) {
                     pbotID
                     name
-                    organ {
-                        type
-                    }
-                    archtypeDescription {
-                        Description {
-                            name
-                        }
-                    }
-                    description {
-                        Description {
-                            pbotID
-                        }
-                    }
-                    references {
-                        Reference {
-                            title
-                            publisher
-                            year
-                        }
-                        order
-                    }
-                }            
-            }
-        `;
-    } else {
-        gQL = gql`
-            query ($pbotID: ID, $name: String, $locality: String, $groups: [ID!] ${filters.collection ? ", $collection: ID" : ""}) {
-                Specimen (pbotID: $pbotID, name: $name, locality: $locality, filter: {
-                    ${filters.collection ?
-                        "AND: [{elementOf_some: {pbotID_in: $groups}}, {collection: {pbotID: $collection}}]" : 
-                        "elementOf_some: {pbotID_in: $groups}"
-                    }
-                }) {
-                    pbotID
-                    name
+                    preservationMode
+                    idigbiouuid
+                    pbdbcid
+                    pbdboccid
                     organ {
                         type
                     }
@@ -72,14 +39,13 @@ function Specimens(props) {
                         }
                         order
                     }
-                    archtypeDescription {
+                    describedBy @include(if: $includeDescriptions) {
                         Description {
                             pbotID
-                            type
                             name
-                            family
-                            genus
-                            species
+                            schema {
+                                title
+                            }
                             characterInstances {
                                 pbotID
                                 character {
@@ -94,36 +60,31 @@ function Specimens(props) {
                             }
                         }
                     }
-                    description {
-                        Description {
-                            pbotID
-                            type
+                    exampleOf @include(if: $includeOTUs){
+                        OTU {
                             name
                             family
                             genus
                             species
-                            characterInstances {
-                                pbotID
-                                character {
-                                    name
-                                }
-                                state {
-                                    State {
-                                        name
-                                    }
-                                    value
-                                }
-                            }
+                        }
+                    }
+                    holotypeOf @include(if: $includeOTUs){
+                        OTU {
+                            name
+                            family
+                            genus
+                            species
                         }
                     }
                 }            
             }
         `;
-    }
     
     const { loading, error, data } = useQuery(gQL, {
         variables: {
-            ...filters
+            ...filters,
+            includeDescriptions: props.includeDescriptions,
+            includeOTUs: props.includeOTUs,
         },
         fetchPolicy: "cache-and-network"
     });
@@ -136,35 +97,69 @@ function Specimens(props) {
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
     const indent2 = {marginLeft:"4em"}
+    const indent3 = {marginLeft:"6em"}
     return (specimens.length === 0) ? (
         <div style={style}>
             No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
-    ) : specimens.map(({ pbotID, name, organ, description, archtypeDescription, references }) => (
-        <div key={pbotID} style={style}>
-            <b>{name || "(name missing)"}</b>
-            <div style={indent}><b>pbotID:</b> {pbotID}</div>
-            <div style={indent}><b>organ:</b> {organ.type}</div>
-            <div style={indent}><b>archetype description:</b> {archtypeDescription ? `${archtypeDescription.Description.name}` : ""}</div>
-            <div style={indent}><b>description:</b> {description ? "" : "OTU specimen"}</div>
-            {references && references.length > 0 &&
+    ) : specimens.map((s) => (
+        <div key={s.pbotID} style={style}>
+            <b>{s.name || "(name missing)"}</b>
+            <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
+            <div style={indent}><b>organ:</b> {s.organ.type}</div>
+            <div style={indent}><b>preservation mode:</b> {s.preservationMode}</div>
+            <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
+            <div style={indent}><b>pbdbcid:</b> {s.pbdbcid}</div>
+            <div style={indent}><b>pbdboccid:</b> {s.pbdboccid}</div>
+            {s.describedBy && s.describedBy.length > 0 &&
                 <div>
-                    <div style={indent}><b>references:</b></div>
-                    {alphabetize([...references], "order").map(reference => (
-                        <div style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                    <div style={indent}><b>descriptions:</b></div>
+                    {s.describedBy.map(d => (
+                        <div>
+                            <div style={indent2}><b>{d.Description.schema.title}</b></div>
+                            {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
+                            <div>
+                                <div style={indent2}><b>character instances:</b></div>
+                                <CharacterInstances characterInstances={d.Description.characterInstances} />
+                            </div>
+                            }
+                        </div>
                     ))}
                 </div>
             }
-            {((description && description.Description.characterInstances && description.Description.characterInstances.length > 0) || (archtypeDescription && archtypeDescription.Description.characterInstances && archtypeDescription.Description.characterInstances.length > 0)) &&
-            <div>
-                <div style={indent}><b>character instances:</b></div>
-                <CharacterInstances characterInstances={description ? 
-                    description.Description.characterInstances : 
-                    archtypeDescription ? 
-                        archtypeDescription.Description.characterInstances :
-                        ""
-                } />
-            </div>
+            {s.holotypeOf && s.holotypeOf.length > 0 &&
+                <div>
+                    <div style={indent}><b>holotype of:</b></div>
+                    {s.holotypeOf.map(h => (
+                        <div>
+                            <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                            <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                            <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                            <div style={indent2}><b>species: {h.OTU.species}</b></div>
+                        </div>
+                    ))}
+                </div>
+            }
+            {s.exampleOf && s.exampleOf.length > 0 &&
+                <div>
+                    <div style={indent}><b>example of:</b></div>
+                    {s.exampleOf.map(h => (
+                        <div>
+                            <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                            <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                            <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                            <div style={indent2}><b>species: {h.OTU.species}</b></div>
+                        </div>
+                    ))}
+                </div>
+            }
+            {s.references && s.references.length > 0 &&
+                <div>
+                    <div style={indent}><b>references:</b></div>
+                    {alphabetize([...s.references], "order").map(reference => (
+                        <div style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                    ))}
+                </div>
             }
         
             <br />
@@ -182,11 +177,11 @@ const SpecimenQueryResults = ({queryParams, queryEntity}) => {
                         filters={{
                             pbotID: queryParams.specimenID,
                             name: queryParams.name, 
-                            locality: queryParams.locality, 
                             collection: queryParams.collection || null, 
                             groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
-                        includeComplex={queryParams.includeComplex} 
+                        includeDescriptions={queryParams.includeDescriptions} 
+                        includeOTUs={queryParams.includeOTUs} 
                     />
                 ) : 
                 '';
