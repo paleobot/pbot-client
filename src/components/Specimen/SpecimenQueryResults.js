@@ -111,22 +111,6 @@ function Specimens(props) {
             <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
             <div style={indent}><b>pbdbcid:</b> {s.pbdbcid}</div>
             <div style={indent}><b>pbdboccid:</b> {s.pbdboccid}</div>
-            {s.describedBy && s.describedBy.length > 0 &&
-                <div>
-                    <div style={indent}><b>descriptions:</b></div>
-                    {s.describedBy.map(d => (
-                        <div>
-                            <div style={indent2}><b>{d.Description.schema.title}</b></div>
-                            {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
-                            <div>
-                                <div style={indent2}><b>character instances:</b></div>
-                                <CharacterInstances characterInstances={d.Description.characterInstances} />
-                            </div>
-                            }
-                        </div>
-                    ))}
-                </div>
-            }
             {s.holotypeOf && s.holotypeOf.length > 0 &&
                 <div>
                     <div style={indent}><b>holotype of:</b></div>
@@ -158,6 +142,21 @@ function Specimens(props) {
                     <div style={indent}><b>references:</b></div>
                     {alphabetize([...s.references], "order").map(reference => (
                         <div style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                    ))}
+                </div>
+            }
+            {s.describedBy && s.describedBy.length > 0 &&
+                <div>
+                    <div style={indent}><b>descriptions:</b></div>
+                    {s.describedBy.map(d => (
+                        <div>
+                            <div style={indent2}><b>{d.Description.schema.title}</b></div>
+                            {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
+                            <div>
+                                <CharacterInstances style={indent3}  characterInstances={d.Description.characterInstances} />
+                            </div>
+                            }
+                        </div>
                     ))}
                 </div>
             }
