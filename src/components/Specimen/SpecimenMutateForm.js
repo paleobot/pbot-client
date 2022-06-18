@@ -21,7 +21,6 @@ const SpecimenSelect = (props) => {
                 Specimen {
                     pbotID
                     name
-                    locality
                     preservationMode
                     idigbiouuid
                     pbdbcid
@@ -33,18 +32,6 @@ const SpecimenSelect = (props) => {
                       	Description {
                         	pbotID
                       	}
-                    }
-                    exampleOf {
-                        OTU {
-                            name
-                            pbotID
-                        }
-                    }
-                    holotypeOf {
-                        OTU {
-                            name
-                            pbotID
-                        }
                     }
                     elementOf {
                         name
@@ -90,16 +77,13 @@ const SpecimenSelect = (props) => {
             onChange={(event,child) => {
                 //props.resetForm();
                 props.values.name = child.props.dname;
-                props.values.locality = child.props.dlocality ? child.props.dlocality : '';
                 props.values.organ = child.props.dorgan ? child.props.dorgan : '';
                 props.values.preservationMode = child.props.dpreservationmode ? child.props.dpreservationmode : '';
                 props.values.describedBy = child.props.ddescribedby ? JSON.parse(child.props.ddescribedby) : [];
-                props.values.exampleOf = child.props.dexampleOf ? child.props.dexampleOf : '';
-                props.values.holotypeOf = child.props.dholotypeOf ? child.props.dholotypeOf : '';
                 props.values.idigbiouuid = child.props.didigbiouuid ? child.props.didigbiouuid : '';
                 props.values.pbdbcid = child.props.dpbdbcid ? child.props.dpbdbcid : '';
                 props.values.pbdboccid = child.props.dpbdboccid ? child.props.dpbdboccid : '';
-                props.values.public = "true"=== child.props.dpublic || false;
+                props.values.public =  child.props.dpublic;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
@@ -112,12 +96,9 @@ const SpecimenSelect = (props) => {
                     key={specimen.pbotID} 
                     value={specimen.pbotID}
                     dname={specimen.name}
-                    dlocality={specimen.locality}
                     dorgan={specimen.organ.pbotID}
                     dpreservationmode={specimen.preservationMode}
                     ddescribedby={specimen.describedBy ? JSON.stringify(specimen.describedBy.map(d => d.Description.pbotID)) : ''}
-                    dexampleOf={specimen.exampleOf ? specimen.exampleOf.OTU.pbotID : ''}
-                    dholotypeOf={specimen.holotypeOf ? specimen.holotypeOf.OTU.pbotID : ''}
                     didigbiouuid={specimen.idigbiouuid}
                     dpbdbcid={specimen.pbdbcid}
                     dpbdboccid={specimen.pbdboccid}
@@ -280,7 +261,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 })
            })}
             onSubmit={(values, {resetForm}) => {
-                alert(JSON.stringify(values, null, 2));
+                //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.mode = mode;
                 handleQueryParamChange(values);
