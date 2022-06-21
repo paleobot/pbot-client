@@ -35,7 +35,7 @@ export const GroupSelect = (props) => {
             console.log(newGroup);
             if ("public" === newGroup.name) {
                 publicGroupID = newGroup.pbotID;
-                return acc;
+                return acc.concat(newGroup);
             } else {
                 return acc.concat(newGroup);
             }
