@@ -8,17 +8,29 @@ import {GroupSelect} from '../Group/GroupSelect.js';
 
 const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
     //const [values, setValues] = useState({});
-   
+    const initValues = {
+        schemaID: '', 
+        title: '', 
+        year: '', 
+        groups: [],
+        includeCharacters: false
+    };
+    
+    //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
+    //allowing useEffect to call resetForm
+    const formikRef = React.useRef();
+    React.useEffect(() => {
+        if (formikRef.current) {
+            formikRef.current.resetForm({values:initValues});
+        }
+    });
+    
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
-            initialValues={{
-                schemaID: '', 
-                title: '', 
-                year: '', 
-                groups: [],
-                includeCharacters: false}}
+            innerRef={formikRef}
+            initialValues={initValues}
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
@@ -35,12 +47,13 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 .max(4, 'Must be 4 characters or less'),
                 groups: Yup.array().of(Yup.string())
             })}
-            onSubmit={values => {
+            onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 handleQueryParamChange(values)
                 setShowResult(true);
                 //setShowOTUs(true);
+                resetForm({values: initValues});
             }}
         >
             <Form>
