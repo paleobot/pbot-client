@@ -1,11 +1,9 @@
 import React, { useState }from 'react';
 import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider } from '@mui/material';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
-import DescriptionQueryForm from './Description/DescriptionQueryForm';
-import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
-import SchemaQueryForm from './Schema/SchemaQueryForm';
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import OTUMutateForm from './OTU/OTUMutateForm';
+import SynonymMutateForm from './Synonym/SynonymMutateForm';
 import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
 import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
 import ReferenceMutateForm from './Reference/ReferenceMutateForm';
@@ -64,6 +62,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     <FormControl component="fieldset">
                         <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                         <FormControlLabel value="OTU-mutate" control={<Radio />} label="OTU" labelPlacement="end"/>
+                        <FormControlLabel value="Synonym-mutate" control={<Radio />} label="Synonym" labelPlacement="end"/>
                         <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
@@ -102,6 +101,10 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                 
                     <div hidden={selectedForm !== "OTU-mutate"}>
                         <OTUMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                    </div>
+
+                    <div hidden={selectedForm !== "Synonym-mutate"}>
+                        <SynonymMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "Description-mutate"}>

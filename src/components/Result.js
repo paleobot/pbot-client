@@ -6,6 +6,7 @@ import ReferenceQueryResults from './Reference/ReferenceQueryResults';
 import SchemaQueryResults from './Schema/SchemaQueryResults';
 import PersonQueryResults from './Person/PersonQueryResults';
 import OTUMutateResults from './OTU/OTUMutateResults';
+import SynonymMutateResults from './Synonym/SynonymMutateResults';
 import DescriptionMutateResults from './Description/DescriptionMutateResults';
 import CharacterInstanceMutateResults from './CharacterInstance/CharacterInstanceMutateResults';
 import SpecimenMutateResults from './Specimen/SpecimenMutateResults';
@@ -38,6 +39,9 @@ const Result = ({queryParams, queryEntity}) => {
         ) :
         queryEntity === "OTU-mutate" ? (
             <OTUMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "Synonym-mutate" ? (
+            <SynonymMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         queryEntity === "Description-mutate" ? (
             <DescriptionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
