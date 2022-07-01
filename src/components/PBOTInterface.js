@@ -2,6 +2,8 @@ import React, { useState }from 'react';
 import { AppBar, Tabs, Tab } from '@mui/material';
 import Result from './Result';
 import Action from './Action';
+import {publicGroupID, GroupSelect} from './Group/GroupSelect.js';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 
 import {
   ApolloClient,
@@ -17,6 +19,7 @@ import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
   uri: '/graphql',
+  //useGETForQueries: true
 });
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
@@ -38,11 +41,17 @@ const client = new ApolloClient({
 
 
 const PBOTInterface = ({setRotatePBOT}) => {
-    const [selectedTab, setSelectedTab] = useState(0);
-    const [queryParams, setQueryParams] = useState(0);
-    const [selectedForm, setSelectedForm] = useState(0);
-    const [showResult, setShowResult] = useState(false);
     
+    //This path business is to handle direct urls to nodes 
+    //(e.g. http://localhost:3000/Specimen/7599aa01-c919-4628-a5a8-b513d7a080c1)
+    //This code, and related in Result.js, is proof on concept. Will need to 
+    //use react-router to make it tight.
+    const pathPieces = window.location.pathname.split('/');
+    const [selectedTab, setSelectedTab] = useState(pathPieces[1] ? 1 : 0);
+    const [queryParams, setQueryParams] = useState(0);
+    const [selectedForm, setSelectedForm] = useState(pathPieces[1] ? pathPieces[1] : 0);
+    const [showResult, setShowResult] = useState(pathPieces[1]);
+        
     const setSelectedTabDeco = (newTab) => {
         if (newTab === 0) {
             setRotatePBOT(true);
@@ -77,10 +86,10 @@ const PBOTInterface = ({setRotatePBOT}) => {
     };
         
     let result = showResult ? (
-                <Result queryParams={queryParams} queryEntity={selectedForm}/>
-             ) :
-             '';
-
+                    <Result queryParams={queryParams} queryEntity={selectedForm}/>
+                 ) :
+                 '';
+  
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
         <ApolloProvider client={client}>

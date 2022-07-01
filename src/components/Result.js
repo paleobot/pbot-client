@@ -18,8 +18,57 @@ import StateMutateResults from './State/StateMutateResults';
 import PersonMutateResults from './Person/PersonMutateResults';
 import GroupMutateResults from './Group/GroupMutateResults';
 import CollectionMutateResults from './Collection/CollectionMutateResults';
+import {
+  useQuery,
+  gql
+} from "@apollo/client";
 
 const Result = ({queryParams, queryEntity}) => {
+    console.log("Result");
+    
+    //This publicGroupID and path business is to handle direct urls to nodes 
+    //(e.g. http://localhost:3000/Specimen/7599aa01-c919-4628-a5a8-b513d7a080c1)
+    //This code, and related in Result.js, is proof on concept. Will need to 
+    //use react-router to make it tight.
+    //TODO: Right now, this query happens for every Result. It does not need to.
+    //Leaving it for now, because at some point we'll be switching to react-router, 
+    //and this will change the whole way for handle paths and initialization.
+    //Just make sure this gets handled more efficiently.
+    const gQL = gql`
+            query {
+                Group (name: "public"){
+                    pbotID
+                }            
+            }
+        `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                 
+    const publicGroupID = data.Group[0].pbotID;
+        
+    const pathPieces = window.location.pathname.split('/');
+    const qParams = "OTU"===pathPieces[1] ? {
+        otuID: pathPieces[2] || null, 
+        groups:[publicGroupID], //TODO:Figure out how to get this programatically
+        includeHolotypeDescription: false,
+        includeMergedDescription: false
+    } : "Specimen"===pathPieces[1] ? {
+        specimenID: pathPieces[2] || null,
+        groups:[publicGroupID], //TODO:Figure out how to get this programatically
+        includeDescriptions:false, 
+        includeOTUs:false
+    } : "Reference"===pathPieces[1] ? {
+        referenceID: pathPieces[2] || null,
+        groups:[publicGroupID], //TODO:Figure out how to get this programatically
+    } : "Schema"===pathPieces[1] ? {
+        schemaID: pathPieces[2] || null,
+        groups:[publicGroupID], //TODO:Figure out how to get this programatically
+        includeCharacters:false, 
+    } : {};
+    queryParams = queryParams ?  queryParams : qParams ;
 
     let result = 
         queryEntity === "OTU" ? (
