@@ -25,15 +25,17 @@ import {
 
 const Result = ({queryParams, queryEntity}) => {
     console.log("Result");
-    
+
+    /*
     //This publicGroupID and path business is to handle direct urls to nodes 
     //(e.g. http://localhost:3000/Specimen/7599aa01-c919-4628-a5a8-b513d7a080c1)
     //This code, and related in Result.js, is proof on concept. Will need to 
     //use react-router to make it tight.
-    //TODO: Right now, this query happens for every Result. It does not need to.
-    //Leaving it for now, because at some point we'll be switching to react-router, 
-    //and this will change the whole way for handle paths and initialization.
-    //Just make sure this gets handled more efficiently.
+    //TODO: The path code needs to know the public group id, but we can't assume that is initialized.
+    //The query below does that. But it has problems. For one thing, this query happens for every Result call,
+    //and that's a lot. For another, and a showstopper, it somehow causes React to inifinite loop.
+    //So, I've hardcoded it instead for now. I'll figure out a better way as part of the react-router change.
+    //Probably using React Context or something. I'm leaving it all here for future reference.
     const gQL = gql`
             query {
                 Group (name: "public"){
@@ -46,30 +48,34 @@ const Result = ({queryParams, queryEntity}) => {
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-                                 
+                                
     const publicGroupID = data.Group[0].pbotID;
-        
-    const pathPieces = window.location.pathname.split('/');
-    const qParams = "OTU"===pathPieces[1] ? {
-        otuID: pathPieces[2] || null, 
-        groups:[publicGroupID], //TODO:Figure out how to get this programatically
-        includeHolotypeDescription: false,
-        includeMergedDescription: false
-    } : "Specimen"===pathPieces[1] ? {
-        specimenID: pathPieces[2] || null,
-        groups:[publicGroupID], //TODO:Figure out how to get this programatically
-        includeDescriptions:false, 
-        includeOTUs:false
-    } : "Reference"===pathPieces[1] ? {
-        referenceID: pathPieces[2] || null,
-        groups:[publicGroupID], //TODO:Figure out how to get this programatically
-    } : "Schema"===pathPieces[1] ? {
-        schemaID: pathPieces[2] || null,
-        groups:[publicGroupID], //TODO:Figure out how to get this programatically
-        includeCharacters:false, 
-    } : {};
-    queryParams = queryParams ?  queryParams : qParams ;
-
+    
+    const publicGroupID = "4a34d2a4-f1ab-43b5-8435-d46182901b1e";
+    if ("/" !== window.location.pathname) {
+        const pathPieces = window.location.pathname.split('/');
+        const qParams = "OTU"===pathPieces[1] ? {
+            otuID: pathPieces[2] || null, 
+            groups:[publicGroupID], //TODO:Figure out how to get this programatically
+            includeHolotypeDescription: false,
+            includeMergedDescription: false
+        } : "Specimen"===pathPieces[1] ? {
+            specimenID: pathPieces[2] || null,
+            groups:[publicGroupID], //TODO:Figure out how to get this programatically
+            includeDescriptions:false, 
+            includeOTUs:false
+        } : "Reference"===pathPieces[1] ? {
+            referenceID: pathPieces[2] || null,
+            groups:[publicGroupID], //TODO:Figure out how to get this programatically
+        } : "Schema"===pathPieces[1] ? {
+            schemaID: pathPieces[2] || null,
+            groups:[publicGroupID], //TODO:Figure out how to get this programatically
+            includeCharacters:false, 
+        } : {};
+        queryParams = queryParams ?  queryParams : qParams ;
+    }
+    */
+    
     let result = 
         queryEntity === "OTU" ? (
             <OTUQueryResults queryParams={queryParams} queryEntity={queryEntity}/>

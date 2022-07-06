@@ -42,6 +42,7 @@ const client = new ApolloClient({
 
 const PBOTInterface = ({setRotatePBOT}) => {
     
+    /*
     //This path business is to handle direct urls to nodes 
     //(e.g. http://localhost:3000/Specimen/7599aa01-c919-4628-a5a8-b513d7a080c1)
     //This code, and related in Result.js, is proof on concept. Will need to 
@@ -51,10 +52,20 @@ const PBOTInterface = ({setRotatePBOT}) => {
     const [queryParams, setQueryParams] = useState(0);
     const [selectedForm, setSelectedForm] = useState(pathPieces[1] ? pathPieces[1] : 0);
     const [showResult, setShowResult] = useState(pathPieces[1]);
-        
+    */
+    const [selectedTab, setSelectedTab] = useState(0);
+    const [queryParams, setQueryParams] = useState(0);
+    const [selectedForm, setSelectedForm] = useState(0);
+    const [showResult, setShowResult] = useState(false); 
+    
     const setSelectedTabDeco = (newTab) => {
         if (newTab === 0) {
             setRotatePBOT(true);
+            //TODO: This hack is for the path business. Need to clean up path when user navigates.
+            //This will go away when we use react.router.
+            //if ('/' !== window.location.pathname) { 
+            //    window.location.pathname = '/';
+            //}
         } else if (newTab === 1) {
             setRotatePBOT(false);
         }
