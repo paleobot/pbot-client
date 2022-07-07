@@ -15,13 +15,22 @@ function OTUList(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
     let gQL = gql`
-        query ($pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!], $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
+        query ($pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!], $includeSynonyms: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
             OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species,  filter:{elementOf_some: {pbotID_in: $groups}}) {
                 pbotID
                 name
                 family
                 genus
                 species
+                synonyms @include(if: $includeSynonyms) {
+                    otus {
+                        name
+                        pbotID
+                        family
+                        genus
+                        species
+                    }
+                }
                 mergedDescription @include(if: $includeMergedDescription) {
                     schema
                     characterName
@@ -63,6 +72,7 @@ function OTUList(props) {
     const { loading, error, data } = useQuery(gQL, {
         variables: {
             ...filters,
+            includeSynonyms: props.includeSynonyms,
             includeHolotypeDescription: props.includeHolotypeDescription,
             includeMergedDescription: props.includeMergedDescription
         },
@@ -94,6 +104,7 @@ const OTUQueryResults = ({queryParams, queryEntity}) => {
                             species: queryParams.species || null, 
                             groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
+                        includeSynonyms={queryParams.includeSynonyms} 
                         includeHolotypeDescription={queryParams.includeHolotypeDescription} 
                         includeMergedDescription={queryParams.includeMergedDescription} 
                     />

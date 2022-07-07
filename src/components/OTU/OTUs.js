@@ -4,23 +4,42 @@ import { alphabetize } from '../../util.js';
 
 function OTUs(props) {
     console.log("OTUs");
+    console.log(props.otus);
     let otus = alphabetize([...props.otus], "name");
     console.log(otus);
     
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
     const indent2 = {marginLeft:"4em"}
+    const indent3 = {marginLeft:"6em"}
     return (otus.length === 0) ? (
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription }) => (
+    ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription, synonyms }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
             <div style={indent}><b>pbotID:</b>{pbotID}</div>
             <div style={indent}><b>family:</b>{family}</div>
             <div style={indent}><b>genus:</b>{genus}</div>
             <div style={indent}><b>species:</b>{species}</div>
+            
+            {synonyms && synonyms.length > 0 &&
+            <div>
+                <div style={indent}><b>synonyms:</b></div>
+                {synonyms.map((synonym, i) => {
+                    const synOTU=synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
+                    return (
+                        <div key={i}>
+                            <div style={indent2}>{synOTU.name}</div>
+                            <div style={indent3}><b>family:</b>{synOTU.family}</div>
+                            <div style={indent3}><b>genus:</b>{synOTU.genus}</div>
+                            <div style={indent3}><b>species:</b>{synOTU.species}</div>
+                        </div>
+                    )
+                })}
+            </div>
+            }
             
             {holotype && holotype.Specimen.describedBy && holotype.Specimen.describedBy[0].Description.characterInstances && holotype.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
             <div>

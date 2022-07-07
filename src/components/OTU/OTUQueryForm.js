@@ -15,7 +15,8 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 species: '',
                 groups: [],
                 includeHolotypeDescription: false,
-                includeMergedDescription: false
+                includeMergedDescription: false,
+                includeSynonyms: false
             };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     
@@ -62,41 +63,6 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
         >
             {props => (
             <Form>
-                {/*
-                <InputLabel htmlFor="type" style={{ marginTop: "10px" }}>Type</InputLabel>
-                <Field 
-                    component={RadioGroup} 
-                    name="type" 
-                    label="Type"
-                >
-                    <Grid container>
-                        <Grid item>
-                            <FormControlLabel
-                                value="OTU"
-                                control={<Radio />}
-                                label="OTU"
-                                disabled={false}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <FormControlLabel
-                                value="specimen"
-                                control={<Radio />}
-                                label="Specimen"
-                                disabled={false}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <FormControlLabel
-                                value="all"
-                                control={<Radio  />}
-                                label="All"
-                                disabled={false}
-                            />
-                        </Grid>
-                    </Grid>
-                </Field>
-                */}
             
                 <Field 
                     component={TextField}
@@ -136,6 +102,15 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 <GroupSelect/>
                 <br />
 
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="includeSynonyms" 
+                    type="checkbox" 
+                    Label={{ label: 'Include synonyms' }}
+                    disabled={false}
+                />
+                <br />
+                
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeHolotypeDescription" 
