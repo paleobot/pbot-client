@@ -50,6 +50,12 @@ const SynonymSelect = (props) => {
     let synonyms = [...data.Synonym];
         
     console.log(synonyms);
+    synonyms = synonyms.map(synonym => {
+        return {
+            ...synonym,
+            name: synonym.otus.reduce((acc,otu) => acc ? acc + "/" + otu.name : otu.name, null)
+        }
+    });
     synonyms = alphabetize(synonyms, "name");
     console.log(synonyms);
     
@@ -89,7 +95,7 @@ const SynonymSelect = (props) => {
                     dreferences={synonym.references ? JSON.stringify(synonym.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                     dpublic={synonym.elementOf && synonym.elementOf.reduce((acc,group) => {return ("public" === group.name).toString()}, "false")}
                     dgroups={synonym.elementOf ? JSON.stringify(synonym.elementOf.map(group => group.pbotID)) : null}
-                >{synonym.otus.reduce((acc,otu) => acc ? acc + "/" + otu.name : otu.name, null)}</MenuItem>
+                >{synonym.name/*synonym.otus.reduce((acc,otu) => acc ? acc + "/" + otu.name : otu.name, null)*/}</MenuItem>
             ))}
         </Field>
     )
