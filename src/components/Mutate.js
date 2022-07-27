@@ -4,6 +4,7 @@ import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Butt
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import OTUMutateForm from './OTU/OTUMutateForm';
 import SynonymMutateForm from './Synonym/SynonymMutateForm';
+import CommentMutateForm from './Comment/CommentMutateForm';
 import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
 import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
 import ReferenceMutateForm from './Reference/ReferenceMutateForm';
@@ -63,6 +64,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                         <FormControlLabel value="OTU-mutate" control={<Radio />} label="OTU" labelPlacement="end"/>
                         <FormControlLabel value="Synonym-mutate" control={<Radio />} label="Synonym" labelPlacement="end"/>
+                        <FormControlLabel value="Comment-mutate" control={<Radio />} label="Comment" labelPlacement="end"/>
                         <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
                         <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
@@ -105,6 +107,10 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
 
                     <div hidden={selectedForm !== "Synonym-mutate"}>
                         <SynonymMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                    </div>
+
+                    <div hidden={selectedForm !== "Comment-mutate"}>
+                        <CommentMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "Description-mutate"}>
