@@ -10,8 +10,8 @@ const CommentMutateResults = ({queryParams, queryEntity}) => {
                         params={{
                             pbotID: queryParams.comment || null,
                             content: queryParams.content || null,
-                            subjectID: queryParams.synonym || null,
-                            //parentID: queryParams.parentCharacter || queryParams.schema || null, 
+                            //subjectID: queryParams.synonym || null,
+                            subjectID: queryParams.parentComment || queryParams.synonym || null, 
                             references: queryParams.references || null,
                         }}
                         entity="Comment"

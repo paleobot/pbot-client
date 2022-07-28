@@ -20,6 +20,14 @@ const CommentSelect = (props) => {
             GetAllComments (synonymID: $synonymID)  {
                 pbotID
                 content
+                subject {
+                    ...on Synonym {
+                        pbotID
+                    }
+                    ...on Comment {
+                        pbotID
+                    }
+                }
                 references {
                     Reference {
                         pbotID
@@ -56,13 +64,13 @@ const CommentSelect = (props) => {
             SelectProps={{
                 multiple: false,
             }}
-            disabled={false}
+            disabled={"edit"===props.mode}
             onChange={(event,child) => {
                 //props.resetForm();
                 if (!props.parent) {
                     props.values.content = child.props.dcontent || '';
                 }
-                props.values.parent = child.props.dparent || '';
+                props.values.parentComment = child.props.dparent || '';
                 props.handleChange(event);
             }}
         >
@@ -71,7 +79,7 @@ const CommentSelect = (props) => {
                     key={comment.pbotID} 
                     value={comment.pbotID}
                     dcontent={comment.content}
-                    dparent={comment.refersTo.pbotID}
+                    dparent={comment.subject.pbotID}
                 >{comment.content}</MenuItem>
             ))}
         </Field>
@@ -150,6 +158,7 @@ const CommentMutateForm = ({queryParams, handleQueryParamChange, showResult, set
                 comment: '',
                 content: '',
                 synonym: '',
+                parentComment: '',
                 mode: mode,
     };
     
@@ -204,7 +213,7 @@ const CommentMutateForm = ({queryParams, handleQueryParamChange, showResult, set
                 }
                 
                 {((mode === "create" && props.values.synonym) || (mode === "edit" && props.values.comment)) &&
-                    <CommentSelect values={props.values} parent handleChange={props.handleChange}/>
+                    <CommentSelect values={props.values} parent mode={mode} handleChange={props.handleChange}/>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.comment !== '')) &&
