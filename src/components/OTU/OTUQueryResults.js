@@ -15,7 +15,7 @@ function OTUList(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
     let gQL = gql`
-        query ($pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!], $includeSynonyms: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
+        query ($pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!], $includeSynonyms: Boolean!, $includeComments: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
             OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species,  filter:{elementOf_some: {pbotID_in: $groups}}) {
                 pbotID
                 name
@@ -29,6 +29,24 @@ function OTUList(props) {
                         family
                         genus
                         species
+                    }
+                    comments  @include(if: $includeComments) {
+                        enteredBy {
+                            Person {
+                                given
+                                surname
+                            }
+                        }
+                        content
+                        comments {
+                            enteredBy {
+                                Person {
+                                    given
+                                    surname
+                                }
+                            }
+                            content
+                        }
                     }
                 }
                 mergedDescription @include(if: $includeMergedDescription) {
@@ -73,6 +91,7 @@ function OTUList(props) {
         variables: {
             ...filters,
             includeSynonyms: props.includeSynonyms,
+            includeComments: props.includeComments,
             includeHolotypeDescription: props.includeHolotypeDescription,
             includeMergedDescription: props.includeMergedDescription
         },
@@ -105,6 +124,7 @@ const OTUQueryResults = ({queryParams, queryEntity}) => {
                             groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
                         }}
                         includeSynonyms={queryParams.includeSynonyms} 
+                        includeComments={queryParams.includeComments} 
                         includeHolotypeDescription={queryParams.includeHolotypeDescription} 
                         includeMergedDescription={queryParams.includeMergedDescription} 
                     />

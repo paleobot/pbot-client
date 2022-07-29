@@ -16,7 +16,8 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 groups: [],
                 includeHolotypeDescription: false,
                 includeMergedDescription: false,
-                includeSynonyms: false
+                includeSynonyms: false,
+                includeComments: false,
             };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     
@@ -29,6 +30,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
         }
     });
     
+    const indent01 = {marginLeft: "2em"}
     return (
        
         <Formik
@@ -109,7 +111,21 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                     Label={{ label: 'Include synonyms' }}
                     disabled={false}
                 />
+                
+                {props.values.includeSynonyms &&
+                    <div style={indent01}>
+                    <Field 
+                        component={CheckboxWithLabel}
+                        name="includeComments" 
+                        type="checkbox" 
+                        Label={{ label: 'Include comments' }}
+                        disabled={false}
+                    />
+                    </div>
+                }
+                {!props.values.includeSynonyms &&
                 <br />
+                }
                 
                 <Field 
                     component={CheckboxWithLabel}

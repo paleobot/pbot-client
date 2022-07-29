@@ -12,6 +12,8 @@ function OTUs(props) {
     const indent = {marginLeft:"2em"}
     const indent2 = {marginLeft:"4em"}
     const indent3 = {marginLeft:"6em"}
+    const indent4 = {marginLeft:"8em"}
+    const indent5 = {marginLeft:"10em"}
     return (otus.length === 0) ? (
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
@@ -35,6 +37,27 @@ function OTUs(props) {
                             <div style={indent3}><b>family:</b>{synOTU.family}</div>
                             <div style={indent3}><b>genus:</b>{synOTU.genus}</div>
                             <div style={indent3}><b>species:</b>{synOTU.species}</div>
+                            {synonym.comments && synonym.comments.length > 0 &&
+                            <div>
+                                <div style={indent2}><b>comments:</b></div>
+                                {synonym.comments.map((comment, i) => (
+                                    <div key={i}>
+                                        <div style={indent3}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                        <div style={indent3}>{comment.content}</div>
+                                        {comment.comments && comment.comments.length > 0 &&
+                                        <div>
+                                            {comment.comments.map((comment, i) => (
+                                                <div key={i}>
+                                                    <div style={indent4}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                    <div style={indent4}>{comment.content}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        }
+                                    </div>
+                                ))}
+                            </div>
+                            }
                         </div>
                     )
                 })}
