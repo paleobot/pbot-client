@@ -14,6 +14,10 @@ function OTUs(props) {
     const indent3 = {marginLeft:"6em"}
     const indent4 = {marginLeft:"8em"}
     const indent5 = {marginLeft:"10em"}
+    const indent6 = {marginLeft:"12em"}
+    const indent7 = {marginLeft:"14em"}
+    
+    //TODO:Figure out a more modular way to handle nested comments query and presentation
     return (otus.length === 0) ? (
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
@@ -50,6 +54,36 @@ function OTUs(props) {
                                                 <div key={i}>
                                                     <div style={indent4}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
                                                     <div style={indent4}>{comment.content}</div>
+                                                    {comment.comments && comment.comments.length > 0 &&
+                                                    <div>
+                                                        {comment.comments.map((comment, i) => (
+                                                            <div key={i}>
+                                                                <div style={indent5}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                <div style={indent5}>{comment.content}</div>
+                                                                {comment.comments && comment.comments.length > 0 &&
+                                                                <div>
+                                                                    {comment.comments.map((comment, i) => (
+                                                                        <div key={i}>
+                                                                            <div style={indent6}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                            <div style={indent6}>{comment.content}</div>
+                                                                            {comment.comments && comment.comments.length > 0 &&
+                                                                            <div>
+                                                                                {comment.comments.map((comment, i) => (
+                                                                                    <div key={i}>
+                                                                                        <div style={indent7}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                                        <div style={indent7}>{comment.content}</div>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                            }
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                }
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    }
                                                 </div>
                                             ))}
                                         </div>

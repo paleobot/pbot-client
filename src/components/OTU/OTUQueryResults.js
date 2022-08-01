@@ -14,6 +14,7 @@ function OTUList(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
+    //TODO:Figure out a more modular way to handle nested comments query and presentation
     let gQL = gql`
         query ($pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!], $includeSynonyms: Boolean!, $includeComments: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
             OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species,  filter:{elementOf_some: {pbotID_in: $groups}}) {
@@ -46,6 +47,33 @@ function OTUList(props) {
                                 }
                             }
                             content
+                            comments {
+                                enteredBy {
+                                    Person {
+                                        given
+                                        surname
+                                    }
+                                }
+                                content
+                                comments {
+                                    enteredBy {
+                                        Person {
+                                            given
+                                            surname
+                                        }
+                                    }
+                                    content
+                                    comments {
+                                        enteredBy {
+                                            Person {
+                                                given
+                                                surname
+                                            }
+                                        }
+                                        content
+                                    }
+                                }
+                            }
                         }
                     }
                 }
