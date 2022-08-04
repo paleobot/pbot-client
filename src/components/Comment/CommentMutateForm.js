@@ -159,6 +159,7 @@ const CommentMutateForm = ({queryParams, handleQueryParamChange, showResult, set
                 content: '',
                 synonym: '',
                 parentComment: '',
+                references: [],
                 mode: mode,
     };
     
@@ -187,6 +188,15 @@ const CommentMutateForm = ({queryParams, handleQueryParamChange, showResult, set
             validationSchema={Yup.object({
                 content: Yup.string().required(),
                 synonym: Yup.string().required(),
+                references: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string(),
+                            //.required('Reference title is required'),
+                        order: Yup.string(),
+                            //.required('Reference order is required')
+                            //.typeError('Reference order is required')
+                    })
+                ),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -228,10 +238,8 @@ const CommentMutateForm = ({queryParams, handleQueryParamChange, showResult, set
                     />
                     <br />
 
-                    {/*
                     <ReferenceManager values={props.values}/>
                     <br />
-                    */}
                     
                     </div>
                 }
