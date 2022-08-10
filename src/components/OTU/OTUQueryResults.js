@@ -14,10 +14,114 @@ function OTUList(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
+    const groups = props.standAlone ? '' : '$groups: [ID!], ';
+    const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
+    
     //TODO:Figure out a more modular way to handle nested comments query and presentation
+    /*
     let gQL = gql`
         query ($pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!], $includeSynonyms: Boolean!, $includeComments: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
             OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species,  filter:{elementOf_some: {pbotID_in: $groups}}) {
+                pbotID
+                name
+                family
+                genus
+                species
+                synonyms @include(if: $includeSynonyms) {
+                    otus {
+                        name
+                        pbotID
+                        family
+                        genus
+                        species
+                    }
+                    comments  @include(if: $includeComments) {
+                        enteredBy {
+                            Person {
+                                given
+                                surname
+                            }
+                        }
+                        content
+                        comments {
+                            enteredBy {
+                                Person {
+                                    given
+                                    surname
+                                }
+                            }
+                            content
+                            comments {
+                                enteredBy {
+                                    Person {
+                                        given
+                                        surname
+                                    }
+                                }
+                                content
+                                comments {
+                                    enteredBy {
+                                        Person {
+                                            given
+                                            surname
+                                        }
+                                    }
+                                    content
+                                    comments {
+                                        enteredBy {
+                                            Person {
+                                                given
+                                                surname
+                                            }
+                                        }
+                                        content
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                mergedDescription @include(if: $includeMergedDescription) {
+                    schema
+                    characterName
+                    stateName
+                    stateValue
+                    stateOrder
+                }
+                holotype @include(if: $includeHolotypeDescription) {
+                    Specimen {
+                        name
+                        describedBy {
+                            Description {
+                                name
+                                schema {
+                                    pbotID
+                                    title
+                                }
+                                characterInstances {
+                                    pbotID
+                                    character {
+                                        name
+                                    }
+                                    state {
+                                        State {
+                                            name
+                                        }
+                                        order
+                                        value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    `;
+    */
+    let gQL = gql`
+        query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups} $includeSynonyms: Boolean!, $includeComments: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
+            OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species ${filter}) {
                 pbotID
                 name
                 family
@@ -155,6 +259,7 @@ const OTUQueryResults = ({queryParams, queryEntity}) => {
                         includeComments={queryParams.includeComments} 
                         includeHolotypeDescription={queryParams.includeHolotypeDescription} 
                         includeMergedDescription={queryParams.includeMergedDescription} 
+                        standAlone={queryParams.standAlone} 
                     />
                 ) : 
                 '';

@@ -8,6 +8,11 @@ import './App.css';
 import PBOTInterface from './components/PBOTInterface';
 import { createTheme, ThemeProvider, StyledEngineProvider, adaptV4Theme } from '@mui/material';
 import Footer from "./components/Footer";
+import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
+
+import {ApolloProvider} from "@apollo/client";
+import {client} from './ApolloClientSetup.js';
+import { AppBar, Typography } from '@mui/material';
 
 const theme = createTheme(adaptV4Theme({
     palette: {
@@ -40,6 +45,15 @@ const PBOTIcon = ({rotatePBOT}) => {
 
 function App() {
     const [rotatePBOT, setRotatePBOT] = useState(true);
+    
+    const currentLocation = window.location.pathname;
+    //Handle request for standalone OTU result
+    if (currentLocation.includes("otu")) {
+        return (
+            <OTUDirectQueryResults/>
+        );
+    }
+    
     //localStorage.removeItem('PBOTMutationToken');
     return (
       <StyledEngineProvider injectFirst>

@@ -1,6 +1,7 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize } from '../../util.js';
+import { Link } from '@mui/material';
 
 function OTUs(props) {
     console.log("OTUs");
@@ -17,7 +18,7 @@ function OTUs(props) {
     const indent6 = {marginLeft:"12em"}
     const indent7 = {marginLeft:"14em"}
     
-    //TODO:Figure out a more modular way to handle nested comments query and presentation
+    //TODO:Figure out a more modular way to handle nested comments query and presentation    
     return (otus.length === 0) ? (
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
@@ -25,10 +26,11 @@ function OTUs(props) {
     ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription, synonyms }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
-            <div style={indent}><b>pbotID:</b>{pbotID}</div>
-            <div style={indent}><b>family:</b>{family}</div>
-            <div style={indent}><b>genus:</b>{genus}</div>
-            <div style={indent}><b>species:</b>{species}</div>
+            <div style={indent}><b>direct link:</b> <Link underline="hover" href={window.location.origin + "/result/otu/" + pbotID}>{window.location.origin}/result/otu/{pbotID}</Link></div>
+            <div style={indent}><b>pbotID:</b> {pbotID}</div>
+            <div style={indent}><b>family:</b> {family}</div>
+            <div style={indent}><b>genus:</b> {genus}</div>
+            <div style={indent}><b>species:</b> {species}</div>
             
             {synonyms && synonyms.length > 0 &&
             <div>
@@ -37,10 +39,10 @@ function OTUs(props) {
                     const synOTU=synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
                     return (
                         <div key={i}>
-                            <div style={indent2}>{synOTU.name}</div>
-                            <div style={indent3}><b>family:</b>{synOTU.family}</div>
-                            <div style={indent3}><b>genus:</b>{synOTU.genus}</div>
-                            <div style={indent3}><b>species:</b>{synOTU.species}</div>
+                            <div style={indent2}> {synOTU.name}</div>
+                            <div style={indent3}><b>family:</b> {synOTU.family}</div>
+                            <div style={indent3}><b>genus:</b> {synOTU.genus}</div>
+                            <div style={indent3}><b>species:</b> {synOTU.species}</div>
                             {synonym.comments && synonym.comments.length > 0 &&
                             <div>
                                 <div style={indent2}><b>comments:</b></div>
