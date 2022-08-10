@@ -45,12 +45,15 @@ const PBOTIcon = ({rotatePBOT}) => {
 
 function App() {
     const [rotatePBOT, setRotatePBOT] = useState(true);
-    
-    const currentLocation = window.location.pathname;
+
     //Handle request for standalone OTU result
-    if (currentLocation.includes("otu")) {
+    if ("/" !== window.location.pathname) {
         return (
-            <OTUDirectQueryResults/>
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={theme}>
+                    <OTUDirectQueryResults/>
+                </ThemeProvider>
+            </StyledEngineProvider>
         );
     }
     

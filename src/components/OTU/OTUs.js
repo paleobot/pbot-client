@@ -26,7 +26,7 @@ function OTUs(props) {
     ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription, synonyms }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
-            <div style={indent}><b>direct link:</b> <Link underline="hover" href={window.location.origin + "/result/otu/" + pbotID}  target="_blank">{window.location.origin}/result/otu/{pbotID}</Link></div>
+            <div style={indent}><b>direct link:</b> <Link underline="hover" href={window.location.origin + "/otu/" + pbotID}  target="_blank">{window.location.origin}/otu/{pbotID}</Link></div>
             <div style={indent}><b>pbotID:</b> {pbotID}</div>
             <div style={indent}><b>family:</b> {family}</div>
             <div style={indent}><b>genus:</b> {genus}</div>
