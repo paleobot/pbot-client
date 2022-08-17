@@ -13,6 +13,7 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
         name: '', 
         collection: '',
         groups: [],
+        includeImages: false,
         includeDescriptions: false,
         includeOTUs: false
     };
@@ -81,6 +82,15 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
                 <GroupSelect/>
                 <br />
                 
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="includeImages" 
+                    type="checkbox" 
+                    Label={{ label: 'Include images' }}
+                    disabled={false}
+                />
+                <br />
+
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeDescriptions" 
