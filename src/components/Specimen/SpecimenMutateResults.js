@@ -2,9 +2,35 @@ import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
 import {publicGroupID} from '../Group/GroupSelect.js';
 
-const SpecimenMutateResults = ({queryParams, queryEntity}) => {
-    console.log(queryParams);
+import { gql } from "@apollo/client/core";
+import { useApolloClient } from "@apollo/client/react/hooks/useApolloClient.js";
+import { useMutation } from "@apollo/client/react/hooks/useMutation.js";
 
+const SpecimenMutateResults = ({queryParams, queryEntity}) => {
+    console.log("-------------------SpecimenMutateResults--------------------");
+    console.log(queryParams);
+    console.log(queryParams.references);
+    console.log(queryParams.references[0].pbotID);
+    //console.log(queryParams.images);
+    //console.log(queryParams.images[0].image);
+    console.log(queryParams.image)
+
+    //TODO: 1) Move this into Mutator. 2) Can this be made part of the Specimen mutation in the API?
+    const SINGLE_UPLOAD_MUTATION = gql`
+    mutation singleUpload($file: Upload!) {
+        singleUpload(file: $file) {
+            filename
+        }
+    }
+    `;
+
+    const [uploadFileMutation] = useMutation(SINGLE_UPLOAD_MUTATION);
+    const apolloClient = useApolloClient();
+    uploadFileMutation({ variables: { file: queryParams.image } }).then(() => {
+        apolloClient.resetStore();
+    });
+
+    /*
     let specimens = queryEntity === "Specimen-mutate" ? (
                     <Mutator
                         params={{
@@ -26,7 +52,8 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                     />
                 ) : 
                 '';
-    
+    */
+    const specimens = "Hi there";
     return (
         <div>
             {specimens}
