@@ -9,11 +9,19 @@ import {
   useApolloClient
 } from "@apollo/client";
 import { setContext } from '@apollo/client/link/context';
+import { createUploadLink } from "apollo-upload-client";
 
+/*
 const httpLink = createHttpLink({
     uri: '/graphql',
     //useGETForQueries: true
 });
+*/
+const httpLink = createUploadLink({
+    uri: '/graphql',
+    //useGETForQueries: true
+});
+
 const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
     const token = localStorage.getItem('PBOTMutationToken');
@@ -21,6 +29,7 @@ const authLink = setContext((_, { headers }) => {
     return {
         headers: {
             ...headers,
+            "apollo-require-preflight": "true",
             authorization: token ? `Bearer ${token}` : "",
         }
     }
