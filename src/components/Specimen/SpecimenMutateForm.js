@@ -2,10 +2,11 @@ import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
+import { TextField, CheckboxWithLabel, RadioGroup, Select, SimpleFileUpload } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
+import {ImageManager} from '../Image/ImageManager.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
 
 import {
@@ -212,6 +213,8 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     pbotID: '',
                     order:'',
                 }],
+                //images: [],
+                image:{},
                 public: true,
                 collection: '',
                 groups: [],
@@ -254,6 +257,18 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     })
                 ),
                 collection: Yup.string().required(),
+                                         /*
+                images: Yup.array().of(
+                    Yup.object().shape({
+                        image: Yup.object().shape({
+                            Yup.string()
+                            .required('Reference title is required'),
+                        order: Yup.string()
+                            .required('Reference order is required')
+                            .typeError('Reference order is required')
+                    })
+                ),
+                */
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -354,6 +369,20 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     
                     <CollectionSelect />
                     <br />
+
+                    <InputLabel>
+                        Images
+                    </InputLabel>
+                     <Field
+                        component={SimpleFileUpload}
+                        name="image"
+                        fullWidth 
+                        disabled={false}
+                    >
+                    </Field>
+                    <br />
+                    
+                    {/*TODO: Figure out why <ImageManager values={props.values}/> can't keep track of the files*/}
 
                     <Field 
                         component={CheckboxWithLabel}
