@@ -16,7 +16,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
     //console.log(queryParams.file);
     //console.log(queryParams.image)
 
-    
+    /*
     //TODO: 1) Move this into Mutator. 2) Can this be made part of the Specimen mutation in the API?
     const SINGLE_UPLOAD_MUTATION = gql`
     mutation singleUpload($file: Upload!) {
@@ -28,18 +28,13 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
 
     const [uploadFileMutation] = useMutation(SINGLE_UPLOAD_MUTATION);
     const apolloClient = useApolloClient();
-    /*
-    uploadFileMutation({ variables: { file: queryParams.image } }).then(() => {
-        apolloClient.resetStore();
-    });
-    */
     queryParams.images.forEach (image => {
         uploadFileMutation({ variables: { file: image.image } }).then(() => {
             apolloClient.resetStore();
         });
     });
+    */
     
-    /*
     let specimens = queryEntity === "Specimen-mutate" ? (
                     <Mutator
                         params={{
@@ -53,6 +48,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                             pbdbcid: queryParams.pbdbcid || null,
                             pbdboccid: queryParams.pbdboccid || null,
                             collection: queryParams.collection || null,
+                            uploadImages: queryParams.images || null,
                             groups: queryParams.public ? 
                                 [publicGroupID] : queryParams.groups || null,
                         }}
@@ -61,8 +57,8 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                     />
                 ) : 
                 '';
-    */
-    const specimens = "Hi there";
+    
+    //const specimens = "Hi there";
     return (
         <div>
             {specimens}
