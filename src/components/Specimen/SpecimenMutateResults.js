@@ -11,10 +11,12 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
     console.log(queryParams.references);
     console.log(queryParams.references[0].pbotID);
-    //console.log(queryParams.images);
-    //console.log(queryParams.images[0].image);
-    console.log(queryParams.image)
+    console.log(queryParams.images);
+    console.log(queryParams.images[0].image);
+    //console.log(queryParams.file);
+    //console.log(queryParams.image)
 
+    
     //TODO: 1) Move this into Mutator. 2) Can this be made part of the Specimen mutation in the API?
     const SINGLE_UPLOAD_MUTATION = gql`
     mutation singleUpload($file: Upload!) {
@@ -26,10 +28,17 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
 
     const [uploadFileMutation] = useMutation(SINGLE_UPLOAD_MUTATION);
     const apolloClient = useApolloClient();
+    /*
     uploadFileMutation({ variables: { file: queryParams.image } }).then(() => {
         apolloClient.resetStore();
     });
-
+    */
+    queryParams.images.forEach (image => {
+        uploadFileMutation({ variables: { file: image.image } }).then(() => {
+            apolloClient.resetStore();
+        });
+    });
+    
     /*
     let specimens = queryEntity === "Specimen-mutate" ? (
                     <Mutator
