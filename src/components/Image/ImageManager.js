@@ -19,13 +19,26 @@ export const ImageManager = (props) => {
                         return (
                             <Grid container spacing={2} direction="row" key={index}>
                                 <Grid item xs={6}>
+                                    
                                     <Field
                                         component={SimpleFileUpload}
-                                        name="images.${index}.image"
+                                        name={`images.${index}.image`}
                                         fullWidth 
                                         disabled={false}
+                                        onChange={(event) => {
+                                            props.values.images[index].image = event.currentTarget.files[0]
+                                        }}
                                     >
                                     </Field>
+                                    
+                                    {/*
+                                    <input
+                                        accept="image/*"
+                                        name={`images.${index}.image`}
+                                        type="file"
+                                        onChange={(event) => {props.values.images[index].image = event.currentTarget.files[0]}}
+                                    />
+                                    */}
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Field
