@@ -213,8 +213,8 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     pbotID: '',
                     order:'',
                 }],
-                //images: [],
-                image:{},
+                images: [],
+                //image:{},
                 public: true,
                 collection: '',
                 groups: [],
@@ -257,18 +257,14 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     })
                 ),
                 collection: Yup.string().required(),
-                                         /*
                 images: Yup.array().of(
                     Yup.object().shape({
-                        image: Yup.object().shape({
-                            Yup.string()
-                            .required('Reference title is required'),
+                        image: Yup.mixed().required('Image file is required'),
                         order: Yup.string()
-                            .required('Reference order is required')
-                            .typeError('Reference order is required')
+                            .required('Image order is required')
+                            .typeError('Image order is required')
                     })
                 ),
-                */
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -370,6 +366,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     <CollectionSelect />
                     <br />
 
+                    {/*
                     <InputLabel>
                         Images
                     </InputLabel>
@@ -381,8 +378,8 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     >
                     </Field>
                     <br />
-                    
-                    {/*TODO: Figure out why <ImageManager values={props.values}/> can't keep track of the files*/}
+                    */}
+                    <ImageManager values={props.values}/>
 
                     <Field 
                         component={CheckboxWithLabel}
