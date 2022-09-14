@@ -14,6 +14,7 @@ import StateMutateForm from './State/StateMutateForm';
 import PersonMutateForm from './Person/PersonMutateForm';
 import GroupMutateForm from './Group/GroupMutateForm';
 import CollectionMutateForm from './Collection/CollectionMutateForm';
+import ImageMutateForm from './Image/ImageMutateForm';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import EditIcon from '@mui/icons-material/Edit';
@@ -21,6 +22,9 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { ToggleButtonGroup } from '@mui/material';
 import { ToggleButton } from '@mui/material';
+
+import FileUpload from './FileUpload';
+
 
 const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     /*
@@ -77,6 +81,8 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                         <Divider />
                         <FormControlLabel value="Group-mutate" control={<Radio />} label="Group" labelPlacement="end" />
                         <FormControlLabel value="Person-mutate" control={<Radio />} label="Person" labelPlacement="end" />
+                        <Divider />
+                        <FormControlLabel value="Image-mutate" control={<Radio />} label="Image" labelPlacement="end" />
                         </RadioGroup>
                     </FormControl>
                 </Grid>
@@ -152,7 +158,11 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                    <div hidden={selectedForm !== "Person-mutate"}>
                         <PersonMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
-                    
+
+                    <div hidden={selectedForm !== "Image-mutate"}>
+                        <ImageMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                    </div>
+
                 </Grid>
             </Grid>
         </div>
