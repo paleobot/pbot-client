@@ -20,6 +20,7 @@ const PreviewImage = (props) => {
     console.log(props);
     console.log(props.values.uploadImage);
     const {setFieldValue} = useFormikContext();
+    if (props.values.uploadImage) {
         return (
             <Grid container spacing={2} direction="row" >
                 <Grid item xs={6}>
@@ -38,9 +39,36 @@ const PreviewImage = (props) => {
                 </Grid>
                 <br />
             </Grid>
-        )
+        );
+    } else if (props.values.link) {
+        return (
+            <Grid container spacing={2} direction="row" >
+                <Grid item xs={6}>
+                    <img src={props.values.link} width="200"/>
+                </Grid>
+                <Grid item xs={3}>
+                    <Button
+                        type="button"
+                        variant="text" 
+                        color="secondary" 
+                        size="large"
+                        onClick={() => setFieldValue("link", '')} 
+                    >
+                        X
+                    </Button>
+                </Grid>
+                <br />
+            </Grid>
+        );
+    } else {
+        return (
+            <div></div>
+        );
+    }
 }
 
+/*
+ * TODO:unused. Ghosting for now
 const UploadImage = (props) => {
     console.log("UploadImage");
     console.log(props);
@@ -108,6 +136,7 @@ const UploadImage = (props) => {
     }
 
 }
+*/
 
 const CollectionSelect = (props) => {
     console.log("CollectionSelect");
@@ -212,6 +241,50 @@ const SpecimenSelect = (props) => {
     )
 }
 
+//TODO: Not working
+const ImageSelect = (props) => {
+    console.log("SpecimenSelect");
+
+    const gQL = gql`
+            query {
+                Image (filter: { OR: [{imageOf: {pbotID: "${props.values.specimen}"}}, {imageOf: null}]}) {
+                    pbotID
+                    link
+                }            
+            }
+        `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                 
+    console.log(data.Image);
+    
+    const images = alphabetize([...data.Image], "link"); //TODO: No reason to alphabetize on link. Better to use the file name at the end of link?
+    console.log(images)
+    
+    return (
+        <Field
+            component={TextField}
+            type="text"
+            name="image"
+            label="Image node"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {images.map(({ pbotID, link }) => (
+                <MenuItem key={pbotID} value={pbotID}>
+                    <SecureImage src={link} width="100"/>
+                </MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const initValues = {
@@ -277,8 +350,18 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     disabled={false}
                 />
                 
+                {("edit" === props.values.mode || "delete" === props.values.mode) &&
+                    <div>
+                    <p>Not yet implemented</p>
+                    </div>
+                }
+                
+                {"create" === props.values.mode &&
+                <div>
                 <CollectionSelect values={props.values} handleChange={props.handleChange}/>
                 <br />
+                </div>
+                }
             
                 {props.values.collection !== '' &&
                     <div>
@@ -286,32 +369,40 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     <br />
                     </div>
                 }
-                
-                {/*<LinkDialog values={props.values}/>*/}
-                    
-                {props.values.specimen !== '' &&
+                                    
+                {props.values.specimen !== '' && "create" === props.values.mode &&
                     <div>
                     <InputLabel>
                         Image
                     </InputLabel>
-                    {!props.values.uploadImage &&
-                        <Button color="secondary" component="label">
-                        Choose file
-                        <input 
-                            name="uploadImage"
-                            hidden 
-                            accept="image/*" 
-                            onChange={(event) => {
-                                console.log("------------onChange---------------");
-                                //props.values.uploadImage = event.target.files[0]
-                                props.setFieldValue("uploadImage",event.target.files[0]);
-                                console.log(props.values.uploadImage);
-                            }}
-                            type="file" 
-                        />
-                        </Button>
+                    {!props.values.uploadImage && !props.values.link &&
+                        <Grid container spacing={2} direction="row">
+                            <Grid item xs={5}>
+                                <Button color="secondary" component="label">
+                                    File
+                                <input 
+                                    name="uploadImage"
+                                    hidden 
+                                    accept="image/*" 
+                                    onChange={(event) => {
+                                        console.log("------------onChange---------------");
+                                        //props.values.uploadImage = event.target.files[0]
+                                        props.setFieldValue("uploadImage",event.target.files[0]);
+                                        console.log(props.values.uploadImage);
+                                    }}
+                                    type="file" 
+                                />
+                                </Button>
+                            </Grid>
+                            <Grid item xs={2}>
+                                or
+                            </Grid>
+                            <Grid item xs={5}>
+                                <LinkDialog values={props.values}/>
+                            </Grid>
+                        </Grid>
                     }
-                    {props.values.uploadImage &&
+                    {(props.values.uploadImage || props.values.link) &&
                         <PreviewImage values={props.values}/>
                     }
 
