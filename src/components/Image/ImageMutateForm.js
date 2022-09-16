@@ -6,6 +6,7 @@ import { TextField, CheckboxWithLabel, RadioGroup, Select, SimpleFileUpload } fr
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {SecureImage} from './SecureImage.js';
+import {LinkDialog} from "./LinkDialog.js";
 
 import {
   useQuery,
@@ -14,15 +15,15 @@ import {
   useMutation,
 } from "@apollo/client";
 
-const UploadImage2 = (props) => {
+const PreviewImage = (props) => {
     console.log("UploadImage");
     console.log(props);
-    console.log(props.values.image);
+    console.log(props.values.uploadImage);
     const {setFieldValue} = useFormikContext();
         return (
             <Grid container spacing={2} direction="row" >
                 <Grid item xs={6}>
-                    <img src={URL.createObjectURL(props.values.image)} width="200"/>
+                    <img src={URL.createObjectURL(props.values.uploadImage)} width="200"/>
                 </Grid>
                 <Grid item xs={3}>
                     <Button
@@ -30,7 +31,7 @@ const UploadImage2 = (props) => {
                         variant="text" 
                         color="secondary" 
                         size="large"
-                        onClick={() => setFieldValue("image", '')} 
+                        onClick={() => setFieldValue("uploadImage", '')} 
                     >
                         X
                     </Button>
@@ -43,7 +44,7 @@ const UploadImage2 = (props) => {
 const UploadImage = (props) => {
     console.log("UploadImage");
     console.log(props);
-    console.log(props.values.image);
+    console.log(props.values.uploadImage);
     
     const client = useApolloClient();
     const {setFieldValue} = useFormikContext();
@@ -57,7 +58,7 @@ const UploadImage = (props) => {
     `;
     
     console.log("before useMutation");
-    const [uploadFileMutation, { data, loading, error }] = useMutation(gQL, {variables: {image: props.values.image, specimenID: props.values.specimen }});
+    const [uploadFileMutation, { data, loading, error }] = useMutation(gQL, {variables: {image: props.values.uploadImage, specimenID: props.values.specimen }});
     console.log("before useEffect");
     useEffect(() => {
             uploadFileMutation().catch((err) => {
@@ -93,7 +94,7 @@ const UploadImage = (props) => {
                         variant="text" 
                         color="secondary" 
                         size="large"
-                        onClick={() => setFieldValue("image", '')} 
+                        onClick={() => setFieldValue("uploadImage", '')} 
                     >
                         X
                     </Button>
@@ -214,9 +215,10 @@ const SpecimenSelect = (props) => {
 
 const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const initValues = {
+                image: '',
                 collection: '', 
                 specimen: '',
-                image:'',
+                uploadImage:'',
                 link: '',
                 citation: '',
                 caption: '',
@@ -251,7 +253,7 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             validationSchema={Yup.object({
                 collection: Yup.string().required(),
                 specimen: Yup.string().required(),
-                link: Yup.string().required(),
+                //link: Yup.string().required(),
                 name: Yup.string(),
                 ciation: Yup.string(),
                 caption: Yup.string(),
@@ -284,31 +286,33 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     <br />
                     </div>
                 }
+                
+                {/*<LinkDialog values={props.values}/>*/}
                     
                 {props.values.specimen !== '' &&
                     <div>
                     <InputLabel>
                         Image
                     </InputLabel>
-                    {!props.values.image &&
+                    {!props.values.uploadImage &&
                         <Button color="secondary" component="label">
                         Choose file
                         <input 
-                            name="image"
+                            name="uploadImage"
                             hidden 
                             accept="image/*" 
                             onChange={(event) => {
                                 console.log("------------onChange---------------");
-                                //props.values.image = event.target.files[0]
-                                props.setFieldValue("image",event.target.files[0]);
-                                console.log(props.values.image);
+                                //props.values.uploadImage = event.target.files[0]
+                                props.setFieldValue("uploadImage",event.target.files[0]);
+                                console.log(props.values.uploadImage);
                             }}
                             type="file" 
                         />
                         </Button>
                     }
-                    {props.values.image &&
-                        <UploadImage values={props.values}/>
+                    {props.values.uploadImage &&
+                        <PreviewImage values={props.values}/>
                     }
 
                     <Field
