@@ -19,6 +19,7 @@ import StateMutateResults from './State/StateMutateResults';
 import PersonMutateResults from './Person/PersonMutateResults';
 import GroupMutateResults from './Group/GroupMutateResults';
 import CollectionMutateResults from './Collection/CollectionMutateResults';
+import ImageMutateResults from './Image/ImageMutateResults';
 import {
   useQuery,
   gql
@@ -110,6 +111,9 @@ const Result = ({queryParams, queryEntity}) => {
         ) : 
         queryEntity === "Specimen-mutate" ? (
             <SpecimenMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        ) : 
+        queryEntity === "Image-mutate" ? (
+            <ImageMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
         queryEntity === "Collection-mutate" ? (
             <CollectionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
