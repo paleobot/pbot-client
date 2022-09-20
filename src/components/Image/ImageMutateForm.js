@@ -243,7 +243,7 @@ const SpecimenSelect = (props) => {
 
 //TODO: Not working
 const ImageSelect = (props) => {
-    console.log("SpecimenSelect");
+    console.log("ImageSelect");
 
     const gQL = gql`
             query {
@@ -261,7 +261,8 @@ const ImageSelect = (props) => {
                                  
     console.log(data.Image);
     
-    const images = alphabetize([...data.Image], "link"); //TODO: No reason to alphabetize on link. Better to use the file name at the end of link?
+    //const images = alphabetize([...data.Image], "link"); //TODO: No reason to alphabetize on link. Better to use the file name at the end of link?
+    const images = [...data.Image];
     console.log(images)
     
     return (
@@ -350,13 +351,13 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     disabled={false}
                 />
                 
-                {("edit" === props.values.mode || "delete" === props.values.mode) &&
+                {"edit" === props.values.mode &&
                     <div>
                     <p>Not yet implemented</p>
                     </div>
                 }
                 
-                {"create" === props.values.mode &&
+                {("create" === props.values.mode || "delete" === props.values.mode) &&
                 <div>
                 <CollectionSelect values={props.values} handleChange={props.handleChange}/>
                 <br />
@@ -370,6 +371,13 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     </div>
                 }
                                     
+                {props.values.specimen !== '' && "delete" === props.values.mode &&
+                    <div>
+                    <ImageSelect values={props.values} />
+                    <br />
+                    </div>
+                }
+
                 {props.values.specimen !== '' && "create" === props.values.mode &&
                     <div>
                     <InputLabel>
