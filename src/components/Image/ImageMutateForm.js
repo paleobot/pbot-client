@@ -254,6 +254,10 @@ const ImageSelect = (props) => {
                     citation
                     caption
                     type
+                    elementOf {
+                        name
+                        pbotID
+                    }
                 }            
             }
         `;
@@ -287,6 +291,8 @@ const ImageSelect = (props) => {
                 props.values.citation = child.props.dcitation ? child.props.dcitation : '';
                 props.values.caption = child.props.dcaption ? child.props.dcaption : '';
                 props.values.type = child.props.dtype ? JSON.parse(child.props.dtype) : '';
+                props.values.public =  child.props.dpublic;
+                props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.handleChange(event);
             }}
@@ -299,6 +305,7 @@ const ImageSelect = (props) => {
                     dcitation={image.citation}
                     dcaption={image.caption}
                     dtype={image.type}
+                    dpublic={image.elementOf && image.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
                     dgroups={image.elementOf ? JSON.stringify(image.elementOf.map(group => group.pbotID)) : null}
                 >
                     <SecureImage src={image.link} width="100"/>
@@ -371,12 +378,6 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     type="hidden" 
                     disabled={false}
                 />
-                
-                {"edit" === props.values.mode &&
-                    <div>
-                    <p>Not yet implemented</p>
-                    </div>
-                }
                 
                 {("create" === props.values.mode || "delete" === props.values.mode || "edit" === props.values.mode) &&
                 <div>
