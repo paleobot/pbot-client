@@ -8,6 +8,7 @@ import { alphabetize } from '../../util.js';
 import {publicGroupID} from '../Group/GroupSelect.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import {Carousel} from 'react-responsive-carousel'
+import {SecureImage} from '../Image/SecureImage.js';
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
@@ -122,10 +123,12 @@ function Specimens(props) {
             <div style={indent}><b>pbdboccid:</b> {s.pbdboccid}</div>
             {s.images && s.images.length > 0 &&
                 <div style={carousel}>
-                <Carousel>
+                {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                <Carousel showThumbs={false}>  
                     {s.images.map((image) => (
                         <div key={image.pbotID} >
-                            <img src={image.link} alt={image.caption}/>
+                            {/*<img src={image.link} alt={image.caption}/>*/}
+                            <SecureImage src={image.link}/>
                         </div>
                     ))}
                 </Carousel>
