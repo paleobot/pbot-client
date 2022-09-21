@@ -44,7 +44,8 @@ const PreviewImage = (props) => {
         return (
             <Grid container spacing={2} direction="row" >
                 <Grid item xs={6}>
-                    <img src={props.values.link} width="200"/>
+                    {/*<img src={props.values.link} width="200"/>*/}
+                    <SecureImage src={props.values.link} width="200"/>
                 </Grid>
                 <Grid item xs={3}>
                     <Button
@@ -250,6 +251,9 @@ const ImageSelect = (props) => {
                 Image (filter: { OR: [{imageOf: {pbotID: "${props.values.specimen}"}}, {imageOf: null}]}) {
                     pbotID
                     link
+                    citation
+                    caption
+                    type
                 }            
             }
         `;
@@ -277,10 +281,27 @@ const ImageSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
+            onChange={(event,child) => {
+                //props.resetForm();
+                props.values.link = child.props.dlink ? child.props.dlink : '';
+                props.values.citation = child.props.dcitation ? child.props.dcitation : '';
+                props.values.caption = child.props.dcaption ? child.props.dcaption : '';
+                props.values.type = child.props.dtype ? JSON.parse(child.props.dtype) : '';
+                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
+                props.handleChange(event);
+            }}
         >
-            {images.map(({ pbotID, link }) => (
-                <MenuItem key={pbotID} value={pbotID}>
-                    <SecureImage src={link} width="100"/>
+            {images.map((image) => (
+                <MenuItem 
+                    key={image.pbotID} 
+                    value={image.pbotID}
+                    dlink={image.link}
+                    dcitation={image.citation}
+                    dcaption={image.caption}
+                    dtype={image.type}
+                    dgroups={image.elementOf ? JSON.stringify(image.elementOf.map(group => group.pbotID)) : null}
+                >
+                    <SecureImage src={image.link} width="100"/>
                 </MenuItem>
             ))}
         </Field>
@@ -357,7 +378,7 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     </div>
                 }
                 
-                {("create" === props.values.mode || "delete" === props.values.mode) &&
+                {("create" === props.values.mode || "delete" === props.values.mode || "edit" === props.values.mode) &&
                 <div>
                 <CollectionSelect values={props.values} handleChange={props.handleChange}/>
                 <br />
@@ -371,14 +392,14 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     </div>
                 }
                                     
-                {props.values.specimen !== '' && "delete" === props.values.mode &&
+                {props.values.specimen !== '' && ("delete" === props.values.mode || "edit" === props.values.mode) &&
                     <div>
-                    <ImageSelect values={props.values} />
+                    <ImageSelect values={props.values}  handleChange={props.handleChange}/>
                     <br />
                     </div>
                 }
 
-                {props.values.specimen !== '' && "create" === props.values.mode &&
+                {props.values.specimen !== '' && ("create" === props.values.mode || "edit" === props.values.mode) &&
                     <div>
                     <InputLabel>
                         Image
