@@ -11,8 +11,6 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
     console.log(queryParams);
     console.log(queryParams.references);
     console.log(queryParams.references[0].pbotID);
-    console.log(queryParams.images);
-    console.log(queryParams.images[0].image);
     //console.log(queryParams.file);
     //console.log(queryParams.image)
 
@@ -51,6 +49,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                             uploadImages: queryParams.images || null,
                             groups: queryParams.public ? 
                                 [publicGroupID] : queryParams.groups || null,
+                            cascade: queryParams.cascade || false
                         }}
                         entity="Specimen"
                         mode={queryParams.mode}

@@ -213,11 +213,10 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     pbotID: '',
                     order:'',
                 }],
-                images: [],
-                //image:{},
                 public: true,
                 collection: '',
                 groups: [],
+                cascade: false,
                 mode: mode,
     };    
 
@@ -366,21 +365,6 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     <CollectionSelect />
                     <br />
 
-                    {/*
-                    <InputLabel>
-                        Images
-                    </InputLabel>
-                     <Field
-                        component={SimpleFileUpload}
-                        name="image"
-                        fullWidth 
-                        disabled={false}
-                    >
-                    </Field>
-                    <br />
-                    */}
-                    <ImageManager values={props.values}/>
-
                     <Field 
                         component={CheckboxWithLabel}
                         name="public" 
@@ -396,10 +380,23 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                         <br />
                     </div>
                     }
-                
+                                    
                     </div>
                 }
                 
+                {(mode === "delete") &&
+                <div>
+                    <Field
+                        type="checkbox"
+                        component={CheckboxWithLabel}
+                        name="cascade"
+                        type="checkbox" 
+                        Label={{ label: 'Cascade' }}
+                    />
+                <br />
+                </div>
+                }
+                    
                 <br />
                 <br />
 
