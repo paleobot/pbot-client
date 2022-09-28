@@ -242,7 +242,6 @@ const SpecimenSelect = (props) => {
     )
 }
 
-//TODO: Not working
 const ImageSelect = (props) => {
     console.log("ImageSelect");
 
@@ -315,6 +314,15 @@ const ImageSelect = (props) => {
     )
 }
 
+//TODO: get these from config
+const FILE_SIZE_LIMIT = 10000000; //10 Mb for now
+const SUPPORTED_FORMATS = [
+    "image/jpg",
+    "image/jpeg",
+    "image/gif",
+    "image/png"
+];
+
 const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const initValues = {
                 image: '',
@@ -355,13 +363,23 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             validationSchema={Yup.object({
                 collection: Yup.string().required(),
                 specimen: Yup.string().required(),
-                //link: Yup.string().required(),
-                name: Yup.string(),
-                ciation: Yup.string(),
-                caption: Yup.string(),
+                link: Yup.string(),                    
+                uploadImage: Yup.mixed()
+                    .test("fileSize", "File too large", value => value ? value.size <= FILE_SIZE_LIMIT : true)
+                    .test("fileFormat", "Unsupported Format", value => value ? SUPPORTED_FORMATS.includes(value.type) : true)
+                    .when("link", {
+                        is: (link) => !link,
+                        then: Yup.mixed().required("File or link required"),
+                        otherwise: Yup.mixed()
+                    }),
+                citation: Yup.string().required(),
+                caption: Yup.string().required(),
+                type: Yup.string(),
+                                        
             })}
             onSubmit={(values, {resetForm}) => {
-                //alert(JSON.stringify(values, null, 2));
+                //console.log(values.uploadImage);
+                //alert(JSON.stringify(values.uploadImage, null, 2));
                 //setValues(values);
                 values.mode = mode;
                 handleQueryParamChange(values);
@@ -435,7 +453,10 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     {(props.values.uploadImage || props.values.link) &&
                         <PreviewImage values={props.values}/>
                     }
-
+                    <ErrorMessage name="uploadImage">
+                        { msg => <div style={{ color: 'red' }}>{msg}</div> }
+                    </ErrorMessage>
+                    
                     <Field
                         component={TextField}
                         type="text"
