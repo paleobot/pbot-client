@@ -315,7 +315,7 @@ const ImageSelect = (props) => {
 }
 
 const FILE_SIZE_LIMIT = process.env.REACT_APP_FILE_SIZE_LIMIT;
-const SUPPORTED_FORMATS = process.env.REACT_APP_SUPPORTED_FORMATS.split(";");
+const SUPPORTED_IMAGE_FORMATS = process.env.REACT_APP_SUPPORTED_IMAGE_FORMATS.split(";");
 
 const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const initValues = {
@@ -360,7 +360,7 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 link: Yup.string(),                    
                 uploadImage: Yup.mixed()
                     .test("fileSize", "File too large", value => value ? value.size <= FILE_SIZE_LIMIT : true)
-                    .test("fileFormat", "Unsupported Format", value => value ? SUPPORTED_FORMATS.includes(value.type) : true)
+                    .test("fileFormat", "Unsupported Format", value => value ? SUPPORTED_IMAGE_FORMATS.includes(value.type) : true)
                     .when("link", {
                         is: (link) => !link,
                         then: Yup.mixed().required("File or link required"),
