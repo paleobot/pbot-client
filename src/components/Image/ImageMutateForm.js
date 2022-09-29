@@ -314,14 +314,8 @@ const ImageSelect = (props) => {
     )
 }
 
-//TODO: get these from config
-const FILE_SIZE_LIMIT = 10000000; //10 Mb for now
-const SUPPORTED_FORMATS = [
-    "image/jpg",
-    "image/jpeg",
-    "image/gif",
-    "image/png"
-];
+const FILE_SIZE_LIMIT = process.env.REACT_APP_FILE_SIZE_LIMIT;
+const SUPPORTED_FORMATS = process.env.REACT_APP_SUPPORTED_FORMATS.split(";");
 
 const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
     const initValues = {
