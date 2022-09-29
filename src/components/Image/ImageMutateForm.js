@@ -391,12 +391,8 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     disabled={false}
                 />
                 
-                {("create" === props.values.mode || "delete" === props.values.mode || "edit" === props.values.mode) &&
-                <div>
                 <CollectionSelect values={props.values} handleChange={props.handleChange}/>
                 <br />
-                </div>
-                }
             
                 {props.values.collection !== '' &&
                     <div>
@@ -405,98 +401,103 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     </div>
                 }
                                     
-                {props.values.specimen !== '' && ("delete" === props.values.mode || "edit" === props.values.mode) &&
+                {props.values.specimen !== '' && 
                     <div>
-                    <ImageSelect values={props.values}  handleChange={props.handleChange}/>
-                    <br />
-                    </div>
-                }
-
-                {props.values.specimen !== '' && ("create" === props.values.mode || "edit" === props.values.mode) &&
-                    <div>
-                    <InputLabel>
-                        Image
-                    </InputLabel>
-                    {!props.values.uploadImage && !props.values.link &&
-                        <Grid container spacing={2} direction="row">
-                            <Grid item xs={5}>
-                                <Button color="secondary" component="label">
-                                    File
-                                <input 
-                                    name="uploadImage"
-                                    hidden 
-                                    accept="image/*" 
-                                    onChange={(event) => {
-                                        console.log("------------onChange---------------");
-                                        //props.values.uploadImage = event.target.files[0]
-                                        props.setFieldValue("uploadImage",event.target.files[0]);
-                                        console.log(props.values.uploadImage);
-                                    }}
-                                    type="file" 
-                                />
-                                </Button>
-                            </Grid>
-                            <Grid item xs={2}>
-                                or
-                            </Grid>
-                            <Grid item xs={5}>
-                                <LinkDialog values={props.values}/>
-                            </Grid>
-                        </Grid>
-                    }
-                    {(props.values.uploadImage || props.values.link) &&
-                        <PreviewImage values={props.values}/>
-                    }
-                    <ErrorMessage name="uploadImage">
-                        { msg => <div style={{ color: 'red' }}>{msg}</div> }
-                    </ErrorMessage>
-                    
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="citation"
-                        label="Citation"
-                        fullWidth 
-                        disabled={false}
-                    />
-                    <br />
-
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="caption"
-                        label="Caption"
-                        fullWidth 
-                        disabled={false}
-                    />
-                    <br />
-
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="type"
-                        label="Type"
-                        fullWidth 
-                        disabled={false}
-                    />
-                    <br />
-
-                    <Field 
-                        component={CheckboxWithLabel}
-                        name="public" 
-                        type="checkbox"
-                        Label={{label:"Public"}}
-                        disabled={(mode === "edit" && props.values.origPublic)}
-                    />
-                    <br />
-                    
-                    {!props.values.public &&
-                    <div>
-                        <GroupSelect />
+                    {("delete" === props.values.mode || "edit" === props.values.mode) &&
+                        <div>
+                        <ImageSelect values={props.values}  handleChange={props.handleChange}/>
                         <br />
-                    </div>
+                        </div>
                     }
                 
+
+                    {("create" === props.values.mode || "edit" === props.values.mode) &&
+                        <div>
+                        <InputLabel>
+                            Image
+                        </InputLabel>
+                        {!props.values.uploadImage && !props.values.link &&
+                            <Grid container spacing={2} direction="row">
+                                <Grid item xs={5}>
+                                    <Button color="secondary" component="label">
+                                        File
+                                    <input 
+                                        name="uploadImage"
+                                        hidden 
+                                        accept="image/*" 
+                                        onChange={(event) => {
+                                            console.log("------------onChange---------------");
+                                            //props.values.uploadImage = event.target.files[0]
+                                            props.setFieldValue("uploadImage",event.target.files[0]);
+                                            console.log(props.values.uploadImage);
+                                        }}
+                                        type="file" 
+                                    />
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    or
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <LinkDialog values={props.values}/>
+                                </Grid>
+                            </Grid>
+                        }
+                        {(props.values.uploadImage || props.values.link) &&
+                            <PreviewImage values={props.values}/>
+                        }
+                        <ErrorMessage name="uploadImage">
+                            { msg => <div style={{ color: 'red' }}>{msg}</div> }
+                        </ErrorMessage>
+                        
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="citation"
+                            label="Citation"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
+
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="caption"
+                            label="Caption"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
+
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="type"
+                            label="Type"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
+
+                        <Field 
+                            component={CheckboxWithLabel}
+                            name="public" 
+                            type="checkbox"
+                            Label={{label:"Public"}}
+                            disabled={(mode === "edit" && props.values.origPublic)}
+                        />
+                        <br />
+                        
+                        {!props.values.public &&
+                        <div>
+                            <GroupSelect />
+                            <br />
+                        </div>
+                        }
+                    
+                        </div>
+                    }
                     </div>
                 }
                 
