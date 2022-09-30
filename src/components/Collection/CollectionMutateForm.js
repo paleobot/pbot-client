@@ -20,6 +20,10 @@ const CollectionSelect = (props) => {
             Collection {
                 pbotID
                 name
+                elementOf {
+                    name
+                    pbotID
+                }
                 references {
                     Reference {
                         pbotID
@@ -62,6 +66,9 @@ const CollectionSelect = (props) => {
                 console.log("Collection onChange");
                 console.log(child.props.dspecimens);
                 props.values.name = child.props.dname || '';
+                props.values.public =  child.props.dpublic;
+                props.values.origPublic = props.values.public;
+                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.values.specimens = child.props.dspecimens ? JSON.parse(child.props.dspecimens) : [];
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 console.log(props.values.specimens);
@@ -73,6 +80,8 @@ const CollectionSelect = (props) => {
                     key={collection.pbotID} 
                     value={collection.pbotID}
                     dname={collection.name}
+                    dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
+                    dgroups={collection.elementOf ? JSON.stringify(collection.elementOf.map(group => group.pbotID)) : null}
                     dspecimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
                     dreferences={collection.references ? JSON.stringify(collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                 >{collection.name}</MenuItem>
