@@ -411,7 +411,7 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                     }
                 
 
-                    {("create" === props.values.mode || "edit" === props.values.mode) &&
+                    {"create" === props.values.mode || ("edit" === props.values.mode && props.values.image !== '') &&
                         <div>
                         <InputLabel>
                             Image
