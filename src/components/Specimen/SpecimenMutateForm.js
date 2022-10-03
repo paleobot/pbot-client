@@ -22,7 +22,9 @@ const SpecimenSelect = (props) => {
                 Specimen {
                     pbotID
                     name
-                    preservationMode
+                    preservationMode {
+                        pbotID
+                    }
                     idigbiouuid
                     pbdbcid
                     pbdboccid
@@ -98,7 +100,7 @@ const SpecimenSelect = (props) => {
                     value={specimen.pbotID}
                     dname={specimen.name}
                     dorgan={specimen.organ.pbotID}
-                    dpreservationmode={specimen.preservationMode}
+                    dpreservationmode={specimen.preservationMode ? specimen.preservationMode.pbotID : null}
                     ddescribedby={specimen.describedBy ? JSON.stringify(specimen.describedBy.map(d => d.Description.pbotID)) : ''}
                     didigbiouuid={specimen.idigbiouuid}
                     dpbdbcid={specimen.pbdbcid}
@@ -148,6 +150,47 @@ const OrganSelect = (props) => {
         >
             {organs.map(({ pbotID, type }) => (
                 <MenuItem key={pbotID} value={pbotID}>{type}</MenuItem>
+            ))}
+        </Field>
+    )
+        
+}
+
+const PreservationModeSelect = (props) => {
+    console.log("PreservationModeSelect");
+    console.log(props);
+    const gQL = gql`
+            query {
+                PreservationMode {
+                    name
+                    pbotID
+                }            
+            }
+        `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                 
+    console.log(data.preservationModes);
+    const preservationModes = alphabetize([...data.PreservationMode], "name");
+    
+    return (
+        <Field
+            component={TextField}
+            type="text"
+            name="preservationMode"
+            label="Preservation mode"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {preservationModes.map(({ pbotID, name }) => (
+                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
             ))}
         </Field>
     )
@@ -244,7 +287,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 organ: Yup.string().required(),
-                preservationMode: Yup.string(),
+                preservationMode: Yup.string().required(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
                 references: Yup.array().of(
                     Yup.object().shape({
@@ -315,18 +358,10 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                     <OrganSelect />
                     <br />
 
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="preservationMode"
-                        label="Preservation mode"
-                        fullWidth 
-                        disabled={false}
-                    >
-                    </Field>
+                    <PreservationModeSelect />
                     <br />
-                    
-                    <DescriptionSelect/>
+
+                   <DescriptionSelect/>
                     <br />
 
                     <Field

@@ -40,7 +40,7 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
                             name: queryParams.name || null,
                             references: queryParams.references || null,
                             organID: queryParams.organ || null,
-                            preservationMode: queryParams.preservationMode || null,
+                            preservationModeID: queryParams.preservationMode || null,
                             descriptionIDs: queryParams.describedBy || null,
                             idigbiouuid: queryParams.idigbiouuid || null,
                             pbdbcid: queryParams.pbdbcid || null,

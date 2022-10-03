@@ -27,7 +27,9 @@ function Specimens(props) {
                 }) {
                     pbotID
                     name
-                    preservationMode
+                    preservationMode {
+                        name
+                    }
                     idigbiouuid
                     pbdbcid
                     pbdboccid
@@ -117,7 +119,8 @@ function Specimens(props) {
             <b>{s.name || "(name missing)"}</b>
             <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
             <div style={indent}><b>organ:</b> {s.organ.type}</div>
-            <div style={indent}><b>preservation mode:</b> {s.preservationMode}</div>
+            {/*A mild shenanigan here to handle old specimen nodes without PRESERVED_BY relationships*/}
+            <div style={indent}><b>preservation mode:</b> {s.preservationMode && s.preservationMode.constructor.name === "Object" ? s.preservationMode.name : "unspecified"}</div>
             <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
             <div style={indent}><b>pbdbcid:</b> {s.pbdbcid}</div>
             <div style={indent}><b>pbdboccid:</b> {s.pbdboccid}</div>
