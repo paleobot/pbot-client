@@ -11,9 +11,10 @@ import {
 
 export const ReferenceSelect = (props) => {
     console.log("ReferenceSelect");
+    console.log(props);
     const gQL = gql`
-            query {
-                Reference {
+            query  ($excludeList: [ID!]){
+                Reference (filter: {pbotID_not_in: $excludeList}){
                     pbotID
                     title
                     publisher
@@ -22,7 +23,14 @@ export const ReferenceSelect = (props) => {
             }
         `;
 
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+    const excludeIDs = props.exclude.map(reference => reference.pbotID);
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {        
+        variables: {
+            excludeList: excludeIDs
+        },
+        fetchPolicy: "cache-and-network"
+    });
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
