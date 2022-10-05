@@ -12,6 +12,8 @@ import {
 export const ReferenceSelect = (props) => {
     console.log("ReferenceSelect");
     console.log(props);
+    
+    //TODO: Can this be moved up into ReferenceManager, so it is only done once?
     const gQL = gql`
             query  ($excludeList: [ID!]){
                 Reference (filter: {pbotID_not_in: $excludeList}){
