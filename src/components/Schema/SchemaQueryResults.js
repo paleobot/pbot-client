@@ -43,6 +43,44 @@ function Schemas(props) {
         `;
     } else {
         gQL = gql`
+            fragment CharacterFields on Character {
+                pbotID
+                name
+                states {
+                    ...StateFields
+                    ...StatesRecurse
+                }
+            }
+
+            fragment CharactersRecurse on Character {
+                characters {
+                    ...CharacterFields
+                    characters {
+                        ...CharacterFields
+                        characters {
+                            ...CharacterFields
+                        }
+                    }
+                }
+            }
+
+            fragment StateFields on State {
+                name
+                definition
+            }
+
+            fragment StatesRecurse on State {
+                states {
+                    ...StateFields
+                    states {
+                        ...StateFields
+                        states {
+                            ...StateFields
+                        }
+                    }
+                }
+            }
+
             query ($pbotID: ID, $title: String, $year: String, $groups: [ID!]) {
                 Schema (pbotID: $pbotID, title: $title, year: $year, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
@@ -65,12 +103,8 @@ function Schemas(props) {
                         order
                     }
                     characters {
-                        pbotID
-                        name
-                        states {
-                            name
-                            definition
-                        }
+                        ...CharacterFields
+                        ...CharactersRecurse
                     }
                 }
             }
