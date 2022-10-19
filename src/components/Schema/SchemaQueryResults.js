@@ -76,6 +76,15 @@ function Schemas(props) {
                         ...StateFields
                         states {
                             ...StateFields
+                            states {
+                                ...StateFields
+                                states {
+                                    ...StateFields
+                                    states {
+                                        ...StateFields
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -155,7 +164,7 @@ function Schemas(props) {
             {schema.characters && schema.characters.length > 0 &&
                 <div>
                     <div style={indent}><b>characters:</b></div>
-                    <Characters characters={schema.characters} />
+                    <Characters characters={schema.characters} top="true"/>
                 </div>
             }
             <br />

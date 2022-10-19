@@ -14,12 +14,13 @@ function States(props) {
         }
         return 0;
     });
-    const myUL = {marginTop:"0"}
+    const myUL = {marginTop:"0", marginBottom:"0"}
     return (
         <ul style={myUL}>
-        {states.map(({pbotID, name, definition}) => (
+        {states.map(({pbotID, name, definition, states}) => (
             <li key={pbotID}>
                 {name}, {definition}
+                <States states={states} />
             </li>
         ))}
         </ul>

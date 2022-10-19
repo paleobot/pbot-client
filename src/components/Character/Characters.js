@@ -16,11 +16,14 @@ function Characters(props) {
         }
         return 0;
     });
-    const style = {marginLeft:"4em"}
-    return characters.map(({pbotID, name, states}) => (
+    
+    const style = props.top ? {marginLeft:"4em"} : {marginLeft:"2em"};
+    console.log(style);
+    return characters.map(({pbotID, name, states, characters}) => (
         <div key={pbotID}  style={style}>
             {name}
             <States states={states} />
+            <Characters characters={characters} />
         </div>
     ));
 }
