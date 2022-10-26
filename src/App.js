@@ -6,7 +6,7 @@ import './App.css';
 //import ApolloQuery from './components/ApolloQuery';
 //import OTUQueryForm from './components/OTUQueryForm';
 import PBOTInterface from './components/PBOTInterface';
-import { createTheme, ThemeProvider, StyledEngineProvider, adaptV4Theme } from '@mui/material';
+import { createTheme, ThemeProvider, StyledEngineProvider } from '@mui/material';
 import Footer from "./components/Footer";
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 
@@ -14,7 +14,7 @@ import {ApolloProvider} from "@apollo/client";
 import {client} from './ApolloClientSetup.js';
 import { AppBar, Typography } from '@mui/material';
 
-const theme = createTheme(adaptV4Theme({
+const theme = createTheme({
     palette: {
         primary: {
         main: "#bdbdbd"
@@ -23,18 +23,24 @@ const theme = createTheme(adaptV4Theme({
         main: "#66bb6a"
         }
     },
-    props: {
+    components : {
         MuiTextField: {
-            variant: "standard",
+            defaultProps: {
+                variant: "standard"
+            }
         },
         MuiCheckbox: {
-            color: "secondary"
+            defaultProps: {
+                color: "secondary"
+            }
         },
         MuiRadio: {
-            color: "secondary"
+            defaultProps: {
+                color: "secondary"
+            }
         }
     }
-}));
+});
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
