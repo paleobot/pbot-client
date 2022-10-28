@@ -1,18 +1,18 @@
 import logo from '../../PBOT-logo-transparent.png';
 import {ApolloProvider} from "@apollo/client";
+import { useParams } from 'react-router-dom';
 import {client} from '../../ApolloClientSetup.js';
 import { AppBar, Typography, Link } from '@mui/material';
 import OTUQueryResults from './OTUQueryResults';
 
 const OTUDirectQueryResults = () => {
-    const pathComponents = window.location.pathname.split("/");
+    const { otuid } = useParams();
+    console.log("otuid = " + otuid);
     //Get otu ID, create necessary parameters, and call OTUQueryResults to do the work
-    if (pathComponents.length == 3 && 
-        "otu" == pathComponents[1] &&
-        pathComponents[2].match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
+    if (otuid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
         const queryEntity = "OTU";
         const queryParams = {
-            otuID: pathComponents[2],
+            otuID: otuid,
             groups: [], 
             includeSynonyms: true,
             includeComments: true,
