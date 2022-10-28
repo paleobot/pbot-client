@@ -6,41 +6,12 @@ import './App.css';
 //import ApolloQuery from './components/ApolloQuery';
 //import OTUQueryForm from './components/OTUQueryForm';
 import PBOTInterface from './components/PBOTInterface';
-import { createTheme, ThemeProvider, StyledEngineProvider } from '@mui/material';
 import Footer from "./components/Footer";
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 
 import {ApolloProvider} from "@apollo/client";
 import {client} from './ApolloClientSetup.js';
 import { AppBar, Typography } from '@mui/material';
-
-const theme = createTheme({
-    palette: {
-        primary: {
-        main: "#bdbdbd"
-        },
-        secondary: {
-        main: "#66bb6a"
-        }
-    },
-    components : {
-        MuiTextField: {
-            defaultProps: {
-                variant: "standard"
-            }
-        },
-        MuiCheckbox: {
-            defaultProps: {
-                color: "secondary"
-            }
-        },
-        MuiRadio: {
-            defaultProps: {
-                color: "secondary"
-            }
-        }
-    }
-});
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -55,18 +26,12 @@ function App() {
     //Handle request for standalone OTU result
     if ("/" !== window.location.pathname) {
         return (
-            <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={theme}>
-                    <OTUDirectQueryResults/>
-                </ThemeProvider>
-            </StyledEngineProvider>
+                   <OTUDirectQueryResults/>
         );
     }
     
     //localStorage.removeItem('PBOTMutationToken');
     return (
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
         <div className="App">
             <header className="App-header">
             <PBOTIcon rotatePBOT={rotatePBOT} />
@@ -76,8 +41,6 @@ function App() {
             <br />
            <Footer />
         </div>
-        </ThemeProvider>
-      </StyledEngineProvider>
     );
 }
 
