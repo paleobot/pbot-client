@@ -7,43 +7,41 @@ import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 
 import {ApolloProvider} from "@apollo/client";
 import {client} from '../ApolloClientSetup.js';
+import {
+    useNavigate,
+} from "react-router-dom";
 
 const PBOTInterface = ({setRotatePBOT}) => {
+    const navigate = useNavigate();
+
+    //TODO: The way we are using react-router is dumb. I know that. Working on it. For now, we need to use the path here to set the form states
+    const pathParts = window.location.pathname.split("/");
     
-    /*
-    //This path business is to handle direct urls to nodes 
-    //(e.g. http://localhost:3000/Specimen/7599aa01-c919-4628-a5a8-b513d7a080c1)
-    //This code, and related in Result.js, is proof on concept. Will need to 
-    //use react-router to make it tight.
-    const pathPieces = window.location.pathname.split('/');
-    const [selectedTab, setSelectedTab] = useState(pathPieces[1] ? 1 : 0);
-    const [queryParams, setQueryParams] = useState(0);
-    const [selectedForm, setSelectedForm] = useState(pathPieces[1] ? pathPieces[1] : 0);
-    const [showResult, setShowResult] = useState(pathPieces[1]);
-    */
     const [selectedTab, setSelectedTab] = useState(0);
     const [queryParams, setQueryParams] = useState(0);
-    const [selectedForm, setSelectedForm] = useState(0);
+    const [selectedForm, setSelectedForm] = useState(pathParts[2] || 0);
     const [showResult, setShowResult] = useState(false); 
-    
+    const [formClass, setFormClass] = React.useState(pathParts[1] || 'query');
+   
     const setSelectedTabDeco = (newTab) => {
         if (newTab === 0) {
             setRotatePBOT(true);
-            //TODO: This hack is for the path business. Need to clean up path when user navigates.
-            //This will go away when we use react.router.
-            //if ('/' !== window.location.pathname) { 
-            //    window.location.pathname = '/';
-            //}
         } else if (newTab === 1) {
             setRotatePBOT(false);
         }
         setSelectedTab(newTab);
     };
-    
-    const handleFormChange = (event) => {
+ 
+    const handleFormClass = (event, newFormClass) => {
+        setFormClass(newFormClass);
+        navigate(`/${newFormClass}`);
+    };
+
+   const handleFormChange = (event) => {
         console.log(event.target.value);
         setShowResult(false);
         setSelectedForm(event.target.value);
+        navigate(`/${formClass}/${event.target.value}`);
         console.log("selected form: ");
         console.log(selectedForm);
     };
@@ -80,13 +78,8 @@ const PBOTInterface = ({setRotatePBOT}) => {
                 </Tabs>
             </AppBar>
             
-            <div hidden={selectedTab !== 0}>
-                <Action queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
-            </div>
-
-            <div hidden={selectedTab !== 1}>
+                <Action queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} formClass={formClass} handleFormClass={handleFormClass} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
                 {result}
-            </div>
         </div>
         </ApolloProvider>
 
