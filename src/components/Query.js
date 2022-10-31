@@ -8,21 +8,7 @@ import SchemaQueryForm from './Schema/SchemaQueryForm';
 import PersonQueryForm from './Person/PersonQueryForm';
 
 const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
-    /*
-    const [selectedForm, setSelectedForm] = useState('OTU');
-
-    const handleChange = (event) => {
-        handleFormChange(event);
-       //console.log(selectedForm);
-    };
-    */
-    const [formClass, setFormClass] = React.useState('query');
-
-    const handleFormClass = (event, newFormClass) => {
-        setFormClass(newFormClass);
-    };
-    
-    return (
+     return (
         
         <Grid container spacing={3}>
             <Grid item>
