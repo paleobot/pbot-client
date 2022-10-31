@@ -11,15 +11,104 @@ import {
   Route,
 } from "react-router-dom";
 
+//TODO: This is a dumb way to use react-router (sending every path to App and using all those state variables in there). This is just a transitional approach.
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/otu/:otuid",
-    element: < OTUDirectQueryResults/>
-  }
+    {
+        path: "/",
+        element: <App />,
+    },
+    {
+        path: "/query",
+        element: <App />,
+        children: [
+            {
+                path: "OTU",
+                element: <App />,
+            }, 
+            {
+                path: "Specimen",
+                element: <App />,
+            },
+            {
+                path: "Reference",
+                element: <App />,
+            },
+            {
+                path: "Schema",
+                element: <App />,
+            },
+            {
+                path: "Person",
+                element: <App />,
+            },
+        ],
+    },
+    {
+        path: "/mutate",
+        element: <App />,
+        children: [
+            {
+                path: "OTU-mutate",
+                element: <App />,
+            }, 
+            {
+                path: "Synonym-mutate",
+                element: <App />,
+            }, 
+            {
+                path: "Comment-mutate",
+                element: <App />,
+            }, 
+            {
+                path: "Description-mutate",
+                element: <App />,
+            }, 
+            {
+                path: "CharacterInstance-mutate",
+                element: <App />,
+            }, 
+            {
+                path: "Specimen-mutate",
+                element: <App />,
+            },
+            {
+                path: "Collection-mutate",
+                element: <App />,
+            },
+           {
+                path: "Reference-mutate",
+                element: <App />,
+            },
+            {
+                path: "Schema-mutate",
+                element: <App />,
+            },
+            {
+                path: "Character-mutate",
+                element: <App />,
+            },
+            {
+                path: "State-mutate",
+                element: <App />,
+            },
+            {
+                path: "Group-mutate",
+                element: <App />,
+            },
+            {
+                path: "Person-mutate",
+                element: <App />,
+            },
+            {
+                path: "Image-mutate",
+                element: <App />,
+            },
+        ],
+    },
+    {
+        path: "/otu/:otuid",
+        element: < OTUDirectQueryResults/>
+    }
 ]);
 
 const theme = createTheme({
