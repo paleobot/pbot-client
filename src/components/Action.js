@@ -4,21 +4,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Query from './Query';
 import Mutate from './Mutate';
-
-const Action = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
-    /*
-    const [selectedForm, setSelectedForm] = useState('OTU');
-
-    const handleChange = (event) => {
-        handleFormChange(event);
-       //console.log(selectedForm);
-    };
-    */
-    const [formClass, setFormClass] = React.useState('query');
-
-    const handleFormClass = (event, newFormClass) => {
-        setFormClass(newFormClass);
-    };
+const Action = ({queryParams, handleQueryParamChange, formClass, handleFormClass, selectedForm, handleFormChange, showResult, setShowResult}) => {
 
     return (
         <div>
