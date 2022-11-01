@@ -8,7 +8,7 @@ import SchemaQueryForm from './Schema/SchemaQueryForm';
 import PersonQueryForm from './Person/PersonQueryForm';
 
 const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
-     return (
+    return (
         
         <Grid container spacing={3}>
             <Grid item>
