@@ -4,6 +4,7 @@ import './App.css';
 import PBOTInterface from './components/PBOTInterface';
 import Footer from "./components/Footer";
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
+import { FormControlUnstyledContext } from '@mui/base';
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -12,7 +13,12 @@ const PBOTIcon = ({rotatePBOT}) => {
       )
 }
 
-function App() {
+function App(props) {
+    console.log("----------------App-------------------------");
+    console.log(props);
+    console.log(window.location.pathname)
+    //console.log(formClass);
+    //console.log(form)
     const [rotatePBOT, setRotatePBOT] = useState(true);
 
     //localStorage.removeItem('PBOTMutationToken');
@@ -21,7 +27,7 @@ function App() {
             <header className="App-header">
             <PBOTIcon rotatePBOT={rotatePBOT} />
             </header>
-            <PBOTInterface setRotatePBOT={setRotatePBOT}/>
+            <PBOTInterface setRotatePBOT={setRotatePBOT} props={props}/>
             <br />
             <br />
            <Footer />

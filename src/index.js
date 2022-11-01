@@ -19,93 +19,90 @@ const router = createBrowserRouter([
     },
     {
         path: "/query",
-        element: <App />,
-        children: [
-            {
-                path: "OTU",
-                element: <App />,
-            }, 
-            {
-                path: "Specimen",
-                element: <App />,
-            },
-            {
-                path: "Reference",
-                element: <App />,
-            },
-            {
-                path: "Schema",
-                element: <App />,
-            },
-            {
-                path: "Person",
-                element: <App />,
-            },
-        ],
+        element: <App formClass="query" />,
+    },
+    {
+        path: "/query/otu",
+        element: <App formClass="query" form="OTU" />,
+    }, 
+    {
+        path: "/query/specimen",
+        element: <App  formClass="query" form="Specimen" />,
+    },
+    {
+        path: "/query/reference",
+        element: <App  formClass="query" form="Reference" />,
+    },
+    {
+        path: "/query/schema",
+        element: <App  formClass="query" form="Schema" />,
+    },
+    {
+        path: "/query/person",
+        element: <App  formClass="query" form="Person" />,
     },
     {
         path: "/mutate",
-        element: <App />,
-        children: [
-            {
-                path: "OTU-mutate",
-                element: <App />,
-            }, 
-            {
-                path: "Synonym-mutate",
-                element: <App />,
-            }, 
-            {
-                path: "Comment-mutate",
-                element: <App />,
-            }, 
-            {
-                path: "Description-mutate",
-                element: <App />,
-            }, 
-            {
-                path: "CharacterInstance-mutate",
-                element: <App />,
-            }, 
-            {
-                path: "Specimen-mutate",
-                element: <App />,
-            },
-            {
-                path: "Collection-mutate",
-                element: <App />,
-            },
-           {
-                path: "Reference-mutate",
-                element: <App />,
-            },
-            {
-                path: "Schema-mutate",
-                element: <App />,
-            },
-            {
-                path: "Character-mutate",
-                element: <App />,
-            },
-            {
-                path: "State-mutate",
-                element: <App />,
-            },
-            {
-                path: "Group-mutate",
-                element: <App />,
-            },
-            {
-                path: "Person-mutate",
-                element: <App />,
-            },
-            {
-                path: "Image-mutate",
-                element: <App />,
-            },
-        ],
+        element: <App formClass="mutate" />,
     },
     {
+        path: "/mutate/otu",
+        element: <App formClass="mutate" form="OTU-mutate" />,
+    }, 
+    {
+        path: "/mutate/synonym",
+        element: <App formClass="mutate" form="Synonym-mutate" />,
+    }, 
+    {
+        path: "/mutate/comment",
+        element: <App formClass="mutate" form="Comment-mutate" />,
+    }, 
+    {
+        path: "/mutate/description",
+        element: <App formClass="mutate" form="Description-mutate" />,
+    }, 
+    {
+        path: "/mutate/characterinstance",
+        element: <App formClass="mutate" form="CharacterInstance-mutate" />,
+    }, 
+    {
+        path: "/mutate/specimen",
+        element: <App formClass="mutate" form="Specimen-mutate" />,
+    },
+    {
+        path: "/mutate/collection",
+        element: <App formClass="mutate" form="Collection-mutate" />,
+    },
+    {
+        path: "/mutate/reference",
+        element: <App formClass="mutate" form="Reference-mutate" />,
+    },
+    {
+        path: "/mutate/schema",
+        element: <App formClass="mutate" form="Schema-mutate" />,
+    },
+    {
+        path: "/mutate/character",
+        element: <App formClass="mutate" form="Character-mutate" />,
+    },
+    {
+        path: "/mutate/state",
+        element: <App formClass="mutate" form="State-mutate" />,
+    },
+    {
+        path: "/mutate/group",
+        element: <App formClass="mutate" form="Group-mutate" />,
+    },
+    {
+        path: "/mutate/person",
+        element: <App formClass="mutate" form="Person-mutate" />,
+    },
+    {
+        path: "/mutate/image",
+        element: <App formClass="mutate" form="Image-mutate" />,
+    },
+    {
+        //path: "/query/otu/:otuid",
         path: "/otu/:otuid",
         element: < OTUDirectQueryResults/>
     }
