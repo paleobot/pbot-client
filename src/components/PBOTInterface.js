@@ -11,18 +11,15 @@ import {
     useNavigate,
 } from "react-router-dom";
 
-const PBOTInterface = ({setRotatePBOT}) => {
+const PBOTInterface = ({props, setRotatePBOT}) => {
+    console.log("----------PBOTInterface--------------");
+    console.log(props);
     const navigate = useNavigate();
-
-    //TODO: The way we are using react-router is dumb. I know that. Working on it. For now, we need to use the path here to set the form states
-    const pathParts = window.location.pathname.split("/");
     
     const [selectedTab, setSelectedTab] = useState(0);
     const [queryParams, setQueryParams] = useState(0);
-    const [selectedForm, setSelectedForm] = useState(pathParts[2] || 0);
     const [showResult, setShowResult] = useState(false); 
-    const [formClass, setFormClass] = React.useState(pathParts[1] || 'query');
-   
+    
     const setSelectedTabDeco = (newTab) => {
         if (newTab === 0) {
             setRotatePBOT(true);
@@ -31,19 +28,15 @@ const PBOTInterface = ({setRotatePBOT}) => {
         }
         setSelectedTab(newTab);
     };
- 
+
     const handleFormClass = (event, newFormClass) => {
-        setFormClass(newFormClass);
         navigate(`/${newFormClass}`);
     };
 
    const handleFormChange = (event) => {
         console.log(event.target.value);
         setShowResult(false);
-        setSelectedForm(event.target.value);
-        navigate(`/${formClass}/${event.target.value}`);
-        console.log("selected form: ");
-        console.log(selectedForm);
+        navigate(`/${props.formClass}/${event.target.value.replace("-mutate", "").toLowerCase()}`);
     };
 
     const handleTabChange = (event, newTab) => {
@@ -63,7 +56,7 @@ const PBOTInterface = ({setRotatePBOT}) => {
     };
         
     let result = showResult ? (
-                    <Result queryParams={queryParams} queryEntity={selectedForm}/>
+                    <Result queryParams={queryParams} queryEntity={props.form}/>
                  ) :
                  '';
   
@@ -77,9 +70,9 @@ const PBOTInterface = ({setRotatePBOT}) => {
                     <Tab label="Results"  />
                 </Tabs>
             </AppBar>
-            
-                <Action queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} formClass={formClass} handleFormClass={handleFormClass} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
-                {result}
+        
+            <Action queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} formClass={props.formClass} handleFormClass={handleFormClass} selectedForm={props.form} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
+            {result}
         </div>
         </ApolloProvider>
 
