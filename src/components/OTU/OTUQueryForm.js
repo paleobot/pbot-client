@@ -21,20 +21,10 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
             };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     
-    //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
-    //allowing useEffect to call resetForm
-    const formikRef = React.useRef();
-    React.useEffect(() => {
-        if (formikRef.current) {
-            formikRef.current.resetForm({values:initValues});
-        }
-    });
-    
     const indent01 = {marginLeft: "2em"}
     return (
        
         <Formik
-            innerRef={formikRef}
             initialValues={initValues}
             validate={values => {
                 const errors = {};
@@ -60,7 +50,6 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 handleQueryParamChange(values)
                 setShowResult(true);
                 //setShowOTUs(true);
-                resetForm({values: initValues});
             }}
         >
             {props => (

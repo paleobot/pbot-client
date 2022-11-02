@@ -15,20 +15,10 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
         groups: [],
     };
     
-    //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
-    //allowing useEffect to call resetForm
-    const formikRef = React.useRef();
-    React.useEffect(() => {
-        if (formikRef.current) {
-            formikRef.current.resetForm({values:initValues});
-        }
-    });
-    
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik
-            innerRef={formikRef}
             initialValues={initValues}
             validate={values => {
                 const errors = {};
@@ -54,7 +44,6 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
                 handleQueryParamChange(values)
                 setShowResult(true);
                 //setShowOTUs(true);
-                resetForm({values: initValues});
             }}
         >
             <Form>
