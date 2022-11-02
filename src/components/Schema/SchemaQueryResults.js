@@ -25,6 +25,7 @@ function Schemas(props) {
                     acknowledgments
                     references {
                         Reference {
+                            pbotID
                             title
                             publisher
                             year
@@ -33,6 +34,7 @@ function Schemas(props) {
                     }
                     authoredBy {
                         Person {
+                            pbotID
                             given
                             surname
                         }
@@ -98,6 +100,7 @@ function Schemas(props) {
                     acknowledgments
                     references {
                         Reference {
+                            pbotID
                             title
                             publisher
                             year
@@ -106,6 +109,7 @@ function Schemas(props) {
                     }
                     authoredBy {
                         Person {
+                            pbotID
                             given
                             surname
                         }
@@ -149,7 +153,7 @@ function Schemas(props) {
                 <div>
                     <div style={indent}><b>references:</b></div>
                     {alphabetize([...schema.references], "order").map(reference => (
-                        <div style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                        <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
                     ))}
                 </div>
             }
@@ -157,7 +161,7 @@ function Schemas(props) {
                 <div>
                     <div style={indent}><b>authors:</b></div>
                     {alphabetize([...schema.authoredBy], "order").map(author => (
-                        <div style={indent2}>{author.Person.given} {author.Person.surname}</div>
+                        <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
                     ))}
                 </div>
             }

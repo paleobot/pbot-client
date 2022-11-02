@@ -22,6 +22,7 @@ function References(props) {
                     doi
                     authoredBy {
                         Person {
+                            pbotID
                             given
                             surname
                         }
@@ -59,7 +60,7 @@ function References(props) {
             <div style={indent}><b>doi:</b> {reference.doi || "not specified"} </div>
             <div style={indent}><b>authors:</b></div>
                 {alphabetize([...reference.authoredBy], "order").map(author => (
-                    <div style={indent2}>{author.Person.given} {author.Person.surname}</div>
+                    <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
                 ))}
             
             <br />
