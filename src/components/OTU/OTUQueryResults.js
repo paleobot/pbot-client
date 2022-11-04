@@ -127,6 +127,9 @@ function OTUList(props) {
                 family
                 genus
                 species
+                elementOf {
+                    name
+                }
                 synonyms @include(if: $includeSynonyms) {
                     otus {
                         name
@@ -237,7 +240,7 @@ function OTUList(props) {
     console.log(data.OTU);
     
     return (
-        <OTUs public={(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0])} otus={data.OTU}/>
+        <OTUs public={(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0])} otus={data.OTU} standalone={props.standAlone}/>
     );
 
 }
