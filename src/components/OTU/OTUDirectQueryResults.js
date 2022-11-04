@@ -22,9 +22,6 @@ const OTUDirectQueryResults = () => {
         };
         return (
             <ApolloProvider client={client}>
-                <AppBar position="static" >
-                    <Typography variant="h2"><img src={logo} style={{ height: "15vmin" }} />PBOT OTU</Typography>
-                </AppBar>
                 <OTUQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
             </ApolloProvider>
         );
