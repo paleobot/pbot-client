@@ -1,7 +1,8 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize } from '../../util.js';
-import { Link } from '@mui/material';
+import { Link, Grid, Typography } from '@mui/material';
+import logo from '../../PBOT-logo-transparent.png';
 
 function OTUs(props) {
     console.log("OTUs");
@@ -23,10 +24,42 @@ function OTUs(props) {
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription, synonyms }) => (
+    ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription, synonyms, elementOf}) => (
         <div key={pbotID} style={style}>
+            { props.standalone &&     
+            <Grid container sx={{
+                width: "100%",
+                height: "50px",
+                backgroundColor: 'primary.main',
+            }}>
+                <Grid container item xs={4} sx={{ display: "flex", alignItems: "center" }}>
+                    <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                        <img src={logo} style={{ height: "45px" }} />
+                    </Grid>
+                    <Grid item sx={{ display: "flex", alignItems: "center" }} >                  
+                        <Typography variant="h5">
+                            Pbot
+                        </Typography>
+                    </Grid>                 
+                </Grid>
+                <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
+                    <Typography variant="h5">
+                        OTU: {name || "(name missing)"}
+                    </Typography>
+                </Grid>
+                <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
+                    <Typography variant="h5" sx={{marginRight: "10px"}}>
+                        Workspace: {elementOf[0].name}
+                    </Typography>
+                </Grid>
+            </Grid>
+            }
+
+            {!props.standalone &&
             <b>{name || "(name missing)"}</b>
-            <div style={indent}><b>direct link:</b> <Link underline="hover" href={window.location.origin + "/otu/" + pbotID}  target="_blank">{window.location.origin}/otu/{pbotID}</Link></div>
+            }
+
+            <div style={indent}><b>direct link:</b> <Link underline="hover" href={window.location.origin + "/query/otu/" + pbotID}  target="_blank">{window.location.origin}/query/otu/{pbotID}</Link></div>
             <div style={indent}><b>pbotID:</b> {pbotID}</div>
             <div style={indent}><b>family:</b> {family}</div>
             <div style={indent}><b>genus:</b> {genus}</div>
