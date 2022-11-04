@@ -102,8 +102,8 @@ const router = createBrowserRouter([
         element: <App formClass="mutate" form="Image-mutate" />,
     },
     {
-        //path: "/query/otu/:otuid",
-        path: "/otu/:otuid",
+        path: "/query/otu/:otuid",
+        //path: "/otu/:otuid",
         element: < OTUDirectQueryResults/>
     }
 ]);
