@@ -9,9 +9,11 @@ import {ApolloProvider} from "@apollo/client";
 import {client} from '../ApolloClientSetup.js';
 import {
     useNavigate,
+    useLocation
 } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
-const PBOTInterface = ({props, setRotatePBOT}) => {
+const PBOTInterface = (props) => {
     console.log("----------PBOTInterface--------------");
     console.log(props);
     const navigate = useNavigate();
@@ -22,9 +24,9 @@ const PBOTInterface = ({props, setRotatePBOT}) => {
     
     const setSelectedTabDeco = (newTab) => {
         if (newTab === 0) {
-            setRotatePBOT(true);
+            //setRotatePBOT(true);
         } else if (newTab === 1) {
-            setRotatePBOT(false);
+            //setRotatePBOT(false);
         }
         setSelectedTab(newTab);
     };
@@ -41,9 +43,9 @@ const PBOTInterface = ({props, setRotatePBOT}) => {
 
     const handleTabChange = (event, newTab) => {
         if (newTab === 0) {
-            setRotatePBOT(true);
+            //setRotatePBOT(true);
         } else if (newTab === 1) {
-            setRotatePBOT(false);
+            //setRotatePBOT(false);
         }
         setSelectedTabDeco(newTab);
     };
@@ -55,8 +57,19 @@ const PBOTInterface = ({props, setRotatePBOT}) => {
         setSelectedTabDeco(1);
     };
         
+    //Figure out what we're doing from the path, massage it, and send to Result as queryEntity
+    const location = useLocation();
+    let form = location.pathname.split("/")[2];
+    form = form ? 
+        form === "otu" ? 
+            form.toUpperCase() : 
+            form.charAt(0).toUpperCase() + form.slice(1) :
+        form;
+    form = "mutate" === location.pathname.split("/")[1] ?
+        form + "-mutate" :
+        form;
     let result = showResult ? (
-                    <Result queryParams={queryParams} queryEntity={props.form}/>
+                    <Result queryParams={queryParams} queryEntity={form}/>
                  ) :
                  '';
   
@@ -71,7 +84,7 @@ const PBOTInterface = ({props, setRotatePBOT}) => {
                 </Tabs>
             </AppBar>
         
-            <Action queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} formClass={props.formClass} handleFormClass={handleFormClass} selectedForm={props.form} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
+            <Outlet context={[queryParams, handleQueryParamChange, props.formClass, handleFormClass, handleFormChange, showResult, setShowResult]} />
             {result}
         </div>
         </ApolloProvider>

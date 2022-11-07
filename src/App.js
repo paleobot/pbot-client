@@ -5,6 +5,7 @@ import PBOTInterface from './components/PBOTInterface';
 import Footer from "./components/Footer";
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 import { FormControlUnstyledContext } from '@mui/base';
+import { Outlet } from "react-router-dom";
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -27,7 +28,7 @@ function App(props) {
             <header className="App-header">
             <PBOTIcon rotatePBOT={rotatePBOT} />
             </header>
-            <PBOTInterface setRotatePBOT={setRotatePBOT} props={props}/>
+            <Outlet />
             <br />
             <br />
            <Footer />

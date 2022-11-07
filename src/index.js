@@ -10,102 +10,123 @@ import {
   RouterProvider,
   Route,
 } from "react-router-dom";
+import PBOTInterface from './components/PBOTInterface';
+import Action from './components/Action';
 
-//TODO: This is a dumb way to use react-router (sending every path to App and using all those state variables in there). This is just a transitional approach.
 const router = createBrowserRouter([
     {
         path: "/",
         element: <App />,
+        children: [
+            { 
+                index: true, 
+                element: <PBOTInterface formClass="query" /> 
+            },
+            {
+                path: "query",
+                element: <PBOTInterface formClass="query" />,
+                children: [
+                    { 
+                        index: true, 
+                        element: <Action /> 
+                    },
+                    {
+                        path: "otu",
+                        element: <Action  selectedForm="OTU"/>,
+                    },
+                    {
+                        path: "specimen",
+                        element: <Action  selectedForm="Specimen" />,
+                    },
+                    {
+                        path: "reference",
+                        element: <Action selectedForm="Reference" />,
+                    },
+                    {
+                        path: "schema",
+                        element: <Action selectedForm="Schema" />,
+                    },
+                    {
+                        path: "person",
+                        element: <Action selectedForm="Person" />,
+                    },
+                ]
+            },
+            {
+                path: "mutate",
+                element: <PBOTInterface formClass="mutate" />,
+                children: [
+                    { 
+                        index: true, 
+                        element: <Action /> 
+                    },
+                    {
+                        path: "otu",
+                        element: <Action selectedForm="OTU-mutate" />,
+                    }, 
+                    {
+                        path: "synonym",
+                        element: <Action selectedForm="Synonym-mutate" />,
+                    }, 
+                    {
+                        path: "comment",
+                        element: <Action selectedForm="Comment-mutate" />,
+                    }, 
+                    {
+                        path: "description",
+                        element: <Action selectedForm="Description-mutate" />,
+                    }, 
+                    {
+                        path: "characterinstance",
+                        element: <Action selectedForm="CharacterInstance-mutate" />,
+                    }, 
+                    {
+                        path: "specimen",
+                        element: <Action selectedForm="Specimen-mutate" />,
+                    },
+                    {
+                        path: "collection",
+                        element: <Action selectedForm="Collection-mutate" />,
+                    },
+                    {
+                        path: "reference",
+                        element: <Action selectedForm="Reference-mutate" />,
+                    },
+                    {
+                        path: "schema",
+                        element: <Action selectedForm="Schema-mutate" />,
+                    },
+                    {
+                        path: "character",
+                        element: <Action selectedForm="Character-mutate" />,
+                    },
+                    {
+                        path: "state",
+                        element: <Action selectedForm="State-mutate" />,
+                    },
+                    {
+                        path: "group",
+                        element: <Action selectedForm="Group-mutate" />,
+                    },
+                    {
+                        path: "person",
+                        element: <Action selectedForm="Person-mutate" />,
+                    },
+                    {
+                        path: "image",
+                        element: <Action selectedForm="Image-mutate" />,
+                    }
+                ]
+            }
+        ]
     },
-    {
-        path: "/query",
-        element: <App formClass="query" />,
-    },
-    {
-        path: "/query/otu",
-        element: <App formClass="query" form="OTU" />,
-    }, 
-    {
-        path: "/query/specimen",
-        element: <App  formClass="query" form="Specimen" />,
-    },
-    {
-        path: "/query/reference",
-        element: <App  formClass="query" form="Reference" />,
-    },
-    {
-        path: "/query/schema",
-        element: <App  formClass="query" form="Schema" />,
-    },
-    {
-        path: "/query/person",
-        element: <App  formClass="query" form="Person" />,
-    },
-    {
-        path: "/mutate",
-        element: <App formClass="mutate" />,
-    },
-    {
-        path: "/mutate/otu",
-        element: <App formClass="mutate" form="OTU-mutate" />,
-    }, 
-    {
-        path: "/mutate/synonym",
-        element: <App formClass="mutate" form="Synonym-mutate" />,
-    }, 
-    {
-        path: "/mutate/comment",
-        element: <App formClass="mutate" form="Comment-mutate" />,
-    }, 
-    {
-        path: "/mutate/description",
-        element: <App formClass="mutate" form="Description-mutate" />,
-    }, 
-    {
-        path: "/mutate/characterinstance",
-        element: <App formClass="mutate" form="CharacterInstance-mutate" />,
-    }, 
-    {
-        path: "/mutate/specimen",
-        element: <App formClass="mutate" form="Specimen-mutate" />,
-    },
-    {
-        path: "/mutate/collection",
-        element: <App formClass="mutate" form="Collection-mutate" />,
-    },
-    {
-        path: "/mutate/reference",
-        element: <App formClass="mutate" form="Reference-mutate" />,
-    },
-    {
-        path: "/mutate/schema",
-        element: <App formClass="mutate" form="Schema-mutate" />,
-    },
-    {
-        path: "/mutate/character",
-        element: <App formClass="mutate" form="Character-mutate" />,
-    },
-    {
-        path: "/mutate/state",
-        element: <App formClass="mutate" form="State-mutate" />,
-    },
-    {
-        path: "/mutate/group",
-        element: <App formClass="mutate" form="Group-mutate" />,
-    },
-    {
-        path: "/mutate/person",
-        element: <App formClass="mutate" form="Person-mutate" />,
-    },
-    {
-        path: "/mutate/image",
-        element: <App formClass="mutate" form="Image-mutate" />,
-    },
+    //Note: In React Router, nesting of routes reflects embedded presentation, not api functionality. Since direct query pages are not embedded in any other component, this route must exist at the top level.
     {
         path: "/query/otu/:otuid",
         //path: "/otu/:otuid",
         element: < OTUDirectQueryResults/>
     }
+    
 ]);
 
 const theme = createTheme({

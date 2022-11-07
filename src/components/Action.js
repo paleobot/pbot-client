@@ -4,7 +4,11 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Query from './Query';
 import Mutate from './Mutate';
-const Action = ({queryParams, handleQueryParamChange, formClass, handleFormClass, selectedForm, handleFormChange, showResult, setShowResult}) => {
+import { useOutletContext } from "react-router-dom";
+
+const Action = ({selectedForm}/*{queryParams, handleQueryParamChange, formClass, handleFormClass, selectedForm, handleFormChange, showResult, setShowResult}*/) => {
+
+    const [queryParams, handleQueryParamChange, formClass, handleFormClass, handleFormChange, showResult, setShowResult] = useOutletContext();
 
     return (
         <div>
