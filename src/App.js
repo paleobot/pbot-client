@@ -7,6 +7,7 @@ import { Button, Stack } from '@mui/material';
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 import { FormControlUnstyledContext } from '@mui/base';
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import NavBar from './components/NavBar';
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -28,11 +29,7 @@ function App(props) {
     //localStorage.removeItem('PBOTMutationToken');
     return (
         <div className="App">
-            <header className="App-header">
-                <Link to="/query">
-                    <PBOTIcon rotatePBOT={rotatePBOT} />
-                </Link>
-            </header>
+            <NavBar />
             <Outlet />
             <br />
             <Stack direction="row" spacing={5} justifyContent="center">

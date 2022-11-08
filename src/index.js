@@ -16,6 +16,9 @@ import About from './components/About';
 import HowToUsePbot from './components/HowToUsePbot';
 import Resources from './components/Resources';
 import GoToEducationOutreachHub from './components/GoToEducationOutreachHub';
+import Profile from './components/Profile';
+import Account from './components/Account';
+import Logout from './components/Logout';
 
 const router = createBrowserRouter([
     {
@@ -43,6 +46,18 @@ const router = createBrowserRouter([
                 element: <GoToEducationOutreachHub/>
             },
             {
+                path: "profile",
+                element: <Profile/>
+            },
+            {
+                path: "account",
+                element: <Account/>
+            },
+            {
+                path: "logout",
+                element: <Logout/>
+            },
+             {
                 path: "query",
                 element: <PBOTInterface formClass="query" />,
                 children: [
