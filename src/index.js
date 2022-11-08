@@ -12,6 +12,10 @@ import {
 } from "react-router-dom";
 import PBOTInterface from './components/PBOTInterface';
 import Action from './components/Action';
+import About from './components/About';
+import HowToUsePbot from './components/HowToUsePbot';
+import Resources from './components/Resources';
+import GoToEducationOutreachHub from './components/GoToEducationOutreachHub';
 
 const router = createBrowserRouter([
     {
@@ -21,6 +25,22 @@ const router = createBrowserRouter([
             { 
                 index: true, 
                 element: <PBOTInterface formClass="query" /> 
+            },
+            {
+                path: "about",
+                element: <About/>
+            },
+            {
+                path: "howto",
+                element: <HowToUsePbot/>
+            },
+            {
+                path: "resources",
+                element: <Resources/>
+            },
+            {
+                path: "education",
+                element: <GoToEducationOutreachHub/>
             },
             {
                 path: "query",
@@ -124,8 +144,8 @@ const router = createBrowserRouter([
     {
         path: "/query/otu/:otuid",
         //path: "/otu/:otuid",
-        element: < OTUDirectQueryResults/>
-    }
+        element: <OTUDirectQueryResults/>
+    },
     
 ]);
 
