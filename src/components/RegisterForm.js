@@ -3,6 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Grid, Button } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const host = window.location.host;
 
@@ -10,7 +11,8 @@ const RegisterForm = ({ setShowRegistration }) => {
     //const [username, setUserName] = useState();
     //const [password, setPassword] = useState();
     const [showUseExistingUser, setshowUseExistingUser] = useState(false);
-    
+    const navigate = useNavigate();
+
     const registerUser = async (credentials) => {
         return fetch('http://' + host + '/register', {
             method: 'POST',
@@ -38,9 +40,12 @@ const RegisterForm = ({ setShowRegistration }) => {
             return {ok: false, message: "Network error"}; //Could be anything, really
         })
     }
+
+    //TODO: Look into pushing previous page in React Router so we can navigate back to there.
     
     const handleCancel = () => {       
-        setShowRegistration(false);
+        //setShowRegistration(false);
+        navigate("/query");
     }
             
     const handleSubmit = async (values, {setStatus}) => {
@@ -49,7 +54,8 @@ const RegisterForm = ({ setShowRegistration }) => {
         const result = await registerUser(values);
         
         if (result.ok) {
-            setShowRegistration(false);
+            //setShowRegistration(false);
+            navigate("/query");
         } else {
             setStatus({error: result.message});
             if (result.message === "Unregistered user with that email found") {
