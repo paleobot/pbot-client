@@ -8,6 +8,7 @@ import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 import { FormControlUnstyledContext } from '@mui/base';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import NavBar from './components/NavBar';
+import { AuthProvider } from './components/AuthContext';
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -29,18 +30,20 @@ function App(props) {
     //localStorage.removeItem('PBOTMutationToken');
     return (
         <div className="App">
-            <NavBar />
-            <Outlet />
-            <br />
-            <Stack direction="row" spacing={5} justifyContent="center">
+            <AuthProvider>
+                <NavBar />
+                <Outlet />
+                <br />
+                <Stack direction="row" spacing={5} justifyContent="center">
                     <Button color="secondary" variant="contained" onClick={() => {navigate(`/about`);}}>About</Button>
                     <Button color="secondary" variant="contained" onClick={() => {navigate(`/howto`);}}>How to use Pbot</Button>
                     <Button color="secondary" variant="contained" onClick={() => {navigate(`/resources`);}}>Resources</Button>
                     <Button color="secondary" variant="contained" onClick={() => {navigate(`/education`);}}>Go to Education & Outreach Hub</Button>
                 </Stack>
-            <br />
-            <br />
-           <Footer />
+                <br />
+                <br />
+            <Footer />
+           </AuthProvider>
         </div>
     );
 }

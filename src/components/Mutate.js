@@ -24,6 +24,7 @@ import { ToggleButtonGroup } from '@mui/material';
 import { ToggleButton } from '@mui/material';
 
 import FileUpload from './FileUpload';
+import { useAuth } from './AuthContext';
 
 
 const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
@@ -39,7 +40,8 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
     
     const [showRegistration, setShowRegistration] = useState(false);
     
-    const [token, setToken] = useState(localStorage.getItem('PBOTMutationToken'));
+    //const [token, setToken] = useState(localStorage.getItem('PBOTMutationToken'));
+    const [token, setToken] = useAuth();
     
     const handleModeChange = (event, newMode) => {
         setMode(newMode);
@@ -52,11 +54,14 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
     }
 
     if(!token) {
+        return (<p>Workbench access requires authentication</p>)
+        /*
         if (!showRegistration) {
             return <LoginForm setToken={setToken} setShowRegistration={setShowRegistration} />
         } else {
             return <RegisterForm setShowRegistration={setShowRegistration}/>
         }
+        */
     }
     
     return (

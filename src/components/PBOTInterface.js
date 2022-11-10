@@ -73,6 +73,7 @@ const PBOTInterface = (props) => {
                  ) :
                  '';
   
+    //TODO: This is not rerendering the Query page properly when a user logs out. The Group select list still contains private Groups. Figure out what's going on there.
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
         <ApolloProvider client={client}>

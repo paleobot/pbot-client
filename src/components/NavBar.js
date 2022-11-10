@@ -25,6 +25,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import Drawer from '@mui/material/Drawer';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import EngineeringIcon from '@mui/icons-material/Engineering';
+import { useAuth } from './AuthContext';
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -39,14 +40,16 @@ export default function NavBar() {
     const navigate = useNavigate();
 
 
-    const [auth, setAuth] = React.useState(true);
+    //const [auth, setAuth] = React.useState(true);
+    const [token, setToken] = useAuth();
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [token, setToken] = React.useState(localStorage.getItem('PBOTMutationToken'));
     
+    /*
     const handleChange = (event) => {
       setAuth(event.target.checked);
     };
-  
+    */
+
     const handleMenu = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -54,6 +57,14 @@ export default function NavBar() {
     const handleClose = () => {
       setAnchorEl(null);
     };
+
+    const handleLogout = () => {
+        localStorage.removeItem('PBOTMutationToken');
+        setToken(localStorage.getItem('PBOTMutationToken'));
+        localStorage.removeItem('PBOTMe');
+        navigate("/query");
+    }
+   
   
     //const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -121,7 +132,7 @@ export default function NavBar() {
                         PBot
                     </Typography>
                     {!token && (
-                        <Button variant="contained" color="secondary">
+                        <Button variant="contained" color="secondary" onClick={() => {navigate(`/login`);}}>
                             Login
                         </Button>
                     )}
@@ -154,7 +165,7 @@ export default function NavBar() {
                                 >
                                 <MenuItem onClick={() => {handleClose(); navigate(`/profile`);}}>Profile</MenuItem>
                                 <MenuItem onClick={() => {handleClose(); navigate(`/account`);}}>My account</MenuItem>
-                                <MenuItem onClick={() => {handleClose(); navigate(`/logout`);}}>Logout</MenuItem>
+                                <MenuItem onClick={() => {handleClose(); handleLogout(); /*navigate(`/logout`);*/}}>Logout</MenuItem>
                             </Menu>
                         </div>
                     )}

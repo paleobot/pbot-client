@@ -3,14 +3,21 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Box } from '@mui/material';
 import { TextField } from 'formik-mui';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 const host = window.location.host;
 
-const LoginForm = ({ setToken, setShowRegistration }) => {
+const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     //const [username, setUserName] = useState();
     //const [password, setPassword] = useState();
     console.log(host);
+
+    const navigate = useNavigate();
+    const [token, setToken] = useAuth();
+
     const loginUser = async (credentials) => {
+        console.log("loginUser")
         return fetch('http://' + host + '/login', {
             method: 'POST',
             headers: {
@@ -86,6 +93,8 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
             localStorage.setItem('PBOTMutationToken', loginResult.token);
             setToken(loginResult.token);
             localStorage.setItem('PBOTMe', values.userName);
+            console.log("navigating to workbench")
+            navigate(`/mutate`);
         } else {
             console.log("else");
             setStatus({error: loginResult.message}); //TODO: figure out how Formik setStatus works
@@ -172,7 +181,8 @@ const LoginForm = ({ setToken, setShowRegistration }) => {
             </Form>
             )}
         </Formik>
-        <Button variant="text" color="secondary" onClick={() => {setShowRegistration(true);}}>Register</Button>
+        {/*<Button variant="text" color="secondary" onClick={() => {setShowRegistration(true);}}>Register</Button>*/}
+        <Button variant="text" color="secondary" onClick={() => {navigate(`/register`);}}>Register</Button>
         <br />
         {reset}
         </div>

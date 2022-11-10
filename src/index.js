@@ -19,6 +19,8 @@ import GoToEducationOutreachHub from './components/GoToEducationOutreachHub';
 import Profile from './components/Profile';
 import Account from './components/Account';
 import Logout from './components/Logout';
+import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
 
 const router = createBrowserRouter([
     {
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
             { 
                 index: true, 
                 element: <PBOTInterface formClass="query" /> 
+            },
+            {
+                path: "login",
+                element: <LoginForm/>
+            },
+            {
+                path: "register",
+                element: <RegisterForm/>
             },
             {
                 path: "about",

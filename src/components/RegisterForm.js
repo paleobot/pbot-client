@@ -176,7 +176,7 @@ const RegisterForm = ({ setShowRegistration }) => {
                 <br />
                 <br />
 
-                <Grid container spacing={1}>
+                <Grid container spacing={1} style={{justifyContent: "center", align: "center"}}>
                     <Grid item>
                     <Button type="submit" variant="contained" color="primary">Register</Button>
                     </Grid>
