@@ -94,7 +94,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
             setToken(loginResult.token);
             localStorage.setItem('PBOTMe', values.userName);
             console.log("navigating to workbench")
-            navigate(`/mutate`);
+            navigate(-1);
         } else {
             console.log("else");
             setStatus({error: loginResult.message}); //TODO: figure out how Formik setStatus works

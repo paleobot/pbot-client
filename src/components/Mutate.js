@@ -47,28 +47,14 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
         setMode(newMode);
     }
 
-    const handleLogout = () => {
-        localStorage.removeItem('PBOTMutationToken');
-        setToken(localStorage.getItem('PBOTMutationToken'));
-        localStorage.removeItem('PBOTMe');
-    }
-
     if(!token) {
         return (<p>Workbench access requires authentication</p>)
-        /*
-        if (!showRegistration) {
-            return <LoginForm setToken={setToken} setShowRegistration={setShowRegistration} />
-        } else {
-            return <RegisterForm setShowRegistration={setShowRegistration}/>
-        }
-        */
     }
     
     return (
         <div>
-            <Button variant="text" color="secondary" onClick={() => {handleLogout();}}>Logout</Button>
-            <Grid container spacing={3}>
-                <Grid item>
+            <Grid container spacing={3} >
+                <Grid item >
                     <FormControl component="fieldset">
                         <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                         <FormControlLabel value="OTU-mutate" control={<Radio />} label="OTU" labelPlacement="end"/>
@@ -92,8 +78,8 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     </FormControl>
                 </Grid>
                 
-                <Grid item>
-                    <ToggleButtonGroup
+                <Grid item alignItems="right">
+                    <ToggleButtonGroup sx={{marginTop: "5px"}} 
                         value={mode}
                         onChange={handleModeChange}
                         exclusive

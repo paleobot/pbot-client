@@ -21,6 +21,7 @@ import Account from './components/Account';
 import Logout from './components/Logout';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
+import Home from './components/Home';
 
 const router = createBrowserRouter([
     {
@@ -29,7 +30,7 @@ const router = createBrowserRouter([
         children: [
             { 
                 index: true, 
-                element: <PBOTInterface formClass="query" /> 
+                element: <Home /> 
             },
             {
                 path: "login",

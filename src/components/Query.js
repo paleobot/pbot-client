@@ -6,7 +6,6 @@ import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
 import ReferenceQueryForm from './Reference/ReferenceQueryForm';
 import SchemaQueryForm from './Schema/SchemaQueryForm';
 import PersonQueryForm from './Person/PersonQueryForm';
-import { useAuth } from './AuthContext';
 
 const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     

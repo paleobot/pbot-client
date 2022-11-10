@@ -12,6 +12,7 @@ export let publicGroupID;
 
 export const GroupSelect = (props) => {
     console.log("GroupSelect");
+
     const gQL = gql`
             query {
                 Group {

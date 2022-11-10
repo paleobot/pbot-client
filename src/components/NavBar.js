@@ -39,7 +39,6 @@ export default function NavBar() {
     const [rotatePBOT, setRotatePBOT] = React.useState(true);
     const navigate = useNavigate();
 
-
     //const [auth, setAuth] = React.useState(true);
     const [token, setToken] = useAuth();
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -62,7 +61,7 @@ export default function NavBar() {
         localStorage.removeItem('PBOTMutationToken');
         setToken(localStorage.getItem('PBOTMutationToken'));
         localStorage.removeItem('PBOTMe');
-        navigate("/query");
+        navigate("/");
     }
    
   
@@ -126,7 +125,7 @@ export default function NavBar() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h4" component="div" sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Link to="/query">
+                        <Link to="/">
                             <PBOTIcon rotatePBOT={rotatePBOT} />
                         </Link>
                         PBot

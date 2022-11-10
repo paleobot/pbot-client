@@ -12,19 +12,6 @@ const Action = ({selectedForm}/*{queryParams, handleQueryParamChange, formClass,
 
     return (
         <div>
-            <ToggleButtonGroup
-                value={formClass}
-                exclusive
-                onChange={handleFormClass}
-                aria-label="form class"
-            >
-                <ToggleButton value="query" aria-label="query">
-                    Query
-                </ToggleButton>
-                <ToggleButton value="mutate" aria-label="mutate">
-                    Workbench
-                </ToggleButton>
-            </ToggleButtonGroup>
             <Grid container spacing={3}>
                 <Grid item>
                     <div hidden={formClass !== "query"}>

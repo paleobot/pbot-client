@@ -34,7 +34,7 @@ function App(props) {
                 <NavBar />
                 <Outlet />
                 <br />
-                <Stack direction="row" spacing={5} justifyContent="center">
+                <Stack direction="row" spacing={5} justifyContent="center" sx={{marginTop: "30px"}}>
                     <Button color="secondary" variant="contained" onClick={() => {navigate(`/about`);}}>About</Button>
                     <Button color="secondary" variant="contained" onClick={() => {navigate(`/howto`);}}>How to use Pbot</Button>
                     <Button color="secondary" variant="contained" onClick={() => {navigate(`/resources`);}}>Resources</Button>
