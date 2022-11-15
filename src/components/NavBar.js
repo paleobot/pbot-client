@@ -26,6 +26,7 @@ import Drawer from '@mui/material/Drawer';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import { useAuth } from './AuthContext';
+import { useLocation } from 'react-router-dom';
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -76,38 +77,44 @@ export default function NavBar() {
     const secondaryNavDests = ["about", "howto", "resources", "education"]
     const drawer = (
         <div>
-          <Toolbar />
-          <Divider />
-          <List>
+            <Toolbar />
+            <Divider />
+            <List>
                 <ListItem key="Query" disablePadding>
                     <ListItemButton onClick={() => {handleDrawerToggle(); navigate(`/query`);}}>
                         <ListItemIcon>
                             <ManageSearchIcon/>
                         </ListItemIcon>
-                    <ListItemText primary="Query" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem key="Workbench" disablePadding>
+                        <ListItemText primary="Explore" />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem key="Workbench" disablePadding>
                     <ListItemButton onClick={() => {handleDrawerToggle(); navigate(`/mutate`);}}>
                         <ListItemIcon>
                             <EngineeringIcon/>
                         </ListItemIcon>
-                    <ListItemText primary="Workbench" />
-                </ListItemButton>
-              </ListItem>
-          </List>
-          <Divider />
-          <List>
-            {secondaryNavTitles.map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton onClick={() => {handleDrawerToggle(); navigate(secondaryNavDests[index]);}}>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+                        <ListItemText primary="Workbench" />
+                    </ListItemButton>
+                </ListItem>
+            </List>
+            <Divider />
+            <List>
+                {secondaryNavTitles.map((text, index) => (
+                <ListItem key={text} disablePadding>
+                    <ListItemButton onClick={() => {handleDrawerToggle(); navigate(secondaryNavDests[index]);}}>
+                    <ListItemText primary={text} />
+                    </ListItemButton>
+                </ListItem>
+                ))}
+            </List>
         </div>
-      );
+    );
+
+    let location = useLocation().pathname.split('/')[1];
+    location = location === "query" ? "Explore" :
+        location === "mutate" ? "Workbench" :
+        "";
+
         
     return (
         <>
@@ -122,13 +129,13 @@ export default function NavBar() {
                         sx={{ mr: 2 }}
                         onClick={handleDrawerToggle}
                     >
-                        <MenuIcon />
+                        <MenuIcon fontSize='large'/>
                     </IconButton>
                     <Typography variant="h4" component="div" sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <Link to="/">
                             <PBOTIcon rotatePBOT={rotatePBOT} />
                         </Link>
-                        PBot
+                        PBot {location}
                     </Typography>
                     {!token && (
                         <Button variant="contained" color="secondary" onClick={() => {navigate(`/login`);}}>
@@ -145,7 +152,7 @@ export default function NavBar() {
                                 onClick={handleMenu}
                                 color="inherit"
                             >
-                                <AccountCircle />
+                                <AccountCircle fontSize='large' color='success'/>
                             </IconButton>
                             <Menu
                                 id="menu-appbar"
