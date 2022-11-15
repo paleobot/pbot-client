@@ -12,17 +12,13 @@ const Action = ({selectedForm}/*{queryParams, handleQueryParamChange, formClass,
 
     return (
         <div>
-            <Grid container spacing={3}>
-                <Grid item>
-                    <div hidden={formClass !== "query"}>
-                        <Query queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
-                    </div>
-                        
-                    <div hidden={formClass !== "mutate"}>
-                        <Mutate queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
-                    </div>
-                </Grid>
-            </Grid>
+            <div hidden={formClass !== "query"}>
+                <Query queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
+            </div>
+                
+            <div hidden={formClass !== "mutate"}>
+                <Mutate queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
+            </div>
         </div>
     );
 }

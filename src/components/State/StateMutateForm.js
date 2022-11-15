@@ -260,7 +260,7 @@ const StateMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 <Field 
                     component={TextField}
                     name="mode" 
-                    type="hidden" 
+                    sx={{display:"none"}}
                     disabled={false}
                 />
                 

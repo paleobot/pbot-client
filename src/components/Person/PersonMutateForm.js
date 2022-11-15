@@ -129,7 +129,7 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
                 <Field 
                     component={TextField}
                     name="mode" 
-                    type="hidden" 
+                    sx={{display:"none"}}
                     disabled={false}
                 />
                 

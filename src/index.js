@@ -176,19 +176,24 @@ const router = createBrowserRouter([
 ]);
 
 const theme = createTheme({
-  palette: {
-      primary: {
-      main: "#bdbdbd"
-      },
-      secondary: {
-      main: "#66bb6a"
-      }
-  },
-  components : {
-      MuiTextField: {
-          defaultProps: {
-              variant: "standard"
-          }
+    palette: {
+        primary: {
+            main: "#bdbdbd"
+        },
+        secondary: {
+            main: "#66bb6a"
+        }
+    },
+    components : {
+        MuiTextField: {
+            defaultProps: {
+                variant: "standard"
+            },
+            styleOverrides: {
+                root: {
+                    width: "400px"
+                }
+            }
       },
       MuiCheckbox: {
           defaultProps: {

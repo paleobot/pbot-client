@@ -16,7 +16,6 @@ const SchemaQueryForm = ({queryParams, handleQueryParamChange, showResult, setSh
         includeCharacters: false
     };
     
-    const style = {textAlign: "left", width: "60%", margin: "auto"}
     return (
        
         <Formik

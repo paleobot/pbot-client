@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Divider } from '@mui/material';
+import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Divider, Typography } from '@mui/material';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import OTUQueryForm from './OTU/OTUQueryForm';
 import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
@@ -10,7 +10,7 @@ import PersonQueryForm from './Person/PersonQueryForm';
 const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
     
     return (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} style={{marginLeft:"10px", marginTop: "5px"}}>
             <Grid item>
                 <FormControl component="fieldset">
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
@@ -25,7 +25,8 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
                 </FormControl>
             </Grid>
             
-            <Grid item>
+            <Grid item xs>
+                {selectedForm && <Typography variant="h5">Search parameters</Typography>}
                 <div hidden={selectedForm !== "OTU"}>
                     <OTUQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>

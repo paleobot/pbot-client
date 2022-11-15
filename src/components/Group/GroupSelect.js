@@ -51,8 +51,8 @@ export const GroupSelect = (props) => {
             type="text"
             name="groups"
             label="Groups"
-            fullWidth 
             select={true}
+            style={{minWidth:"200px"}}
             SelectProps={{
                 multiple: true,
             }}

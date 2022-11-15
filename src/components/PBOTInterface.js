@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { AppBar, Tabs, Tab } from '@mui/material';
+import { AppBar, Tabs, Tab, Box } from '@mui/material';
 import Result from './Result';
 import Action from './Action';
 import {publicGroupID, GroupSelect} from './Group/GroupSelect.js';
@@ -73,23 +73,25 @@ const PBOTInterface = (props) => {
                  ) :
                  '';
   
-    const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const style = {textAlign: "left"}
     return (
         <ApolloProvider client={client}>
         <div style={style}>
-            <AppBar position="static">
-                <Tabs value={selectedTab} onChange={handleTabChange} variant="fullWidth" textColor="inherit" indicatorColor="secondary">
-                    <Tab label="Action"  />
-                    <Tab label="Results"  />
-                </Tabs>
-            </AppBar>
-        
-            <div hidden={selectedTab !== 0}>
-                <Outlet context={[queryParams, handleQueryParamChange, props.formClass, handleFormClass, handleFormChange, showResult, setShowResult]} />
-            </div>
-            <div hidden={selectedTab !== 1}>
-                {result}
-            </div>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={selectedTab} onChange={handleTabChange} textColor="secondary" indicatorColor="secondary">
+                <Tab label="Action"  />
+                <Tab label="Results"  />
+            </Tabs>
+            </Box>
+
+            <div style={{margin: "10px"}}>
+                <div hidden={selectedTab !== 0}>
+                    <Outlet context={[queryParams, handleQueryParamChange, props.formClass, handleFormClass, handleFormChange, showResult, setShowResult]} />
+                </div>
+                <div hidden={selectedTab !== 1}>
+                    {result}
+                </div>
+`            </div>
         </div>
         </ApolloProvider>
 

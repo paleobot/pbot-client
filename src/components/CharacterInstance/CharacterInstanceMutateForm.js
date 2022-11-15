@@ -293,7 +293,8 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
             {props => (
             <Form>
                 <Field
-                    type="hidden"
+                    component={TextField}
+                    sx={{display:"none"}}
                     name="schema"
                     disabled={false}
                 />
@@ -301,7 +302,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 <Field 
                     component={TextField}
                     name="mode" 
-                    type="hidden" 
+                    sx={{display:"none"}}
                     disabled={false}
                 />
                 

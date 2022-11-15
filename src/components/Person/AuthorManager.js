@@ -76,26 +76,28 @@ export const AuthorManager = (props) => {
                         //props.values.authors[index].order = index+1; 
                         return (
                             <Grid container spacing={2} direction="row" key={index}>
-                                <Grid item xs={6}>
+                                <Grid item xs={5}>
                                     <AuthorSelect name={`authors.${index}.pbotID`}/>
                                 </Grid>
-                                <Grid item xs={3}>
+                                <Grid item xs={1}>
                                     <Field
                                         component={TextField}
                                         name={`authors.${index}.order`}
                                         label="Order"
                                         type="text"
+                                        sx={{width:"75px"}}
                                         //disabled={props.values.authors[index].name === ''}
                                     />
                                 </Grid>
                                 {index > 0 &&
-                                <Grid item xs={3}>
+                                <Grid item xs={1}>
                                     <Button
                                         type="button"
                                         variant="text" 
                                         color="secondary" 
                                         size="large"
                                         onClick={() => remove(index)}
+                                        sx={{width:"50px"}}
                                         //disabled={props.values.authors[index].name === ''}
                                     >
                                         X

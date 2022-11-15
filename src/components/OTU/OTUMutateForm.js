@@ -169,11 +169,12 @@ const SpecimenSelect = (props) => {
                 type="text"
                 name="holotypeSpecimen"
                 label="Holotype specimen"
-                fullWidth 
+                style={{minWidth:"200px"}}
                 select={true}
                 SelectProps={{
                     multiple: false,
                 }}
+                sx={{minWidth:"200px"}}
                 disabled={false}
                 onChange={(event,child) => {
                     props.handleChange(event);
@@ -192,7 +193,7 @@ const SpecimenSelect = (props) => {
                 type="text"
                 name="exampleSpecimens"
                 label="Example specimens"
-                fullWidth 
+                sx={{minWidth:"200px"}}
                 select={true}
                 SelectProps={{
                     multiple: true,
@@ -315,10 +316,10 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                     name="name" 
                     type="text" 
                     label="Name"
-                    fullWidth
                     disabled={false}
                 />
-                
+                <br />
+               
                 <Field 
                     component={TextField}
                     name="family" 

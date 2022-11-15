@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider } from '@mui/material';
+import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider, Typography} from '@mui/material';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import OTUMutateForm from './OTU/OTUMutateForm';
@@ -53,7 +53,28 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
     
     return (
         <div>
-            <Grid container spacing={3} >
+                <Grid container justifyContent="flex-end">
+                    <ToggleButtonGroup sx={{marginTop: "5px"}} 
+                        value={mode}
+                        onChange={handleModeChange}
+                        exclusive
+                        aria-label="mutation type"
+                        orientation="horizontal"
+                        size="small"
+                    >
+                        <ToggleButton value="create" aria-label="create">
+                            <AddIcon />
+                        </ToggleButton>
+                        <ToggleButton value="edit" aria-label="edit" >
+                            <EditIcon />
+                        </ToggleButton>
+                        <ToggleButton value="delete" aria-label="delete" >
+                            <RemoveIcon />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </Grid>
+
+            <Grid container spacing={3} style={{marginLeft:"10px"}}>
                 <Grid item >
                     <FormControl component="fieldset">
                         <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
@@ -78,7 +99,9 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                     </FormControl>
                 </Grid>
                 
-                <Grid item alignItems="right">
+                <Grid item alignItems="right" xs>
+                    {selectedForm && <Typography variant="h5">Mutation parameters</Typography>}
+                    {/*}
                     <ToggleButtonGroup sx={{marginTop: "5px"}} 
                         value={mode}
                         onChange={handleModeChange}
@@ -97,7 +120,7 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                             <RemoveIcon />
                         </ToggleButton>
                     </ToggleButtonGroup>
-                
+                    */}
                     <div hidden={selectedForm !== "OTU-mutate"}>
                         <OTUMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>

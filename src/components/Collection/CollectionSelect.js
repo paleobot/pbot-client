@@ -35,7 +35,7 @@ export const CollectionSelect = (props) => {
             type="text"
             name="collection"
             label="Collection"
-            fullWidth 
+            style={{minWidth:"200px"}}
             select={true}
             SelectProps={{
                 multiple: false,

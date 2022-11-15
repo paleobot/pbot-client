@@ -19,25 +19,27 @@ export const ReferenceManager = (props) => {
                     props.values.references.map((reference, index) => { 
                         return (
                             <Grid container spacing={2} direction="row" key={index}>
-                                <Grid item xs={6}>
+                                <Grid item xs={5}>
                                     <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)}/>
                                 </Grid>
-                                <Grid item xs={3}>
+                                <Grid item xs={1}>
                                     <Field
                                         component={TextField}
                                         name={`references.${index}.order`}
                                         label="Order"
                                         type="text"
+                                        sx={{width:"75px"}}
                                     />
                                 </Grid>
                                 {index > 0 &&
-                                <Grid item xs={3}>
+                                <Grid item xs={1} sx={{ display: "flex", justifyContent: "flex-start" }}>
                                     <Button
                                         type="button"
                                         variant="text" 
                                         color="secondary" 
                                         size="large"
                                         onClick={() => remove(index)}
+                                        sx={{width:"50px"}}
                                     >
                                         X
                                     </Button>

@@ -296,6 +296,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                     fullWidth
                     disabled={false}
                 />
+                <br />
                 
                 <SchemaSelect />
                 <br />

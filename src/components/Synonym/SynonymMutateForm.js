@@ -238,6 +238,7 @@ const SynonymMutateForm = ({queryParams, handleQueryParamChange, showResult, set
                     fullWidth
                     disabled={false}
                 />
+                <br />
                 
                 <OTUSelect values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
                 <br />

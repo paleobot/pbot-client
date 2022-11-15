@@ -57,7 +57,6 @@ export const ReferenceSelect = (props) => {
             type="text"
             name={props.name || "references"}
             label="Title"
-            fullWidth 
             select={true}
             SelectProps={{
                 multiple: false,

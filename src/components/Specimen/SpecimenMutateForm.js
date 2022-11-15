@@ -328,7 +328,7 @@ const SpecimenMutateForm = ({queryParams, handleQueryParamChange, showResult, se
                 <Field 
                     component={TextField}
                     name="mode" 
-                    type="hidden" 
+                    sx={{display:"none"}}
                     disabled={false}
                 />
                 

@@ -217,6 +217,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                     fullWidth 
                     disabled={false}
                 />
+                <br />
 
                 <Field 
                     component={CheckboxWithLabel}
