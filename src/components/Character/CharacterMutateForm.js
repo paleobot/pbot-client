@@ -60,6 +60,7 @@ const CharacterSelect = (props) => {
     
     const style = {minWidth: "12ch"}
     return characters.length === 0 ? null : (
+        <>
         <Field
             style={style}
             component={TextField}
@@ -92,6 +93,8 @@ const CharacterSelect = (props) => {
                 >{character.name}</MenuItem>
             ))}
         </Field>
+        <br />
+        </>
     )
 }
 
@@ -117,6 +120,7 @@ const SchemaSelect = (props) => {
     console.log(schemas)
     
     return (
+        <>
         <Field
             component={TextField}
             type="text"
@@ -139,6 +143,8 @@ const SchemaSelect = (props) => {
                 <MenuItem key={pbotID} value={pbotID}>{title}</MenuItem>
             ))}
         </Field>
+        <br />
+        </>
     )
 }
 
@@ -208,7 +214,7 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.character !== '')) &&
-                    <div>
+                    <>
                     <Field
                         component={TextField}
                         type="text"
@@ -227,7 +233,8 @@ const CharacterMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                         fullWidth 
                         disabled={false}
                     />
-                    </div>
+                    <br />
+                    </>
                 }
                 
                 {(mode === "delete") &&
