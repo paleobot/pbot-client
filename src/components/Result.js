@@ -139,7 +139,7 @@ const Result = ({queryParams, queryEntity}) => {
         queryEntity === "Group-mutate" ? (
             <GroupMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
         ) : 
-        'sumptin wrong';
+        'nothing to show';
         
     return (
         <Grid container spacing={3}>
