@@ -390,7 +390,6 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 {(mode === "delete") &&
                 <div>
                     <Field
-                        type="checkbox"
                         component={CheckboxWithLabel}
                         name="cascade"
                         type="checkbox" 
