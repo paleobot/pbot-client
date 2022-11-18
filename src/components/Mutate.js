@@ -28,14 +28,40 @@ import { useAuth } from './AuthContext';
 
 
 const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
-    /*
-    const [selectedForm, setSelectedForm] = useState('OTU');
+    //This annoying bit of razzle-dazzle is to force MUI RadioGroup to reset when the path is just "/mutate".
+    //Without this, if we had selected a form then navigated somewhere else then navigated back via a
+    //Workbench button, the radio button was still set. I could find no graceful way to fix this, so...
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
+    const FormSelector = (form, reset) => {
+        if (!form) {
+            reset();
+        };
+        return (
+                <FormControl component="fieldset">
+                    <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
+                    <FormControlLabel value="OTU-mutate" control={<Radio />} label="OTU" labelPlacement="end"/>
+                    <FormControlLabel value="Synonym-mutate" control={<Radio />} label="Synonym" labelPlacement="end"/>
+                    <FormControlLabel value="Comment-mutate" control={<Radio />} label="Comment" labelPlacement="end"/>
+                    <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
+                    <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
+                    <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
+                    <FormControlLabel value="Collection-mutate" control={<Radio />} label="Collection" labelPlacement="end" />
+                    <Divider />
+                    <FormControlLabel value="Reference-mutate" control={<Radio />} label="Reference" labelPlacement="end" />
+                    <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" />
+                    <FormControlLabel value="Character-mutate" control={<Radio />} label="Character" labelPlacement="end" />
+                    <FormControlLabel value="State-mutate" control={<Radio />} label="State" labelPlacement="end" />
+                    <Divider />
+                    <FormControlLabel value="Group-mutate" control={<Radio />} label="Group" labelPlacement="end" />
+                    <FormControlLabel value="Person-mutate" control={<Radio />} label="Person" labelPlacement="end" />
+                    <Divider />
+                    <FormControlLabel value="Image-mutate" control={<Radio />} label="Image" labelPlacement="end" />
+                    </RadioGroup>
+                </FormControl>
+        );    
+    }
 
-    const handleChange = (event) => {
-        handleFormChange(event);
-       //console.log(selectedForm);
-    };
-    */
     const [mode, setMode] = React.useState('create');
     
     const [showRegistration, setShowRegistration] = useState(false);
@@ -76,51 +102,11 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
 
             <Grid container spacing={3} style={{marginLeft:"10px"}}>
                 <Grid item >
-                    <FormControl component="fieldset">
-                        <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                        <FormControlLabel value="OTU-mutate" control={<Radio />} label="OTU" labelPlacement="end"/>
-                        <FormControlLabel value="Synonym-mutate" control={<Radio />} label="Synonym" labelPlacement="end"/>
-                        <FormControlLabel value="Comment-mutate" control={<Radio />} label="Comment" labelPlacement="end"/>
-                        <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
-                        <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
-                        <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
-                        <FormControlLabel value="Collection-mutate" control={<Radio />} label="Collection" labelPlacement="end" />
-                        <Divider />
-                        <FormControlLabel value="Reference-mutate" control={<Radio />} label="Reference" labelPlacement="end" />
-                        <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" />
-                        <FormControlLabel value="Character-mutate" control={<Radio />} label="Character" labelPlacement="end" />
-                        <FormControlLabel value="State-mutate" control={<Radio />} label="State" labelPlacement="end" />
-                        <Divider />
-                        <FormControlLabel value="Group-mutate" control={<Radio />} label="Group" labelPlacement="end" />
-                        <FormControlLabel value="Person-mutate" control={<Radio />} label="Person" labelPlacement="end" />
-                        <Divider />
-                        <FormControlLabel value="Image-mutate" control={<Radio />} label="Image" labelPlacement="end" />
-                        </RadioGroup>
-                    </FormControl>
+                    <FormSelector form={selectedForm} reset={forceUpdate} />
                 </Grid>
                 
                 <Grid item alignItems="right" xs>
                     {selectedForm && <Typography variant="h5">Mutation parameters</Typography>}
-                    {/*}
-                    <ToggleButtonGroup sx={{marginTop: "5px"}} 
-                        value={mode}
-                        onChange={handleModeChange}
-                        exclusive
-                        aria-label="mutation type"
-                        orientation="horizontal"
-                        size="small"
-                    >
-                        <ToggleButton value="create" aria-label="create">
-                            <AddIcon />
-                        </ToggleButton>
-                        <ToggleButton value="edit" aria-label="edit" >
-                            <EditIcon />
-                        </ToggleButton>
-                        <ToggleButton value="delete" aria-label="delete" >
-                            <RemoveIcon />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    */}
                     <div hidden={selectedForm !== "OTU-mutate"}>
                         <OTUMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
