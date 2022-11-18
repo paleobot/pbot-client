@@ -32,7 +32,8 @@ const PBOTInterface = (props) => {
     };
 
     const handleFormClass = (event, newFormClass) => {
-        navigate(`/${newFormClass}`);
+        setShowResult(false);
+         navigate(`/${newFormClass}`);
     };
 
    const handleFormChange = (event) => {
@@ -91,7 +92,7 @@ const PBOTInterface = (props) => {
                 <div hidden={selectedTab !== 1}>
                     {result}
                 </div>
-`            </div>
+            </div>
         </div>
         </ApolloProvider>
 
