@@ -25,9 +25,10 @@ import {
   gql
 } from "@apollo/client";
 
-const Result = ({queryParams, queryEntity}) => {
-    console.log("Result");
-
+const Result = ({queryParams, type, queryEntity}) => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>Result<<<<<<<<<<<<<<<<<<<<<<<<");
+    console.log(type)
+    console.log(queryEntity)
     /*
     //This publicGroupID and path business is to handle direct urls to nodes 
     //(e.g. http://localhost:3000/Specimen/7599aa01-c919-4628-a5a8-b513d7a080c1)
@@ -79,65 +80,65 @@ const Result = ({queryParams, queryEntity}) => {
     */
     
     let result = 
-        queryEntity === "OTU" ? (
-            <OTUQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "query" && queryEntity === "otu" ? (
+            <OTUQueryResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Specimen" ? (
-            <SpecimenQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "query" && queryEntity === "specimen" ? (
+            <SpecimenQueryResults queryParams={queryParams} />
         ) :
-        queryEntity === "Reference" ? (
-            <ReferenceQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "query" && queryEntity === "reference" ? (
+            <ReferenceQueryResults queryParams={queryParams} />
         ) :
-        queryEntity === "Schema" ? (
-            <SchemaQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "query" && queryEntity === "schema" ? (
+            <SchemaQueryResults queryParams={queryParams} />
         ) :
-        queryEntity === "Person" ? (
-            <PersonQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "query" && queryEntity === "person" ? (
+            <PersonQueryResults queryParams={queryParams} />
         ) :
-        queryEntity === "OTU-mutate" ? (
-            <OTUMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "otu" ? (
+            <OTUMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Synonym-mutate" ? (
-            <SynonymMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "synonym" ? (
+            <SynonymMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Comment-mutate" ? (
-            <CommentMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "comment" ? (
+            <CommentMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Description-mutate" ? (
-            <DescriptionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "description" ? (
+            <DescriptionMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "CharacterInstance-mutate" ? (
-            <CharacterInstanceMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "characterinstance" ? (
+            <CharacterInstanceMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Specimen-mutate" ? (
-            <SpecimenMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "specimen" ? (
+            <SpecimenMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Image-mutate" ? (
-            <ImageMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "image" ? (
+            <ImageMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Collection-mutate" ? (
-            <CollectionMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "collection" ? (
+            <CollectionMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Organ-mutate" ? (
-            <OrganMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "organ" ? (
+            <OrganMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Reference-mutate" ? (
-            <ReferenceMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "reference" ? (
+            <ReferenceMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Schema-mutate" ? (
-            <SchemaMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "schema" ? (
+            <SchemaMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Character-mutate" ? (
-            <CharacterMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "character" ? (
+            <CharacterMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "State-mutate" ? (
-            <StateMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "state" ? (
+            <StateMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Person-mutate" ? (
-            <PersonMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "person" ? (
+            <PersonMutateResults queryParams={queryParams} />
         ) : 
-        queryEntity === "Group-mutate" ? (
-            <GroupMutateResults queryParams={queryParams} queryEntity={queryEntity}/>
+        type === "mutate" && queryEntity === "group" ? (
+            <GroupMutateResults queryParams={queryParams} />
         ) : 
         'nothing to show';
         

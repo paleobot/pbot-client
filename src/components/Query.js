@@ -21,13 +21,13 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
         return (
             <FormControl component="fieldset">
                 <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                <FormControlLabel value="OTU" control={<Radio />} label="OTU" labelPlacement="end"/>
-                <FormControlLabel value="Specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
+                <FormControlLabel value="otu" control={<Radio />} label="OTU" labelPlacement="end"/>
+                <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
                 <Divider />
-                <FormControlLabel value="Reference" control={<Radio />} label="Reference" labelPlacement="end"/>
-                <FormControlLabel value="Schema" control={<Radio />} label="Schema" labelPlacement="end" />
+                <FormControlLabel value="reference" control={<Radio />} label="Reference" labelPlacement="end"/>
+                <FormControlLabel value="schema" control={<Radio />} label="Schema" labelPlacement="end" />
                 <Divider />
-                <FormControlLabel value="Person" control={<Radio />} label="Person" labelPlacement="end"/>
+                <FormControlLabel value="person" control={<Radio />} label="Person" labelPlacement="end"/>
                 </RadioGroup>
             </FormControl>  
         );    
@@ -41,23 +41,23 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
             
             <Grid item xs>
                 {selectedForm && <Typography variant="h5">Search parameters</Typography>}
-                <div hidden={selectedForm !== "OTU"}>
+                <div hidden={selectedForm !== "otu"}>
                     <OTUQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>
                     
-                <div hidden={selectedForm !== "Specimen"}>
+                <div hidden={selectedForm !== "specimen"}>
                     <SpecimenQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>
 
-                <div hidden={selectedForm !== "Reference"}>
+                <div hidden={selectedForm !== "reference"}>
                     <ReferenceQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>
 
-                <div hidden={selectedForm !== "Schema"}>
+                <div hidden={selectedForm !== "schema"}>
                     <SchemaQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>
 
-                <div hidden={selectedForm !== "Person"}>
+                <div hidden={selectedForm !== "person"}>
                     <PersonQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
                 </div>
                 

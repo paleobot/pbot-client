@@ -10,7 +10,6 @@ const OTUDirectQueryResults = () => {
     console.log("otuid = " + otuid);
     //Get otu ID, create necessary parameters, and call OTUQueryResults to do the work
     if (otuid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
-        const queryEntity = "OTU";
         const queryParams = {
             otuID: otuid,
             groups: [], 
@@ -22,7 +21,7 @@ const OTUDirectQueryResults = () => {
         };
         return (
             <ApolloProvider client={client}>
-                <OTUQueryResults queryParams={queryParams} queryEntity={queryEntity}/>
+                <OTUQueryResults queryParams={queryParams} />
             </ApolloProvider>
         );
     } else {

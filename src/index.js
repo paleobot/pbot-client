@@ -78,23 +78,23 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "otu",
-                        element: <Action  selectedForm="OTU"/>,
+                        element: <Action  selectedForm="otu"/>,
                     },
                     {
                         path: "specimen",
-                        element: <Action  selectedForm="Specimen" />,
+                        element: <Action  selectedForm="specimen" />,
                     },
                     {
                         path: "reference",
-                        element: <Action selectedForm="Reference" />,
+                        element: <Action selectedForm="reference" />,
                     },
                     {
                         path: "schema",
-                        element: <Action selectedForm="Schema" />,
+                        element: <Action selectedForm="schema" />,
                     },
                     {
                         path: "person",
-                        element: <Action selectedForm="Person" />,
+                        element: <Action selectedForm="person" />,
                     },
                 ]
             },
@@ -108,59 +108,59 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "otu",
-                        element: <Action selectedForm="OTU-mutate" />,
+                        element: <Action selectedForm="otu" />,
                     }, 
                     {
                         path: "synonym",
-                        element: <Action selectedForm="Synonym-mutate" />,
+                        element: <Action selectedForm="synonym" />,
                     }, 
                     {
                         path: "comment",
-                        element: <Action selectedForm="Comment-mutate" />,
+                        element: <Action selectedForm="comment" />,
                     }, 
                     {
                         path: "description",
-                        element: <Action selectedForm="Description-mutate" />,
+                        element: <Action selectedForm="description" />,
                     }, 
                     {
                         path: "characterinstance",
-                        element: <Action selectedForm="CharacterInstance-mutate" />,
+                        element: <Action selectedForm="characterinstance" />,
                     }, 
                     {
                         path: "specimen",
-                        element: <Action selectedForm="Specimen-mutate" />,
+                        element: <Action selectedForm="specimen" />,
                     },
                     {
                         path: "collection",
-                        element: <Action selectedForm="Collection-mutate" />,
+                        element: <Action selectedForm="collection" />,
                     },
                     {
                         path: "reference",
-                        element: <Action selectedForm="Reference-mutate" />,
+                        element: <Action selectedForm="reference" />,
                     },
                     {
                         path: "schema",
-                        element: <Action selectedForm="Schema-mutate" />,
+                        element: <Action selectedForm="schema" />,
                     },
                     {
                         path: "character",
-                        element: <Action selectedForm="Character-mutate" />,
+                        element: <Action selectedForm="character" />,
                     },
                     {
                         path: "state",
-                        element: <Action selectedForm="State-mutate" />,
+                        element: <Action selectedForm="state" />,
                     },
                     {
                         path: "group",
-                        element: <Action selectedForm="Group-mutate" />,
+                        element: <Action selectedForm="group" />,
                     },
                     {
                         path: "person",
-                        element: <Action selectedForm="Person-mutate" />,
+                        element: <Action selectedForm="person" />,
                     },
                     {
                         path: "image",
-                        element: <Action selectedForm="Image-mutate" />,
+                        element: <Action selectedForm="image" />,
                     }
                 ]
             }

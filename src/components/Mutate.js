@@ -40,23 +40,23 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
         return (
                 <FormControl component="fieldset">
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                    <FormControlLabel value="OTU-mutate" control={<Radio />} label="OTU" labelPlacement="end"/>
-                    <FormControlLabel value="Synonym-mutate" control={<Radio />} label="Synonym" labelPlacement="end"/>
-                    <FormControlLabel value="Comment-mutate" control={<Radio />} label="Comment" labelPlacement="end"/>
-                    <FormControlLabel value="Description-mutate" control={<Radio />} label="Description" labelPlacement="end"/>
-                    <FormControlLabel value="CharacterInstance-mutate" control={<Radio />} label="Character Instance" labelPlacement="end"/>
-                    <FormControlLabel value="Specimen-mutate" control={<Radio />} label="Specimen" labelPlacement="end" />
-                    <FormControlLabel value="Collection-mutate" control={<Radio />} label="Collection" labelPlacement="end" />
+                    <FormControlLabel value="otu" control={<Radio />} label="OTU" labelPlacement="end"/>
+                    <FormControlLabel value="synonym" control={<Radio />} label="Synonym" labelPlacement="end"/>
+                    <FormControlLabel value="comment" control={<Radio />} label="Comment" labelPlacement="end"/>
+                    <FormControlLabel value="description" control={<Radio />} label="Description" labelPlacement="end"/>
+                    <FormControlLabel value="characterinstance" control={<Radio />} label="Character Instance" labelPlacement="end"/>
+                    <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end" />
+                    <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end" />
                     <Divider />
-                    <FormControlLabel value="Reference-mutate" control={<Radio />} label="Reference" labelPlacement="end" />
-                    <FormControlLabel value="Schema-mutate" control={<Radio />} label="Schema" labelPlacement="end" />
-                    <FormControlLabel value="Character-mutate" control={<Radio />} label="Character" labelPlacement="end" />
-                    <FormControlLabel value="State-mutate" control={<Radio />} label="State" labelPlacement="end" />
+                    <FormControlLabel value="reference" control={<Radio />} label="Reference" labelPlacement="end" />
+                    <FormControlLabel value="schema" control={<Radio />} label="Schema" labelPlacement="end" />
+                    <FormControlLabel value="character" control={<Radio />} label="Character" labelPlacement="end" />
+                    <FormControlLabel value="state" control={<Radio />} label="State" labelPlacement="end" />
                     <Divider />
-                    <FormControlLabel value="Group-mutate" control={<Radio />} label="Group" labelPlacement="end" />
-                    <FormControlLabel value="Person-mutate" control={<Radio />} label="Person" labelPlacement="end" />
+                    <FormControlLabel value="group" control={<Radio />} label="Group" labelPlacement="end" />
+                    <FormControlLabel value="person" control={<Radio />} label="Person" labelPlacement="end" />
                     <Divider />
-                    <FormControlLabel value="Image-mutate" control={<Radio />} label="Image" labelPlacement="end" />
+                    <FormControlLabel value="image" control={<Radio />} label="Image" labelPlacement="end" />
                     </RadioGroup>
                 </FormControl>
         );    
@@ -107,59 +107,59 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                 
                 <Grid item alignItems="right" xs>
                     {selectedForm && <Typography variant="h5">Mutation parameters</Typography>}
-                    <div hidden={selectedForm !== "OTU-mutate"}>
+                    <div hidden={selectedForm !== "otu"}>
                         <OTUMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Synonym-mutate"}>
+                    <div hidden={selectedForm !== "synonym"}>
                         <SynonymMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Comment-mutate"}>
+                    <div hidden={selectedForm !== "comment"}>
                         <CommentMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Description-mutate"}>
+                    <div hidden={selectedForm !== "description"}>
                         <DescriptionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "CharacterInstance-mutate"}>
+                    <div hidden={selectedForm !== "characterinstance"}>
                         <CharacterInstanceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
-                    <div hidden={selectedForm !== "Specimen-mutate"}>
+                    <div hidden={selectedForm !== "specimen"}>
                         <SpecimenMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Collection-mutate"}>
+                    <div hidden={selectedForm !== "collection"}>
                         <CollectionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Reference-mutate"}>
+                    <div hidden={selectedForm !== "reference"}>
                         <ReferenceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Schema-mutate"}>
+                    <div hidden={selectedForm !== "schema"}>
                         <SchemaMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
-                    <div hidden={selectedForm !== "Character-mutate"}>
+                    <div hidden={selectedForm !== "character"}>
                         <CharacterMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
-                    <div hidden={selectedForm !== "State-mutate"}>
+                    <div hidden={selectedForm !== "state"}>
                         <StateMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Group-mutate"}>
+                    <div hidden={selectedForm !== "group"}>
                         <GroupMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
-                   <div hidden={selectedForm !== "Person-mutate"}>
+                   <div hidden={selectedForm !== "person"}>
                         <PersonMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
-                    <div hidden={selectedForm !== "Image-mutate"}>
+                    <div hidden={selectedForm !== "image"}>
                         <ImageMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
                     </div>
 

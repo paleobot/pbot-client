@@ -61,6 +61,8 @@ const PBOTInterface = (props) => {
     //Figure out what we're doing from the path, massage it, and send to Result as queryEntity
     const location = useLocation();
     let form = location.pathname.split("/")[2];
+    console.log(form)
+    /*
     form = form ? 
         form === "otu" ? 
             form.toUpperCase() : 
@@ -69,8 +71,9 @@ const PBOTInterface = (props) => {
     form = "mutate" === location.pathname.split("/")[1] ?
         form + "-mutate" :
         form;
+        */
     let result = showResult ? (
-                    <Result queryParams={queryParams} queryEntity={form}/>
+                    <Result queryParams={queryParams} type={props.formClass} queryEntity={form}/>
                  ) :
                  '';
   
