@@ -1,29 +1,22 @@
 import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
 
-const CommentMutateResults = ({queryParams, queryEntity}) => {
+const CommentMutateResults = ({queryParams}) => {
     console.log("CommentMutateResults");
     console.log(queryParams);
 
-    let comments = queryEntity === "Comment-mutate" ? (
-                    <Mutator
-                        params={{
-                            pbotID: queryParams.comment || null,
-                            content: queryParams.content || null,
-                            //subjectID: queryParams.synonym || null,
-                            subjectID: queryParams.parentComment || queryParams.synonym || null, 
-                            references: queryParams.references || null,
-                        }}
-                        entity="Comment"
-                        mode={queryParams.mode}
-                    />
-                ) : 
-                '';
-    
     return (
-        <div>
-            {comments}
-        </div>
+        <Mutator
+            params={{
+                pbotID: queryParams.comment || null,
+                content: queryParams.content || null,
+                //subjectID: queryParams.synonym || null,
+                subjectID: queryParams.parentComment || queryParams.synonym || null, 
+                references: queryParams.references || null,
+            }}
+            entity="Comment"
+            mode={queryParams.mode}
+        />
     );
 };
 

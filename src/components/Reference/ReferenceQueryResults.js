@@ -69,26 +69,19 @@ function References(props) {
 
 }
 
-const ReferenceQueryResults = ({queryParams, queryEntity}) => {
+const ReferenceQueryResults = ({queryParams}) => {
     console.log(queryParams);
 
-    let references = queryEntity === "Reference" ? (
-                    <References 
-                        filters={{
-                            pbotID: queryParams.referenceID || null,
-                            title: queryParams.title || null, 
-                            year: queryParams.year || null, 
-                            publisher: queryParams.publisher || null, 
-                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
-                        }}
-                    />
-                ) : 
-                '';
-    
     return (
-        <div>
-            {references}
-        </div>
+        <References 
+            filters={{
+                pbotID: queryParams.referenceID || null,
+                title: queryParams.title || null, 
+                year: queryParams.year || null, 
+                publisher: queryParams.publisher || null, 
+                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+            }}
+        />
     );
 };
 

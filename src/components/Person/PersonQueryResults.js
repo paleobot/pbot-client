@@ -54,27 +54,20 @@ function Persons(props) {
 
 }
 
-const PersonQueryResults = ({queryParams, queryEntity}) => {
+const PersonQueryResults = ({queryParams}) => {
     console.log(queryParams);
 
-    let persons = queryEntity === "Person" ? (
-                    <Persons 
-                        filters={{
-                            pbotID: queryParams.personID || null,
-                            given: queryParams.given || null, 
-                            surname: queryParams.surname || null, 
-                            email: queryParams.email || null, 
-                            orcid: queryParams.orcid || null, 
-                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
-                        }}
-                    />
-                ) : 
-                '';
-    
     return (
-        <div>
-            {persons}
-        </div>
+        <Persons 
+            filters={{
+                pbotID: queryParams.personID || null,
+                given: queryParams.given || null, 
+                surname: queryParams.surname || null, 
+                email: queryParams.email || null, 
+                orcid: queryParams.orcid || null, 
+                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+            }}
+        />
     );
 };
 

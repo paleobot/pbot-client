@@ -87,28 +87,21 @@ function DescriptionList(props) {
 
 }
 
-const DescriptionQueryResults = ({queryParams, queryEntity}) => {
+const DescriptionQueryResults = ({queryParams}) => {
     console.log(queryParams);
 
-    let descriptions = queryEntity === "Description" ? (
-                    <DescriptionList 
-                        filters={{
-                            type: queryParams.type || null,
-                            pbotID: queryParams.descriptionID || null,
-                            family: queryParams.family || null, 
-                            genus: queryParams.genus || null, 
-                            species: queryParams.species || null, 
-                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
-                        }}
-                        includeComplex={queryParams.includeComplex} 
-                    />
-                ) : 
-                '';
-    
     return (
-        <div>
-            {descriptions}
-        </div>
+        <DescriptionList 
+            filters={{
+                type: queryParams.type || null,
+                pbotID: queryParams.descriptionID || null,
+                family: queryParams.family || null, 
+                genus: queryParams.genus || null, 
+                species: queryParams.species || null, 
+                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+            }}
+            includeComplex={queryParams.includeComplex} 
+        />
     );
 };
 

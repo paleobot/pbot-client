@@ -177,26 +177,19 @@ function Schemas(props) {
 
 }
 
-const SchemaQueryResults = ({queryParams, queryEntity}) => {
-    console.log(queryParams);
-
-    let schemas = queryEntity === "Schema" ? (
-                    <Schemas 
-                        filters={{
-                            pbotID: queryParams.schemaID,
-                            title: queryParams.title, 
-                            year: queryParams.year, 
-                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
-                        }}
-                        includeCharacters={queryParams.includeCharacters} 
-                    />
-                ) : 
-                '';
+const SchemaQueryResults = ({queryParams}) => {
+    //console.log(queryParams);
     
     return (
-        <div>
-            {schemas}
-        </div>
+        <Schemas 
+            filters={{
+                pbotID: queryParams.schemaID,
+                title: queryParams.title, 
+                year: queryParams.year, 
+                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+            }}
+            includeCharacters={queryParams.includeCharacters} 
+        />
     );
 };
 

@@ -245,32 +245,25 @@ function OTUList(props) {
 
 }
 
-const OTUQueryResults = ({queryParams, queryEntity}) => {
+const OTUQueryResults = ({queryParams}) => {
     console.log("queryParams");
     console.log(queryParams);
 
-    let otus = queryEntity === "OTU" ? (
-                    <OTUList 
-                        filters={{
-                            pbotID: queryParams.otuID || null,
-                            family: queryParams.family || null, 
-                            genus: queryParams.genus || null, 
-                            species: queryParams.species || null, 
-                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
-                        }}
-                        includeSynonyms={queryParams.includeSynonyms} 
-                        includeComments={queryParams.includeComments} 
-                        includeHolotypeDescription={queryParams.includeHolotypeDescription} 
-                        includeMergedDescription={queryParams.includeMergedDescription} 
-                        standAlone={queryParams.standAlone} 
-                    />
-                ) : 
-                '';
-    
     return (
-        <div>
-            {otus}
-        </div>
+        <OTUList 
+            filters={{
+                pbotID: queryParams.otuID || null,
+                family: queryParams.family || null, 
+                genus: queryParams.genus || null, 
+                species: queryParams.species || null, 
+                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+            }}
+            includeSynonyms={queryParams.includeSynonyms} 
+            includeComments={queryParams.includeComments} 
+            includeHolotypeDescription={queryParams.includeHolotypeDescription} 
+            includeMergedDescription={queryParams.includeMergedDescription} 
+            standAlone={queryParams.standAlone} 
+        />
     );
 };
 

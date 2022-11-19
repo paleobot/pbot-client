@@ -6,7 +6,7 @@ import { gql } from "@apollo/client/core";
 import { useApolloClient } from "@apollo/client/react/hooks/useApolloClient.js";
 import { useMutation } from "@apollo/client/react/hooks/useMutation.js";
 
-const SpecimenMutateResults = ({queryParams, queryEntity}) => {
+const SpecimenMutateResults = ({queryParams}) => {
     console.log("-------------------SpecimenMutateResults--------------------");
     console.log(queryParams);
     console.log(queryParams.references);
@@ -33,35 +33,27 @@ const SpecimenMutateResults = ({queryParams, queryEntity}) => {
     });
     */
     
-    let specimens = queryEntity === "Specimen-mutate" ? (
-                    <Mutator
-                        params={{
-                            pbotID: queryParams.specimen || null,
-                            name: queryParams.name || null,
-                            references: queryParams.references || null,
-                            organID: queryParams.organ || null,
-                            preservationModeID: queryParams.preservationMode || null,
-                            descriptionIDs: queryParams.describedBy || null,
-                            idigbiouuid: queryParams.idigbiouuid || null,
-                            pbdbcid: queryParams.pbdbcid || null,
-                            pbdboccid: queryParams.pbdboccid || null,
-                            collection: queryParams.collection || null,
-                            uploadImages: queryParams.images || null,
-                            groups: queryParams.public ? 
-                                [publicGroupID] : queryParams.groups || null,
-                            cascade: queryParams.cascade || false
-                        }}
-                        entity="Specimen"
-                        mode={queryParams.mode}
-                    />
-                ) : 
-                '';
-    
-    //const specimens = "Hi there";
     return (
-        <div>
-            {specimens}
-        </div>
+        <Mutator
+            params={{
+                pbotID: queryParams.specimen || null,
+                name: queryParams.name || null,
+                references: queryParams.references || null,
+                organID: queryParams.organ || null,
+                preservationModeID: queryParams.preservationMode || null,
+                descriptionIDs: queryParams.describedBy || null,
+                idigbiouuid: queryParams.idigbiouuid || null,
+                pbdbcid: queryParams.pbdbcid || null,
+                pbdboccid: queryParams.pbdboccid || null,
+                collection: queryParams.collection || null,
+                uploadImages: queryParams.images || null,
+                groups: queryParams.public ? 
+                    [publicGroupID] : queryParams.groups || null,
+                cascade: queryParams.cascade || false
+            }}
+            entity="Specimen"
+            mode={queryParams.mode}
+        />
     );
 };
 

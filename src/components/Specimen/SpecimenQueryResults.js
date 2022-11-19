@@ -193,29 +193,22 @@ function Specimens(props) {
 
 }
 
-const SpecimenQueryResults = ({queryParams, queryEntity}) => {
+const SpecimenQueryResults = ({queryParams}) => {
     console.log("SpecimenQueryResults");
     console.log(queryParams);
-
-    let specimens = queryEntity === "Specimen" ? (
-                    <Specimens 
-                        filters={{
-                            pbotID: queryParams.specimenID,
-                            name: queryParams.name, 
-                            collection: queryParams.collection || null, 
-                            groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
-                        }}
-                        includeImages={queryParams.includeImages}
-                        includeDescriptions={queryParams.includeDescriptions} 
-                        includeOTUs={queryParams.includeOTUs} 
-                    />
-                ) : 
-                '';
     
     return (
-        <div>
-            {specimens}
-        </div>
+        <Specimens 
+            filters={{
+                pbotID: queryParams.specimenID,
+                name: queryParams.name, 
+                collection: queryParams.collection || null, 
+                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+            }}
+            includeImages={queryParams.includeImages}
+            includeDescriptions={queryParams.includeDescriptions} 
+            includeOTUs={queryParams.includeOTUs} 
+        />
     );
 };
 
