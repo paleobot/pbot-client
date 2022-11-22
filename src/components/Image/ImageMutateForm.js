@@ -317,7 +317,7 @@ const ImageSelect = (props) => {
 const FILE_SIZE_LIMIT = process.env.REACT_APP_FILE_SIZE_LIMIT;
 const SUPPORTED_IMAGE_FORMATS = process.env.REACT_APP_SUPPORTED_IMAGE_FORMATS.split(";");
 
-const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const ImageMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 image: '',
                 collection: '', 
@@ -350,7 +350,7 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -376,7 +376,7 @@ const ImageMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 //alert(JSON.stringify(values.uploadImage, null, 2));
                 //setValues(values);
                 values.mode = mode;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values: initValues});

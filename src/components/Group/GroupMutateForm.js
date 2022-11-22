@@ -132,7 +132,7 @@ const MemberSelect = (props) => {
 }
 
 
-const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const GroupMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 group: '', 
                 name: '',
@@ -158,7 +158,7 @@ const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -170,7 +170,7 @@ const GroupMutateForm = ({queryParams, handleQueryParamChange, showResult, setSh
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.mode = mode;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values: initValues});

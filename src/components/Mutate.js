@@ -27,7 +27,7 @@ import FileUpload from './FileUpload';
 import { useAuth } from './AuthContext';
 
 
-const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
+const Mutate = ({queryParams, handleSubmit, selectedForm, handleFormChange, showResult, setShowResult}) => {
     //This annoying bit of razzle-dazzle is to force MUI RadioGroup to reset when the path is just "/mutate".
     //Without this, if we had selected a form then navigated somewhere else then navigated back via a
     //Workbench button, the radio button was still set. I could find no graceful way to fix this, so...
@@ -104,63 +104,63 @@ const Mutate = ({queryParams, handleQueryParamChange, selectedForm, handleFormCh
                 <Grid item >
                     <FormSelector form={selectedForm} reset={forceUpdate} />
                 </Grid>
-                
+            
                 <Grid item alignItems="right" xs>
                     {selectedForm && <Typography variant="h5">Mutation parameters</Typography>}
                     <div hidden={selectedForm !== "otu"}>
-                        <OTUMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <OTUMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "synonym"}>
-                        <SynonymMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <SynonymMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "comment"}>
-                        <CommentMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <CommentMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "description"}>
-                        <DescriptionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <DescriptionMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "characterinstance"}>
-                        <CharacterInstanceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <CharacterInstanceMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
                     <div hidden={selectedForm !== "specimen"}>
-                        <SpecimenMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <SpecimenMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "collection"}>
-                        <CollectionMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <CollectionMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "reference"}>
-                        <ReferenceMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <ReferenceMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "schema"}>
-                        <SchemaMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <SchemaMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
                     <div hidden={selectedForm !== "character"}>
-                        <CharacterMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <CharacterMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
                     <div hidden={selectedForm !== "state"}>
-                        <StateMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <StateMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "group"}>
-                        <GroupMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <GroupMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
                     
                    <div hidden={selectedForm !== "person"}>
-                        <PersonMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <PersonMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                     <div hidden={selectedForm !== "image"}>
-                        <ImageMutateForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult} mode={mode}/>
+                        <ImageMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
                     </div>
 
                 </Grid>

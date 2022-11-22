@@ -7,7 +7,7 @@ import ReferenceQueryForm from './Reference/ReferenceQueryForm';
 import SchemaQueryForm from './Schema/SchemaQueryForm';
 import PersonQueryForm from './Person/PersonQueryForm';
 
-const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormChange, showResult, setShowResult}) => {
+const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
 
     //This annoying bit of razzle-dazzle is to force MUI RadioGroup to reset when the path is just "/query".
     //Without this, if we had selected a form then navigated somewhere else then navigated back via an
@@ -42,23 +42,23 @@ const Query = ({queryParams, handleQueryParamChange, selectedForm, handleFormCha
             <Grid item xs>
                 {selectedForm && <Typography variant="h5">Search parameters</Typography>}
                 <div hidden={selectedForm !== "otu"}>
-                    <OTUQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    <OTUQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
                 </div>
                     
                 <div hidden={selectedForm !== "specimen"}>
-                    <SpecimenQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    <SpecimenQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
                 </div>
 
                 <div hidden={selectedForm !== "reference"}>
-                    <ReferenceQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    <ReferenceQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
                 </div>
 
                 <div hidden={selectedForm !== "schema"}>
-                    <SchemaQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    <SchemaQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
                 </div>
 
                 <div hidden={selectedForm !== "person"}>
-                    <PersonQueryForm queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} showResult={showResult} setShowResult={setShowResult}/>
+                    <PersonQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
                 </div>
                 
             </Grid>

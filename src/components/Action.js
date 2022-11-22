@@ -6,18 +6,18 @@ import Query from './Query';
 import Mutate from './Mutate';
 import { useOutletContext } from "react-router-dom";
 
-const Action = ({selectedForm}/*{queryParams, handleQueryParamChange, formClass, handleFormClass, selectedForm, handleFormChange, showResult, setShowResult}*/) => {
+const Action = ({selectedForm}/*{queryParams, handleSubmit, formClass, handleFormClass, selectedForm, handleFormChange, showResult, setShowResult}*/) => {
 
-    const [queryParams, handleQueryParamChange, formClass, handleFormClass, handleFormChange, showResult, setShowResult] = useOutletContext();
+    const [handleSubmit, formClass, handleFormChange, setShowResult] = useOutletContext();
 
     return (
         <div>
             <div hidden={formClass !== "query"}>
-                <Query queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
+                <Query handleSubmit={handleSubmit} selectedForm={selectedForm} handleFormChange={handleFormChange} setShowResult={setShowResult}/>
             </div>
                 
             <div hidden={formClass !== "mutate"}>
-                <Mutate queryParams={queryParams} handleQueryParamChange={handleQueryParamChange} selectedForm={selectedForm} handleFormChange={handleFormChange} showResult={showResult} setShowResult={setShowResult}/>
+                <Mutate handleSubmit={handleSubmit} selectedForm={selectedForm} handleFormChange={handleFormChange} setShowResult={setShowResult}/>
             </div>
         </div>
     );

@@ -5,7 +5,7 @@ import { Button, AppBar, Tabs, Tab } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 
-const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const ReferenceQueryForm = ({handleSubmit, setShowResult}) => {
     //const [values, setValues] = useState({});
     const initValues = {
         referenceID: '', 
@@ -23,7 +23,7 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -41,7 +41,7 @@ const ReferenceQueryForm = ({queryParams, handleQueryParamChange, showResult, se
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
-                handleQueryParamChange(values)
+                handleSubmit(values)
                 setShowResult(true);
                 //setShowOTUs(true);
             }}

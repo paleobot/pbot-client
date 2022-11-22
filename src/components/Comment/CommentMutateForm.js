@@ -153,7 +153,7 @@ const SynonymSelect = (props) => {
         
 }
 
-const CommentMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const CommentMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 comment: '',
                 content: '',
@@ -181,7 +181,7 @@ const CommentMutateForm = ({queryParams, handleQueryParamChange, showResult, set
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -202,7 +202,7 @@ const CommentMutateForm = ({queryParams, handleQueryParamChange, showResult, set
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.mode = mode;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values: initValues});

@@ -6,7 +6,7 @@ import { TextField, CheckboxWithLabel, RadioGroup } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 
 
-const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const DescriptionQueryForm = ({handleSubmit, setShowResult}) => {
     //const [values, setValues] = useState({});
    
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -24,7 +24,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -43,7 +43,7 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.type = values.type === "all" ? '' : values.type
-                handleQueryParamChange(values)
+                handleSubmit(values)
                 setShowResult(true);
                 //setShowOTUs(true);
             }}
@@ -147,4 +147,4 @@ const OTUQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowR
     );
 };
 
-export default OTUQueryForm;
+export default DescriptionQueryForm;

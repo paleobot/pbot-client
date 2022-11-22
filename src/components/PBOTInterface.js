@@ -51,8 +51,8 @@ const PBOTInterface = (props) => {
         setSelectedTabDeco(newTab);
     };
 
-    const handleQueryParamChange = (values) => {
-        console.log("handleQueryParamChange");
+    const handleSubmit = (values) => {
+        console.log("handleSubmit");
         console.log(values);
         setQueryParams(values);
         setSelectedTabDeco(1);
@@ -74,13 +74,13 @@ const PBOTInterface = (props) => {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={selectedTab} onChange={handleTabChange} textColor="secondary" indicatorColor="secondary">
                 <Tab label="Action"  />
-                <Tab label="Results"  />
+                <Tab label="Results"  disabled={!showResult}/>
             </Tabs>
             </Box>
 
             <div style={{margin: "10px"}}>
                 <div hidden={selectedTab !== 0}>
-                    <Outlet context={[queryParams, handleQueryParamChange, props.formClass, handleFormClass, handleFormChange, showResult, setShowResult]} />
+                    <Outlet context={[handleSubmit, props.formClass, handleFormChange, setShowResult]} />
                 </div>
                 <div hidden={selectedTab !== 1}>
                     {result}

@@ -6,7 +6,7 @@ import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
 
-const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, setShowResult}) => {
+const SpecimenQueryForm = ({handleSubmit, setShowResult}) => {
     //const [values, setValues] = useState({});
     const initValues = {
         specimenID: '', 
@@ -26,7 +26,7 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -41,7 +41,7 @@ const SpecimenQueryForm = ({queryParams, handleQueryParamChange, showResult, set
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
-                handleQueryParamChange(values)
+                handleSubmit(values)
                 setShowResult(true);
                 //setShowOTUs(true);
             }}

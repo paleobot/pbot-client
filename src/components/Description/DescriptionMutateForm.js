@@ -204,7 +204,7 @@ const SpecimenSelect = (props) => {
 }
 
 
-const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const DescriptionMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 description: '',
                 schema: '',
@@ -238,7 +238,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -270,7 +270,7 @@ const DescriptionMutateForm = ({queryParams, handleQueryParamChange, showResult,
                 //setValues(values);
                 values.mode = mode;
                 values.specimen = null;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values:initValues});

@@ -91,7 +91,7 @@ const ReferenceSelect = (props) => {
     )
 }
 
-const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const ReferenceMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 reference: '',
                 title: '',
@@ -125,7 +125,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -153,7 +153,7 @@ const ReferenceMutateForm = ({queryParams, handleQueryParamChange, showResult, s
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.mode = mode;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values: initValues});

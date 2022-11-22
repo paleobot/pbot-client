@@ -94,7 +94,7 @@ const SchemaSelect = (props) => {
     )
 }
 
-const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const SchemaMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 schema: '', 
                 title: '',
@@ -132,7 +132,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -168,7 +168,7 @@ const SchemaMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
             onSubmit={(values, {resetForm}) => {
                 //setValues(values);
                 values.mode = mode;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values: initValues});

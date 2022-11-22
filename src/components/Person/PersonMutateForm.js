@@ -79,7 +79,7 @@ const PersonSelect = (props) => {
     )
 }
 
-const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const PersonMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
         person: '',
         given: '',
@@ -107,7 +107,7 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
           initialValues={initValues}
             validate={values => {
                 const errors = {};
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -119,7 +119,7 @@ const PersonMutateForm = ({queryParams, handleQueryParamChange, showResult, setS
             })}
             onSubmit={(values, {resetForm}) => {
                 values.mode = mode;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 resetForm({values:initValues});
             }}

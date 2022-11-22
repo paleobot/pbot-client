@@ -236,7 +236,7 @@ const StateSelect = (props) => {
         
 }
 
-const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const CharacterInstanceMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 characterInstance: '',
                 description: '',
@@ -265,7 +265,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -284,7 +284,7 @@ const CharacterInstanceMutateForm = ({queryParams, handleQueryParamChange, showR
                 //setValues(values);
                 //console.log(">>>>>>>>>>>>>>>>>submitting<<<<<<<<<<<<<<<<<<<<<<<");
                 values.mode = mode;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 resetForm({values: initValues});
                 //setShowOTUs(true);

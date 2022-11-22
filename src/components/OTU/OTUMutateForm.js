@@ -213,7 +213,7 @@ const SpecimenSelect = (props) => {
 }
 
 
-const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShowResult, mode}) => {
+const OTUMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 otu: '',
                 exampleSpecimens: [],
@@ -250,7 +250,7 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
             validate={values => {
                 const errors = {};
                 //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleQueryParamChange(values);
+                //handleSubmit(values);
                 setShowResult(false);
                 return errors;
             }}
@@ -293,7 +293,7 @@ const OTUMutateForm = ({queryParams, handleQueryParamChange, showResult, setShow
                 //values.genus = null;
                 //values.species = null;
                 //values.specimen = null;
-                handleQueryParamChange(values);
+                handleSubmit(values);
                 setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values:initValues});
