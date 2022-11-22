@@ -22,15 +22,6 @@ const PBOTInterface = (props) => {
     const [queryParams, setQueryParams] = useState(0);
     const [showResult, setShowResult] = useState(false); 
     
-    const setSelectedTabDeco = (newTab) => {
-        if (newTab === 0) {
-            //setRotatePBOT(true);
-        } else if (newTab === 1) {
-            //setRotatePBOT(false);
-        }
-        setSelectedTab(newTab);
-    };
-
     const handleFormClass = (event, newFormClass) => {
         setShowResult(false);
          navigate(`/${newFormClass}`);
@@ -48,14 +39,14 @@ const PBOTInterface = (props) => {
         } else if (newTab === 1) {
             //setRotatePBOT(false);
         }
-        setSelectedTabDeco(newTab);
+        setSelectedTab(newTab);
     };
 
     const handleSubmit = (values) => {
         console.log("handleSubmit");
         console.log(values);
         setQueryParams(values);
-        setSelectedTabDeco(1);
+        setSelectedTab(1);
     };
         
     //Figure out what we're doing from the path, massage it, and send to Result as queryEntity
