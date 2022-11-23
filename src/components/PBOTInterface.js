@@ -34,11 +34,6 @@ const PBOTInterface = (props) => {
     };
 
     const handleTabChange = (event, newTab) => {
-        if (newTab === 0) {
-            //setRotatePBOT(true);
-        } else if (newTab === 1) {
-            //setRotatePBOT(false);
-        }
         setSelectedTab(newTab);
     };
 
@@ -52,7 +47,6 @@ const PBOTInterface = (props) => {
     //Figure out what we're doing from the path, massage it, and send to Result as queryEntity
     const location = useLocation();
     let form = location.pathname.split("/")[2];
-    console.log(form)
     let result = showResult ? (
                     <Result queryParams={queryParams} type={props.formClass} queryEntity={form}/>
                  ) :
@@ -71,7 +65,7 @@ const PBOTInterface = (props) => {
 
             <div style={{margin: "10px"}}>
                 <div hidden={selectedTab !== 0}>
-                    <Outlet context={[handleSubmit, props.formClass, handleFormChange, setShowResult]} />
+                    <Outlet context={[handleSubmit, props.formClass, handleFormChange, setShowResult, setSelectedTab]} />
                 </div>
                 <div hidden={selectedTab !== 1}>
                     {result}
