@@ -72,7 +72,7 @@ const SchemaSelect = (props) => {
                 props.values.year = child.props.dyear || '';
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 props.values.authors = child.props.dauthors ? JSON.parse(child.props.dauthors) : [];
-                props.values.public = "true"=== child.props.dpublic || false;
+                props.values.public = "true" === child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.handleChange(event);
@@ -86,7 +86,7 @@ const SchemaSelect = (props) => {
                     dyear={schema.year}
                     dreferences={schema.references ? JSON.stringify(schema.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                     dauthors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
-                    dpublic={schema.elementOf && schema.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
+                    dpublic={schema.elementOf && schema.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
                 >{schema.title}</MenuItem>
             ))}
@@ -252,7 +252,6 @@ const SchemaMutateForm = ({handleSubmit, setShowResult, mode}) => {
                         type="checkbox"
                         component={CheckboxWithLabel}
                         name="cascade"
-                        type="checkbox" 
                         Label={{ label: 'Cascade' }}
                     />
                   <br />

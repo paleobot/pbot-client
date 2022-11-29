@@ -111,7 +111,7 @@ const DescriptionSelect = (props) => {
                     dschema={description.schema.pbotID} 
                     dname={description.name} 
                     dspecimens={description.specimens ? JSON.stringify(description.specimens.map(specimen => specimen.Specimen.pbotID)) : []}
-                    dpublic={description.elementOf && description.elementOf.reduce((acc,group) => {return ("public" === group.name).toString()}, "false")}
+                    dpublic={description.elementOf && description.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
                     dreferences={description.references ? JSON.stringify(description.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                 >{description.name}</MenuItem>
@@ -339,7 +339,6 @@ const DescriptionMutateForm = ({handleSubmit, setShowResult, mode}) => {
                         type="checkbox"
                         component={CheckboxWithLabel}
                         name="cascade"
-                        type="checkbox" 
                         Label={{ label: 'Cascade' }}
                     />
                   <br />

@@ -83,7 +83,7 @@ const ReferenceSelect = (props) => {
                     dyear={reference.year}
                     ddoi={reference.doi}
                     dauthors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
-                    dpublic={reference.elementOf && reference.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
+                    dpublic={reference.elementOf && reference.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={reference.elementOf ? JSON.stringify(reference.elementOf.map(group => group.pbotID)) : null}
                 >{reference.title + ", " + reference.publisher + ", " + reference.year}</MenuItem>
             ))}

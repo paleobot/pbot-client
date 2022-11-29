@@ -86,7 +86,7 @@ const SpecimenSelect = (props) => {
                 props.values.idigbiouuid = child.props.didigbiouuid ? child.props.didigbiouuid : '';
                 props.values.pbdbcid = child.props.dpbdbcid ? child.props.dpbdbcid : '';
                 props.values.pbdboccid = child.props.dpbdboccid ? child.props.dpbdboccid : '';
-                props.values.public =  child.props.dpublic;
+                props.values.public =  "true"===child.props.dpublic;;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
@@ -105,7 +105,7 @@ const SpecimenSelect = (props) => {
                     didigbiouuid={specimen.idigbiouuid}
                     dpbdbcid={specimen.pbdbcid}
                     dpbdboccid={specimen.pbdboccid}
-                    dpublic={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
+                    dpublic={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
                     dreferences={specimen.references ? JSON.stringify(specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                     dcollection={specimen.collection ? specimen.collection.pbotID : ''}
@@ -425,7 +425,6 @@ const SpecimenMutateForm = ({handleSubmit, setShowResult, mode}) => {
                         type="checkbox"
                         component={CheckboxWithLabel}
                         name="cascade"
-                        type="checkbox" 
                         Label={{ label: 'Cascade' }}
                     />
                 <br />

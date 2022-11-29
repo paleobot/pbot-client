@@ -317,7 +317,6 @@ const StateMutateForm = ({handleSubmit, setShowResult, mode}) => {
                         type="checkbox"
                         component={CheckboxWithLabel}
                         name="cascade"
-                        type="checkbox" 
                         Label={{ label: 'Cascade' }}
                     />
                 }

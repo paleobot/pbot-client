@@ -66,7 +66,7 @@ const CollectionSelect = (props) => {
                 console.log("Collection onChange");
                 console.log(child.props.dspecimens);
                 props.values.name = child.props.dname || '';
-                props.values.public =  child.props.dpublic;
+                props.values.public = "true"===child.props.dpublic;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.values.specimens = child.props.dspecimens ? JSON.parse(child.props.dspecimens) : [];
@@ -80,7 +80,7 @@ const CollectionSelect = (props) => {
                     key={collection.pbotID} 
                     value={collection.pbotID}
                     dname={collection.name}
-                    dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {return "public" === group.name}, false)}
+                    dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {console.log(">>>>>>>>>>Collection.name = "); console.log(collection.name); console.log("group.name ="); console.log(group.name); console.log(acc || "public" === group.name);return acc || "public" === group.name}, false).toString()}
                     dgroups={collection.elementOf ? JSON.stringify(collection.elementOf.map(group => group.pbotID)) : null}
                     dspecimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
                     dreferences={collection.references ? JSON.stringify(collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
