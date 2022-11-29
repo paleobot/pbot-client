@@ -27,7 +27,7 @@ import FileUpload from './FileUpload';
 import { useAuth } from './AuthContext';
 
 
-const Mutate = ({queryParams, handleSubmit, selectedForm, handleFormChange, showResult, setShowResult}) => {
+const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
     //This annoying bit of razzle-dazzle is to force MUI RadioGroup to reset when the path is just "/mutate".
     //Without this, if we had selected a form then navigated somewhere else then navigated back via a
     //Workbench button, the radio button was still set. I could find no graceful way to fix this, so...
@@ -70,6 +70,7 @@ const Mutate = ({queryParams, handleSubmit, selectedForm, handleFormChange, show
     const [token, setToken] = useAuth();
     
     const handleModeChange = (event, newMode) => {
+        setShowResult(false);
         setMode(newMode);
     }
 
