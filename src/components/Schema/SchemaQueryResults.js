@@ -185,7 +185,7 @@ function Schemas(props) {
                 </Grid>
             }
 
-            {!props.standalone &&
+            {!props.standAlone &&
             <b>{schema.title || "(title missing)"}</b>
             }
 
