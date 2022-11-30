@@ -3,9 +3,11 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import { Link, Grid, Typography } from '@mui/material';
 import Characters from "../Character/Characters";
 import { alphabetize } from '../../util.js';
 import {publicGroupID} from '../Group/GroupSelect.js';
+import logo from '../../PBOT-logo-transparent.png';
 
 function Schemas(props) {
     console.log(props);
@@ -14,15 +16,21 @@ function Schemas(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
+    const groups = props.standAlone ? '' : ', $groups: [ID!] ';
+    const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
+    
     let gQL;
     if (!props.includeCharacters) {
         gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String, $groups: [ID!]) {
-                Schema (pbotID: $pbotID, title: $title, year: $year, filter:{elementOf_some: {pbotID_in: $groups}}) {
+            query ($pbotID: ID, $title: String, $year: String ${groups}) {
+                Schema (pbotID: $pbotID, title: $title, year: $year ${filter}) {
                     pbotID
                     title
                     year
                     acknowledgments
+                    elementOf {
+                        name
+                    }
                     references {
                         Reference {
                             pbotID
@@ -92,12 +100,15 @@ function Schemas(props) {
                 }
             }
 
-            query ($pbotID: ID, $title: String, $year: String, $groups: [ID!]) {
-                Schema (pbotID: $pbotID, title: $title, year: $year, filter:{elementOf_some: {pbotID_in: $groups}}) {
+            query ($pbotID: ID, $title: String, $year: String ${groups}) {
+                Schema (pbotID: $pbotID, title: $title, year: $year ${filter}) {
                     pbotID
                     title
                     year
                     acknowledgments
+                    elementOf {
+                        name
+                    }
                     references {
                         Reference {
                             pbotID
@@ -145,7 +156,41 @@ function Schemas(props) {
         </div>
     ) : schemas.map((schema) => (
         <div key={schema.pbotID} style={style}>
-            <b>{schema.title}</b>
+            { props.standAlone &&     
+                <Grid container sx={{
+                    width: "100%",
+                    minHeight: "50px",
+                    backgroundColor: 'primary.main',
+                }}>
+                    <Grid container item xs={4} sx={{ display: "flex", alignItems: "center" }}>
+                        <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                            <img src={logo} style={{ height: "45px" }} />
+                        </Grid>
+                        <Grid item sx={{ display: "flex", alignItems: "center" }} >                  
+                            <Typography variant="h5">
+                                Pbot
+                            </Typography>
+                        </Grid>                 
+                    </Grid>
+                    <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
+                        <Typography variant="h5">
+                            Schema: {schema.title}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
+                        <Typography variant="h5" sx={{marginRight: "10px"}}>
+                            Workspace: {schema.elementOf[0].name}
+                        </Typography>
+                    </Grid>
+                </Grid>
+            }
+
+            {!props.standalone &&
+            <b>{schema.title || "(title missing)"}</b>
+            }
+
+            <div style={indent}><b>direct link:</b> <Link underline="hover" href={window.location.origin + "/query/schema/" + schema.pbotID}  target="_blank">{window.location.origin}/query/schema/{schema.pbotID}</Link></div>
+
             <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
             <div style={indent}><b>year:</b> {schema.year} </div>
             {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
@@ -178,8 +223,9 @@ function Schemas(props) {
 }
 
 const SchemaQueryResults = ({queryParams}) => {
-    //console.log(queryParams);
-    
+    console.log("SchemaQueryResults")
+    console.log(queryParams);
+    console.log(publicGroupID);
     return (
         <Schemas 
             filters={{
@@ -189,6 +235,7 @@ const SchemaQueryResults = ({queryParams}) => {
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
             }}
             includeCharacters={queryParams.includeCharacters} 
+            standAlone={queryParams.standAlone} 
         />
     );
 };

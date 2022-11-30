@@ -246,8 +246,10 @@ function OTUList(props) {
 }
 
 const OTUQueryResults = ({queryParams}) => {
+    console.log("OTUQueryResults");
     console.log("queryParams");
     console.log(queryParams);
+    console.log(publicGroupID);
 
     return (
         <OTUList 

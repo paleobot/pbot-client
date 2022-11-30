@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
+import SchemaDirectQueryResults from './components/Schema/SchemaDirectQueryResults';
 import { createTheme, ThemeProvider, StyledEngineProvider } from '@mui/material';
 import {
   createBrowserRouter,
@@ -166,11 +167,16 @@ const router = createBrowserRouter([
             }
         ]
     },
-    //Note: In React Router, nesting of routes reflects embedded presentation, not api functionality. Since direct query pages are not embedded in any other component, this route must exist at the top level.
+    //Note: In React Router, nesting of routes reflects embedded presentation, not api functionality. Since direct query pages are not embedded in any other component, these routes must exist at the top level.
     {
         path: "/query/otu/:otuid",
         //path: "/otu/:otuid",
         element: <OTUDirectQueryResults/>
+    },
+    {
+        path: "/query/schema/:schemaid",
+        //path: "/schema/:schemaid",
+        element: <SchemaDirectQueryResults/>
     },
     
 ]);
