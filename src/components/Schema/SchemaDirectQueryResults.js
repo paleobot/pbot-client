@@ -1,19 +1,22 @@
 import logo from '../../PBOT-logo-transparent.png';
 import {ApolloProvider} from "@apollo/client";
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import {client} from '../../ApolloClientSetup.js';
 import { AppBar, Typography, Link } from '@mui/material';
 import SchemaQueryResults from './SchemaQueryResults';
 
 const SchemaDirectQueryResults = () => {
     const { schemaid } = useParams();
+    const [search] = useSearchParams();
+    console.log("search = " + search)
+
     console.log("schemaid = " + schemaid);
     //Get schema ID, create necessary parameters, and call SchemaQueryResults to do the work
     if (schemaid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
         const queryParams = {
             schemaID: schemaid,
             groups: [], 
-            includeCharacters: true, 
+            includeCharacters: "true" === search.get("includeCharacters"),
             standAlone: true,
         };
         return (

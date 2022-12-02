@@ -20,7 +20,16 @@ function Schemas(props) {
     const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
     
     let gQL;
-    if (!props.includeCharacters) {
+    if (!props.standAlone) {
+        gQL = gql`
+            query ($pbotID: ID, $title: String, $year: String ${groups}) {
+                Schema (pbotID: $pbotID, title: $title, year: $year ${filter}) {
+                    pbotID
+                    title
+                }
+            }
+        `
+    } else if (!props.includeCharacters) {
         gQL = gql`
             query ($pbotID: ID, $title: String, $year: String ${groups}) {
                 Schema (pbotID: $pbotID, title: $title, year: $year ${filter}) {
@@ -157,6 +166,7 @@ function Schemas(props) {
     ) : schemas.map((schema) => (
         <div key={schema.pbotID} style={style}>
             { props.standAlone &&     
+                <>
                 <Grid container sx={{
                     width: "100%",
                     minHeight: "50px",
@@ -183,40 +193,41 @@ function Schemas(props) {
                         </Typography>
                     </Grid>
                 </Grid>
+                <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={window.location.origin + "/query/schema/" + schema.pbotID}  target="_blank">{window.location.origin}/query/schema/{schema.pbotID}</Link></div>
+
+                <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
+                <div style={indent}><b>year:</b> {schema.year} </div>
+                {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
+                {schema.references && schema.references.length > 0 &&
+                    <div>
+                        <div style={indent}><b>references:</b></div>
+                        {alphabetize([...schema.references], "order").map(reference => (
+                            <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                        ))}
+                    </div>
+                }
+                {schema.authoredBy && schema.authoredBy.length > 0 &&
+                    <div>
+                        <div style={indent}><b>authors:</b></div>
+                        {alphabetize([...schema.authoredBy], "order").map(author => (
+                            <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
+                        ))}
+                    </div>
+                }
+                {schema.characters && schema.characters.length > 0 &&
+                    <div>
+                        <div style={indent}><b>characters:</b></div>
+                        <Characters characters={schema.characters} top="true"/>
+                    </div>
+                }
+                <br />
+                </>
             }
 
             {!props.standAlone &&
-            <b>{schema.title || "(title missing)"}</b>
+            <Link style={indent} color="success.main" underline="hover" href={window.location.origin + "/query/schema/" + schema.pbotID + (props.includeCharacters ? "?includeCharacters=true" : "")}  target="_blank"><b>{schema.title || "(title missing)"}</b></Link>
             }
 
-            <div style={indent}><b>direct link:</b> <Link underline="hover" href={window.location.origin + "/query/schema/" + schema.pbotID}  target="_blank">{window.location.origin}/query/schema/{schema.pbotID}</Link></div>
-
-            <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
-            <div style={indent}><b>year:</b> {schema.year} </div>
-            {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
-            {schema.references && schema.references.length > 0 &&
-                <div>
-                    <div style={indent}><b>references:</b></div>
-                    {alphabetize([...schema.references], "order").map(reference => (
-                        <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
-                    ))}
-                </div>
-            }
-            {schema.authoredBy && schema.authoredBy.length > 0 &&
-                <div>
-                    <div style={indent}><b>authors:</b></div>
-                    {alphabetize([...schema.authoredBy], "order").map(author => (
-                        <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
-                    ))}
-                </div>
-            }
-            {schema.characters && schema.characters.length > 0 &&
-                <div>
-                    <div style={indent}><b>characters:</b></div>
-                    <Characters characters={schema.characters} top="true"/>
-                </div>
-            }
-            <br />
         </div>
     ));
 
