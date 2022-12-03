@@ -27,6 +27,7 @@ function OTUs(props) {
     ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription, synonyms, elementOf}) => (
         <div key={pbotID} style={style}>
             { props.standalone &&     
+                <>
                 <Grid container sx={{
                     width: "100%",
                     minHeight: "50px",
@@ -53,113 +54,117 @@ function OTUs(props) {
                         </Typography>
                     </Grid>
                 </Grid>
+
+                <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={window.location.origin + "/query/otu/" + pbotID + (props.includeSynonyms ? "?includeSynonyms=true" : "") + (props.includeComments ? "&includeComments=true" : "") + (props.includeHolotypeDescription ? "&includeHolotypeDescription=true" : "") + (props.includeMergedDescription ? "&includeMergedDescription=true" : "")}  target="_blank">{window.location.origin + "/query/otu/" + pbotID + (props.includeSynonyms ? "?includeSynonyms=true" : "") + (props.includeComments ? "&includeComments=true" : "") + (props.includeHolotypeDescription ? "&includeHolotypeDescription=true" : "") + (props.includeMergedDescription ? "&includeMergedDescription=true" : "")}</Link></div>
+                <div style={indent}><b>pbotID:</b> {pbotID}</div>
+                <div style={indent}><b>family:</b> {family}</div>
+                <div style={indent}><b>genus:</b> {genus}</div>
+                <div style={indent}><b>species:</b> {species}</div>
+                
+                {synonyms && synonyms.length > 0 &&
+                <div>
+                    <div style={indent}><b>synonyms:</b></div>
+                    {synonyms.map((synonym, i) => {
+                        const synOTU=synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
+                        return (
+                            <div key={i}>
+                                <div style={indent2}> {synOTU.name}</div>
+                                <div style={indent3}><b>family:</b> {synOTU.family}</div>
+                                <div style={indent3}><b>genus:</b> {synOTU.genus}</div>
+                                <div style={indent3}><b>species:</b> {synOTU.species}</div>
+                                {synonym.comments && synonym.comments.length > 0 &&
+                                <div>
+                                    <div style={indent2}><b>comments:</b></div>
+                                    {synonym.comments.map((comment, i) => (
+                                        <div key={i}>
+                                            <div style={indent3}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                            <div style={indent3}>{comment.content}</div>
+                                            {comment.comments && comment.comments.length > 0 &&
+                                            <div>
+                                                {comment.comments.map((comment, i) => (
+                                                    <div key={i}>
+                                                        <div style={indent4}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                        <div style={indent4}>{comment.content}</div>
+                                                        {comment.comments && comment.comments.length > 0 &&
+                                                        <div>
+                                                            {comment.comments.map((comment, i) => (
+                                                                <div key={i}>
+                                                                    <div style={indent5}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                    <div style={indent5}>{comment.content}</div>
+                                                                    {comment.comments && comment.comments.length > 0 &&
+                                                                    <div>
+                                                                        {comment.comments.map((comment, i) => (
+                                                                            <div key={i}>
+                                                                                <div style={indent6}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                                <div style={indent6}>{comment.content}</div>
+                                                                                {comment.comments && comment.comments.length > 0 &&
+                                                                                <div>
+                                                                                    {comment.comments.map((comment, i) => (
+                                                                                        <div key={i}>
+                                                                                            <div style={indent7}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                                            <div style={indent7}>{comment.content}</div>
+                                                                                        </div>
+                                                                                    ))}
+                                                                                </div>
+                                                                                }
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                    }
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            }
+                                        </div>
+                                    ))}
+                                </div>
+                                }
+                            </div>
+                        )
+                    })}
+                </div>
+                }
+                
+                {holotype && holotype.Specimen.describedBy && holotype.Specimen.describedBy[0].Description.characterInstances && holotype.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
+                <div>
+                    <div style={indent}><b>holotype description:</b></div>
+                    {alphabetize([...holotype.Specimen.describedBy], "Description.schema.title").map((d, i) => (
+                        <div key={d.Description.schema.pbotID}>
+                            <div style={indent2}><b>from schema "{d.Description.schema.title}":</b></div>
+                            <CharacterInstances characterInstances={d.Description.characterInstances} />
+                        </div>
+                    ))}
+                </div>
+                }
+                
+                {mergedDescription && mergedDescription.length > 0 &&
+                <div>
+                    <div style={indent}><b>merged description:</b></div>
+                    {alphabetize([...mergedDescription], "schema").reduce((acc, ci) => acc.includes(ci.schema) ? acc : acc.concat(ci.schema),[]).map((s,i) => (
+                        <div key={i}>
+                            <div style={indent2}><b>from schema "{s}":</b></div>
+                            {alphabetize(mergedDescription.filter(ci => ci.schema === s), "characterName").map ((ci, i) =>  (
+                                <div style={indent2} key={i}>{ci.characterName}:{"quantity" === ci.stateName ? ci.stateValue : ci.stateName}{ci.stateOrder  ? ', order:' + ci.stateOrder : ''}</div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+                }
+                <br />
+                </>
             }
+
 
             {!props.standalone &&
-            <b>{name || "(name missing)"}</b>
+            <Link style={indent} color="success.main" underline="hover" href={window.location.origin + "/query/otu/" + pbotID + (props.includeSynonyms ? "?includeSynonyms=true" : "") + (props.includeComments ? "&includeComments=true" : "") + (props.includeHolotypeDescription ? "&includeHolotypeDescription=true" : "") + (props.includeMergedDescription ? "&includeMergedDescription=true" : "")}  target="_blank"><b>{name || "(title missing)"}</b></Link>
             }
-
-            <div style={indent}><b>direct link:</b> <Link underline="hover" href={window.location.origin + "/query/otu/" + pbotID}  target="_blank">{window.location.origin}/query/otu/{pbotID}</Link></div>
-            <div style={indent}><b>pbotID:</b> {pbotID}</div>
-            <div style={indent}><b>family:</b> {family}</div>
-            <div style={indent}><b>genus:</b> {genus}</div>
-            <div style={indent}><b>species:</b> {species}</div>
-            
-            {synonyms && synonyms.length > 0 &&
-            <div>
-                <div style={indent}><b>synonyms:</b></div>
-                {synonyms.map((synonym, i) => {
-                    const synOTU=synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
-                    return (
-                        <div key={i}>
-                            <div style={indent2}> {synOTU.name}</div>
-                            <div style={indent3}><b>family:</b> {synOTU.family}</div>
-                            <div style={indent3}><b>genus:</b> {synOTU.genus}</div>
-                            <div style={indent3}><b>species:</b> {synOTU.species}</div>
-                            {synonym.comments && synonym.comments.length > 0 &&
-                            <div>
-                                <div style={indent2}><b>comments:</b></div>
-                                {synonym.comments.map((comment, i) => (
-                                    <div key={i}>
-                                        <div style={indent3}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                        <div style={indent3}>{comment.content}</div>
-                                        {comment.comments && comment.comments.length > 0 &&
-                                        <div>
-                                            {comment.comments.map((comment, i) => (
-                                                <div key={i}>
-                                                    <div style={indent4}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                    <div style={indent4}>{comment.content}</div>
-                                                    {comment.comments && comment.comments.length > 0 &&
-                                                    <div>
-                                                        {comment.comments.map((comment, i) => (
-                                                            <div key={i}>
-                                                                <div style={indent5}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                                <div style={indent5}>{comment.content}</div>
-                                                                {comment.comments && comment.comments.length > 0 &&
-                                                                <div>
-                                                                    {comment.comments.map((comment, i) => (
-                                                                        <div key={i}>
-                                                                            <div style={indent6}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                                            <div style={indent6}>{comment.content}</div>
-                                                                            {comment.comments && comment.comments.length > 0 &&
-                                                                            <div>
-                                                                                {comment.comments.map((comment, i) => (
-                                                                                    <div key={i}>
-                                                                                        <div style={indent7}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                                                        <div style={indent7}>{comment.content}</div>
-                                                                                    </div>
-                                                                                ))}
-                                                                            </div>
-                                                                            }
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                                }
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                    }
-                                                </div>
-                                            ))}
-                                        </div>
-                                        }
-                                    </div>
-                                ))}
-                            </div>
-                            }
-                        </div>
-                    )
-                })}
-            </div>
-            }
-            
-            {holotype && holotype.Specimen.describedBy && holotype.Specimen.describedBy[0].Description.characterInstances && holotype.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
-            <div>
-                <div style={indent}><b>holotype description:</b></div>
-                {alphabetize([...holotype.Specimen.describedBy], "Description.schema.title").map((d, i) => (
-                    <div key={d.Description.schema.pbotID}>
-                        <div style={indent2}><b>from schema "{d.Description.schema.title}":</b></div>
-                        <CharacterInstances characterInstances={d.Description.characterInstances} />
-                    </div>
-                ))}
-            </div>
-            }
-            
-            {mergedDescription && mergedDescription.length > 0 &&
-            <div>
-                <div style={indent}><b>merged description:</b></div>
-                {alphabetize([...mergedDescription], "schema").reduce((acc, ci) => acc.includes(ci.schema) ? acc : acc.concat(ci.schema),[]).map((s,i) => (
-                    <div key={i}>
-                        <div style={indent2}><b>from schema "{s}":</b></div>
-                        {alphabetize(mergedDescription.filter(ci => ci.schema === s), "characterName").map ((ci, i) =>  (
-                            <div style={indent2} key={i}>{ci.characterName}:{"quantity" === ci.stateName ? ci.stateValue : ci.stateName}{ci.stateOrder  ? ', order:' + ci.stateOrder : ''}</div>
-                        ))}
-                    </div>
-                ))}
-            </div>
-            }
-            <br />
         </div>
+
+
     ));
 }
 

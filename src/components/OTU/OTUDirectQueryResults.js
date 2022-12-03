@@ -1,6 +1,6 @@
 import logo from '../../PBOT-logo-transparent.png';
 import {ApolloProvider} from "@apollo/client";
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import {client} from '../../ApolloClientSetup.js';
 import { AppBar, Typography, Link } from '@mui/material';
 import OTUQueryResults from './OTUQueryResults';
@@ -8,15 +8,18 @@ import OTUQueryResults from './OTUQueryResults';
 const OTUDirectQueryResults = () => {
     const { otuid } = useParams();
     console.log("otuid = " + otuid);
+    const [search] = useSearchParams();
+    console.log("search = " + search)
+
     //Get otu ID, create necessary parameters, and call OTUQueryResults to do the work
     if (otuid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
         const queryParams = {
             otuID: otuid,
             groups: [], 
-            includeSynonyms: true,
-            includeComments: true,
-            includeHolotypeDescription: true,
-            includeMergedDescription: true, 
+            includeSynonyms: "true" === search.get("includeSynonyms"),
+            includeComments: "true" === search.get("includeComments"),
+            includeHolotypeDescription: "true" === search.get("includeHolotypeDescription"),
+            includeMergedDescription: "true" === search.get("includeMergedDescription"), 
             standAlone: true,
         };
         return (
