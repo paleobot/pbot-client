@@ -193,7 +193,7 @@ function Schemas(props) {
                         </Typography>
                     </Grid>
                 </Grid>
-                <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={window.location.origin + "/query/schema/" + schema.pbotID}  target="_blank">{window.location.origin}/query/schema/{schema.pbotID}</Link></div>
+                <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={window.location.origin + "/query/schema/" + schema.pbotID + (props.includeCharacters ? "?includeCharacters=true" : "")}  target="_blank">{window.location.origin + "/query/schema/" + schema.pbotID + (props.includeCharacters ? "?includeCharacters=true" : "")}</Link></div>
 
                 <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
                 <div style={indent}><b>year:</b> {schema.year} </div>
