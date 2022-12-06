@@ -163,73 +163,81 @@ function Schemas(props) {
         <div style={style}>
             No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
-    ) : schemas.map((schema) => (
-        <div key={schema.pbotID} style={style}>
-            { props.standAlone &&     
-                <>
-                <Grid container sx={{
-                    width: "100%",
-                    minHeight: "50px",
-                    backgroundColor: 'primary.main',
-                }}>
-                    <Grid container item xs={4} sx={{ display: "flex", alignItems: "center" }}>
-                        <Grid item sx={{ display: "flex", alignItems: "center" }}>
-                            <img src={logo} style={{ height: "45px" }} />
+    ) : schemas.map((schema) => {
+
+        const directURL = new URL(window.location.origin + "/query/schema/" + schema.pbotID);
+        if (props.includeCharacters) {
+            directURL.searchParams.append("includeCharacters", "true");
+        }
+            
+        return (
+            <div key={schema.pbotID} style={style}>
+                { props.standAlone &&     
+                    <>
+                    <Grid container sx={{
+                        width: "100%",
+                        minHeight: "50px",
+                        backgroundColor: 'primary.main',
+                    }}>
+                        <Grid container item xs={4} sx={{ display: "flex", alignItems: "center" }}>
+                            <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                                <img src={logo} style={{ height: "45px" }} />
+                            </Grid>
+                            <Grid item sx={{ display: "flex", alignItems: "center" }} >                  
+                                <Typography variant="h5">
+                                    Pbot
+                                </Typography>
+                            </Grid>                 
                         </Grid>
-                        <Grid item sx={{ display: "flex", alignItems: "center" }} >                  
+                        <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                             <Typography variant="h5">
-                                Pbot
+                                Schema: {schema.title}
                             </Typography>
-                        </Grid>                 
+                        </Grid>
+                        <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
+                            <Typography variant="h5" sx={{marginRight: "10px"}}>
+                                Workspace: {schema.elementOf[0].name}
+                            </Typography>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
-                        <Typography variant="h5">
-                            Schema: {schema.title}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
-                        <Typography variant="h5" sx={{marginRight: "10px"}}>
-                            Workspace: {schema.elementOf[0].name}
-                        </Typography>
-                    </Grid>
-                </Grid>
-                <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={window.location.origin + "/query/schema/" + schema.pbotID + (props.includeCharacters ? "?includeCharacters=true" : "")}  target="_blank">{window.location.origin + "/query/schema/" + schema.pbotID + (props.includeCharacters ? "?includeCharacters=true" : "")}</Link></div>
+                    <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
-                <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
-                <div style={indent}><b>year:</b> {schema.year} </div>
-                {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
-                {schema.references && schema.references.length > 0 &&
-                    <div>
-                        <div style={indent}><b>references:</b></div>
-                        {alphabetize([...schema.references], "order").map(reference => (
-                            <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
-                        ))}
-                    </div>
+                    <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
+                    <div style={indent}><b>year:</b> {schema.year} </div>
+                    {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
+                    {schema.references && schema.references.length > 0 &&
+                        <div>
+                            <div style={indent}><b>references:</b></div>
+                            {alphabetize([...schema.references], "order").map(reference => (
+                                <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                            ))}
+                        </div>
+                    }
+                    {schema.authoredBy && schema.authoredBy.length > 0 &&
+                        <div>
+                            <div style={indent}><b>authors:</b></div>
+                            {alphabetize([...schema.authoredBy], "order").map(author => (
+                                <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
+                            ))}
+                        </div>
+                    }
+                    {schema.characters && schema.characters.length > 0 &&
+                        <div>
+                            <div style={indent}><b>characters:</b></div>
+                            <Characters characters={schema.characters} top="true"/>
+                        </div>
+                    }
+                    <br />
+                    </>
                 }
-                {schema.authoredBy && schema.authoredBy.length > 0 &&
-                    <div>
-                        <div style={indent}><b>authors:</b></div>
-                        {alphabetize([...schema.authoredBy], "order").map(author => (
-                            <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
-                        ))}
-                    </div>
-                }
-                {schema.characters && schema.characters.length > 0 &&
-                    <div>
-                        <div style={indent}><b>characters:</b></div>
-                        <Characters characters={schema.characters} top="true"/>
-                    </div>
-                }
-                <br />
-                </>
-            }
 
-            {!props.standAlone &&
-            <Link style={indent} color="success.main" underline="hover" href={window.location.origin + "/query/schema/" + schema.pbotID + (props.includeCharacters ? "?includeCharacters=true" : "")}  target="_blank"><b>{schema.title || "(title missing)"}</b></Link>
-            }
+                {!props.standAlone &&
+                <Link style={indent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{schema.title || "(title missing)"}</b></Link>
+                }
 
-        </div>
-    ));
+            </div>
+        )
+    });
 
 }
 
