@@ -3,12 +3,14 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import { Link, Grid, Typography } from '@mui/material';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize } from '../../util.js';
 import {publicGroupID} from '../Group/GroupSelect.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import {Carousel} from 'react-responsive-carousel'
 import {SecureImage} from '../Image/SecureImage.js';
+import logo from '../../PBOT-logo-transparent.png';
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
@@ -17,14 +19,28 @@ function Specimens(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
-    const gQL = gql`
-            query ($pbotID: ID, $name: String, $groups: [ID!], $includeImages: Boolean!, $includeDescriptions: Boolean!, $includeOTUs: Boolean! ${filters.collection ? ", $collection: ID" : ""}) {
-                Specimen (pbotID: $pbotID, name: $name, filter: {
-                    ${filters.collection ?
-                        "AND: [{elementOf_some: {pbotID_in: $groups}}, {collection: {pbotID: $collection}}]" : 
-                        "elementOf_some: {pbotID_in: $groups}"
-                    }
-                }) {
+    const groups = props.standAlone ? '' : '$groups: [ID!], ';
+    const filter = props.standAlone ? '' : `,  filter: {
+        ${filters.collection ?
+            "AND: [{elementOf_some: {pbotID_in: $groups}}, {collection: {pbotID: $collection}}]" : 
+            "elementOf_some: {pbotID_in: $groups}"
+        }
+    }`;
+    
+    let gQL;
+    if (!props.standAlone) {
+        gQL = gql`
+            query ($pbotID: ID, $name: String, ${groups} ${filters.collection ? ", $collection: ID" : ""}) {
+                Specimen (pbotID: $pbotID, name: $name ${filter}) {
+                    pbotID
+                    name
+                }
+            }
+        `
+    } else {
+        gQL = gql`
+            query ($pbotID: ID, $name: String, ${groups} $includeImages: Boolean!, $includeDescriptions: Boolean!, $includeOTUs: Boolean! ${filters.collection ? ", $collection: ID" : ""}) {
+                Specimen (pbotID: $pbotID, name: $name ${filter}) {
                     pbotID
                     name
                     preservationMode {
@@ -35,6 +51,9 @@ function Specimens(props) {
                     pbdboccid
                     organ {
                         type
+                    }
+                    elementOf {
+                        name
                     }
                     references {
                         Reference {
@@ -89,6 +108,7 @@ function Specimens(props) {
                 }            
             }
         `;
+    }
     
     const { loading, error, data } = useQuery(gQL, {
         variables: {
@@ -114,82 +134,131 @@ function Specimens(props) {
         <div style={style}>
             No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
-    ) : specimens.map((s) => (
+    ) : specimens.map((s) => {
+        const directURL = new URL(window.location.origin + "/query/specimen/" + s.pbotID);
+        if (props.includeImages) {
+            directURL.searchParams.append("includeImages", "true");
+        }
+        if (props.includeDescriptions) {
+            directURL.searchParams.append("includeDescriptions", "true");
+        }
+        if (props.includeOTUs) {
+            directURL.searchParams.append("includeOTUs", "true");
+        }
+            
+        return (
         <div key={s.pbotID} style={style}>
-            <b>{s.name || "(name missing)"}</b>
-            <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
-            <div style={indent}><b>organ:</b> {s.organ.type}</div>
-            {/*A mild shenanigan here to handle old specimen nodes without PRESERVED_BY relationships*/}
-            <div style={indent}><b>preservation mode:</b> {s.preservationMode && s.preservationMode.constructor.name === "Object" ? s.preservationMode.name : "unspecified"}</div>
-            <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
-            <div style={indent}><b>pbdbcid:</b> {s.pbdbcid}</div>
-            <div style={indent}><b>pbdboccid:</b> {s.pbdboccid}</div>
-            {s.images && s.images.length > 0 &&
-                <div style={carousel}>
-                {/*can't use thumbs because SecureImage does not immediately make image available*/}
-                <Carousel showThumbs={false}>  
-                    {s.images.map((image) => (
-                        <div key={image.pbotID} >
-                            {/*<img src={image.link} alt={image.caption}/>*/}
-                            <SecureImage src={image.link}/>
-                        </div>
-                    ))}
-                </Carousel>
-                </div>
-            }
-            {s.holotypeOf && s.holotypeOf.length > 0 &&
-                <div>
-                    <div style={indent}><b>holotype of:</b></div>
-                    {s.holotypeOf.map((h, idx) => (
-                        <div key={idx}>
-                            <div style={indent2}><b>name: {h.OTU.name}</b></div>
-                            <div style={indent2}><b>family: {h.OTU.family}</b></div>
-                            <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
-                            <div style={indent2}><b>species: {h.OTU.species}</b></div>
-                        </div>
-                    ))}
-                </div>
-            }
-            {s.exampleOf && s.exampleOf.length > 0 &&
-                <div>
-                    <div style={indent}><b>example of:</b></div>
-                    {s.exampleOf.map((h, idx) => (
-                        <div key={idx}>
-                            <div style={indent2}><b>name: {h.OTU.name}</b></div>
-                            <div style={indent2}><b>family: {h.OTU.family}</b></div>
-                            <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
-                            <div style={indent2}><b>species: {h.OTU.species}</b></div>
-                        </div>
-                    ))}
-                </div>
-            }
-            {s.references && s.references.length > 0 &&
-                <div>
-                    <div style={indent}><b>references:</b></div>
-                    {alphabetize([...s.references], "order").map((reference, idx) => (
-                        <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
-                    ))}
-                </div>
-            }
-            {s.describedBy && s.describedBy.length > 0 &&
-                <div>
-                    <div style={indent}><b>descriptions:</b></div>
-                    {s.describedBy.map((d,idx) => (
-                        <div key={idx}>
-                            <div style={indent2}><b>{d.Description.schema.title}</b></div>
-                            {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
-                            <div>
-                                <CharacterInstances style={indent3}  characterInstances={d.Description.characterInstances} />
+            { props.standAlone &&     
+                <>
+                <Grid container sx={{
+                    width: "100%",
+                    minHeight: "50px",
+                    backgroundColor: 'primary.main',
+                }}>
+                    <Grid container item xs={4} sx={{ display: "flex", alignItems: "center" }}>
+                        <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                            <img src={logo} style={{ height: "45px" }} />
+                        </Grid>
+                        <Grid item sx={{ display: "flex", alignItems: "center" }} >                  
+                            <Typography variant="h5">
+                                Pbot
+                            </Typography>
+                        </Grid>                 
+                    </Grid>
+                    <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
+                        <Typography variant="h5">
+                            Specimen: {s.name}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
+                        <Typography variant="h5" sx={{marginRight: "10px"}}>
+                            Workspace: {s.elementOf[0].name}
+                        </Typography>
+                    </Grid>
+                </Grid>
+                <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
+
+                <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
+                <div style={indent}><b>organ:</b> {s.organ.type}</div>
+                {/*A mild shenanigan here to handle old specimen nodes without PRESERVED_BY relationships*/}
+                <div style={indent}><b>preservation mode:</b> {s.preservationMode && s.preservationMode.constructor.name === "Object" ? s.preservationMode.name : "unspecified"}</div>
+                <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
+                <div style={indent}><b>pbdbcid:</b> {s.pbdbcid}</div>
+                <div style={indent}><b>pbdboccid:</b> {s.pbdboccid}</div>
+                {s.images && s.images.length > 0 &&
+                    <div style={carousel}>
+                    {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                    <Carousel showThumbs={false}>  
+                        {s.images.map((image) => (
+                            <div key={image.pbotID} >
+                                {/*<img src={image.link} alt={image.caption}/>*/}
+                                <SecureImage src={image.link}/>
                             </div>
-                            }
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </Carousel>
+                    </div>
+                }
+                {s.holotypeOf && s.holotypeOf.length > 0 &&
+                    <div>
+                        <div style={indent}><b>holotype of:</b></div>
+                        {s.holotypeOf.map((h, idx) => (
+                            <div key={idx}>
+                                <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                                <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                                <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                                <div style={indent2}><b>species: {h.OTU.species}</b></div>
+                            </div>
+                        ))}
+                    </div>
+                }
+                {s.exampleOf && s.exampleOf.length > 0 &&
+                    <div>
+                        <div style={indent}><b>example of:</b></div>
+                        {s.exampleOf.map((h, idx) => (
+                            <div key={idx}>
+                                <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                                <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                                <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                                <div style={indent2}><b>species: {h.OTU.species}</b></div>
+                            </div>
+                        ))}
+                    </div>
+                }
+                {s.references && s.references.length > 0 &&
+                    <div>
+                        <div style={indent}><b>references:</b></div>
+                        {alphabetize([...s.references], "order").map((reference, idx) => (
+                            <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                        ))}
+                    </div>
+                }
+                {s.describedBy && s.describedBy.length > 0 &&
+                    <div>
+                        <div style={indent}><b>descriptions:</b></div>
+                        {s.describedBy.map((d,idx) => (
+                            <div key={idx}>
+                                <div style={indent2}><b>{d.Description.schema.title}</b></div>
+                                {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
+                                <div>
+                                    <CharacterInstances style={indent3}  characterInstances={d.Description.characterInstances} />
+                                </div>
+                                }
+                            </div>
+                        ))}
+                    </div>
+                }
+            
+                <br />
+                </>
             }
-        
-            <br />
+
+            {!props.standAlone &&
+            <Link color="success.main" underline="hover" href={directURL}  target="_blank"><b>{s.name || "(name missing)"}</b></Link>
+            }
+
         </div>
-    ));
+        )
+    });
 
 }
 
@@ -208,6 +277,7 @@ const SpecimenQueryResults = ({queryParams}) => {
             includeImages={queryParams.includeImages}
             includeDescriptions={queryParams.includeDescriptions} 
             includeOTUs={queryParams.includeOTUs} 
+            standAlone={queryParams.standAlone} 
         />
     );
 };

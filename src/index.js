@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 import SchemaDirectQueryResults from './components/Schema/SchemaDirectQueryResults';
+import SpecimenDirectQueryResults from './components/Specimen/SpecimenDirectQueryResults';
 import { createTheme, ThemeProvider, StyledEngineProvider } from '@mui/material';
 import {
   createBrowserRouter,
@@ -177,6 +178,11 @@ const router = createBrowserRouter([
         path: "/query/schema/:schemaid",
         //path: "/schema/:schemaid",
         element: <SchemaDirectQueryResults/>
+    },
+    {
+        path: "/query/specimen/:specimenid",
+        //path: "/specimen/:specimenid"",
+        element: <SpecimenDirectQueryResults/>
     },
     
 ]);
