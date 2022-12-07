@@ -6,6 +6,7 @@ import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
 import ReferenceQueryForm from './Reference/ReferenceQueryForm';
 import SchemaQueryForm from './Schema/SchemaQueryForm';
 import PersonQueryForm from './Person/PersonQueryForm';
+import CollectionQueryForm from './Collection/CollectionQueryForm';
 
 const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
 
@@ -22,6 +23,7 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
             <FormControl component="fieldset">
                 <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                 <FormControlLabel value="otu" control={<Radio />} label="OTU" labelPlacement="end"/>
+                <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end"/>
                 <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
                 <Divider />
                 <FormControlLabel value="reference" control={<Radio />} label="Reference" labelPlacement="end"/>
@@ -45,6 +47,10 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
                     <OTUQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
                 </div>
                     
+                <div hidden={selectedForm !== "collection"}>
+                    <CollectionQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
+                </div>
+
                 <div hidden={selectedForm !== "specimen"}>
                     <SpecimenQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
                 </div>

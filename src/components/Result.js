@@ -1,6 +1,7 @@
 import React, { useState }from 'react';
 import { Grid } from '@mui/material';
 import OTUQueryResults from './OTU/OTUQueryResults';
+import CollectionQueryResults from './Collection/CollectionQueryResults';
 import SpecimenQueryResults from './Specimen/SpecimenQueryResults';
 import ReferenceQueryResults from './Reference/ReferenceQueryResults';
 import SchemaQueryResults from './Schema/SchemaQueryResults';
@@ -83,6 +84,9 @@ const Result = ({queryParams, type, queryEntity}) => {
         type === "query" && queryEntity === "otu" ? (
             <OTUQueryResults queryParams={queryParams} />
         ) : 
+        type === "query" && queryEntity === "collection" ? (
+            <CollectionQueryResults queryParams={queryParams} />
+        ) :
         type === "query" && queryEntity === "specimen" ? (
             <SpecimenQueryResults queryParams={queryParams} />
         ) :

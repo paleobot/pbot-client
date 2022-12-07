@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 import SchemaDirectQueryResults from './components/Schema/SchemaDirectQueryResults';
 import SpecimenDirectQueryResults from './components/Specimen/SpecimenDirectQueryResults';
+import CollectionDirectQueryResults from './components/Collection/CollectionDirectQueryResults';
 import { createTheme, ThemeProvider, StyledEngineProvider } from '@mui/material';
 import {
   createBrowserRouter,
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
                     {
                         path: "otu",
                         element: <Action  selectedForm="otu"/>,
+                    },
+                    {
+                        path: "collection",
+                        element: <Action  selectedForm="collection" />,
                     },
                     {
                         path: "specimen",
@@ -183,6 +188,11 @@ const router = createBrowserRouter([
         path: "/query/specimen/:specimenid",
         //path: "/specimen/:specimenid"",
         element: <SpecimenDirectQueryResults/>
+    },
+    {
+        path: "/query/collection/:collectionid",
+        //path: "/Collection/:collectionid"",
+        element: <CollectionDirectQueryResults/>
     },
     
 ]);
