@@ -15,6 +15,7 @@ const SpecimenDirectQueryResults = () => {
     if (specimenid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
         const queryParams = {
             specimenID: specimenid,
+            organs:[],
             groups: [], 
             includeImages: "true" === search.get("includeImages"),
             includeDescriptions: "true" === search.get("includeDescriptions"),

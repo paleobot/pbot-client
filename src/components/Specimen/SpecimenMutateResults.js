@@ -39,7 +39,7 @@ const SpecimenMutateResults = ({queryParams}) => {
                 pbotID: queryParams.specimen || null,
                 name: queryParams.name || null,
                 references: queryParams.references || null,
-                organID: queryParams.organ || null,
+                organIDs: queryParams.organs || null,
                 preservationModeID: queryParams.preservationMode || null,
                 descriptionIDs: queryParams.describedBy || null,
                 idigbiouuid: queryParams.idigbiouuid || null,

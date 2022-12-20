@@ -5,6 +5,7 @@ import { Button, AppBar, Tabs, Tab } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
+import {OrganSelect} from '../Organ/OrganSelect.js';
 
 const SpecimenQueryForm = ({handleSubmit, setShowResult}) => {
     //const [values, setValues] = useState({});
@@ -12,6 +13,7 @@ const SpecimenQueryForm = ({handleSubmit, setShowResult}) => {
         specimenID: '', 
         name: '', 
         collection: '',
+        organs: [],
         groups: [],
         includeImages: false,
         includeDescriptions: false,
@@ -68,6 +70,9 @@ const SpecimenQueryForm = ({handleSubmit, setShowResult}) => {
                 <CollectionSelect />
                 <br />
 
+                <OrganSelect/>
+                <br />
+                
                 <GroupSelect/>
                 <br />
                 

@@ -8,6 +8,7 @@ import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import {ImageManager} from '../Image/ImageManager.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
+import {OrganSelect} from '../Organ/OrganSelect.js';
 
 import {
   useQuery,
@@ -28,7 +29,7 @@ const SpecimenSelect = (props) => {
                     idigbiouuid
                     pbdbcid
                     pbdboccid
-                    organ {
+                    organs {
                         pbotID
                     }
                     describedBy {
@@ -80,8 +81,8 @@ const SpecimenSelect = (props) => {
             onChange={(event,child) => {
                 //props.resetForm();
                 props.values.name = child.props.dname;
-                props.values.organ = child.props.dorgan ? child.props.dorgan : '';
-                props.values.preservationMode = child.props.dpreservationmode ? child.props.dpreservationmode : '';
+                props.values.organs = child.props.dorgans ? JSON.parse(child.props.dorgans) : [];
+                 props.values.preservationMode = child.props.dpreservationmode ? child.props.dpreservationmode : '';
                 props.values.describedBy = child.props.ddescribedby ? JSON.parse(child.props.ddescribedby) : [];
                 props.values.idigbiouuid = child.props.didigbiouuid ? child.props.didigbiouuid : '';
                 props.values.pbdbcid = child.props.dpbdbcid ? child.props.dpbdbcid : '';
@@ -99,7 +100,7 @@ const SpecimenSelect = (props) => {
                     key={specimen.pbotID} 
                     value={specimen.pbotID}
                     dname={specimen.name}
-                    dorgan={specimen.organ.pbotID}
+                    dorgans={specimen.organs ? JSON.stringify(specimen.organs.map(organ => organ.pbotID)) : null}
                     dpreservationmode={specimen.preservationMode ? specimen.preservationMode.pbotID : null}
                     ddescribedby={specimen.describedBy ? JSON.stringify(specimen.describedBy.map(d => d.Description.pbotID)) : ''}
                     didigbiouuid={specimen.idigbiouuid}
@@ -113,47 +114,6 @@ const SpecimenSelect = (props) => {
             ))}
         </Field>
     )
-}
-
-const OrganSelect = (props) => {
-    console.log("OrganSelect");
-    console.log(props);
-    const organGQL = gql`
-            query {
-                Organ {
-                    type
-                    pbotID
-                }            
-            }
-        `;
-
-    const { loading: organLoading, error: organError, data: organData } = useQuery(organGQL, {fetchPolicy: "cache-and-network"});
-
-    if (organLoading) return <p>Loading...</p>;
-    if (organError) return <p>Error :(</p>;
-                                 
-    console.log(organData.organs);
-    const organs = alphabetize([...organData.Organ], "type");
-    
-    return (
-        <Field
-            component={TextField}
-            type="text"
-            name="organ"
-            label="Organ"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {organs.map(({ pbotID, type }) => (
-                <MenuItem key={pbotID} value={pbotID}>{type}</MenuItem>
-            ))}
-        </Field>
-    )
-        
 }
 
 const PreservationModeSelect = (props) => {
@@ -246,7 +206,7 @@ const SpecimenMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 specimen: '',
                 name: '',
-                organ: '',
+                organs: [],
                 preservationMode: '',
                 describedBy: [],
                 idigbiouuid: '',
@@ -286,7 +246,7 @@ const SpecimenMutateForm = ({handleSubmit, setShowResult, mode}) => {
             }}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
-                organ: Yup.string().required(),
+                organs: Yup.array().of(Yup.string()).min(1, "At least one organ required"),
                 preservationMode: Yup.string().required(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
                 references: Yup.array().of(
