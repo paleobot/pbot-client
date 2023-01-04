@@ -217,6 +217,7 @@ const CommentMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 />
                 
                 <SynonymSelect values={props.values} handleChange={props.handleChange}/>
+                <br />
                 
                 {(mode === "edit" || mode === "delete") && props.values.synonym !== '' &&
                     <CommentSelect values={props.values} handleChange={props.handleChange}/>
