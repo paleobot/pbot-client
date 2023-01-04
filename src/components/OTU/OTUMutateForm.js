@@ -81,13 +81,13 @@ const OTUSelect = (props) => {
             onChange={(event,child) => {
                 console.log("onChange");
                 console.log(child.props);
-                console.log(child.props.dexampleSpecimens);
+                console.log(child.props.dexamplespecimens);
                 props.values.name = child.props.dname;
                 props.values.family = child.props.dfamily;
                 props.values.genus = child.props.dgenus;
                 props.values.species = child.props.dspecies;
-                props.values.exampleSpecimens = child.props.dexampleSpecimens ? JSON.parse(child.props.dexampleSpecimens) : [];
-                props.values.holotypeSpecimen = child.props.dholotypeSpecimen;
+                props.values.exampleSpecimens = child.props.dexamplespecimens ? JSON.parse(child.props.dexamplespecimens) : [];
+                props.values.holotypeSpecimen = child.props.dholotypespecimen;
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
@@ -104,8 +104,8 @@ const OTUSelect = (props) => {
                     dfamily={otu.family}
                     dgenus={otu.genus}
                     dspecies={otu.species}
-                    dexampleSpecimens={otu.exampleSpecimens ? JSON.stringify(otu.exampleSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
-                    dholotypeSpecimen={otu.holotype.Specimen.pbotID}
+                    dexamplespecimens={otu.exampleSpecimens ? JSON.stringify(otu.exampleSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
+                    dholotypespecimen={otu.holotype.Specimen.pbotID}
                     dreferences={otu.references ? JSON.stringify(otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
                     dpublic={otu.elementOf && otu.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={otu.elementOf ? JSON.stringify(otu.elementOf.map(group => group.pbotID)) : null}
