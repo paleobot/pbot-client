@@ -17,12 +17,26 @@ const PBOTIcon = ({rotatePBOT}) => {
       )
 }
 
+let consoleDisabled = true; //TODO: figure out how to allow other components to change this
+
+const nullFunc = function(){};
+console = new Proxy(console, {
+    get(target, prop, receiver){
+        if(prop==='log' && consoleDisabled){
+            return nullFunc;
+        }
+        return Reflect.get(...arguments)
+    }
+});
+
+
 function App(props) {
     console.log("----------------App-------------------------");
     console.log(props);
     console.log(window.location.pathname)
     //console.log(formClass);
     //console.log(form)
+    
     const [rotatePBOT, setRotatePBOT] = useState(true);
     const navigate = useNavigate();
 
