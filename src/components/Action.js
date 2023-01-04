@@ -1,4 +1,4 @@
-import React, { useState }from 'react';
+import React, { useState, useEffect }from 'react';
 import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid } from '@mui/material';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -14,10 +14,13 @@ const Action = ({selectedForm}/*{queryParams, handleSubmit, formClass, handleFor
     //but doing so caused a render loop. So, I pass setSelectedTab through the context and do it here.
     const location = useLocation();
     let form = location.pathname.split("/")[2];
-    if (!form) {
-        setSelectedTab(0);
-        setShowResult(false)
-    }
+    //Using useEffect prevents "Cannot update a component while rendering a different component"
+    useEffect(() => {
+        if (!form) {
+            setSelectedTab(0);
+            setShowResult(false)
+        }
+    });
 
     return (
         <div>
