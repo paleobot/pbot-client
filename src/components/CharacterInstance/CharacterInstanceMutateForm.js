@@ -240,6 +240,7 @@ const CharacterInstanceMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 characterInstance: '',
                 description: '',
+                schema: '',
                 character: '',
                 state: '', 
                 quantity: '',
