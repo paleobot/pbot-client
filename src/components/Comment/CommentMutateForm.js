@@ -23,9 +23,11 @@ const CommentSelect = (props) => {
                 subject {
                     ...on Synonym {
                         pbotID
+                        __typename
                     }
                     ...on Comment {
                         pbotID
+                        __typename
                     }
                 }
                 references {
@@ -79,7 +81,7 @@ const CommentSelect = (props) => {
                     key={comment.pbotID} 
                     value={comment.pbotID}
                     dcontent={comment.content}
-                    dparent={comment.subject.pbotID}
+                    dparent={"Comment" === comment.subject.__typename ? comment.subject.pbotID: ''}
                 >{comment.content}</MenuItem>
             ))}
         </Field>
@@ -220,11 +222,17 @@ const CommentMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 <br />
                 
                 {(mode === "edit" || mode === "delete") && props.values.synonym !== '' &&
+                    <>
                     <CommentSelect values={props.values} handleChange={props.handleChange}/>
+                    <br />
+                    </>
                 }
                 
-                {((mode === "create" && props.values.synonym) || (mode === "edit" && props.values.comment)) &&
+                {((mode === "create" && props.values.synonym) || (mode === "edit" && props.values.parentComment)) &&
+                    <>
                     <CommentSelect values={props.values} parent mode={mode} handleChange={props.handleChange}/>
+                    <br />
+                    </>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.comment !== '')) &&
