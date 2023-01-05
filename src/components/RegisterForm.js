@@ -55,7 +55,7 @@ const RegisterForm = ({ setShowRegistration }) => {
         
         if (result.ok) {
             //setShowRegistration(false);
-            navigate("/query");
+            navigate("/login?newReg=true");
         } else {
             setStatus({error: result.message});
             if (result.message === "Unregistered user with that email found") {
