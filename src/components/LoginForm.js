@@ -3,7 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Box } from '@mui/material';
 import { TextField } from 'formik-mui';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 const host = window.location.host;
@@ -14,6 +14,8 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     console.log(host);
 
     const navigate = useNavigate();
+    const [search] = useSearchParams();
+
     const [token, setToken] = useAuth();
 
     const loginUser = async (credentials) => {
@@ -94,7 +96,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
             setToken(loginResult.token);
             localStorage.setItem('PBOTMe', values.userName);
             console.log("navigating to workbench")
-            navigate(-1);
+            navigate("/mutate");
         } else {
             console.log("else");
             setStatus({error: loginResult.message}); //TODO: figure out how Formik setStatus works
@@ -125,7 +127,9 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     
     return(
         <div>
-        <h2>Mutations require authentication</h2>
+        {search.get("newReg") &&
+            <h2>Registration Successful. Please login.</h2>
+        }
         <Formik
             innerRef= {ref}
             initialValues={{
