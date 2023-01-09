@@ -65,6 +65,7 @@ function Schemas(props) {
             fragment CharacterFields on Character {
                 pbotID
                 name
+                definition
                 states {
                     ...StateFields
                     ...StatesRecurse

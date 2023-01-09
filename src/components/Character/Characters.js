@@ -19,9 +19,9 @@ function Characters(props) {
     
     const style = props.top ? {marginLeft:"4em"} : {marginLeft:"2em"};
     console.log(style);
-    return characters.map(({pbotID, name, states, characters}) => (
+    return characters.map(({pbotID, name, definition, states, characters}) => (
         <div key={pbotID}  style={style}>
-            {name}
+            {name}{definition ? `, ${definition}` : ''}
             <States states={states} />
             <Characters characters={characters} />
         </div>

@@ -19,7 +19,7 @@ function States(props) {
         <ul style={myUL}>
         {states.map(({pbotID, name, definition, states}) => (
             <li key={pbotID}>
-                {name}, {definition}
+                {name}{definition ? `, ${definition}` : ''}
                 <States states={states} />
             </li>
         ))}
