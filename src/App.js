@@ -17,19 +17,6 @@ const PBOTIcon = ({rotatePBOT}) => {
       )
 }
 
-//This approach is from https://stackoverflow.com/a/74411049
-let consoleDisabled = true; //TODO: figure out how to allow other components to change this
-const nullFunc = function(){};
-console = new Proxy(console, {
-    get(target, prop, receiver){
-        if(prop==='log' && consoleDisabled){
-            return nullFunc;
-        }
-        return Reflect.get(...arguments)
-    }
-});
-
-
 function App(props) {
     console.log("----------------App-------------------------");
     console.log(props);

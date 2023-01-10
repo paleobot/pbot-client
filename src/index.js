@@ -26,6 +26,25 @@ import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import Home from './components/Home';
 
+/*
+//This approach is from https://stackoverflow.com/a/74411049
+let consoleDisabled = true; //TODO: figure out how to allow other components to change this
+const nullFunc = function(){};
+console = new Proxy(console, {
+    get(target, prop, receiver){
+        if(prop==='log' && consoleDisabled){
+            return nullFunc;
+        }
+        return Reflect.get(...arguments)
+    }
+});
+*/
+//I used the above approach with the intent to have the ability to turn logging on/off per file.
+//But something weird is happening with the Reflect. It returns a null function even when I turn 
+//logging on. I've spent too much time trying to figure it out, so poop on the whole thing. 
+//I'm just gonna do:
+console.log = function() {}
+
 const router = createBrowserRouter([
     {
         path: "/",
