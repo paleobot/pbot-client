@@ -73,6 +73,7 @@ const CommentSelect = (props) => {
                     props.values.content = child.props.dcontent || '';
                 }
                 props.values.parentComment = child.props.dparent || '';
+                props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 props.handleChange(event);
             }}
         >
@@ -82,6 +83,7 @@ const CommentSelect = (props) => {
                     value={comment.pbotID}
                     dcontent={comment.content}
                     dparent={"Comment" === comment.subject.__typename ? comment.subject.pbotID: ''}
+                    dreferences={comment.references ? JSON.stringify(comment.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
                 >{comment.content}</MenuItem>
             ))}
         </Field>
@@ -192,11 +194,11 @@ const CommentMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 synonym: Yup.string().required(),
                 references: Yup.array().of(
                     Yup.object().shape({
-                        pbotID: Yup.string(),
-                            //.required('Reference title is required'),
-                        order: Yup.string(),
-                            //.required('Reference order is required')
-                            //.typeError('Reference order is required')
+                        pbotID: Yup.string()
+                            .required('Reference title is required'),
+                        order: Yup.string()
+                            .required('Reference order is required')
+                            .typeError('Reference order is required')
                     })
                 ),
             })}
@@ -247,7 +249,7 @@ const CommentMutateForm = ({handleSubmit, setShowResult, mode}) => {
                     />
                     <br />
 
-                    <ReferenceManager values={props.values}/>
+                    <ReferenceManager values={props.values} optional={true}/>
                     <br />
                     
                     </div>
