@@ -31,7 +31,7 @@ export const ReferenceManager = (props) => {
                                         sx={{width:"75px"}}
                                     />
                                 </Grid>
-                                {index > 0 &&
+                                {(index > 0 || props.optional) &&
                                 <Grid item xs={1} sx={{ display: "flex", justifyContent: "flex-start" }}>
                                     <Button
                                         type="button"
