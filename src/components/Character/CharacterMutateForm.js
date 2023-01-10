@@ -36,9 +36,11 @@ const CharacterSelect = (props) => {
                 characterOf {
                   ... on Character {
                     pbotID
+                    __typename
                   }
                   ... on Schema {
                     pbotID
+                    __typename
                   }
                 }
             }
@@ -89,7 +91,7 @@ const CharacterSelect = (props) => {
                     value={character.pbotID}
                     dname={character.name}
                     ddefinition={character.definition}
-                    dparentcharacter={character.characterOf.pbotID}
+                    dparentcharacter={"Character" === character.characterOf.__typename ? character.characterOf.pbotID: ''}
                 >{character.name}</MenuItem>
             ))}
         </Field>
