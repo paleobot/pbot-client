@@ -92,7 +92,7 @@ const SynonymSelect = (props) => {
                     value={synonym.pbotID} 
                     dexplanation={synonym.explanation} 
                     dotus={synonym.otus ? JSON.stringify(synonym.otus.map(otu => otu.pbotID)) : null}
-                    dreferences={synonym.references ? JSON.stringify(synonym.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
+                    dreferences={synonym.references ? JSON.stringify(synonym.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
                     dpublic={synonym.elementOf && synonym.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={synonym.elementOf ? JSON.stringify(synonym.elementOf.map(group => group.pbotID)) : null}
                 >{synonym.name/*synonym.otus.reduce((acc,otu) => acc ? acc + "/" + otu.name : otu.name, null)*/}</MenuItem>

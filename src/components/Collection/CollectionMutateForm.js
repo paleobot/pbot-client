@@ -83,7 +83,7 @@ const CollectionSelect = (props) => {
                     dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {console.log(">>>>>>>>>>Collection.name = "); console.log(collection.name); console.log("group.name ="); console.log(group.name); console.log(acc || "public" === group.name);return acc || "public" === group.name}, false).toString()}
                     dgroups={collection.elementOf ? JSON.stringify(collection.elementOf.map(group => group.pbotID)) : null}
                     dspecimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
-                    dreferences={collection.references ? JSON.stringify(collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
+                    dreferences={collection.references ? JSON.stringify(collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
                 >{collection.name}</MenuItem>
             ))}
         </Field>

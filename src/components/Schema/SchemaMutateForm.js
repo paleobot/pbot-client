@@ -84,8 +84,8 @@ const SchemaSelect = (props) => {
                     value={schema.pbotID}
                     dtitle={schema.title}
                     dyear={schema.year}
-                    dreferences={schema.references ? JSON.stringify(schema.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
-                    dauthors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order}})) : null}
+                    dreferences={schema.references ? JSON.stringify(schema.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
+                    dauthors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order || ''}})) : null}
                     dpublic={schema.elementOf && schema.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
                 >{schema.title}</MenuItem>

@@ -108,7 +108,7 @@ const SpecimenSelect = (props) => {
                     dpbdboccid={specimen.pbdboccid}
                     dpublic={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
-                    dreferences={specimen.references ? JSON.stringify(specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
+                    dreferences={specimen.references ? JSON.stringify(specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
                     dcollection={specimen.collection ? specimen.collection.pbotID : ''}
                 >{specimen.name}</MenuItem>
             ))}

@@ -106,7 +106,7 @@ const OTUSelect = (props) => {
                     dspecies={otu.species}
                     dexamplespecimens={otu.exampleSpecimens ? JSON.stringify(otu.exampleSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
                     dholotypespecimen={otu.holotype.Specimen.pbotID}
-                    dreferences={otu.references ? JSON.stringify(otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order}})) : null}
+                    dreferences={otu.references ? JSON.stringify(otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
                     dpublic={otu.elementOf && otu.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={otu.elementOf ? JSON.stringify(otu.elementOf.map(group => group.pbotID)) : null}
                 >{otu.name}</MenuItem>
