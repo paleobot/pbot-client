@@ -3,36 +3,27 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
-import { alphabetize } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
+import {CharacterSelect} from "../Character/CharacterSelect.js";
 
 import {
   useQuery,
   gql
 } from "@apollo/client";
 
+/*
 const CharacterSelect = (props) => {
     console.log("CharacterSelect");
     console.log(props);
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
-    /*
-    const gQL = gql`
-        query ($schemaID: ID) {
-            Schema (pbotID: $schemaID) {
-                characters {    
-                    pbotID
-                    name
-                    definition
-                }
-            }            
-        }
-    `;
-    */
+
     const gQL = gql`
         query ($schemaID: String!) {
             GetAllCharacters (schemaID: $schemaID)  {
                 pbotID
                 name
                 definition
+                order
                 characterOf {
                   ... on Character {
                     pbotID
@@ -54,7 +45,8 @@ const CharacterSelect = (props) => {
                       
     console.log(">>>>>>>>>>>>Results<<<<<<<<<<<<<");
     console.log(data.GetAllCharacters);
-    const characters = alphabetize([...data.GetAllCharacters], "name");
+    //const characters = alphabetize([...data.GetAllCharacters], "name");
+    const characters = sort([...data.GetAllCharacters], "order", "name");
     console.log(characters);
     
     const label = props.parent ? "Parent character" : "Character";
@@ -79,6 +71,7 @@ const CharacterSelect = (props) => {
                 //props.resetForm();
                 if (!props.parent) {
                     props.values.name = child.props.dname || '';
+                    props.values.order = child.props.dorder || '';
                     props.values.definition = child.props.ddefinition || '';
                 }
                 props.values.parentCharacter = child.props.dparentcharacter || '';
@@ -91,6 +84,7 @@ const CharacterSelect = (props) => {
                     value={character.pbotID}
                     dname={character.name}
                     ddefinition={character.definition}
+                    dorder={character.order}
                     dparentcharacter={"Character" === character.characterOf.__typename ? character.characterOf.pbotID: ''}
                 >{character.name}</MenuItem>
             ))}
@@ -99,6 +93,179 @@ const CharacterSelect = (props) => {
         </>
     )
 }
+*/
+
+/*
+const CharacterMenuItems = (props) => {
+    const characters = sort([...props.characters], "order", "name");
+
+    const indent = props.level * 2;
+    const fontWeight = props.level === 0 ? "bold" : "normal";
+    const style = {marginLeft: indent + "em", fontWeight: fontWeight};
+
+    return (
+        <>
+        {characters.map((character) => (
+            <>
+            <MenuItem 
+                style={style}
+                key={character.pbotID} 
+                value={character.pbotID}
+                dname={character.name}
+                ddefinition={character.definition}
+                dorder={character.order}
+                dparentcharacter={"Character" === character.characterOf.__typename ? character.characterOf.pbotID: ''}
+                onClick={(event)=> {alert('name = ' + character.name)}}
+            >{character.name}</MenuItem>
+            <CharacterMenuItems characters={character.characters} level={props.level+1} />
+            </>
+        ))}
+        </>
+    )
+}
+
+const flattenAndSort = (characters, level) => {
+    const chars = sort([...characters], "order", "name");
+    
+    const indent = level * 2;
+    const fontWeight = level === 0 ? "bold" : "normal";
+    const style = {marginLeft: indent + "em", fontWeight: fontWeight};
+
+    let flatList = []; 
+    chars.forEach((character) => {
+        
+        
+        const {characters, ...lightCharacter} = character; // remove characters
+        flatList.push({
+            ...lightCharacter,
+            style: style,
+        });
+        
+        if (character.characters && character.characters.length > 0) {
+            flatList = flatList.concat(flattenAndSort(character.characters, level+1));
+        }
+        return flatList;
+        
+        
+    })
+    return flatList
+}
+
+export const CharacterSelectx = (props) => {
+    const gQL = gql`
+    fragment CharacterFields on Character {
+        pbotID
+        name
+        definition
+        order
+        characterOf {
+            ... on Character {
+                pbotID
+                __typename
+            }
+            ... on Schema {
+                pbotID
+                __typename
+            }
+        }
+    }
+
+    fragment CharactersRecurse on Character {
+        characters {
+            ...CharacterFields
+            characters {
+                ...CharacterFields
+                characters {
+                    ...CharacterFields
+                    characters {
+                        ...CharacterFields
+                        characters {
+                            ...CharacterFields
+                            characters {
+                                ...CharacterFields
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    query ($schemaID: ID) {
+        Schema (pbotID: $schemaID) {
+            characters {
+                ...CharacterFields
+                ...CharactersRecurse
+            }
+        }
+    }
+    `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.values.schema}});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                    
+    console.log(">>>>>>>>>>>>Results<<<<<<<<<<<<<");
+    console.log(data.Schema[0].characters);
+
+    const characters = flattenAndSort(data.Schema[0].characters, 0);
+
+    const label = props.parent ? "Parent character" : "Character";
+    const name =  props.parent ? "parentCharacter" : "character";
+    let level = 0;
+    const style = {minWidth: "12ch"}
+    return data.Schema[0].characters && data.Schema[0].characters.length === 0 ? null : (
+        <>
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name={name}
+            label={label}
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+            onChange={(event,child) => {
+                //props.resetForm();
+                if (!props.parent) {
+                    props.values.name = child.props.dname || '';
+                    props.values.order = child.props.dorder || '';
+                    props.values.definition = child.props.ddefinition || '';
+                }
+                props.values.parentCharacter = child.props.dparentcharacter || '';
+                props.handleChange(event);
+            }}
+        >
+
+            {characters.map((character) => (
+                <MenuItem 
+                    style={character.style}
+                    key={character.pbotID} 
+                    value={character.pbotID}
+                    dname={character.name}
+                    ddefinition={character.definition}
+                    dorder={character.order}
+                    dparentcharacter={"Character" === character.characterOf.__typename ? character.characterOf.pbotID: ''}
+               >{character.name}</MenuItem>
+
+            ))}
+
+        </Field>
+        <br />
+        </>
+    );
+
+}
+
+*/
+
+
+
+
 
 const SchemaSelect = (props) => {
     console.log("SchemaSelect");
@@ -155,6 +322,7 @@ const CharacterMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 character: '',
                 name: '',
                 definition: '',
+                order: '',
                 schema: '',
                 parentCharacter: '',
                 cascade: false,
@@ -186,6 +354,7 @@ const CharacterMutateForm = ({handleSubmit, setShowResult, mode}) => {
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 schema: Yup.string().required(),
+                order: Yup.number().integer(),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -208,11 +377,11 @@ const CharacterMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 <SchemaSelect values={props.values} handleChange={props.handleChange}/>
                 
                 {(mode === "edit" || mode === "delete") && props.values.schema !== '' &&
-                    <CharacterSelect values={props.values} handleChange={props.handleChange}/>
+                    <CharacterSelect source="character" values={props.values} handleChange={props.handleChange}/>
                 }
                 
                 {((mode === "create" && props.values.schema) || (mode === "edit" && props.values.character)) &&
-                    <CharacterSelect values={props.values} parent handleChange={props.handleChange}/>
+                    <CharacterSelect source="character" values={props.values} parent handleChange={props.handleChange}/>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.character !== '')) &&
@@ -236,6 +405,17 @@ const CharacterMutateForm = ({handleSubmit, setShowResult, mode}) => {
                         disabled={false}
                     />
                     <br />
+
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="order"
+                        label="Order"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+                     
                     </>
                 }
                 

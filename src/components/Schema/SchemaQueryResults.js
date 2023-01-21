@@ -66,6 +66,7 @@ function Schemas(props) {
                 pbotID
                 name
                 definition
+                order
                 states {
                     ...StateFields
                     ...StatesRecurse
@@ -87,6 +88,7 @@ function Schemas(props) {
             fragment StateFields on State {
                 name
                 definition
+                order
             }
 
             fragment StatesRecurse on State {
