@@ -1,7 +1,9 @@
 import React from 'react';
+import { sort } from '../../util.js';
 
 function States(props) {
     console.log("States");
+    /*
     let states = [...props.states];
     states.sort((a,b) => {
         const nameA = a.name.toUpperCase(); 
@@ -14,6 +16,9 @@ function States(props) {
         }
         return 0;
     });
+    */
+    const states = sort([...props.states], "order", "name");
+
     const myUL = {marginTop:"0", marginBottom:"0"}
     return (
         <ul style={myUL}>
