@@ -4,6 +4,8 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
+import { StateSelect } from "../State/StateSelect.js"
+import { CharacterSelect } from "../Character/CharacterSelect.js"
 
 import {
   useQuery,
@@ -65,6 +67,7 @@ const SchemaSelect = (props) => {
     )
 }
 
+/*
 const CharacterSelect = (props) => {
     console.log("CharacterSelect");
     console.log(props);
@@ -80,7 +83,7 @@ const CharacterSelect = (props) => {
                 }            
             }
         `;
-    */
+    *
     const characterGQL = gql`
         query ($schemaID: String!) {
             GetAllCharacters (schemaID: $schemaID)  {
@@ -139,7 +142,9 @@ const CharacterSelect = (props) => {
     )
         
 }
+*/
 
+/*
 const StateSelect = (props) => {
     console.log("StateSelect");
     console.log(props);
@@ -151,6 +156,7 @@ const StateSelect = (props) => {
                 pbotID
                 name
                 definition
+                order
                 stateOf {
                   ... on Character {
                     pbotID
@@ -193,6 +199,7 @@ const StateSelect = (props) => {
                 if (!props.parent) {
                     props.values.name = child.props.dname || '';
                     props.values.definition = child.props.ddefinition || '';
+                    props.values.order = child.props.dorder || '';
                     props.values.parentState = child.props.dparentstate || '';
                 }
                 props.handleChange(event);
@@ -204,6 +211,7 @@ const StateSelect = (props) => {
                     value={state.pbotID}
                     dname={state.name}
                     ddefinition={state.definition}
+                    dorder={state.order}
                     dparentstate={state.stateOf.pbotID}
                 >{state.name}</MenuItem>
             ))}
@@ -213,12 +221,14 @@ const StateSelect = (props) => {
     )
         
 }
+*/
 
 const StateMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
                 state: '',
                 name: '',
                 definition: '',
+                order: '',
                 schema: '',
                 character: '',
                 parentState: '',
@@ -251,6 +261,7 @@ const StateMutateForm = ({handleSubmit, setShowResult, mode}) => {
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 definition: Yup.string().required(),
+                order: Yup.number().integer(),
                 schema: Yup.string().required(),
                 character: Yup.string().required(),
             })}
@@ -277,15 +288,15 @@ const StateMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 <SchemaSelect values={props.values} handleChange={props.handleChange}/>
                 
                 {props.values.schema !== '' &&
-                    <CharacterSelect values={props.values} handleChange={props.handleChange} />
+                    <CharacterSelect source="state" values={props.values} handleChange={props.handleChange} />
                 }
 
                 {(props.values.character !== "" && (mode === "edit" || mode === "delete")) &&
-                    <StateSelect values={props.values} handleChange={props.handleChange}/>
+                    <StateSelect source="state" values={props.values} handleChange={props.handleChange}/>
                 }
                  
                 {((mode === "create" && props.values.character) || (mode === "edit" && props.values.state)) &&
-                    <StateSelect values={props.values} parent handleChange={props.handleChange}/>
+                    <StateSelect source="state" values={props.values} parent handleChange={props.handleChange}/>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.state !== '')) &&
@@ -309,6 +320,17 @@ const StateMutateForm = ({handleSubmit, setShowResult, mode}) => {
                             disabled={false}
                         />
                         <br />
+
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="order"
+                            label="Order"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
+                     
                     </>
                 }
                 

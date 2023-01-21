@@ -3,7 +3,9 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
-import { alphabetize } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
+import {CharacterSelect} from "../Character/CharacterSelect.js";
+import { StateSelect } from "../State/StateSelect.js"
 
 import {
   useQuery,
@@ -57,6 +59,8 @@ const DescriptionSelect = (props) => {
                 console.log("Description selected");
                 console.log(child.props.dschemaid);
                 props.values.schema = child.props.dschemaid || '';
+                props.values.character = '';
+                props.values.state = '';
                 props.handleChange(event);
             }}
         >
@@ -121,7 +125,7 @@ const CharacterInstanceSelect = (props) => {
             component={TextField}
             type="text"
             name="characterInstance"
-            label="CharacterInstance"
+            label="Character Instance"
             fullWidth 
             select={true}
             SelectProps={{
@@ -152,15 +156,18 @@ const CharacterInstanceSelect = (props) => {
         
 }
 
+/*
 const CharacterSelect = (props) => {
     console.log("CharacterSelect");
     console.log(props);
+    //TODO: Should the following be using GetAllCharacters?
     const characterGQL = gql`
             query {
                 Schema (pbotID: "${props.values.schema}") {
-                    characters {
+                    characters { 
                         pbotID
                         name
+                        order
                     }
                 }            
             }
@@ -172,8 +179,9 @@ const CharacterSelect = (props) => {
     if (characterError) return <p>Error :(</p>;
                                  
     console.log(characterData.Schema[0].characters);
-    const characters = alphabetize([...characterData.Schema[0].characters], "name");
-    
+    //const characters = alphabetize([...characterData.Schema[0].characters], "name");
+    const characters = sort([...characterData.Schema[0].characters], "order", "name");
+   
     return (
         <Field
             component={TextField}
@@ -194,7 +202,9 @@ const CharacterSelect = (props) => {
     )
         
 }
+*/
 
+/*
 const StateSelect = (props) => {
     console.log("StateSelect");
     console.log(props);
@@ -203,6 +213,7 @@ const StateSelect = (props) => {
             GetAllStates (characterID: "${props.values.character}")  {
                 pbotID
                 name
+                order
             }
         }
     `;
@@ -213,7 +224,8 @@ const StateSelect = (props) => {
     if (stateError) return <p>Error :(</p>;
                                  
     //console.log(stateData.Schema[0].characters);
-    const states = alphabetize([...stateData.GetAllStates], "name");
+    //const states = alphabetize([...stateData.GetAllStates], "name");
+    const states = sort([...stateData.GetAllStates], "order", "name");
     
     return (
         <Field
@@ -235,6 +247,7 @@ const StateSelect = (props) => {
     )
         
 }
+*/
 
 const CharacterInstanceMutateForm = ({handleSubmit, setShowResult, mode}) => {
     const initValues = {
@@ -316,16 +329,16 @@ const CharacterInstanceMutateForm = ({handleSubmit, setShowResult, mode}) => {
                     </div>
                 }
 
-                {(mode === "create" || mode === "edit") && props.values.description !== '' &&
+                {((mode === "create" && props.values.description !== '') || (mode === "edit" && props.values.characterInstance !== '')) &&
                     <div>
-                        <CharacterSelect values={props.values} />
+                        <CharacterSelect values={props.values} source="characterInstance"/>
                         <br />
                     </div>
                 }
                 
                 {(mode === "create" || mode === "edit") && props.values.character !== "" &&
                     <div>
-                        <StateSelect values={props.values} />
+                        <StateSelect values={props.values} source="characterInstance"/>
                         <br />
                     </div>
                 }

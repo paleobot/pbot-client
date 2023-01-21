@@ -11,6 +11,7 @@ const CharacterMutateResults = ({queryParams}) => {
                 pbotID: queryParams.character || null,
                 name: queryParams.name || null,
                 definition: queryParams.definition || null,
+                order: queryParams.order || null,
                 parentID: queryParams.parentCharacter || queryParams.schema || null, 
                 schemaID: queryParams.schema || null,
                 cascade: queryParams.cascade || false
