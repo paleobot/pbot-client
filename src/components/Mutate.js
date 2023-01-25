@@ -108,61 +108,62 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
             
                 <Grid item alignItems="right" xs>
                     {selectedForm && <Typography variant="h5">Mutation parameters</Typography>}
-                    <div hidden={selectedForm !== "otu"}>
+
+                    {selectedForm === "otu" &&
                         <OTUMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "synonym"}>
+                    {selectedForm === "synonym" &&
                         <SynonymMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "comment"}>
+                    {selectedForm === "comment" &&
                         <CommentMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "description"}>
+                    {selectedForm === "description" &&
                         <DescriptionMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "characterinstance"}>
+                    {selectedForm === "characterinstance" &&
                         <CharacterInstanceMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
                     
-                    <div hidden={selectedForm !== "specimen"}>
+                    {selectedForm === "specimen" &&
                         <SpecimenMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "collection"}>
+                    {selectedForm === "collection" &&
                         <CollectionMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "reference"}>
+                    {selectedForm === "reference" &&
                         <ReferenceMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "schema"}>
+                    {selectedForm === "schema" &&
                         <SchemaMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
                     
-                    <div hidden={selectedForm !== "character"}>
+                    {selectedForm === "character" &&
                         <CharacterMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
                     
-                    <div hidden={selectedForm !== "state"}>
+                    {selectedForm === "state" &&
                         <StateMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "group"}>
+                    {selectedForm === "group" &&
                         <GroupMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
                     
-                   <div hidden={selectedForm !== "person"}>
+                   {selectedForm === "person" &&
                         <PersonMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
-                    <div hidden={selectedForm !== "image"}>
+                    {selectedForm === "image" &&
                         <ImageMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
-                    </div>
+                    }
 
                 </Grid>
             </Grid>

@@ -43,29 +43,30 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
             
             <Grid item xs>
                 {selectedForm && <Typography variant="h5">Search parameters</Typography>}
-                <div hidden={selectedForm !== "otu"}>
+
+                {selectedForm === "otu" &&
                     <OTUQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
-                </div>
+                }
                     
-                <div hidden={selectedForm !== "collection"}>
+                {selectedForm === "collection" &&
                     <CollectionQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
-                </div>
+                }
 
-                <div hidden={selectedForm !== "specimen"}>
+                {selectedForm === "specimen" &&
                     <SpecimenQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
-                </div>
+                }
 
-                <div hidden={selectedForm !== "reference"}>
+                {selectedForm === "reference" &&
                     <ReferenceQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
-                </div>
+                }
 
-                <div hidden={selectedForm !== "schema"}>
+                {selectedForm === "schema" &&
                     <SchemaQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
-                </div>
+                }
 
-                <div hidden={selectedForm !== "person"}>
+                {selectedForm === "person" &&
                     <PersonQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
-                </div>
+                }
                 
             </Grid>
         </Grid>
