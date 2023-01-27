@@ -45,27 +45,27 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
                 {selectedForm && <Typography variant="h5">Search parameters</Typography>}
 
                 {selectedForm === "otu" &&
-                    <OTUQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
+                    <OTUQueryForm handleSubmit={handleSubmit} />
                 }
                     
                 {selectedForm === "collection" &&
-                    <CollectionQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
+                    <CollectionQueryForm handleSubmit={handleSubmit} />
                 }
 
                 {selectedForm === "specimen" &&
-                    <SpecimenQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
+                    <SpecimenQueryForm handleSubmit={handleSubmit} />
                 }
 
                 {selectedForm === "reference" &&
-                    <ReferenceQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
+                    <ReferenceQueryForm handleSubmit={handleSubmit} />
                 }
 
                 {selectedForm === "schema" &&
-                    <SchemaQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
+                    <SchemaQueryForm handleSubmit={handleSubmit} />
                 }
 
                 {selectedForm === "person" &&
-                    <PersonQueryForm handleSubmit={handleSubmit} setShowResult={setShowResult}/>
+                    <PersonQueryForm handleSubmit={handleSubmit} />
                 }
                 
             </Grid>

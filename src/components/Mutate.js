@@ -110,59 +110,59 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                     {selectedForm && <Typography variant="h5">Mutation parameters</Typography>}
 
                     {selectedForm === "otu" &&
-                        <OTUMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <OTUMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "synonym" &&
-                        <SynonymMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <SynonymMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "comment" &&
-                        <CommentMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <CommentMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "description" &&
-                        <DescriptionMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <DescriptionMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "characterinstance" &&
-                        <CharacterInstanceMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <CharacterInstanceMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
                     
                     {selectedForm === "specimen" &&
-                        <SpecimenMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <SpecimenMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "collection" &&
-                        <CollectionMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <CollectionMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "reference" &&
-                        <ReferenceMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <ReferenceMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "schema" &&
-                        <SchemaMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <SchemaMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
                     
                     {selectedForm === "character" &&
-                        <CharacterMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <CharacterMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
                     
                     {selectedForm === "state" &&
-                        <StateMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <StateMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "group" &&
-                        <GroupMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <GroupMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
                     
                    {selectedForm === "person" &&
-                        <PersonMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <PersonMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                     {selectedForm === "image" &&
-                        <ImageMutateForm handleSubmit={handleSubmit} setShowResult={setShowResult} mode={mode}/>
+                        <ImageMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                 </Grid>
