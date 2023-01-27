@@ -54,6 +54,7 @@ const PBOTInterface = (props) => {
                  '';
   
     const style = {textAlign: "left"}
+    //Note: The use of hidden for display of result is critical for avoiding repeat executions of that code.
     return (
         <ApolloProvider client={client}>
         <div style={style}>
