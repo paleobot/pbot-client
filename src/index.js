@@ -43,7 +43,7 @@ console = new Proxy(console, {
 //But something weird is happening with the Reflect. It returns a null function even when I turn 
 //logging on. I've spent too much time trying to figure it out, so poop on the whole thing. 
 //I'm just gonna do:
-console.log = function() {}
+//console.log = function() {}
 
 const router = createBrowserRouter([
     {
