@@ -41,6 +41,7 @@ const PBOTInterface = (props) => {
         console.log("handleSubmit");
         console.log(values);
         setQueryParams(values);
+        setShowResult(true);
         setSelectedTab(1);
     };
         
