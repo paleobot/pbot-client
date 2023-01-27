@@ -79,7 +79,7 @@ const PersonSelect = (props) => {
     )
 }
 
-const PersonMutateForm = ({handleSubmit, setShowResult, mode}) => {
+const PersonMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
         person: '',
         given: '',
@@ -105,12 +105,6 @@ const PersonMutateForm = ({handleSubmit, setShowResult, mode}) => {
         <Formik
           innerRef={formikRef}
           initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 given: Yup.string().required(),
                 surname: Yup.string().required(),
@@ -120,7 +114,6 @@ const PersonMutateForm = ({handleSubmit, setShowResult, mode}) => {
             onSubmit={(values, {resetForm}) => {
                 values.mode = mode;
                 handleSubmit(values);
-                setShowResult(true);
                 resetForm({values:initValues});
             }}
         >

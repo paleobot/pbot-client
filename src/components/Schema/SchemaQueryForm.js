@@ -6,7 +6,7 @@ import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 
 
-const SchemaQueryForm = ({handleSubmit, setShowResult}) => {
+const SchemaQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
     const initValues = {
         schemaID: '', 
@@ -20,13 +20,6 @@ const SchemaQueryForm = ({handleSubmit, setShowResult}) => {
        
         <Formik
             initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 schemaID: Yup.string()
                 .uuid('Must be a valid uuid'),
@@ -40,7 +33,6 @@ const SchemaQueryForm = ({handleSubmit, setShowResult}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 handleSubmit(values)
-                setShowResult(true);
                 //setShowOTUs(true);
             }}
         >

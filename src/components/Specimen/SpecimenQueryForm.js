@@ -7,7 +7,7 @@ import {GroupSelect} from '../Group/GroupSelect.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
 import {OrganSelect} from '../Organ/OrganSelect.js';
 
-const SpecimenQueryForm = ({handleSubmit, setShowResult}) => {
+const SpecimenQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
     const initValues = {
         specimenID: '', 
@@ -25,13 +25,6 @@ const SpecimenQueryForm = ({handleSubmit, setShowResult}) => {
        
         <Formik
             initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 specimenID: Yup.string()
                 .uuid('Must be a valid uuid'),
@@ -44,7 +37,6 @@ const SpecimenQueryForm = ({handleSubmit, setShowResult}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 handleSubmit(values)
-                setShowResult(true);
                 //setShowOTUs(true);
             }}
         >

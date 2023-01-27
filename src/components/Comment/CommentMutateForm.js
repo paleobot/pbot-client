@@ -157,7 +157,7 @@ const SynonymSelect = (props) => {
         
 }
 
-const CommentMutateForm = ({handleSubmit, setShowResult, mode}) => {
+const CommentMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 comment: '',
                 content: '',
@@ -182,13 +182,6 @@ const CommentMutateForm = ({handleSubmit, setShowResult, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 content: Yup.string().required(),
                 synonym: Yup.string().required(),
@@ -207,7 +200,6 @@ const CommentMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 //setValues(values);
                 values.mode = mode;
                 handleSubmit(values);
-                setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values: initValues});
             }}

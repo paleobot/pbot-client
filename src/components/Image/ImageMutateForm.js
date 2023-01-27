@@ -317,7 +317,7 @@ const ImageSelect = (props) => {
 const FILE_SIZE_LIMIT = process.env.REACT_APP_FILE_SIZE_LIMIT;
 const SUPPORTED_IMAGE_FORMATS = process.env.REACT_APP_SUPPORTED_IMAGE_FORMATS.split(";");
 
-const ImageMutateForm = ({handleSubmit, setShowResult, mode}) => {
+const ImageMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 image: '',
                 collection: '', 
@@ -347,13 +347,6 @@ const ImageMutateForm = ({handleSubmit, setShowResult, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 collection: Yup.string().required(),
                 specimen: Yup.string().required(),
@@ -377,7 +370,6 @@ const ImageMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 //setValues(values);
                 values.mode = mode;
                 handleSubmit(values);
-                setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values: initValues});
             }}

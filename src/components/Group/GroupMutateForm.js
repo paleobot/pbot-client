@@ -132,7 +132,7 @@ const MemberSelect = (props) => {
 }
 
 
-const GroupMutateForm = ({handleSubmit, setShowResult, mode}) => {
+const GroupMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 group: '', 
                 name: '',
@@ -155,13 +155,6 @@ const GroupMutateForm = ({handleSubmit, setShowResult, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 members: Yup.array().of(Yup.string())//.min(1, "at least one member required"),
@@ -171,7 +164,6 @@ const GroupMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 //setValues(values);
                 values.mode = mode;
                 handleSubmit(values);
-                setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values: initValues});
             }}

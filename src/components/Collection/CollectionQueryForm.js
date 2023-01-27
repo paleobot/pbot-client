@@ -6,7 +6,7 @@ import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 
 
-const CollectionQueryForm = ({handleSubmit, setShowResult}) => {
+const CollectionQueryForm = ({handleSubmit}) => {
     const initValues = {
         collectionID: '', 
         name: '', 
@@ -18,11 +18,6 @@ const CollectionQueryForm = ({handleSubmit, setShowResult}) => {
        
         <Formik
             initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 collectionID: Yup.string()
                 .uuid('Must be a valid uuid'),
@@ -32,7 +27,6 @@ const CollectionQueryForm = ({handleSubmit, setShowResult}) => {
             })}
             onSubmit={(values, {resetForm}) => {
                 handleSubmit(values)
-                setShowResult(true);
             }}
         >
             <Form>

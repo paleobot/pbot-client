@@ -6,7 +6,7 @@ import { TextField, CheckboxWithLabel, RadioGroup } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 
 
-const DescriptionQueryForm = ({handleSubmit, setShowResult}) => {
+const DescriptionQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
    
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -21,13 +21,6 @@ const DescriptionQueryForm = ({handleSubmit, setShowResult}) => {
                 species: '',
                 groups: [],
                 includeComplex: false}}
-            validate={values => {
-                const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 descriptionID: Yup.string()
                 .uuid('Must be a valid uuid'),
@@ -44,7 +37,6 @@ const DescriptionQueryForm = ({handleSubmit, setShowResult}) => {
                 //setValues(values);
                 values.type = values.type === "all" ? '' : values.type
                 handleSubmit(values)
-                setShowResult(true);
                 //setShowOTUs(true);
             }}
         >

@@ -204,7 +204,7 @@ const SpecimenSelect = (props) => {
 }
 
 
-const DescriptionMutateForm = ({handleSubmit, setShowResult, mode}) => {
+const DescriptionMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 description: '',
                 schema: '',
@@ -235,13 +235,6 @@ const DescriptionMutateForm = ({handleSubmit, setShowResult, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 schema: Yup.string().required(),
                 //TODO: decide if specimen is required for specimen types                         
@@ -271,7 +264,6 @@ const DescriptionMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 values.mode = mode;
                 values.specimen = null;
                 handleSubmit(values);
-                setShowResult(true);
                 //setShowOTUs(true);
                 resetForm({values:initValues});
             }}

@@ -249,7 +249,7 @@ const StateSelect = (props) => {
 }
 */
 
-const CharacterInstanceMutateForm = ({handleSubmit, setShowResult, mode}) => {
+const CharacterInstanceMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 characterInstance: '',
                 description: '',
@@ -276,13 +276,6 @@ const CharacterInstanceMutateForm = ({handleSubmit, setShowResult, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validate={values => {
-                const errors = {};
-                //setShowOTUs(false); //Really want to clear results whenever an input changes. This seems like the only place to do that.
-                //handleSubmit(values);
-                setShowResult(false);
-                return errors;
-            }}
             validationSchema={Yup.object({
                 description: Yup.string().required(),
                 character: Yup.string().required(),
@@ -299,7 +292,6 @@ const CharacterInstanceMutateForm = ({handleSubmit, setShowResult, mode}) => {
                 //console.log(">>>>>>>>>>>>>>>>>submitting<<<<<<<<<<<<<<<<<<<<<<<");
                 values.mode = mode;
                 handleSubmit(values);
-                setShowResult(true);
                 resetForm({values: initValues});
                 //setShowOTUs(true);
             }}
