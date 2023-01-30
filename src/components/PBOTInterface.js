@@ -40,6 +40,13 @@ const PBOTInterface = (props) => {
     const handleSubmit = (values) => {
         console.log("handleSubmit");
         console.log(values);
+        //TODO: Must set showResult to false here to trigger rerender of Result. I used to do this in
+        //the validate routine of formik whenever a form field changed, but this caused a strange bug
+        //wherein the top select box would not take the first selection after a submit. No idea what 
+        //the connection was, but removing that setShowResult from the validate routine fixed it.
+        //Unfortunately, it also meant we never set it to false so setting it to true below did not
+        //trigger a re-render. Toggling it here is lame, but it works for now.
+        setShowResult(false); 
         setQueryParams(values);
         setShowResult(true);
         setSelectedTab(1);
