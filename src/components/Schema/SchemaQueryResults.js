@@ -80,6 +80,15 @@ function Schemas(props) {
                         ...CharacterFields
                         characters {
                             ...CharacterFields
+                            characters {
+                                ...CharacterFields
+                                characters {
+                                    ...CharacterFields
+                                    characters {
+                                        ...CharacterFields
+                                    }
+                                }
+                            }
                         }
                     }
                 }
