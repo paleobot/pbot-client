@@ -79,6 +79,16 @@ const ReferenceQueryForm = ({handleSubmit}) => {
                 />
                 <br />
                 
+                <Field
+                    component={TextField}
+                    type="text"
+                    name="pbdbid"
+                    label="PBDB ID"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
+                
                 <GroupSelect/>
                 <br />
 

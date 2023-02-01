@@ -15,6 +15,7 @@ const ReferenceMutateResults = ({queryParams}) => {
                 publisher: queryParams.publisher || null,
                 year: queryParams.year || null,
                 authors: queryParams.authors || null, //.split(", "),
+                pbdbid: queryParams.pbdbid || null,
                 doi: queryParams.doi || null,
                 groups: queryParams.public ? 
                     [publicGroupID] : queryParams.groups || null,

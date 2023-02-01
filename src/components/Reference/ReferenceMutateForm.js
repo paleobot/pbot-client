@@ -1,7 +1,8 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, Link, IconButton, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Tooltip } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
@@ -23,6 +24,7 @@ const ReferenceSelect = (props) => {
                 publisher
                 year
                 doi
+                pbdbid
                 authoredBy {
                     Person {
                         pbotID
@@ -67,6 +69,7 @@ const ReferenceSelect = (props) => {
                 props.values.publisher = child.props.dpublisher || '';
                 props.values.year = child.props.dyear || '';
                 props.values.doi = child.props.ddoi || '';
+                props.values.pbdbid = child.props.dpbdbid || '';
                 props.values.authors = child.props.dauthors ? JSON.parse(child.props.dauthors) : [];
                 props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
@@ -82,6 +85,7 @@ const ReferenceSelect = (props) => {
                     dpublisher={reference.publisher}
                     dyear={reference.year}
                     ddoi={reference.doi}
+                    dpbdbid={reference.pbdbid}
                     dauthors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order || ''}})) : null}
                     dpublic={reference.elementOf && reference.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={reference.elementOf ? JSON.stringify(reference.elementOf.map(group => group.pbotID)) : null}
@@ -102,6 +106,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                     order:'',
                 }],
                 doi: '',
+                pbdbid: '',
                 public: true,
                 groups: [],
                 mode: mode,
@@ -137,6 +142,8 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                     })
                 ).min(1, "Must specify at least one author"),
                 public: Yup.boolean(),
+                doi: Yup.string(),
+                pbdbid: Yup.string(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
@@ -201,6 +208,43 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
 
                 <AuthorManager values={props.values}/>
 
+                <Grid container spacing={2} direction="row">
+                    <Grid item xs={5}>
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="pbdbid"
+                            label="PBDB ID"
+                            fullWidth 
+                            disabled={false}
+                        />
+                    </Grid>
+                    <Grid item xs={1}>
+                        {/*}
+                        <IconButton
+                            color="secondary" 
+                            size="large"
+                            onClick={() => {}}
+                            sx={{width:"50px"}}
+                        >
+                            <SearchIcon/>
+                        </IconButton>
+                        */}
+                        <Tooltip title="Search on PBDB site">
+                            <Link 
+                                sx={{width:"50px"}} 
+                                color="secondary" 
+                                underline="hover" 
+                                href="https://paleobiodb.org/classic/displaySearchRefs?type=view"  
+                                target="_blank"
+                            >
+                                <SearchIcon/>
+                            </Link>
+                        </Tooltip>
+                     </Grid>
+                </Grid>
+                <br />
+
                 <Field
                     component={TextField}
                     type="text"
@@ -209,6 +253,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                     fullWidth 
                     disabled={false}
                 />
+                <br />
                 <br />
 
                 <Field 
