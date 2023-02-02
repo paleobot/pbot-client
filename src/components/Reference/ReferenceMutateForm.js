@@ -12,6 +12,28 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import PBDBSelectDialog from './PBDBSelectDialog.js';
+
+const queryPBDB = (setPBDBResult) => {
+    console.log("queryPBDB")
+    //setPBDBResult(["Hi there"]);
+    
+    fetch("https://paleobiodb.org/data1.2/refs/single.json?id=6930&show=both")
+      .then(res => res.json())
+      .then(
+        (result) => {
+            console.log(result.records);
+            setPBDBResult(result.records)
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+            alert(error)
+        }
+      )
+
+}
 
 const ReferenceSelect = (props) => {
     console.log("ReferenceSelect");
@@ -96,6 +118,24 @@ const ReferenceSelect = (props) => {
 }
 
 const ReferenceMutateForm = ({handleSubmit, mode}) => {
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+    
+    const handleClose = () => {
+        setOpen(false);
+        //TODO: set PBDB and others
+    };
+
+    const [references, setReferences] = useState([]);
+    const setPBDBResult = (references) => {
+        setReferences(references);
+        setOpen(true);
+    }
+    
     const initValues = {
                 reference: '',
                 title: '',
@@ -220,16 +260,24 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                         />
                     </Grid>
                     <Grid item xs={1}>
-                        {/*}
+                        
                         <IconButton
                             color="secondary" 
                             size="large"
-                            onClick={() => {}}
+                            onClick={()=>{queryPBDB(setPBDBResult)}}
                             sx={{width:"50px"}}
                         >
                             <SearchIcon/>
                         </IconButton>
-                        */}
+                        
+                        <PBDBSelectDialog 
+                            references={references} 
+                            open={open}
+                            onClose={handleClose}
+                        />
+                        
+                        
+                        {/*}
                         <Tooltip title="Search on PBDB site">
                             <Link 
                                 sx={{width:"50px"}} 
@@ -241,6 +289,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                                 <SearchIcon/>
                             </Link>
                         </Tooltip>
+                    */}
                      </Grid>
                 </Grid>
                 <br />
