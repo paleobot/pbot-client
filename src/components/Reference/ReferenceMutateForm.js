@@ -14,27 +14,6 @@ import {
 } from "@apollo/client";
 import PBDBSelectDialog from './PBDBSelectDialog.js';
 
-const queryPBDB = (setPBDBResult) => {
-    console.log("queryPBDB")
-    //setPBDBResult(["Hi there"]);
-    
-    fetch("https://paleobiodb.org/data1.2/refs/single.json?id=6930&show=both")
-      .then(res => res.json())
-      .then(
-        (result) => {
-            console.log(result.records);
-            setPBDBResult(result.records)
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-            alert(error)
-        }
-      )
-
-}
-
 const ReferenceSelect = (props) => {
     console.log("ReferenceSelect");
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
@@ -119,22 +98,6 @@ const ReferenceSelect = (props) => {
 
 const ReferenceMutateForm = ({handleSubmit, mode}) => {
 
-    const [open, setOpen] = React.useState(false);
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-    
-    const handleClose = () => {
-        setOpen(false);
-        //TODO: set PBDB and others
-    };
-
-    const [references, setReferences] = useState([]);
-    const setPBDBResult = (references) => {
-        setReferences(references);
-        setOpen(true);
-    }
     
     const initValues = {
                 reference: '',
@@ -248,50 +211,11 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
 
                 <AuthorManager values={props.values}/>
 
-                <Grid container spacing={2} direction="row">
-                    <Grid item xs={5}>
-                        <Field
-                            component={TextField}
-                            type="text"
-                            name="pbdbid"
-                            label="PBDB ID"
-                            fullWidth 
-                            disabled={false}
-                        />
-                    </Grid>
-                    <Grid item xs={1}>
                         
-                        <IconButton
-                            color="secondary" 
-                            size="large"
-                            onClick={()=>{queryPBDB(setPBDBResult)}}
-                            sx={{width:"50px"}}
-                        >
-                            <SearchIcon/>
-                        </IconButton>
-                        
-                        <PBDBSelectDialog 
-                            references={references} 
-                            open={open}
-                            onClose={handleClose}
-                        />
+                <PBDBSelectDialog 
+                />
                         
                         
-                        {/*}
-                        <Tooltip title="Search on PBDB site">
-                            <Link 
-                                sx={{width:"50px"}} 
-                                color="secondary" 
-                                underline="hover" 
-                                href="https://paleobiodb.org/classic/displaySearchRefs?type=view"  
-                                target="_blank"
-                            >
-                                <SearchIcon/>
-                            </Link>
-                        </Tooltip>
-                    */}
-                     </Grid>
-                </Grid>
                 <br />
 
                 <Field
