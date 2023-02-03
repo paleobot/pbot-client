@@ -12,7 +12,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import PBDBSelectDialog from './PBDBSelectDialog.js';
+import PBDBSelect from './PBDBSelect.js';
 
 const ReferenceSelect = (props) => {
     console.log("ReferenceSelect");
@@ -212,7 +212,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 <AuthorManager values={props.values}/>
 
                         
-                <PBDBSelectDialog 
+                <PBDBSelect 
                 />
                         
                         
