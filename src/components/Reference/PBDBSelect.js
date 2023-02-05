@@ -86,7 +86,7 @@ const PBDBDialog = (props) => {
         <DialogActions>
             <FormControlLabel 
                 control={
-                    <Checkbox onChange={(event) => {setPopulateAll(event.target.checked)}}/>
+                    <Checkbox disabled={references.length === 0} onChange={(event) => {setPopulateAll(event.target.checked)}}/>
                 } 
                 label="Populate all fields" />
             <Button onClick={props.handleClose} color="secondary">Cancel</Button>
