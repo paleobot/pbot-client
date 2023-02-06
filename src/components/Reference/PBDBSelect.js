@@ -24,7 +24,7 @@ const PBDBDialog = (props) => {
             `https://paleobiodb.org/data1.2/refs/single.json?id=${props.values.pbdbid}&show=both&vocab=bibjson` :
             "https://paleobiodb.org/data1.2/refs/list.json?show=both&vocab=bibjson" 
         if (!props.values.pbdbid) {
-            url = props.values.title ? `${url}&ref_title=${props.values.title}` : url;
+            url = props.values.title ? `${url}&ref_title=%${props.values.title}%` : url;
             url = props.values.year ? `${url}&ref_pubyr=${props.values.year}` : url;
             url = props.values.doi ? `${url}&ref_doi=${props.values.doi}` : url;
             //url = props.values.authors.length > 0 ? `${url}&ref_author=${props.values.authors[0].surname}` : url;
@@ -107,52 +107,37 @@ export default function PBDBSelect(props) {
         setOpen(false);
     };
 
-    const handleSelect = (value, populateAll) => {
+    const handleSelect = (reference, populateAll) => {
         console.log("click")
-        console.log(value);
-        console.log(value.id)
+        console.log(reference);
+        console.log(reference.id)
         console.log(formikProps)
-        formikProps.setFieldValue("pbdbid", value.id);
+        formikProps.setFieldValue("pbdbid", reference.id);
         if (populateAll) {
-            formikProps.setFieldValue("year", value.year);
-            formikProps.setFieldValue("title", value.title);
+            formikProps.setFieldValue("year", reference.year);
+            formikProps.setFieldValue("title", reference.title);
+            formikProps.setFieldValue("publisher", reference.journal || reference.booktitle);
+            formikProps.setFieldValue("doi", (reference.identifier && reference.identifier.type === "doi") ? reference.identifier.id : null);
         }
         setOpen(false);
     };
 
 
     return (
-        <div>
-            <Grid container spacing={2} direction="row">
-                <Grid item xs={5}>
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="pbdbid"
-                        label="PBDB ID"
-                        fullWidth 
-                        disabled={false}
-                        value={formikProps.values.pbdbid} 
-                        onChange={formikProps.handleChange}
-                    />
-                </Grid>
-                <Grid item xs={1}>
-                    
-                    <IconButton
-                        color="secondary" 
-                        size="large"
-                        onClick={()=>{setOpen(true)}}
-                        sx={{width:"50px"}}
-                        disabled={!((formikProps.values.title && formikProps.values.year) || formikProps.values.doi)}
+        <>
+            <IconButton
+                color="secondary" 
+                size="large"
+                onClick={()=>{setOpen(true)}}
+                sx={{width:"50px"}}
+                disabled={!((formikProps.values.title && formikProps.values.year) || formikProps.values.doi || formikProps.values.pbdbid)}
 
-                    >
-                        <SearchIcon/>
-                    </IconButton>
-                    {open &&
-                        <PBDBDialog open={open} handleClose={handleClose} handleSelect={handleSelect} values={formikProps.values}/>
-                    }
-                </Grid>
-            </Grid>
-        </div>
+            >
+                <SearchIcon/>
+            </IconButton>
+            {open &&
+                <PBDBDialog open={open} handleClose={handleClose} handleSelect={handleSelect} values={formikProps.values}/>
+            }
+        </>
     );
 }
