@@ -84,7 +84,6 @@ const PBDBDialog = (props) => {
                 "No references found"
             )}
             {!loading && !error && references.length > 0 && (
-                <>
                 <List sx={{ pt: 0 }}>
                     {references.map((reference) => (
                         <ListItem disableGutters key={reference.id}>
@@ -95,21 +94,23 @@ const PBDBDialog = (props) => {
                         </ListItem>
                     ))}
                 </List>
+            )}
+            {!loading && !error && (
                 <Typography variant="h6" align="center">
-                Don't see what you're looking for? <br />
-                <Tooltip title="Search on PBDB site">
-                    <Link 
-                        sx={{width:"50px"}} 
-                        color="secondary" 
-                        underline="hover" 
-                        href="https://paleobiodb.org/classic/displaySearchRefs?type=view"  
-                        target="_blank"
-                    >
-                        Search directly on the PBDB site.
-                    </Link>
-                </Tooltip>
+                    <br />
+                    Don't see what you're looking for? <br />
+                    <Tooltip title="Search on PBDB site">
+                        <Link 
+                            sx={{width:"50px"}} 
+                            color="secondary" 
+                            underline="hover" 
+                            href="https://paleobiodb.org/classic/displaySearchRefs?type=view"  
+                            target="_blank"
+                        >
+                            Search directly on the PBDB site.
+                        </Link>
+                    </Tooltip>
                 </Typography>
-                </>
             )}
         </DialogContent>
         <DialogActions>
