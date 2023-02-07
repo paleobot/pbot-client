@@ -52,9 +52,15 @@ const AuthorSelect = (props) => {
                 multiple: false,
             }}
             disabled={false}
+            onChange={(e,c) => {
+                console.log(e); 
+                console.log(c.props.children); 
+                props.values.authors[e.target.name.split('.')[1]].searchName=c.props.dsearchname; 
+                console.log(props.values.authors)
+                props.handleChange(e)}}
         >
-            {authors.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
+            {authors.map(({ pbotID, name, surname }) => (
+                <MenuItem key={pbotID} value={pbotID} dsearchname={surname}>{name}</MenuItem>
             ))}
         </Field>
     )
@@ -77,7 +83,7 @@ export const AuthorManager = (props) => {
                         return (
                             <Grid container spacing={2} direction="row" key={index}>
                                 <Grid item xs={5}>
-                                    <AuthorSelect name={`authors.${index}.pbotID`}/>
+                                    <AuthorSelect name={`authors.${index}.pbotID`} values={props.values} handleChange={props.handleChange}/>
                                 </Grid>
                                 <Grid item xs={1}>
                                     <Field
