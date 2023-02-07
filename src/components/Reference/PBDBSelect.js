@@ -6,10 +6,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Checkbox, FormControlLabel, Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { Checkbox, FormControlLabel, Grid, IconButton, Link, List, ListItem, ListItemButton, ListItemText, Tooltip, Typography } from '@mui/material';
 import { Field, useFormikContext } from 'formik';
 import SearchIcon from '@mui/icons-material/Search';
 import { responsePathAsArray } from 'graphql';
+import { alphabetize } from '../../util';
 
 
 const PBDBDialog = (props) => {
@@ -27,7 +28,17 @@ const PBDBDialog = (props) => {
             url = props.values.title ? `${url}&ref_title=%${props.values.title}%` : url;
             url = props.values.year ? `${url}&ref_pubyr=${props.values.year}` : url;
             url = props.values.doi ? `${url}&ref_doi=${props.values.doi}` : url;
-            //url = props.values.authors.length > 0 ? `${url}&ref_author=${props.values.authors[0].surname}` : url;
+            url = props.values.publisher ? `${url}&pub_title=${props.values.publisher}` : url;
+            const authors = alphabetize(props.values.authors, "order").reduce((str, author, idx) => {
+                return idx === 0 ? 
+                    author.searchName : 
+                    idx === 1 ?
+                        `${str} and ${author.searchName}` :
+                    str;
+            }, '');
+            url = props.values.authors.length > 0 ? `${url}&ref_author=${authors}` : url;
+            console.log(props.values)
+            console.log(props.values.authors)
         }
         console.log(url);
         
@@ -59,7 +70,9 @@ const PBDBDialog = (props) => {
 
     return (
         <Dialog fullWidth={true} open={props.open}>
-        <DialogTitle>Select PBDB Reference</DialogTitle>
+        <DialogTitle>
+            Select PBDB Reference             
+        </DialogTitle>
         <DialogContent>
             {loading && (
                 "Loading..."
@@ -71,6 +84,7 @@ const PBDBDialog = (props) => {
                 "No references found"
             )}
             {!loading && !error && references.length > 0 && (
+                <>
                 <List sx={{ pt: 0 }}>
                     {references.map((reference) => (
                         <ListItem disableGutters key={reference.id}>
@@ -81,14 +95,31 @@ const PBDBDialog = (props) => {
                         </ListItem>
                     ))}
                 </List>
+                <Typography variant="h6" align="center">
+                Don't see what you're looking for? <br />
+                <Tooltip title="Search on PBDB site">
+                    <Link 
+                        sx={{width:"50px"}} 
+                        color="secondary" 
+                        underline="hover" 
+                        href="https://paleobiodb.org/classic/displaySearchRefs?type=view"  
+                        target="_blank"
+                    >
+                        Search directly on the PBDB site.
+                    </Link>
+                </Tooltip>
+                </Typography>
+                </>
             )}
         </DialogContent>
         <DialogActions>
+            <Tooltip title="Populate other fields in the form as well as the PBDB ID field">
             <FormControlLabel 
                 control={
                     <Checkbox disabled={references.length === 0} onChange={(event) => {setPopulateAll(event.target.checked)}}/>
                 } 
                 label="Populate all fields" />
+            </Tooltip>
             <Button onClick={props.handleClose} color="secondary">Cancel</Button>
         </DialogActions>
     </Dialog>
@@ -130,7 +161,7 @@ export default function PBDBSelect(props) {
                 size="large"
                 onClick={()=>{setOpen(true)}}
                 sx={{width:"50px"}}
-                disabled={!((formikProps.values.title && formikProps.values.year) || formikProps.values.doi || formikProps.values.pbdbid)}
+                disabled={!(formikProps.values.title || formikProps.values.publisher || formikProps.values.year || formikProps.values.doi || formikProps.values.pbdbid || formikProps.values.authors[0].searchName)}
 
             >
                 <SearchIcon/>
