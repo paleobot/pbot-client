@@ -29,6 +29,8 @@ const ReferenceSelect = (props) => {
                 authoredBy {
                     Person {
                         pbotID
+                        given
+                        surname
                     }
                     order
                 }
@@ -87,7 +89,7 @@ const ReferenceSelect = (props) => {
                     dyear={reference.year}
                     ddoi={reference.doi}
                     dpbdbid={reference.pbdbid}
-                    dauthors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order || ''}})) : null}
+                    dauthors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order, searchName: author.Person.surname || ''}})) : null}
                     dpublic={reference.elementOf && reference.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={reference.elementOf ? JSON.stringify(reference.elementOf.map(group => group.pbotID)) : null}
                 >{reference.title + ", " + reference.publisher + ", " + reference.year}</MenuItem>
@@ -107,6 +109,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 authors: [{
                     pbotID: '',
                     order:'',
+                    searchName:'',
                 }],
                 doi: '',
                 pbdbid: '',
@@ -141,7 +144,8 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                             .required('Author name is required'),
                         order: Yup.string()
                             .required('Author order is required')
-                            .typeError('Author order is required')
+                            .typeError('Author order is required'),
+                        searchName: Yup.string(),
                     })
                 ).min(1, "Must specify at least one author"),
                 public: Yup.boolean(),
@@ -209,7 +213,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 />
                 <br />
 
-                <AuthorManager values={props.values}/>
+                <AuthorManager values={props.values} handleChange={props.handleChange}/>
 
                         
                 <Grid container spacing={2} direction="row">
