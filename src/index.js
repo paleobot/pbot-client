@@ -245,8 +245,15 @@ const theme = createTheme({
           defaultProps: {
               color: "secondary"
           }
+      },
+      MuiTooltip: {
+        styleOverrides: {
+          tooltip: {
+            fontSize: "0.9em",
+          }
+        }
       }
-  }
+    }
 });
 
 ReactDOM.render(
