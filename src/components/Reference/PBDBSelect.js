@@ -114,7 +114,7 @@ const PBDBDialog = (props) => {
             )}
         </DialogContent>
         <DialogActions>
-            <Tooltip title="Populate other fields in the form as well as the PBDB ID field">
+            <Tooltip title="Populate other fields in the form as well as the PBDB ID field (Note: Authors requires manual entry).">
             <FormControlLabel 
                 control={
                     <Checkbox disabled={references.length === 0} onChange={(event) => {setPopulateAll(event.target.checked)}}/>
@@ -157,16 +157,18 @@ export default function PBDBSelect(props) {
 
     return (
         <>
-            <IconButton
-                color="secondary" 
-                size="large"
-                onClick={()=>{setOpen(true)}}
-                sx={{width:"50px"}}
-                disabled={!(formikProps.values.title || formikProps.values.publisher || formikProps.values.year || formikProps.values.doi || formikProps.values.pbdbid || formikProps.values.authors[0].searchName)}
+            <Tooltip title="Search PBDB using data from this form (only enabled when a searchable field is populated)."><span>
+                <IconButton
+                    color="secondary" 
+                    size="large"
+                    onClick={()=>{setOpen(true)}}
+                    sx={{width:"50px"}}
+                    disabled={!(formikProps.values.title || formikProps.values.publisher || formikProps.values.year || formikProps.values.doi || formikProps.values.pbdbid || formikProps.values.authors[0].searchName)}
 
-            >
-                <SearchIcon/>
-            </IconButton>
+                >
+                    <SearchIcon/>
+                </IconButton>
+            </span></Tooltip>
             {open &&
                 <PBDBDialog open={open} handleClose={handleClose} handleSelect={handleSelect} values={formikProps.values}/>
             }
