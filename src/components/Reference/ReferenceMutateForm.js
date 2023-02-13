@@ -7,6 +7,7 @@ import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {AuthorManager} from '../Person/AuthorManager.js';
+import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
 
 import {
   useQuery,
@@ -14,7 +15,7 @@ import {
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
 
-const ReferenceSelect = (props) => {
+const ReferenceSelectx = (props) => {
     console.log("ReferenceSelect");
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
     const gQL = gql`
@@ -99,7 +100,6 @@ const ReferenceSelect = (props) => {
 }
 
 const ReferenceMutateForm = ({handleSubmit, mode}) => {
-
     
     const initValues = {
                 reference: '',
@@ -175,10 +175,12 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 />
                 
                 {(mode === "edit" || mode === "delete") &&
-                    <div>
-                        <ReferenceSelect values={props.values} handleChange={props.handleChange}/>
-                        <br />
-                    </div>
+                    <Grid container spacing={2} direction="row" >
+                        <Grid item >
+                            <ReferenceSelect name="reference" values={props.values} handleChange={props.handleChange}/>
+                            <br />            
+                        </Grid>
+                    </Grid>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.reference !== '')) &&

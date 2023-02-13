@@ -5,6 +5,7 @@ import { TextField } from 'formik-mui';
 import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
 
 export const ReferenceManager = (props) => {
+
     const style = {marginTop: "1.5em"}
     return (
     <div style={style}>
@@ -14,15 +15,15 @@ export const ReferenceManager = (props) => {
         <FieldArray name="references">
             {({ insert, remove, push }) => (
             <div>
-            <Grid container direction="column">
+            {/*<Grid container direction="column">*/}
                 {props.values.references.length > 0 &&
                     props.values.references.map((reference, index) => { 
                         return (
-                            <Grid container spacing={2} direction="row" key={index}>
-                                <Grid item xs={5}>
-                                    <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)}/>
+                            <Grid container item spacing={2} direction="row" key={index}>
+                                <Grid item >
+                                    <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)} />
                                 </Grid>
-                                <Grid item xs={1}>
+                                <Grid item >
                                     <Field
                                         component={TextField}
                                         name={`references.${index}.order`}
@@ -31,7 +32,7 @@ export const ReferenceManager = (props) => {
                                         sx={{width:"75px"}}
                                     />
                                 </Grid>
-                                {(index > 0 || props.optional) &&
+                                 {(index > 0 || props.optional) &&
                                 <Grid item xs={1} sx={{ display: "flex", justifyContent: "flex-start" }}>
                                     <Button
                                         type="button"
@@ -48,7 +49,7 @@ export const ReferenceManager = (props) => {
                             </Grid>
                         )
                     })}
-                </Grid>
+                {/*</Grid>*/}
                 <Button
                     type="button"
                     variant="text" 

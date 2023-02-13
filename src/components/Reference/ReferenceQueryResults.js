@@ -5,6 +5,7 @@ import {
 } from "@apollo/client";
 import { alphabetize } from '../../util.js';
 import {publicGroupID} from '../Group/GroupSelect.js';
+import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
 function References(props) {
     console.log(props);
@@ -48,6 +49,20 @@ function References(props) {
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
     const indent2 = {marginLeft:"4em"}
+    if (props.select) {
+        return (
+            <List sx={{ pt: 0 }}>
+            {references.map((reference) => (
+                <ListItem disableGutters key={reference.pbotID}>
+                    <ListItemButton onClick={() => props.handleSelect(reference)} >
+                        <ListItemText 
+                        primary={reference.title} secondary={`pbot id: ${reference.pbotID}`} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+        )
+    }
     return (references.length === 0) ? (
         <div style={style}>
             No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
@@ -71,7 +86,7 @@ function References(props) {
 
 }
 
-const ReferenceQueryResults = ({queryParams}) => {
+const ReferenceQueryResults = ({queryParams, select, handleSelect}) => {
     console.log(queryParams);
 
     return (
@@ -83,6 +98,8 @@ const ReferenceQueryResults = ({queryParams}) => {
                 publisher: queryParams.publisher || null, 
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
             }}
+            select={select}
+            handleSelect={handleSelect}
         />
     );
 };
