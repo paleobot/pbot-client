@@ -108,31 +108,14 @@ export const InnerReferenceSelect = (props) => {
                     }}
                     disabled={false}
                     onChange={(event,child) => {
-                        //props.resetForm();
-                        props.values.title = child.props.dtitle || '';
-                        props.values.publisher = child.props.dpublisher || '';
-                        props.values.year = child.props.dyear || '';
-                        props.values.doi = child.props.ddoi || '';
-                        props.values.pbdbid = child.props.dpbdbid || '';
-                        props.values.authors = child.props.dauthors ? JSON.parse(child.props.dauthors) : [];
-                        props.values.public = "true"=== child.props.dpublic || false;
-                        props.values.origPublic = props.values.public;
-                        props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
-                        props.handleChange(event);
+                        props.handleSelect(JSON.parse(child.props.dreference))
                     }}
                 >
                     {references.map((reference) => (
                         <MenuItem 
                             key={reference.pbotID} 
                             value={reference.pbotID}
-                            dtitle={reference.title}
-                            dpublisher={reference.publisher}
-                            dyear={reference.year}
-                            ddoi={reference.doi}
-                            dpbdbid={reference.pbdbid}
-                            dauthors={reference.authoredBy ? JSON.stringify(reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order, searchName: author.Person.surname || ''}})) : null}
-                            dpublic={reference.elementOf && reference.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
-                            dgroups={reference.elementOf ? JSON.stringify(reference.elementOf.map(group => group.pbotID)) : null}
+                            dreference={JSON.stringify(reference)}
                         >{reference.title + ", " + reference.publisher + ", " + reference.year}</MenuItem>
                     ))}
                 </Field>
@@ -209,17 +192,19 @@ export const ReferenceSelect = (props) => {
         console.log(reference);
         console.log(reference.pbotID)
 
-        const authors = reference.authoredBy ? reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order, searchName: author.Person.surname || ''}}) : [];
-
         formikProps.setFieldValue(props.name, reference.pbotID);
         
-        formikProps.setFieldValue("pbdbid", reference.pbdbid || '');
-        formikProps.setFieldValue("year", reference.year || '');
-        formikProps.setFieldValue("title", reference.title || '');
-        formikProps.setFieldValue("publisher", reference.publisher || '');
-        formikProps.setFieldValue("doi", reference.doi || '');
-        formikProps.setFieldValue("authors", authors);
-        
+        if ("reference" === props.name) { //Standalone ReferenceSelect
+            const authors = reference.authoredBy ? reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order, searchName: author.Person.surname || ''}}) : [];
+
+            formikProps.setFieldValue("pbdbid", reference.pbdbid || '');
+            formikProps.setFieldValue("year", reference.year || '');
+            formikProps.setFieldValue("title", reference.title || '');
+            formikProps.setFieldValue("publisher", reference.publisher || '');
+            formikProps.setFieldValue("doi", reference.doi || '');
+            formikProps.setFieldValue("authors", authors);
+        }
+
         setOpen(false);
     };
 
@@ -242,7 +227,7 @@ export const ReferenceSelect = (props) => {
                     }
                 </Grid>
                 <Grid item xs={5}>
-                    <InnerReferenceSelect name={props.name} exclude={props.exclude} values={props.values} handleChange={props.handleChange}/>
+                    <InnerReferenceSelect name={props.name} exclude={props.exclude} values={props.values} handleSelect={handleSelect}/>
                 </Grid>
             </Grid>
         </>
