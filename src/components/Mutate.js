@@ -70,8 +70,10 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
     const [token, setToken] = useAuth();
     
     const handleModeChange = (event, newMode) => {
-        setShowResult(false);
-        setMode(newMode);
+        if (newMode !== null) {
+            setShowResult(false);
+            setMode(newMode);
+        }
     }
 
     if(!token) {
