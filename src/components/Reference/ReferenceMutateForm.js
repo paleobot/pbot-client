@@ -175,12 +175,10 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 />
                 
                 {(mode === "edit" || mode === "delete") &&
-                    <Grid container spacing={2} direction="row" >
-                        <Grid item >
-                            <ReferenceSelect name="reference" values={props.values} handleChange={props.handleChange}/>
-                            <br />            
-                        </Grid>
-                    </Grid>
+                    <>
+                        <ReferenceSelect name="reference" />
+                        <br />
+                    </>            
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.reference !== '')) &&
