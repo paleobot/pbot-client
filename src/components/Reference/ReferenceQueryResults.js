@@ -14,8 +14,8 @@ function References(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
     const gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String, $publisher: String, $groups: [ID!]) {
-                Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher, filter:{elementOf_some: {pbotID_in: $groups}}) {
+            query ($pbotID: ID, $title: String, $year: String, $publisher: String, $groups: [ID!], $excludeList: [ID!]) {
+                Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher, filter:{AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]}) {
                     pbotID
                     title
                     year
@@ -34,9 +34,13 @@ function References(props) {
             }
         `;
         
+    //For ReferenceManager applications, omit references that are already in the list
+    const excludeIDs = props.exclude ? props.exclude.map(reference => reference.pbotID) : [];
+
     const { loading, error, data } = useQuery(gQL, {
         variables: {
-            ...filters
+            ...filters,
+            excludeList: excludeIDs
         },
         fetchPolicy: "cache-and-network"
     });
@@ -86,7 +90,7 @@ function References(props) {
 
 }
 
-const ReferenceQueryResults = ({queryParams, select, handleSelect}) => {
+const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => {
     console.log(queryParams);
 
     return (
@@ -100,6 +104,7 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect}) => {
             }}
             select={select}
             handleSelect={handleSelect}
+            exclude={exclude}
         />
     );
 };
