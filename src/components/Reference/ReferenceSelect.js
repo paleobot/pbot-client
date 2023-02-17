@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Field, useFormikContext } from 'formik';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack } from '@mui/material';
 import { TextField } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {
@@ -52,19 +52,6 @@ export const InnerReferenceSelect = (props) => {
             }
         `;
 
-        /*
-        //TODO: Can this be moved up into ReferenceManager, so it is only done once?
-        const gQL = gql`
-                query  ($excludeList: [ID!]){
-                    Reference (filter: {pbotID_not_in: $excludeList}){
-                        pbotID
-                        title
-                        publisher
-                        year
-                    }            
-                }
-            `;
-        */
        //For ReferenceManager applications, omit references that are already in the list
         const excludeIDs = props.exclude ? props.exclude.map(reference => reference.pbotID) : [];
 
@@ -164,7 +151,7 @@ const ReferenceDialog = (props) => {
             <ReferenceQueryForm handleSubmit={handleSubmit}/>
             }
             {showResult &&
-            <ReferenceQueryResults queryParams={queryParams} select={true} handleSelect={props.handleSelect}/>
+            <ReferenceQueryResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect}/>
             }
         </DialogContent>
         <DialogActions>
@@ -208,28 +195,20 @@ export const ReferenceSelect = (props) => {
         setOpen(false);
     };
 
-
     return (
-        <>
-            <Grid container item spacing={2} direction="row" key={props.name}>
-                <Grid item xs={1}>
-                    <IconButton
-                        color="secondary" 
-                        size="large"
-                        onClick={()=>{setOpen(true)}}
-                        sx={{width:"50px"}}
-                        disabled={false}
-                    >
-                        <SearchIcon/>
-                    </IconButton>
-                    {open &&
-                        <ReferenceDialog open={open} handleClose={handleClose} handleSelect={handleSelect} values={formikProps.values}/>
-                    }
-                </Grid>
-                <Grid item xs={5}>
-                    <InnerReferenceSelect name={props.name} exclude={props.exclude} values={props.values} handleSelect={handleSelect}/>
-                </Grid>
-            </Grid>
-        </>
+        <Stack direction="row" key={props.name}>
+            <IconButton
+                color="secondary" 
+                size="large"
+                onClick={()=>{setOpen(true)}}
+                disabled={false}
+            >
+                <SearchIcon/>
+            </IconButton>
+            {open &&
+                <ReferenceDialog open={open} handleClose={handleClose} handleSelect={handleSelect} exclude={props.exclude} />
+            }
+            <InnerReferenceSelect name={props.name} exclude={props.exclude} handleSelect={handleSelect}/>
+        </Stack>
     );
 }
