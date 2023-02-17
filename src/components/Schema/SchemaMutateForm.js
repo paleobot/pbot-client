@@ -217,7 +217,7 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
 
                 <ReferenceManager values={props.values}/>
                 
-                <AuthorManager values={props.values}/>
+                <AuthorManager values={props.values} handleChange={props.handleChange}/>
 
                 <Field 
                     component={CheckboxWithLabel}
