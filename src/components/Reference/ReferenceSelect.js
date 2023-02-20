@@ -10,6 +10,7 @@ import {
 import ReferenceQueryForm from './ReferenceQueryForm.js';
 import SearchIcon from '@mui/icons-material/Search';
 import ReferenceQueryResults from './ReferenceQueryResults.js';
+import { publicGroupID } from '../Group/GroupSelect.js';
 
 
 export const InnerReferenceSelect = (props) => {
@@ -183,6 +184,9 @@ export const ReferenceSelect = (props) => {
         
         if ("reference" === props.name) { //Standalone ReferenceSelect
             const authors = reference.authoredBy ? reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order, searchName: author.Person.surname || ''}}) : [];
+            
+            const groups = reference.elementOf ? reference.elementOf.map(group => {return group.pbotID}) : [];
+            console.log(groups)
 
             formikProps.setFieldValue("pbdbid", reference.pbdbid || '');
             formikProps.setFieldValue("year", reference.year || '');
@@ -190,6 +194,8 @@ export const ReferenceSelect = (props) => {
             formikProps.setFieldValue("publisher", reference.publisher || '');
             formikProps.setFieldValue("doi", reference.doi || '');
             formikProps.setFieldValue("authors", authors);
+            formikProps.setFieldValue("groups", groups);
+            formikProps.setFieldValue("public", groups.includes(publicGroupID));
         }
 
         setOpen(false);
