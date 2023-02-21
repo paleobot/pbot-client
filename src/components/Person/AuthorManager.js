@@ -7,66 +7,11 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-
-const AuthorSelect = (props) => {
-    console.log("AuthorSelect");
-    console.log(props);
-    console.log(props.name);
-    const gQL = gql`
-            query {
-                Person (filter: {AND: [{given_not: "guest"}, {surname_not: "guest"}]}) {
-                    pbotID
-                    given
-                    surname
-                }            
-            }
-        `;
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                                 
-    console.log(data.Person);
-    
-    const authors = alphabetize(
-        data.Person.map(person => {
-            const newPerson = {...person};
-            console.log(newPerson);
-
-            newPerson.name = person.given + " " + person.surname;
-            return newPerson;
-        }), 
-    "surname");
-    console.log(authors)
-    
-    return (
-        <Field
-            component={TextField}
-            type="text"
-            name={props.name}
-            label="Name"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-            onChange={(e,c) => {
-                console.log(e); 
-                console.log(c.props.children); 
-                props.values.authors[e.target.name.split('.')[1]].searchName=c.props.dsearchname; 
-                console.log(props.values.authors)
-                props.handleChange(e)}}
-        >
-            {authors.map(({ pbotID, name, surname }) => (
-                <MenuItem key={pbotID} value={pbotID} dsearchname={surname}>{name}</MenuItem>
-            ))}
-        </Field>
-    )
-}
+import { PersonSelect } from './PersonSelect.js';
 
 export const AuthorManager = (props) => {
+    console.log("AuthorManager");
+
     const style = {marginTop: "1.5em"}
     return (
     <div style={style}>
@@ -83,7 +28,8 @@ export const AuthorManager = (props) => {
                         return (
                             <Grid container spacing={2} direction="row" key={index}>
                                 <Grid item xs={5}>
-                                    <AuthorSelect name={`authors.${index}.pbotID`} values={props.values} handleChange={props.handleChange}/>
+                                    {console.log(props.values.authors.filter(person => person.pbotID !== person.pbotID))}
+                                    <PersonSelect name={`authors.${index}.pbotID`} exclude={props.values.authors.filter(person => person.pbotID !== author.pbotID)}/>
                                 </Grid>
                                 <Grid item xs={1}>
                                     <Field
