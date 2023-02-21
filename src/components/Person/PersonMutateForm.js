@@ -10,74 +10,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-
-const PersonSelect = (props) => {
-    console.log("PersonSelect");
-    console.log(props);
-    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
-    const gQL = gql`
-        query {
-            Person {
-                pbotID
-                given
-                surname
-                email
-                orcid
-                memberOf {
-                    pbotID
-                }
-            }            
-        }
-    `;
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.values.schema}});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                      
-    console.log(">>>>>>>>>>>>Results<<<<<<<<<<<<<");
-    console.log(data.Person);
-    const persons = alphabetize([...data.Person], "surname");
-    console.log(persons);
-    
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="person"
-            label="Person"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-            onChange={(event,child) => {
-                //props.resetForm();
-                props.values.given = child.props.dgiven || '';
-                props.values.surname = child.props.dsurname || '';
-                props.values.email = child.props.demail || '';
-                props.values.orcid = child.props.dorcid || '';
-                props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
-                props.handleChange(event);
-            }}
-        >
-            {persons.map((person) => (
-                <MenuItem 
-                    key={person.pbotID} 
-                    value={person.pbotID}
-                    dsurname={person.surname}
-                    dgiven={person.given}
-                    demail={person.email}
-                    dorcid={person.orcid}
-                    dgroups={person.memberOf ? JSON.stringify(person.memberOf.map(group => group.pbotID)) : null}
-                >{person.given} {person.surname}</MenuItem>
-            ))}
-        </Field>
-    )
-}
+import { PersonSelect } from './PersonSelect.js';
 
 const PersonMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
@@ -128,7 +61,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "edit" || mode === "delete") &&
                     <div>
-                        <PersonSelect values={props.values} handleChange={props.handleChange}/>
+                        <PersonSelect name="person"/>
                         <br />
                     </div>
                 }
