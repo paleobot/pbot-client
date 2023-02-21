@@ -128,7 +128,7 @@ const PBDBDialog = (props) => {
 }
 
 export default function PBDBSelect(props) {
-    console.log("PBDBSelectDialog");
+    console.log("PBDBSelect");
     console.log(props.values)
 
     const formikProps = useFormikContext()
