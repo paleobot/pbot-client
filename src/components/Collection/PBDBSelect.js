@@ -26,7 +26,7 @@ const PBDBDialog = (props) => {
             "https://paleobiodb.org/data1.2/colls/list.json?show=full&vocab=pbdb" 
         if (!props.values.pbdbid) {
             url = props.values.name ? `${url}&coll_match=%${props.values.name}%` : url;
-            /* for specimens?
+            /* for specimens and references?
             const authors = alphabetize(props.values.authors, "order").reduce((str, author, idx) => {
                 return idx === 0 ? 
                     author.searchName : 
