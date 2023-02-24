@@ -11,6 +11,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import PBDBSelect from './PBDBSelect.js';
 
 const CollectionSelect = (props) => {
     console.log("CollectionSelect");
@@ -137,6 +138,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 collection: '', 
                 name: '',
+                pbdbid: '',
                 specimens: [],
                 references: [{
                     pbotID: '',
@@ -164,6 +166,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
+                pbdbid: Yup.string(),
                 specimens: Yup.array().of(Yup.string()).when('public', {
                     is: true,
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one specimen for a public collection")
@@ -213,6 +216,23 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                         fullWidth 
                         disabled={false}
                     />
+                    <br />
+
+                    <Grid container spacing={2} direction="row">
+                        <Grid item xs={5}>
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="pbdbid"
+                                label="PBDB ID"
+                                fullWidth 
+                                disabled={false}
+                            />
+                        </Grid>
+                        <Grid item xs={1}>
+                            <PBDBSelect />
+                        </Grid>
+                    </Grid>
                     <br />
 
                     <SpecimenSelect values={props.values}/>

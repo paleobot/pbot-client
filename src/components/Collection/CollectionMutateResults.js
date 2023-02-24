@@ -12,6 +12,7 @@ const CollectionMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.collection || null,
                 name: queryParams.name || null,
+                pbdbid: queryParams.pbdbid || null,
                 specimens: queryParams.specimens || null, 
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
