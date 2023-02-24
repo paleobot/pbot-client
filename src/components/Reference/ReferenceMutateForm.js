@@ -133,20 +133,20 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
 
                         
                 <Grid container spacing={2} direction="row">
-                <Grid item xs={5}>
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="pbdbid"
-                        label="PBDB ID"
-                        fullWidth 
-                        disabled={false}
-                    />
+                    <Grid item xs={5}>
+                        <Field
+                            component={TextField}
+                            type="text"
+                            name="pbdbid"
+                            label="PBDB ID"
+                            fullWidth 
+                            disabled={false}
+                        />
+                    </Grid>
+                    <Grid item xs={1}>
+                        <PBDBSelect />
+                    </Grid>
                 </Grid>
-                <Grid item xs={1}>
-                    <PBDBSelect />
-                </Grid>
-            </Grid>
                        
                         
                 <br />
