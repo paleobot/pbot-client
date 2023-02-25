@@ -21,6 +21,9 @@ const CollectionSelect = (props) => {
             Collection {
                 pbotID
                 name
+                lat
+                lon
+                pbdbid
                 elementOf {
                     name
                     pbotID
@@ -67,6 +70,9 @@ const CollectionSelect = (props) => {
                 console.log("Collection onChange");
                 console.log(child.props.dspecimens);
                 props.values.name = child.props.dname || '';
+                props.values.lat = child.props.dlat || '';
+                props.values.lon = child.props.dlon || '';
+                props.values.pbdbid = child.props.dpbdbid || '';
                 props.values.public = "true"===child.props.dpublic;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
@@ -81,6 +87,9 @@ const CollectionSelect = (props) => {
                     key={collection.pbotID} 
                     value={collection.pbotID}
                     dname={collection.name}
+                    dlat={collection.lat}
+                    dlon={collection.lon}
+                    dpbdbid={collection.pbdbid}
                     dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {console.log(">>>>>>>>>>Collection.name = "); console.log(collection.name); console.log("group.name ="); console.log(group.name); console.log(acc || "public" === group.name);return acc || "public" === group.name}, false).toString()}
                     dgroups={collection.elementOf ? JSON.stringify(collection.elementOf.map(group => group.pbotID)) : null}
                     dspecimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
@@ -138,6 +147,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 collection: '', 
                 name: '',
+                lat: '',
+                lon: '',
                 pbdbid: '',
                 specimens: [],
                 references: [{
@@ -166,6 +177,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
+                lat: Yup.string(), //for now
+                lon: Yup.string(), //for now
                 pbdbid: Yup.string(),
                 specimens: Yup.array().of(Yup.string()).when('public', {
                     is: true,
@@ -218,6 +231,25 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     />
                     <br />
 
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="lat"
+                        label="Latitude"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="lon"
+                        label="Longitude"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
                     <Grid container spacing={2} direction="row">
                         <Grid item xs={5}>
                             <Field
