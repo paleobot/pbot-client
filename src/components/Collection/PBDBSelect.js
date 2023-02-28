@@ -62,10 +62,9 @@ const PBDBDialog = (props) => {
                 if (response.status_code) {
                     throw new Error (response.errors[0]);
                 }
-                setCollections(response.records.map(coll => { //strip off annoying "ref:"
+                setCollections(response.records.map(coll => { 
                     return {
                         ...coll,
-                        //id: coll.id.slice(4),
                     }
                 }))
             }
@@ -163,6 +162,8 @@ export default function PBDBSelect(props) {
         if (populateAll) {
             //formikProps.setFieldValue("year", reference.year);
             formikProps.setFieldValue("name", collection.collection_name);
+            formikProps.setFieldValue("maxinterval", collection.early_interval || '');
+            formikProps.setFieldValue("mininterval", collection.late_interval || '');
             formikProps.setFieldValue("lat", collection.lat);
             formikProps.setFieldValue("lon", collection.lng);
             //formikProps.setFieldValue("publisher", reference.journal || reference.booktitle);
