@@ -11,7 +11,18 @@ import { Field, useFormikContext } from 'formik';
 import SearchIcon from '@mui/icons-material/Search';
 import { responsePathAsArray } from 'graphql';
 import { alphabetize } from '../../util';
+import buffer from '@turf/buffer'; 
+import { point } from '@turf/helpers';
+import wkx from 'wkx'
 
+const WKTBuffer = (lat, lon) => {
+    console.log("WKTBuffer")
+    const lt = parseFloat(lat);
+    const ln = parseFloat(lon)
+    const buffered = buffer(point([ln, lt]), 0.2, {units: 'degrees'});
+    const wkt = wkx.Geometry.parseGeoJSON(buffered.geometry).toWkt();
+    return wkt;
+}
 
 const PBDBDialog = (props) => {
     const [collections, setCollections] = useState([]);
@@ -26,6 +37,7 @@ const PBDBDialog = (props) => {
             "https://paleobiodb.org/data1.2/colls/list.json?show=full&vocab=pbdb" 
         if (!props.values.pbdbid) {
             url = props.values.name ? `${url}&coll_match=%${props.values.name}%` : url;
+            url = props.values.lat && props.values.lon ? `${url}&loc=${WKTBuffer(props.values.lat, props.values.lon)}` : url;
             /* for specimens and references?
             const authors = alphabetize(props.values.authors, "order").reduce((str, author, idx) => {
                 return idx === 0 ? 
@@ -132,6 +144,10 @@ export default function PBDBSelect(props) {
 
     const formikProps = useFormikContext()
 
+    if (formikProps.values.lat && formikProps.values.lon) {
+        WKTBuffer(formikProps.values.lat, formikProps.values.lon)
+    }
+
     const [open, setOpen] = React.useState(false);
     
     const handleClose = () => {
@@ -147,6 +163,8 @@ export default function PBDBSelect(props) {
         if (populateAll) {
             //formikProps.setFieldValue("year", reference.year);
             formikProps.setFieldValue("name", collection.collection_name);
+            formikProps.setFieldValue("lat", collection.lat);
+            formikProps.setFieldValue("lon", collection.lng);
             //formikProps.setFieldValue("publisher", reference.journal || reference.booktitle);
             //formikProps.setFieldValue("doi", (reference.identifier && reference.identifier.type === "doi") ? reference.identifier.id : null);
         }
@@ -162,7 +180,7 @@ export default function PBDBSelect(props) {
                     size="large"
                     onClick={()=>{setOpen(true)}}
                     sx={{width:"50px"}}
-                    disabled={!(formikProps.values.name || formikProps.values.pbdbid)}
+                    disabled={!(formikProps.values.name || formikProps.values.pbdbid || (formikProps.values.lat && formikProps.values.lon))}
 
                 >
                     <SearchIcon/>
