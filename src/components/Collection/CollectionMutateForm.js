@@ -1,4 +1,4 @@
-import React, { useState }from 'react';
+import React, { useState, useEffect }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
@@ -12,6 +12,72 @@ import {
   gql
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
+
+const IntervalSelect = (props) => {
+    const [intervals, setIntervals] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const uniq = (a) => {
+        const seen = {};
+        return a.filter((item) => {
+            return seen.hasOwnProperty(item.name) ? false : (seen[item.name] = true);
+        });
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=all&vocab=pbdb")
+        fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=1&vocab=pbdb")
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                if (response.status_code) {
+                    throw new Error (response.errors[0]);
+                }
+                setIntervals(uniq(response.records.map(int => { //only care about name; get rid of dups
+                    return {
+                        name: int.interval_name
+                    }
+                })))
+            }
+        ).catch (
+            (error) => {
+                console.log("error!")
+                console.log(error)
+                setError(error)
+            }
+        )
+    }, [])
+
+    const style = {minWidth: "12ch"}
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>Error :(</p>
+
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name={props.name}
+            label={"maxinterval" === props.name ? "Maximum interval" : "Minimum interval"}
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {intervals.map((interval) => (
+                <MenuItem 
+                    key={interval.name} 
+                    value={interval.name}
+                >{interval.name}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const CollectionSelect = (props) => {
     console.log("CollectionSelect");
@@ -147,6 +213,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 collection: '', 
                 name: '',
+                maxinterval: '',
+                mininterval: '',
                 lat: '',
                 lon: '',
                 pbdbid: '',
@@ -177,6 +245,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
+                maxinterval: Yup.string(),
+                mininterval: Yup.string(),
                 lat: Yup.string(), //for now
                 lon: Yup.string(), //for now
                 pbdbid: Yup.string(),
@@ -250,6 +320,13 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                         disabled={false}
                     />
                     <br />
+
+                    <IntervalSelect name="maxinterval" />
+                    <br />
+
+                    <IntervalSelect name="mininterval" />
+                    <br />
+
                     <Grid container spacing={2} direction="row">
                         <Grid item xs={5}>
                             <Field
