@@ -6,6 +6,7 @@ import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
+//import IntervalSelect from './IntervalSelect.js';
 
 import {
   useQuery,
@@ -28,7 +29,8 @@ const IntervalSelect = (props) => {
     useEffect(() => {
         setLoading(true);
         //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=all&vocab=pbdb")
-        fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=1&vocab=pbdb")
+        //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=1&vocab=pbdb")
+        fetch("https://macrostrat.org/api/v1/defs/intervals?timescale_id=1")
         .then(res => res.json())
         .then(
             (response) => {
@@ -36,11 +38,18 @@ const IntervalSelect = (props) => {
                 if (response.status_code) {
                     throw new Error (response.errors[0]);
                 }
+                /*
                 setIntervals(uniq(response.records.map(int => { //only care about name; get rid of dups
                     return {
                         name: int.interval_name
                     }
                 })))
+                */
+                setIntervals(response.success.data.map(int => { //only care about name
+                    return {
+                        name: int.name
+                    }
+                }));
             }
         ).catch (
             (error) => {
@@ -74,6 +83,71 @@ const IntervalSelect = (props) => {
                     key={interval.name} 
                     value={interval.name}
                 >{interval.name}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const LithologySelect = (props) => {
+    const [lithologies, setLithologies] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const uniq = (a) => {
+        const seen = {};
+        return a.filter((item) => {
+            return seen.hasOwnProperty(item.name) ? false : (seen[item.name] = true);
+        });
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        fetch("https://macrostrat.org/api/v1/defs/lithologies?all")
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                if (response.status_code) {
+                    throw new Error (response.errors[0]);
+                }
+                setLithologies(response.success.data.map(int => { //only care about name
+                    return {
+                        name: int.lith
+                    }
+                }));
+            }
+        ).catch (
+            (error) => {
+                console.log("error!")
+                console.log(error)
+                setError(error)
+            }
+        )
+    }, [])
+
+    const style = {minWidth: "12ch"}
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>Error :(</p>
+
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="lithology"
+            label="Lithology"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {lithologies.map((lith) => (
+                <MenuItem 
+                    key={lith.name} 
+                    value={lith.name}
+                >{lith.name}</MenuItem>
             ))}
         </Field>
     )
@@ -217,6 +291,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 mininterval: '',
                 lat: '',
                 lon: '',
+                lithology: '',
                 pbdbid: '',
                 specimens: [],
                 references: [{
@@ -245,6 +320,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
+                lithology: Yup.string(),
                 maxinterval: Yup.string(),
                 mininterval: Yup.string(),
                 lat: Yup.string(), //for now
@@ -321,11 +397,16 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     />
                     <br />
 
+
                     <IntervalSelect name="maxinterval" />
                     <br />
 
                     <IntervalSelect name="mininterval" />
                     <br />
+                    
+                    <LithologySelect />
+                    <br />
+                    
 
                     <Grid container spacing={2} direction="row">
                         <Grid item xs={5}>
