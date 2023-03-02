@@ -164,6 +164,8 @@ export default function PBDBSelect(props) {
             formikProps.setFieldValue("name", collection.collection_name);
             formikProps.setFieldValue("maxinterval", collection.early_interval || '');
             formikProps.setFieldValue("mininterval", collection.late_interval || '');
+            formikProps.setFieldValue("lithology", collection.lithology1 || '');
+            formikProps.setFieldValue("environment", collection.environment || '');
             formikProps.setFieldValue("lat", collection.lat);
             formikProps.setFieldValue("lon", collection.lng);
             //formikProps.setFieldValue("publisher", reference.journal || reference.booktitle);
