@@ -1,11 +1,13 @@
 import React, { useState, useEffect }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 //import IntervalSelect from './IntervalSelect.js';
 
 import {
@@ -153,6 +155,71 @@ const LithologySelect = (props) => {
     )
 }
 
+const EnvironmentSelect = (props) => {
+    const [environments, setEnvironments] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const uniq = (a) => {
+        const seen = {};
+        return a.filter((item) => {
+            return seen.hasOwnProperty(item.name) ? false : (seen[item.name] = true);
+        });
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        fetch("https://macrostrat.org/api/v1/defs/environments?all")
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                if (response.status_code) {
+                    throw new Error (response.errors[0]);
+                }
+                setEnvironments(response.success.data.map(int => { //only care about name
+                    return {
+                        name: int.environ
+                    }
+                }));
+            }
+        ).catch (
+            (error) => {
+                console.log("error!")
+                console.log(error)
+                setError(error)
+            }
+        )
+    }, [])
+
+    const style = {minWidth: "12ch"}
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>Error :(</p>
+
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="environment"
+            label="Environment"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {environments.map((env) => (
+                <MenuItem 
+                    key={env.name} 
+                    value={env.name}
+                >{env.name}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
 const CollectionSelect = (props) => {
     console.log("CollectionSelect");
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
@@ -292,8 +359,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 lat: '',
                 lon: '',
                 lithology: '',
+                environment: '',
                 pbdbid: '',
-                specimens: [],
                 references: [{
                     pbotID: '',
                     order:'',
@@ -313,6 +380,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "60%", marginTop:"20px"}
     return (
        
         <Formik
@@ -321,15 +389,12 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 lithology: Yup.string(),
+                environment: Yup.string(),
                 maxinterval: Yup.string(),
                 mininterval: Yup.string(),
                 lat: Yup.string(), //for now
                 lon: Yup.string(), //for now
                 pbdbid: Yup.string(),
-                specimens: Yup.array().of(Yup.string()).when('public', {
-                    is: true,
-                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one specimen for a public collection")
-                }),
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
@@ -425,9 +490,6 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     </Grid>
                     <br />
 
-                    <SpecimenSelect values={props.values}/>
-                    <br />
-
                     <ReferenceManager values={props.values}/>
                 
                     <Field 
@@ -445,6 +507,19 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                         <br />
                     </div>
                     }
+
+                    <Accordion fullWidth style={accstyle}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="optional-content"
+                            id="optional-header"                        
+                        >
+                            Optional fields
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <EnvironmentSelect/>
+                        </AccordionDetails>
+                    </Accordion>
                 
                     </div>
                 }
