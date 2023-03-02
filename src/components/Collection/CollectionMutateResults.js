@@ -16,6 +16,7 @@ const CollectionMutateResults = ({queryParams}) => {
                 maxinterval: queryParams.maxinterval || null,
                 lithology: queryParams.lithology || null,
                 environment: queryParams.environment || null,
+                collectors: queryParams.collectors || null,
                 lat: parseFloat(queryParams.lat) || null,
                 lon: parseFloat(queryParams.lon) || null,
                 pbdbid: queryParams.pbdbid || null,

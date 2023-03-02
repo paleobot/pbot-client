@@ -1,7 +1,7 @@
 import React, { useState, useEffect }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
@@ -15,6 +15,7 @@ import {
   gql
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
+
 
 const IntervalSelect = (props) => {
     const [intervals, setIntervals] = useState([]);
@@ -62,7 +63,7 @@ const IntervalSelect = (props) => {
         )
     }, [])
 
-    const style = {minWidth: "12ch"}
+    const style = {minWidth: "12ch", width:"35%"}
     if (loading) return <p>Loading...</p>
     if (error) return <p>Error :(</p>
 
@@ -73,7 +74,6 @@ const IntervalSelect = (props) => {
             type="text"
             name={props.name}
             label={"maxinterval" === props.name ? "Maximum interval" : "Minimum interval"}
-            fullWidth 
             select={true}
             SelectProps={{
                 multiple: false,
@@ -307,14 +307,14 @@ const CollectionSelect = (props) => {
     )
 }
 
-const SpecimenSelect = (props) => {
-    console.log("SpecimenSelect");
-
+const PreservationModeSelect = (props) => {
+    console.log("PreservationModeSelect");
+    console.log(props);
     const gQL = gql`
             query {
-                Specimen (filter: { OR: [{collection: {pbotID: "${props.values.collection}"}}, {collection: null}]}) {
-                    pbotID
+                PreservationMode {
                     name
+                    pbotID
                 }            
             }
         `;
@@ -324,29 +324,28 @@ const SpecimenSelect = (props) => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
                                  
-    console.log(data.Specimen);
-    
-    const specimens = alphabetize([...data.Specimen], "name");
-    console.log(specimens)
+    console.log(data.preservationModes);
+    const preservationModes = alphabetize([...data.PreservationMode], "name");
     
     return (
         <Field
             component={TextField}
             type="text"
-            name="specimens"
-            label="Specimens"
+            name="preservationMode"
+            label="Preservation mode"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: true,
+                multiple: false,
             }}
             disabled={false}
         >
-            {specimens.map(({ pbotID, name }) => (
+            {preservationModes.map(({ pbotID, name }) => (
                 <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
             ))}
         </Field>
     )
+        
 }
 
 
@@ -380,7 +379,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
-    const accstyle = {textAlign: "left", width: "60%", marginTop:"20px"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -431,82 +430,85 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.collection !== '')) &&
-                    <div>
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="name"
-                        label="Name"
-                        fullWidth 
-                        disabled={false}
-                    />
-                    <br />
-
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="lat"
-                        label="Latitude"
-                        fullWidth 
-                        disabled={false}
-                    />
-                    <br />
-
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="lon"
-                        label="Longitude"
-                        fullWidth 
-                        disabled={false}
-                    />
-                    <br />
-
-
-                    <IntervalSelect name="maxinterval" />
-                    <br />
-
-                    <IntervalSelect name="mininterval" />
-                    <br />
-                    
-                    <LithologySelect />
-                    <br />
-                    
-
-                    <Grid container spacing={2} direction="row">
-                        <Grid item xs={5}>
+                    <>
+                    <Accordion fullWidth style={accstyle} defaultExpanded={true}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Required fields
+                    </AccordionSummary>
+                    <AccordionDetails>
+                
                             <Field
                                 component={TextField}
                                 type="text"
-                                name="pbdbid"
-                                label="PBDB ID"
+                                name="name"
+                                label="Name"
                                 fullWidth 
                                 disabled={false}
                             />
-                        </Grid>
-                        <Grid item xs={1}>
-                            <PBDBSelect />
-                        </Grid>
-                    </Grid>
-                    <br />
+                            <br />
 
-                    <ReferenceManager values={props.values}/>
-                
-                    <Field 
-                        component={CheckboxWithLabel}
-                        name="public" 
-                        type="checkbox"
-                        Label={{label:"Public"}}
-                        disabled={(mode === "edit" && props.values.origPublic)}
-                    />
-                    <br />
-                    
-                    {!props.values.public &&
-                    <div>
-                        <GroupSelect />
-                        <br />
-                    </div>
-                    }
+                            <Stack direction="row" spacing={4}>
+                                <Field
+                                    component={TextField}
+                                    type="text"
+                                    name="lat"
+                                    label="Latitude"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={TextField}
+                                    type="text"
+                                    name="lon"
+                                    label="Longitude"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                            </Stack>
+
+                            <Stack direction="row" spacing={4}>
+                                <IntervalSelect name="maxinterval" />
+                                <IntervalSelect name="mininterval" />
+                            </Stack>
+                            
+                            <LithologySelect />
+                            <br />
+                            
+                            <Stack direction="row" spacing={0}>
+                                <Field
+                                    component={TextField}
+                                    type="text"
+                                    name="pbdbid"
+                                    label="PBDB ID"
+                                    fullWidth 
+                                    disabled={false}
+                                />
+                                <PBDBSelect />
+                            </Stack>
+
+                            <ReferenceManager values={props.values}/>
+                        
+                            <Field 
+                                component={CheckboxWithLabel}
+                                name="public" 
+                                type="checkbox"
+                                Label={{label:"Public"}}
+                                disabled={(mode === "edit" && props.values.origPublic)}
+                            />
+                            
+                            {!props.values.public &&
+                            <div>
+                                <GroupSelect />
+                                <br />
+                            </div>
+                            }
+                            
+                        </AccordionDetails>
+                    </Accordion>
 
                     <Accordion fullWidth style={accstyle}>
                         <AccordionSummary
@@ -518,10 +520,21 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                         </AccordionSummary>
                         <AccordionDetails>
                             <EnvironmentSelect/>
+                            <br />
+
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="collectors"
+                                label="Collectors"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
                         </AccordionDetails>
                     </Accordion>
                 
-                    </div>
+                    </>
                 }
                 
                 <br />
