@@ -12,10 +12,13 @@ const CollectionMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.collection || null,
                 name: queryParams.name || null,
+                mininterval: queryParams.mininterval || null,
+                maxinterval: queryParams.maxinterval || null,
+                lithology: queryParams.lithology || null,
+                environment: queryParams.environment || null,
                 lat: parseFloat(queryParams.lat) || null,
                 lon: parseFloat(queryParams.lon) || null,
                 pbdbid: queryParams.pbdbid || null,
-                specimens: queryParams.specimens || null, 
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
                     [publicGroupID] : queryParams.groups || null,
