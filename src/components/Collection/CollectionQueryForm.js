@@ -1,15 +1,68 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
+import {collectionTypes, countries} from "./Lists.js"
+
+const CollectionTypeSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="collectiontype"
+            label="Collection type"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {collectionTypes.map((ct) => (
+                <MenuItem 
+                    key={ct} 
+                    value={ct}
+                >{ct}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const CountrySelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="country"
+            label="Country"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {countries.map((country) => (
+                <MenuItem 
+                    key={country.Code} 
+                    value={country.Code}
+                >{`${country.Name} - ${country.Code}`}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 
 const CollectionQueryForm = ({handleSubmit}) => {
     const initValues = {
         collectionID: '', 
         name: '', 
+        country: '',
+        collectiontype: '',
         groups: [],
         includeSpecimens: false
     };
@@ -48,6 +101,12 @@ const CollectionQueryForm = ({handleSubmit}) => {
                     disabled={false}
                     variant="standard"
                 />
+                <br />
+                
+                <CollectionTypeSelect />
+                <br />
+
+                <CountrySelect />
                 <br />
                 
                 <GroupSelect/>

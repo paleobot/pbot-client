@@ -37,8 +37,8 @@ function Collections(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String ${groups}) {
-                Collection (pbotID: $pbotID, name: $name ${filter}) {
+            query ($pbotID: ID, $name: String, $country: String, $collectionType: String, ${groups}) {
+                Collection (pbotID: $pbotID, name: $name, country: $country, collectionType: $collectionType  ${filter}) {
                     pbotID
                     name
                 }
@@ -46,10 +46,25 @@ function Collections(props) {
         `
     } else {
         gQL = gql`
-            query ($pbotID: ID, $name: String, ${groups} $includeSpecimens: Boolean! ${filters.collection ? ", $collection: ID" : ""}) {
-                Collection (pbotID: $pbotID, name: $name ${filter}) {
+            query ($pbotID: ID, $name: String, $country: String, $collectionType: String, ${groups} $includeSpecimens: Boolean! ${filters.collection ? ", $collection: ID" : ""}) {
+                Collection (pbotID: $pbotID, name: $name, country: $country, collectionType: $collectionType ${filter}) {
                     pbotID
                     name
+                    collectionType
+                    sizeClasses
+                    lat
+                    lon
+                    country
+                    maxinterval
+                    mininterval
+                    lithology
+                    environment
+                    collectors
+                    pbdbid
+                    preservationModes {
+                        pbotID
+                        name
+                    }
                     elementOf {
                         name
                     }
@@ -130,6 +145,32 @@ function Collections(props) {
                     <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
                     <div style={indent}><b>pbotID:</b> {collection.pbotID}</div>
+                    <div style={indent}><b>latitude:</b> {collection.lat}</div>
+                    <div style={indent}><b>longitude:</b> {collection.lon}</div>
+                    <div style={indent}><b>country:</b> {collection.country}</div>
+                    <div style={indent}><b>collection type:</b> {collection.collectionType}</div>
+                    <div style={indent}><b>max interval:</b> {collection.maxinterval}</div>
+                    <div style={indent}><b>min interval:</b> {collection.mininterval}</div>
+                    <div style={indent}><b>lithology:</b> {collection.lithology}</div>
+                    <div style={indent}><b>environment:</b> {collection.environment}</div>
+                    <div style={indent}><b>collectors:</b> {collection.collectors}</div>
+                    <div style={indent}><b>pbdb id:</b> {collection.pbdbid}</div>
+                    {collection.sizeClasses && collection.sizeClasses.length > 0 &&
+                        <div>
+                            <div style={indent}><b>size classes:</b></div>
+                            {collection.sizeClasses.map(sc => (
+                                <div key={sc} style={indent2}>{sc}</div>
+                            ))}
+                        </div>
+                    }
+                    {collection.preservationModes && collection.preservationModes.length > 0 &&
+                        <div>
+                            <div style={indent}><b>preservation modes:</b></div>
+                            {collection.preservationModes.map(pm => (
+                                <div key={pm.pbotID} style={indent2}>{pm.name}</div>
+                            ))}
+                        </div>
+                    }
                     {collection.references && collection.references.length > 0 &&
                         <div>
                             <div style={indent}><b>references:</b></div>
@@ -167,6 +208,8 @@ const CollectionQueryResults = ({queryParams}) => {
             filters={{
                 pbotID: queryParams.collectionID,
                 name: queryParams.name, 
+                country: queryParams.country,
+                collectionType: queryParams.collectiontype,
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
             }}
             includeSpecimens={queryParams.includeSpecimens} 
