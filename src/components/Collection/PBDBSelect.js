@@ -143,10 +143,6 @@ export default function PBDBSelect(props) {
 
     const formikProps = useFormikContext()
 
-    if (formikProps.values.lat && formikProps.values.lon) {
-        WKTBuffer(formikProps.values.lat, formikProps.values.lon)
-    }
-
     const [open, setOpen] = React.useState(false);
     
     const handleClose = () => {
