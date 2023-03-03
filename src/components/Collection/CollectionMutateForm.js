@@ -7,6 +7,7 @@ import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {collectionTypes, sizeClasses, countries} from "./Lists.js"
 
 //import IntervalSelect from './IntervalSelect.js';
 
@@ -16,22 +17,6 @@ import {
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
 
-//TODO: These should be obtained from somewhere (our api or pbdb)
-const collectionTypes = [
-    "biostratigraphic", 
-    "paleoecologic", 
-    "taphonomic", 
-    "taxonomic", 
-    "general",
-    "fanual/floral"
-]
-
-//TODO: These should be obtained from somewhere (our api or pbdb)
-const sizeClasses = [
-    "> 10 mm", 
-    "1 - 10 mm", 
-    "< 1 mm"
-]
 
 const CollectionTypeSelect = (props) => {
     const style = {minWidth: "12ch"}
@@ -83,6 +68,30 @@ const SizeClassSelect = (props) => {
     )
 }
 
+const CountrySelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="country"
+            label="Country"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {countries.map((country) => (
+                <MenuItem 
+                    key={country.Code} 
+                    value={country.Code}
+                >{`${country.Name} - ${country.Code}`}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const IntervalSelect = (props) => {
     const [intervals, setIntervals] = useState([]);
@@ -299,6 +308,7 @@ const CollectionSelect = (props) => {
                 sizeClasses
                 lat
                 lon
+                country
                 maxinterval
                 mininterval
                 lithology
@@ -358,6 +368,7 @@ const CollectionSelect = (props) => {
                 props.values.sizeclasses = child.props.dsizeclasses ? JSON.parse(child.props.dsizeclasses) : [];
                 props.values.lat = child.props.dlat || '';
                 props.values.lon = child.props.dlon || '';
+                props.values.country = child.props.dcountry || '';
                 props.values.maxinterval = child.props.dmaxinterval || '';
                 props.values.mininterval = child.props.dmininterval || '';
                 props.values.lithology = child.props.dlithology || '';
@@ -383,6 +394,7 @@ const CollectionSelect = (props) => {
                     dsizeclasses={collection.sizeClasses ? JSON.stringify(collection.sizeClasses.map(sizeClass => sizeClass)) : null}
                     dlat={collection.lat}
                     dlon={collection.lon}
+                    dcountry={collection.country}
                     dmaxinterval={collection.maxinterval}
                     dmininterval={collection.mininterval}
                     dlithology={collection.lithology}
@@ -451,6 +463,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 mininterval: '',
                 lat: '',
                 lon: '',
+                country: '',
                 lithology: '',
                 preservationmodes: [],
                 environment: '',
@@ -493,6 +506,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 lat: Yup.string().required("latitude is a required field"), //for now
                 lon: Yup.string().required("longitude is a required field"), //for now
                 pbdbid: Yup.string(),
+                country: Yup.string().required(),
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
@@ -571,6 +585,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     disabled={false}
                                 />
                             </Stack>
+
+                            <CountrySelect />
 
                             <Stack direction="row" spacing={4}>
                                 <IntervalSelect name="maxinterval" />

@@ -22,6 +22,7 @@ const CollectionMutateResults = ({queryParams}) => {
                 collectors: queryParams.collectors || null,
                 lat: parseFloat(queryParams.lat) || null,
                 lon: parseFloat(queryParams.lon) || null,
+                country: queryParams.country || null,
                 pbdbid: queryParams.pbdbid || null,
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
