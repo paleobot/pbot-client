@@ -16,6 +16,73 @@ import {
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
 
+//TODO: These should be obtained from somewhere (our api or pbdb)
+const collectionTypes = [
+    "biostratigraphic", 
+    "paleoecologic", 
+    "taphonomic", 
+    "taxonomic", 
+    "general",
+    "fanual/floral"
+]
+
+//TODO: These should be obtained from somewhere (our api or pbdb)
+const sizeClasses = [
+    "> 10 mm", 
+    "1 - 10 mm", 
+    "< 1 mm"
+]
+
+const CollectionTypeSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="collectiontype"
+            label="Collection type"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {collectionTypes.map((ct) => (
+                <MenuItem 
+                    key={ct} 
+                    value={ct}
+                >{ct}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const SizeClassSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="sizeclasses"
+            label="Size classes"
+            select={true}
+            SelectProps={{
+                multiple: true,
+            }}
+            disabled={false}
+        >
+            {sizeClasses.map((sc) => (
+                <MenuItem 
+                    key={sc} 
+                    value={sc}
+                >{sc}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
 
 const IntervalSelect = (props) => {
     const [intervals, setIntervals] = useState([]);
@@ -210,9 +277,9 @@ const EnvironmentSelect = (props) => {
             }}
             disabled={false}
         >
-            {environments.map((env) => (
+            {environments.map((env, idx) => (
                 <MenuItem 
-                    key={env.name} 
+                    key={idx} 
                     value={env.name}
                 >{env.name}</MenuItem>
             ))}
@@ -228,8 +295,15 @@ const CollectionSelect = (props) => {
             Collection {
                 pbotID
                 name
+                collectionType
+                sizeClasses
                 lat
                 lon
+                maxinterval
+                mininterval
+                lithology
+                environment
+                collectors
                 pbdbid
                 elementOf {
                     name
@@ -242,6 +316,9 @@ const CollectionSelect = (props) => {
                     order
                 }
                 specimens {
+                    pbotID
+                }
+                preservationModes {
                     pbotID
                 }
             }            
@@ -277,9 +354,17 @@ const CollectionSelect = (props) => {
                 console.log("Collection onChange");
                 console.log(child.props.dspecimens);
                 props.values.name = child.props.dname || '';
+                props.values.collectiontype = child.props.dcollectiontype || '';
+                props.values.sizeclasses = child.props.dsizeclasses ? JSON.parse(child.props.dsizeclasses) : [];
                 props.values.lat = child.props.dlat || '';
                 props.values.lon = child.props.dlon || '';
+                props.values.maxinterval = child.props.dmaxinterval || '';
+                props.values.mininterval = child.props.dmininterval || '';
+                props.values.lithology = child.props.dlithology || '';
+                props.values.environment = child.props.denvironment || '';
+                props.values.collectors = child.props.dcollectors || '';
                 props.values.pbdbid = child.props.dpbdbid || '';
+                props.values.preservationmodes = child.props.dpreservationmodes ? JSON.parse(child.props.dpreservationmodes) : [];
                 props.values.public = "true"===child.props.dpublic;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
@@ -294,9 +379,17 @@ const CollectionSelect = (props) => {
                     key={collection.pbotID} 
                     value={collection.pbotID}
                     dname={collection.name}
+                    dcollectiontype={collection.collectionType}
+                    dsizeclasses={collection.sizeClasses ? JSON.stringify(collection.sizeClasses.map(sizeClass => sizeClass)) : null}
                     dlat={collection.lat}
                     dlon={collection.lon}
+                    dmaxinterval={collection.maxinterval}
+                    dmininterval={collection.mininterval}
+                    dlithology={collection.lithology}
+                    denvironment={collection.environment}
+                    dcollectors={collection.collectors}
                     dpbdbid={collection.pbdbid}
+                    dpreservationmodes={collection.preservationModes ? JSON.stringify(collection.preservationModes.map(preservationMode => preservationMode.pbotID)) : null}
                     dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {console.log(">>>>>>>>>>Collection.name = "); console.log(collection.name); console.log("group.name ="); console.log(group.name); console.log(acc || "public" === group.name);return acc || "public" === group.name}, false).toString()}
                     dgroups={collection.elementOf ? JSON.stringify(collection.elementOf.map(group => group.pbotID)) : null}
                     dspecimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
@@ -331,12 +424,12 @@ const PreservationModeSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="preservationMode"
-            label="Preservation mode"
+            name="preservationmodes"
+            label="Preservation modes"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: false,
+                multiple: true,
             }}
             disabled={false}
         >
@@ -353,12 +446,16 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 collection: '', 
                 name: '',
+                collectiontype: '',
                 maxinterval: '',
                 mininterval: '',
                 lat: '',
                 lon: '',
                 lithology: '',
+                preservationmodes: [],
                 environment: '',
+                collectors: '',
+                sizeclasses: [],
                 pbdbid: '',
                 references: [{
                     pbotID: '',
@@ -387,12 +484,14 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
-                lithology: Yup.string(),
+                lithology: Yup.string().required(),
+                preservationmodes: Yup.array().of(Yup.string()).min(1, "preservation modes must have at least one entry"),
                 environment: Yup.string(),
-                maxinterval: Yup.string(),
+                collectors: Yup.string(),
+                maxinterval: Yup.string().required("maximum interval is a required field"),
                 mininterval: Yup.string(),
-                lat: Yup.string(), //for now
-                lon: Yup.string(), //for now
+                lat: Yup.string().required("latitude is a required field"), //for now
+                lon: Yup.string().required("longitude is a required field"), //for now
                 pbdbid: Yup.string(),
                 references: Yup.array().of(
                     Yup.object().shape({
@@ -431,7 +530,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "create" || (mode === "edit" && props.values.collection !== '')) &&
                     <>
-                    <Accordion fullWidth style={accstyle} defaultExpanded={true}>
+                    <Accordion style={accstyle} defaultExpanded={true}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="required-content"
@@ -449,6 +548,9 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 fullWidth 
                                 disabled={false}
                             />
+                            <br />
+
+                            <CollectionTypeSelect />
                             <br />
 
                             <Stack direction="row" spacing={4}>
@@ -478,6 +580,12 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             <LithologySelect />
                             <br />
                             
+                            <PreservationModeSelect />
+                            <br />
+
+                            <SizeClassSelect />
+                            <br />
+
                             <Stack direction="row" spacing={0}>
                                 <Field
                                     component={TextField}
@@ -510,7 +618,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                         </AccordionDetails>
                     </Accordion>
 
-                    <Accordion fullWidth style={accstyle}>
+                    <Accordion style={accstyle}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="optional-content"
