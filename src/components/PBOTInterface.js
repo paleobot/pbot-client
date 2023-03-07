@@ -17,11 +17,15 @@ const PBOTInterface = (props) => {
     console.log("----------PBOTInterface--------------");
     console.log(props);
     const navigate = useNavigate();
-    
+
     const [selectedTab, setSelectedTab] = useState(0);
     const [queryParams, setQueryParams] = useState(0);
     const [showResult, setShowResult] = useState(false); 
     
+    //User has used Back button. Reset everything.
+    window.onpopstate = () => { console.log("onpopstate"); console.log(window.location);setShowResult(false); setQueryParams(null); setSelectedTab(0);};
+    
+
     const handleFormClass = (event, newFormClass) => {
         setShowResult(false);
          navigate(`/${newFormClass}`);
@@ -50,6 +54,9 @@ const PBOTInterface = (props) => {
         setQueryParams(values);
         setShowResult(true);
         setSelectedTab(1);
+
+        //push another frame on history in case user uses Back button to get back to Actions tab
+        navigate(`${window.location.pathname}`); 
     };
         
     //Figure out what we're doing from the path, massage it, and send to Result as queryEntity
