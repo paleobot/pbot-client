@@ -124,7 +124,12 @@ export const CharacterSelect = (props) => {
     const characters = sortAndFlatten(data.Schema[0].characters, 0);
 
     const label = props.parent ? "Parent character" : "Character";
-    const name =  props.parent ? "parentCharacter" : "character";
+    //const name =  props.parent ? "parentCharacter" : "character";
+    const name =  props.name ? 
+        props.name :
+        props.parent ? 
+            "parentCharacter" : 
+            "character";
     let level = 0;
     const style = {minWidth: "12ch"}
     return data.Schema[0].characters && data.Schema[0].characters.length === 0 ? null : (

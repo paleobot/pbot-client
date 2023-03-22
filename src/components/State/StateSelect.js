@@ -96,7 +96,16 @@ export const StateSelect = (props) => {
     const states = sortAndFlatten(data.Character[0].states, 0);
 
     const label = props.parent ? "Parent state" : "State";
-    const name =  props.parent ? "parentState" : "state";
+    //const name =  props.parent ? "parentState" : "state";
+    console.log("choosing state select name")
+    console.log(props.name);
+    const name =  props.name ?
+        props.name :
+        props.parent ? 
+            "parentState" : 
+            "state";
+    console.log(name);
+
     let level = 0;
     const style = {minWidth: "12ch"}
 
@@ -160,7 +169,7 @@ export const StateSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="state"
+            name={name}
             label="State"
             fullWidth 
             select={true}

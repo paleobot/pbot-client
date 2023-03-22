@@ -6,6 +6,7 @@ import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
+import {CharacterInstanceManager} from '../CharacterInstance/CharacterInstanceManager.js';
 
 import {
   useQuery,
@@ -213,6 +214,15 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                     order:'',
                 }],
                 specimens: [],
+                characterInstances: [],
+                /*
+                characterInstances: [{
+                    characterID: '',
+                    stateID: '',
+                    quantity: '',
+                    order:'',
+                }],
+                */
                 name: '',
                 public: true,
                 groups: [],
@@ -299,7 +309,11 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                 <SpecimenSelect handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
                 <br />
                 </div>
-                          
+
+                {props.values.schema !== '' &&
+                <CharacterInstanceManager values={props.values}/>
+                }
+
                 <Field 
                     component={CheckboxWithLabel}
                     name="public" 
