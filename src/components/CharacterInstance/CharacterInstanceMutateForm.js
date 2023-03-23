@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
@@ -249,17 +249,21 @@ const StateSelect = (props) => {
 }
 */
 
-const CharacterInstanceMutateForm = ({handleSubmit, mode}) => {
+const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema}) => {
+    console.log("CharacterInstanceMutateForm");
+    console.log(description)
+    console.log(schema)
     const initValues = {
                 characterInstance: '',
-                description: '',
-                schema: '',
+                description: description || '',
+                schema: schema || '',
                 character: '',
                 state: '', 
                 quantity: '',
                 order: '',
                 mode: mode,
     };
+    console.log(initValues)
             
     //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
     //allowing useEffect to call resetForm
@@ -335,7 +339,7 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode}) => {
                     </div>
                 }
                 
-                {(mode === "create" || mode === "edit") && props.values.state && props.values.state.split(",")[0] === "quantity" &&
+                {(mode === "create" || mode === "edit") && props.values.state && (props.values.state.split(",")[0] === "quantity" || props.values.state.split(",")[0] === "quantitative") &&
                     <div>
                         <Field
                             component={TextField}
