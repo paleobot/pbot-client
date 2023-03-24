@@ -16,18 +16,46 @@ import {
 } from "@apollo/client";
 //import CharacterInstances from '../CharacterInstance/CharacterInstances.js';
 
+
+
+
 const CharacterInstanceDeleteDialog = (props) => {
+    const [showResult, setShowResult] = useState(false);
+
     return (
         <Dialog fullWidth={true} open={props.open}>
             <DialogTitle>
-                Delete x             
+                Delete Character Instance
             </DialogTitle>
             <DialogContent>
-                Are you sure?
+                {showResult &&
+                    <CharacterInstanceMutateResults queryParams={{
+                        characterInstance: props.deleteCI.pbotID,
+                        description: null,
+                        character: "x",
+                        state: "x,y",
+                        quantity: "",
+                        order: "",
+                        mode: "delete"
+                    }} />
+                }
+                {!showResult &&
+                <>
+                <p>You are about to delete the Character Instance <i>{props.deleteCI.character.name} - {props.deleteCI.state.State.name}</i></p>
+                <p>Are you sure you want to do this?</p>
+                </>
+                }
             </DialogContent>
             <DialogActions>
-                <Button onClick={props.handleClose} color="secondary">Do it</Button>
-                <Button onClick={props.handleClose} color="secondary">Cancel</Button>
+                {showResult &&
+                    <Button onClick={props.handleClose} color="secondary">Ok</Button>
+                }
+                {!showResult &&
+                <>
+                    <Button onClick={()=>{setShowResult(true)}} color="secondary">Do it</Button>
+                    <Button onClick={() => {props.setDeleteCI(null); props.handleClose()}} color="secondary">Cancel</Button>
+                </>
+                }
             </DialogActions>
         </Dialog>
     )
@@ -42,36 +70,33 @@ return cI
 
 function CharacterInstances(props) {
     //console.log("CharacterInstances");
-    const [open, setOpen] = React.useState(false);
+    //const [open, setOpen] = React.useState(false);
  
     if (!props.characterInstances) return ''; //TODO: is this the best place to handle this?
     //console.log(props.characterInstances);
 
-  
+  /*
     const handleClose = () => {
         setOpen(false);
     };
-
+*/
     let characterInstances = alphabetize([...props.characterInstances].map(cI => massage({...cI})), "sortName");
     
     const style = {marginLeft:"4em"}
-    return characterInstances.map(({pbotID, character, state}) => (
-        <div key={pbotID}  style={props.style || style}>
-            {character.name}: {(state.value !== null && state.value !== '') ? `${state.value}` : `${state.State.name}`}{state.order ? `, order: ${state.order}` : ``}
+    return characterInstances.map((cI) => (
+        <div key={cI.pbotID}  style={props.style || style}>
+            {cI.character.name}: {(cI.state.value !== null && cI.state.value !== '') ? `${cI.state.value}` : `${cI.state.State.name}`}{cI.state.order ? `, order: ${cI.state.order}` : ``}
             <Button
                 type="button"
                 variant="text" 
                 color="secondary" 
                 size="large"
-                onClick={() => setOpen(true)}
+                onClick={() => {props.setDeleteCI(cI); props.setDeleteOpen(true)}}
                 sx={{width:"50px"}}
             >
                 X
             </Button>
             <br />
-            {open && 
-                <CharacterInstanceDeleteDialog open={open} handleClose={handleClose} />
-            }
         </div>
     ));
 }
@@ -118,7 +143,7 @@ const CharacterInstanceDialog = (props) => {
                 <CharacterInstanceMutateForm handleSubmit={handleSubmit} mode="create" description={props.description} schema={props.schema}/>
                 }
                 {showResult &&
-                <CharacterInstanceMutateResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect}/>
+                <CharacterInstanceMutateResults queryParams={queryParams} exclude={props.exclude} />
                 }
             </DialogContent>
             <DialogActions>
@@ -165,7 +190,7 @@ const CharacterInstanceList = (props) => {
     if (error) return <p>Error :(</p>;
 
     return (
-        <CharacterInstances characterInstances={data.Description[0].characterInstances} />
+        <CharacterInstances deleteCI={props.deleteCI} setDeleteCI={props.setDeleteCI} setDeleteOpen={props.setDeleteOpen} characterInstances={data.Description[0].characterInstances} />
     );
 
 }
@@ -173,16 +198,15 @@ const CharacterInstanceList = (props) => {
 const CharacterInstanceCreator = (props) => {
     //const formikProps = useFormikContext();
 
-    const [open, setOpen] = React.useState(false);
-   
-    const handleClose = () => {
-        setOpen(false);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
+    const [deleteCI, setDeleteCI] = React.useState(null);
+    const handleDeleteConfirmClose = () => {
+        setDeleteConfirmOpen(false);
     };
 
-    const handleSelect = (characterInstance) => {
-        console.log("handleSelect")
-        console.log(characterInstance);
-        setOpen(false);
+    const [addDialogOpen, setAddDialogOpen] = React.useState(false);
+    const handleAddDialogClose = () => {
+        setAddDialogOpen(false);
     };
 
     const accstyle = {textAlign: "left", width: "70%"}
@@ -198,13 +222,13 @@ const CharacterInstanceCreator = (props) => {
                         Character instances
                     </AccordionSummary>
                     <AccordionDetails>
-                        <CharacterInstanceList description={props.values.description}/>
+                        <CharacterInstanceList deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} description={props.values.description}/>
                         <Button
                             style={{marginTop:"1.5em"}}
                             type="button"
                             variant="text" 
                             color="secondary" 
-                            onClick={()=>{console.log("click"); console.log(props.values); /*setDesc(props.values.description); setSch(props.values.schema);*/ setOpen(true)}}
+                            onClick={()=>{console.log("click"); console.log(props.values); /*setDesc(props.values.description); setSch(props.values.schema);*/ setAddDialogOpen(true)}}
                             disabled={false}
                         >
                             Add character instance
@@ -213,8 +237,11 @@ const CharacterInstanceCreator = (props) => {
                 </Accordion>
             }
 
-            {open && 
-                <CharacterInstanceDialog description={props.values.description} schema={props.values.schema} open={open} handleClose={handleClose} handleSelect={handleSelect} />
+            {addDialogOpen && 
+                <CharacterInstanceDialog description={props.values.description} schema={props.values.schema} open={addDialogOpen} handleClose={handleAddDialogClose}  />
+            }
+            {deleteConfirmOpen && 
+                <CharacterInstanceDeleteDialog open={deleteConfirmOpen} deleteCI={deleteCI} setDeleteCI={setDeleteCI} handleClose={handleDeleteConfirmClose} />
             }
         </>
     );
