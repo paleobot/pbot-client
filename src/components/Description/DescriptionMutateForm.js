@@ -13,6 +13,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import CharacterInstanceCreator from './CharacterInstanceCreator.js';
 
 const DescriptionSelect = (props) => {
     console.log("DescriptionSelect");
@@ -259,8 +260,6 @@ const CharacterInstanceDialog = (props) => {
 
 const DescriptionMutateForm = ({handleSubmit, mode}) => {
     const [open, setOpen] = React.useState(false);
-    const [desc, setDesc] = React.useState('');
-    const [sch, setSch] = React.useState('');
     
     const handleClose = () => {
         setOpen(false);
@@ -385,25 +384,10 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                 
                 </div>
                 }
+                <br />
 
                 {(mode === "edit" && props.values.description !== '') &&
-                    <>
-                        <InputLabel>
-                        Character instances
-                        </InputLabel>
-                        <Button
-                            type="button"
-                            variant="text" 
-                            color="secondary" 
-                            onClick={()=>{console.log("click"); console.log(props.values); setDesc(props.values.description); setSch(props.values.schema); setOpen(true)}}
-                            disabled={false}
-                        >
-                            Add character instance
-                        </Button>
-                    </>
-                }
-                {open && 
-                    <CharacterInstanceDialog description={desc} schema={sch} open={open} handleClose={handleClose} handleSelect={handleSelect} />
+                    <CharacterInstanceCreator values={props.values} />
                 }
 
                   
