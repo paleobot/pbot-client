@@ -316,8 +316,10 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema}) 
                     disabled={false}
                 />
                 
+                {!description && 
                 <DescriptionSelect values={props.values} handleChange={props.handleChange}/>
-                                
+                }
+                
                 {(mode === "edit" || mode === "delete") && props.values.description !== '' &&
                     <div>
                         <CharacterInstanceSelect values={props.values} handleChange={props.handleChange}/>
