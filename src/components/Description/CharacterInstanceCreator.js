@@ -14,7 +14,67 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import CharacterInstances from '../CharacterInstance/CharacterInstances.js';
+//import CharacterInstances from '../CharacterInstance/CharacterInstances.js';
+
+const CharacterInstanceDeleteDialog = (props) => {
+    return (
+        <Dialog fullWidth={true} open={props.open}>
+            <DialogTitle>
+                Delete x             
+            </DialogTitle>
+            <DialogContent>
+                Are you sure?
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={props.handleClose} color="secondary">Do it</Button>
+                <Button onClick={props.handleClose} color="secondary">Cancel</Button>
+            </DialogActions>
+        </Dialog>
+    )
+}
+
+const massage = cI => {
+    cI.sortName = `
+            ${cI.state.order !== null ? `${cI.state.order}` : ``}${cI.character.name}${cI.state.value !== null ? `${cI.state.value}` : `${cI.state.State.name}`}
+`.toUpperCase();
+return cI
+};
+
+function CharacterInstances(props) {
+    //console.log("CharacterInstances");
+    const [open, setOpen] = React.useState(false);
+ 
+    if (!props.characterInstances) return ''; //TODO: is this the best place to handle this?
+    //console.log(props.characterInstances);
+
+  
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    let characterInstances = alphabetize([...props.characterInstances].map(cI => massage({...cI})), "sortName");
+    
+    const style = {marginLeft:"4em"}
+    return characterInstances.map(({pbotID, character, state}) => (
+        <div key={pbotID}  style={props.style || style}>
+            {character.name}: {(state.value !== null && state.value !== '') ? `${state.value}` : `${state.State.name}`}{state.order ? `, order: ${state.order}` : ``}
+            <Button
+                type="button"
+                variant="text" 
+                color="secondary" 
+                size="large"
+                onClick={() => setOpen(true)}
+                sx={{width:"50px"}}
+            >
+                X
+            </Button>
+            <br />
+            {open && 
+                <CharacterInstanceDeleteDialog open={open} handleClose={handleClose} />
+            }
+        </div>
+    ));
+}
 
 /*
 const CharacterInstanceDialog = (props) => {
