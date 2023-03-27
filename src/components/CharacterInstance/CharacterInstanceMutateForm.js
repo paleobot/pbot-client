@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage, FormikProvider } from 'formik';
+import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
+import { Button, MenuItem } from '@mui/material';
+import { TextField } from 'formik-mui';
 import { alphabetize, sort } from '../../util.js';
 import {CharacterSelect} from "../Character/CharacterSelect.js";
 import { StateSelect } from "../State/StateSelect.js"
@@ -156,103 +156,10 @@ const CharacterInstanceSelect = (props) => {
         
 }
 
-/*
-const CharacterSelect = (props) => {
-    console.log("CharacterSelect");
-    console.log(props);
-    //TODO: Should the following be using GetAllCharacters?
-    const characterGQL = gql`
-            query {
-                Schema (pbotID: "${props.values.schema}") {
-                    characters { 
-                        pbotID
-                        name
-                        order
-                    }
-                }            
-            }
-        `;
-
-    const { loading: characterLoading, error: characterError, data: characterData } = useQuery(characterGQL, {fetchPolicy: "cache-and-network"});
-
-    if (characterLoading) return <p>Loading...</p>;
-    if (characterError) return <p>Error :(</p>;
-                                 
-    console.log(characterData.Schema[0].characters);
-    //const characters = alphabetize([...characterData.Schema[0].characters], "name");
-    const characters = sort([...characterData.Schema[0].characters], "order", "name");
-   
-    return (
-        <Field
-            component={TextField}
-            type="text"
-            name="character"
-            label="Character"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {characters.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
-            ))}
-        </Field>
-    )
-        
-}
-*/
-
-/*
-const StateSelect = (props) => {
-    console.log("StateSelect");
-    console.log(props);
-    const stateGQL = gql`
-        query {
-            GetAllStates (characterID: "${props.values.character}")  {
-                pbotID
-                name
-                order
-            }
-        }
-    `;
-
-    const { loading: stateLoading, error: stateError, data: stateData } = useQuery(stateGQL, {fetchPolicy: "cache-and-network"});
-
-    if (stateLoading) return <p>Loading...</p>;
-    if (stateError) return <p>Error :(</p>;
-                                 
-    //console.log(stateData.Schema[0].characters);
-    //const states = alphabetize([...stateData.GetAllStates], "name");
-    const states = sort([...stateData.GetAllStates], "order", "name");
-    
-    return (
-        <Field
-            component={TextField}
-            type="text"
-            name="state"
-            label="State"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {states.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={name + "," + pbotID}>{name}</MenuItem>
-            ))}
-        </Field>
-    )
-        
-}
-*/
-
 const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema}) => {
     console.log("CharacterInstanceMutateForm");
-    console.log(description)
-    console.log(schema)
+    //console.log(description)
+    //console.log(schema)
     const initValues = {
                 characterInstance: '',
                 description: description || '',
@@ -263,7 +170,7 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema}) 
                 order: '',
                 mode: mode,
     };
-    console.log(initValues)
+    //console.log(initValues)
             
     //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
     //allowing useEffect to call resetForm

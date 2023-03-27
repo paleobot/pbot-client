@@ -1,19 +1,17 @@
 ﻿import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage, FieldArray, useFormikContext } from 'formik';
+import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
+import { Button, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { TextField, CheckboxWithLabel } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
-import CharacterInstanceMutateForm from '../CharacterInstance/CharacterInstanceMutateForm.js';
-import CharacterInstanceMutateResults from '../CharacterInstance/CharacterInstanceMutateResults.js';
+import CharacterInstanceCreator from './CharacterInstanceCreator.js';
 
 import {
   useQuery,
   gql
 } from "@apollo/client";
-import CharacterInstanceCreator from './CharacterInstanceCreator.js';
 
 const DescriptionSelect = (props) => {
     console.log("DescriptionSelect");
@@ -206,71 +204,9 @@ const SpecimenSelect = (props) => {
     )
 }
 
-/*
-const CharacterInstanceDialog = (props) => {
-    console.log("CharacterInstanceDialog")
-    console.log(props)
-
-    return (
-        <Dialog fullWidth={true} open={props.open}>
-            <DialogTitle>
-                Create character instance             
-            </DialogTitle>
-            <DialogContent>
-                Hi there
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={props.handleClose} color="secondary">Cancel</Button>
-            </DialogActions>
-        </Dialog>
-    )
-}
-*/
-
-const CharacterInstanceDialog = (props) => {
-    console.log("CharacterInstanceDialog")
-    console.log(props)
-    const [showResult, setShowResult] = useState(false);
-    const [queryParams, setQueryParams] = useState([]);
-
-    const handleSubmit = (values) => {
-        setQueryParams(values);
-        setShowResult(true);
-    }
-
-    return (
-        <Dialog fullWidth={true} open={props.open}>
-            <DialogTitle>
-                Create character instance             
-            </DialogTitle>
-            <DialogContent>
-                {!showResult &&
-                <CharacterInstanceMutateForm handleSubmit={handleSubmit} mode="create" description={props.description} schema={props.schema}/>
-                }
-                {showResult &&
-                <CharacterInstanceMutateResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect}/>
-                }
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={props.handleClose} color="secondary">Cancel</Button>
-            </DialogActions>
-        </Dialog>
-    )
-}
-
 const DescriptionMutateForm = ({handleSubmit, mode}) => {
     const [open, setOpen] = React.useState(false);
     
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleSelect = (characterInstance) => {
-        console.log("handleSelect")
-        console.log(characterInstance);
-        setOpen(false);
-    };
-
     const initValues = {
                 description: '',
                 schema: '',
