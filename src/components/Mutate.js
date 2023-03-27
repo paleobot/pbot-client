@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider, Typography} from '@mui/material';
+import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider, Typography, Tooltip} from '@mui/material';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import DescriptionMutateForm from './Description/DescriptionMutateForm';
 import OTUMutateForm from './OTU/OTUMutateForm';
@@ -92,13 +92,19 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                         size="small"
                     >
                         <ToggleButton value="create" aria-label="create">
-                            <AddIcon />
+                            <Tooltip title="Create">
+                                <AddIcon />
+                            </Tooltip>
                         </ToggleButton>
                         <ToggleButton value="edit" aria-label="edit" >
-                            <EditIcon />
+                            <Tooltip title="Edit">
+                                <EditIcon />
+                            </Tooltip>
                         </ToggleButton>
                         <ToggleButton value="delete" aria-label="delete" >
-                            <RemoveIcon />
+                            <Tooltip title="Delete">
+                                <RemoveIcon />
+                            </Tooltip>
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Grid>
