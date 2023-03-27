@@ -14,7 +14,7 @@ import {
 
 const Mutator = (props) => {
 //function Mutater(props) {
-    console.log("Mutater");
+    console.log("Mutator");
     console.log(props);
     
     const client = useApolloClient();
