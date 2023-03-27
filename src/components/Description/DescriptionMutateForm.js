@@ -6,7 +6,7 @@ import { TextField, CheckboxWithLabel } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
-import CharacterInstanceCreator from './CharacterInstanceCreator.js';
+import CharacterInstanceManager from '../CharacterInstance/CharacterInstanceManager.js';
 
 import {
   useQuery,
@@ -323,7 +323,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                 <br />
 
                 {(mode === "edit" && props.values.description !== '') &&
-                    <CharacterInstanceCreator values={props.values} />
+                    <CharacterInstanceManager values={props.values} />
                 }
 
                   

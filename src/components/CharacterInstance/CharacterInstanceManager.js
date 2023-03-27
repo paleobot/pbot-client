@@ -1,8 +1,8 @@
 import React, { useState }from 'react';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { alphabetize } from '../../util.js';
-import CharacterInstanceMutateForm from '../CharacterInstance/CharacterInstanceMutateForm.js';
-import CharacterInstanceMutateResults from '../CharacterInstance/CharacterInstanceMutateResults.js';
+import CharacterInstanceMutateForm from './CharacterInstanceMutateForm.js';
+import CharacterInstanceMutateResults from './CharacterInstanceMutateResults.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
@@ -163,7 +163,7 @@ const CharacterInstanceList = (props) => {
 
 }
 
-const CharacterInstanceCreator = (props) => {
+const CharacterInstanceManager = (props) => {
     //const formikProps = useFormikContext();
 
     const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
@@ -215,4 +215,4 @@ const CharacterInstanceCreator = (props) => {
     );
 };
 
-export default CharacterInstanceCreator;
+export default CharacterInstanceManager;
