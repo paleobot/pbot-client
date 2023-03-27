@@ -1,11 +1,6 @@
 import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage, FieldArray, useFormikContext } from 'formik';
-import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { alphabetize } from '../../util.js';
-import {GroupSelect} from '../Group/GroupSelect.js';
-import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import CharacterInstanceMutateForm from '../CharacterInstance/CharacterInstanceMutateForm.js';
 import CharacterInstanceMutateResults from '../CharacterInstance/CharacterInstanceMutateResults.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -15,8 +10,6 @@ import {
   gql
 } from "@apollo/client";
 //import CharacterInstances from '../CharacterInstance/CharacterInstances.js';
-
-
 
 
 const CharacterInstanceDeleteDialog = (props) => {
@@ -30,6 +23,8 @@ const CharacterInstanceDeleteDialog = (props) => {
             <DialogContent>
                 {showResult &&
                     <CharacterInstanceMutateResults queryParams={{
+                        //All we care about here is characterInstance.
+                        //The rest is stub data to satisfy the graphql interface. 
                         characterInstance: props.deleteCI.pbotID,
                         description: null,
                         character: "x",
@@ -72,20 +67,14 @@ function CharacterInstances(props) {
     //console.log("CharacterInstances");
     //const [open, setOpen] = React.useState(false);
  
-    if (!props.characterInstances) return ''; //TODO: is this the best place to handle this?
-    //console.log(props.characterInstances);
+    if (!props.characterInstances) return ''; 
 
-  /*
-    const handleClose = () => {
-        setOpen(false);
-    };
-*/
     let characterInstances = alphabetize([...props.characterInstances].map(cI => massage({...cI})), "sortName");
     
     const style = {marginLeft:"4em"}
     return characterInstances.map((cI) => (
         <div key={cI.pbotID}  style={props.style || style}>
-            {cI.character.name}: {(cI.state.value !== null && cI.state.value !== '') ? `${cI.state.value}` : `${cI.state.State.name}`}{cI.state.order ? `, order: ${cI.state.order}` : ``}
+            <b>{cI.character.name}</b>: {(cI.state.value !== null && cI.state.value !== '') ? `${cI.state.value}` : `${cI.state.State.name}`}{cI.state.order ? `, order: ${cI.state.order}` : ``}
             <Button
                 type="button"
                 variant="text" 
@@ -100,27 +89,6 @@ function CharacterInstances(props) {
         </div>
     ));
 }
-
-/*
-const CharacterInstanceDialog = (props) => {
-    console.log("CharacterInstanceDialog")
-    console.log(props)
-
-    return (
-        <Dialog fullWidth={true} open={props.open}>
-            <DialogTitle>
-                Create character instance             
-            </DialogTitle>
-            <DialogContent>
-                Hi there
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={props.handleClose} color="secondary">Cancel</Button>
-            </DialogActions>
-        </Dialog>
-    )
-}
-*/
 
 const CharacterInstanceDialog = (props) => {
     console.log("CharacterInstanceDialog")
