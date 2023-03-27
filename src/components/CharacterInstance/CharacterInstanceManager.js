@@ -28,7 +28,7 @@ const CharacterInstanceDeleteDialog = (props) => {
                         characterInstance: props.deleteCI.pbotID,
                         description: null,
                         character: "x",
-                        state: "x,y",
+                        state: "x~,y",
                         quantity: "",
                         order: "",
                         mode: "delete"

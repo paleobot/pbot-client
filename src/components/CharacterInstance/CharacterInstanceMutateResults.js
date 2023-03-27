@@ -10,7 +10,7 @@ const CharacterInstanceMutateResults = ({queryParams}) => {
                 pbotID: queryParams.characterInstance || null,
                 descriptionID: queryParams.description || null,
                 characterID: queryParams.character || null, 
-                stateID: queryParams.state.split(",")[1] || null,
+                stateID: queryParams.state.split("~,")[1] || null,
                 quantity: queryParams.quantity || null,
                 order: queryParams.order || null,
             }}

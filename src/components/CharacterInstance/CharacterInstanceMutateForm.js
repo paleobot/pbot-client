@@ -248,7 +248,7 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema}) 
                     </div>
                 }
                 
-                {(mode === "create" || mode === "edit") && props.values.state && (props.values.state.split(",")[0] === "quantity" || props.values.state.split(",")[0] === "quantitative") &&
+                {(mode === "create" || mode === "edit") && props.values.state && (props.values.state.split("~,")[0] === "quantity" || props.values.state.split("~,")[0] === "quantitative") &&
                     <div>
                         <Field
                             component={TextField}

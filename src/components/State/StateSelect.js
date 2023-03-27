@@ -173,7 +173,7 @@ export const StateSelect = (props) => {
                 <MenuItem 
                     style={style}
                     key={pbotID} 
-                    value={name + "," + pbotID}
+                    value={name + "~," + pbotID}
                 >{name}</MenuItem>
             ))}
         </Field>
