@@ -82,40 +82,38 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
     
     return (
         <div>
-                <Grid container justifyContent="flex-end">
-                    <ToggleButtonGroup sx={{marginTop: "5px"}} 
-                        value={mode}
-                        onChange={handleModeChange}
-                        exclusive
-                        aria-label="mutation type"
-                        orientation="horizontal"
-                        size="small"
-                    >
-                        <ToggleButton value="create" aria-label="create">
-                            <Tooltip title="Create">
-                                <AddIcon />
-                            </Tooltip>
-                        </ToggleButton>
-                        <ToggleButton value="edit" aria-label="edit" >
-                            <Tooltip title="Edit">
-                                <EditIcon />
-                            </Tooltip>
-                        </ToggleButton>
-                        <ToggleButton value="delete" aria-label="delete" >
-                            <Tooltip title="Delete">
-                                <RemoveIcon />
-                            </Tooltip>
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                </Grid>
-
             <Grid container spacing={3} style={{marginLeft:"10px"}}>
                 <Grid item >
                     <FormSelector form={selectedForm} reset={forceUpdate} />
                 </Grid>
             
                 <Grid item alignItems="right" xs>
-                    {selectedForm && <Typography variant="h5">Mutation parameters</Typography>}
+                    {selectedForm && 
+                        <ToggleButtonGroup sx={{marginTop: "5px"}} 
+                            value={mode}
+                            onChange={handleModeChange}
+                            exclusive
+                            aria-label="mutation type"
+                            orientation="horizontal"
+                            size="small"
+                        >
+                            <ToggleButton value="create" aria-label="create">
+                                <Tooltip title="Create">
+                                    <AddIcon />
+                                </Tooltip>
+                            </ToggleButton>
+                            <ToggleButton value="edit" aria-label="edit" >
+                                <Tooltip title="Edit">
+                                    <EditIcon />
+                                </Tooltip>
+                            </ToggleButton>
+                            <ToggleButton value="delete" aria-label="delete" >
+                                <Tooltip title="Delete">
+                                    <RemoveIcon />
+                                </Tooltip>
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                    }
 
                     {selectedForm === "otu" &&
                         <OTUMutateForm handleSubmit={handleSubmit} mode={mode}/>
