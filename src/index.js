@@ -252,7 +252,18 @@ const theme = createTheme({
             fontSize: "0.9em",
           }
         }
-      }
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+            root: {
+                "&.Mui-selected": {
+                  backgroundColor: "#dddddd",
+                } 
+            }
+            
+        }
+      },
+
     }
 });
 
