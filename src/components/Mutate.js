@@ -89,7 +89,7 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
             
                 <Grid item alignItems="right" xs>
                     {selectedForm && 
-                        <ToggleButtonGroup sx={{marginTop: "5px"}} 
+                        <ToggleButtonGroup sx={{marginTop: "5px", marginBottom:"10px"}} 
                             value={mode}
                             onChange={handleModeChange}
                             exclusive
