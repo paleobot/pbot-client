@@ -226,6 +226,7 @@ const StateSelect = (props) => {
 const StateMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 state: '',
+                quantitative: false,
                 name: '',
                 definition: '',
                 order: '',
@@ -294,12 +295,28 @@ const StateMutateForm = ({handleSubmit, mode}) => {
                 {(mode === "create" || (mode === "edit" && props.values.state !== '')) &&
                     <>
                         <Field
+                            type="checkbox"
+                            component={CheckboxWithLabel}
+                            name="quantitative"
+                            Label={{ label: 'Quantitative' }}
+                            onChange={event => {
+                                if (props.values.quantitative) {
+                                    props.values.name=""
+                                } else {
+                                    props.values.name="quantity"
+                                }
+                                props.handleChange(event);
+                            }}
+                        />
+                        <br />
+
+                        <Field
                             component={TextField}
                             type="text"
                             name="name"
                             label="Name"
                             fullWidth 
-                            disabled={false}
+                            disabled={props.values.quantitative}
                         />
                         <br />
 
