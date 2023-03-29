@@ -1,6 +1,6 @@
 import React, { useState }from 'react';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { alphabetize } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
 import CharacterInstanceMutateForm from './CharacterInstanceMutateForm.js';
 import CharacterInstanceMutateResults from './CharacterInstanceMutateResults.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -32,7 +32,7 @@ const CharacterInstanceDeleteDialog = (props) => {
                         quantity: "",
                         order: "",
                         mode: "delete"
-                    }} />
+                    }}  handleClose={props.handleClose} />
                 }
                 {!showResult &&
                 <>
@@ -57,10 +57,9 @@ const CharacterInstanceDeleteDialog = (props) => {
 }
 
 const massage = cI => {
-    cI.sortName = `
-            ${cI.state.order !== null ? `${cI.state.order}` : ``}${cI.character.name}${cI.state.value !== null ? `${cI.state.value}` : `${cI.state.State.name}`}
-`.toUpperCase();
-return cI
+    cI.sortName01 = `${cI.character.name}`.toUpperCase();
+    cI.sortName02 = cI.state.order !== null ? `${cI.state.order}` : ``;
+    return cI
 };
 
 function CharacterInstances(props) {
@@ -69,7 +68,7 @@ function CharacterInstances(props) {
  
     if (!props.characterInstances) return ''; 
 
-    let characterInstances = alphabetize([...props.characterInstances].map(cI => massage({...cI})), "sortName");
+    let characterInstances = sort([...props.characterInstances].map(cI => massage({...cI})), "sortName01", "#sortName02");
     
     const style = {marginLeft:"4em"}
     return characterInstances.map((cI) => (
@@ -111,7 +110,7 @@ const CharacterInstanceDialog = (props) => {
                 <CharacterInstanceMutateForm handleSubmit={handleSubmit} mode="create" description={props.description} schema={props.schema}/>
                 }
                 {showResult &&
-                <CharacterInstanceMutateResults queryParams={queryParams} exclude={props.exclude} />
+                <CharacterInstanceMutateResults queryParams={queryParams} handleClose={props.handleClose}/>
                 }
             </DialogContent>
             <DialogActions>
