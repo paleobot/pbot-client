@@ -167,7 +167,7 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema}) 
                 character: '',
                 state: '', 
                 quantity: '',
-                order: '',
+                order: '1',
                 mode: mode,
     };
     //console.log(initValues)
