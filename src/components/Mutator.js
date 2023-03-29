@@ -76,6 +76,12 @@ const Mutator = (props) => {
         //Force reload of cache
         client.resetStore();
 
+        //If handleClose is present, caller was a dialog. Just close it and return
+        if (props.handleClose) {
+            props.handleClose();
+            return null;
+        }
+
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
         return props.mode === "edit" ?
         (

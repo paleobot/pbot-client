@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
 
-const CharacterInstanceMutateResults = ({queryParams}) => {
+const CharacterInstanceMutateResults = ({queryParams, handleClose}) => {
     console.log(queryParams);
 
     return (
@@ -16,6 +16,7 @@ const CharacterInstanceMutateResults = ({queryParams}) => {
             }}
             entity="CharacterInstance"
             mode={queryParams.mode}
+            handleClose={handleClose}
         />
     );
 };
