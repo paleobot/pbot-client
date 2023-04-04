@@ -6,6 +6,60 @@ import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
 import {OrganSelect} from '../Organ/OrganSelect.js';
+import { CharacterSelect } from '../Character/CharacterSelect.js';
+import { StateSelect } from '../State/StateSelect.js';
+import { alphabetize } from '../../util.js';
+import {
+    useQuery,
+    gql
+  } from "@apollo/client";
+  import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+  
+const SchemaSelect = (props) => {
+    console.log("SchemaSelect");
+    const gQL = gql`
+        query {
+            Schema {
+                pbotID
+                title
+            }            
+        }
+    `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                      
+    console.log(">>>>>>>>>>>>Schema results<<<<<<<<<<<<<");
+    console.log(data.Schema);
+    const schemas = alphabetize([...data.Schema], "title");
+    console.log(schemas);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="schema"
+            label="Schema"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {schemas.map((schema) => (
+                <MenuItem 
+                    key={schema.pbotID} 
+                    value={schema.pbotID}
+                >{schema.title}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const SpecimenQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
@@ -13,6 +67,9 @@ const SpecimenQueryForm = ({handleSubmit}) => {
         specimenID: '', 
         name: '', 
         collection: '',
+        schema: '',
+        character: '',
+        state: '',
         organs: [],
         groups: [],
         includeImages: false,
@@ -40,6 +97,7 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 //setShowOTUs(true);
             }}
         >
+            {props => (
             <Form>
                 <Field 
                     component={TextField}
@@ -65,6 +123,23 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 <OrganSelect/>
                 <br />
                 
+                <SchemaSelect />
+                <br />
+
+                {props.values.schema !== '' &&
+                    <div>
+                        <CharacterSelect values={props.values} source="characterInstance"/>
+                        <br />
+                    </div>
+                }
+                
+                {props.values.character !== "" &&
+                    <div>
+                        <StateSelect values={props.values} source="characterInstance"/>
+                        <br />
+                    </div>
+                }
+
                 <GroupSelect/>
                 <br />
                 
@@ -101,6 +176,7 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 <br />
                 <br />
             </Form>
+            )}
         </Formik>
     
     );

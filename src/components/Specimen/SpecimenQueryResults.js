@@ -20,17 +20,66 @@ function Specimens(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
     const groups = props.standAlone ? '' : '$groups: [ID!], ';
+    /*
     const filter = props.standAlone ? '' : `,  filter: {
         ${filters.collection ?
             "AND: [{elementOf_some: {pbotID_in: $groups}}, {collection: {pbotID: $collection}}]" : 
             "elementOf_some: {pbotID_in: $groups}"
         }
     }`;
-    
+    */
+
+    let filter = '';
+    if (!props.standAlone) {
+        filter = ", filter: {"
+        if (!filters.collection && !filters.state && !filters.character && !filters.schema) {
+            filter += "elementOf_some: {pbotID_in: $groups}"
+        } else {
+            filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
+            if (filters.collection) {
+                filter += ", {collection: {pbotID: $collection}}"
+            }
+            if (filters.state) {
+                filter += `, {
+                    describedBy: {
+                        Description: { 
+                            characterInstances: {
+                                state: {
+                                    State: {pbotID: $state}
+                                }
+                            }
+                        }
+                    }
+                }`
+            } else if (filters.character) {
+                filter += `, {
+                    describedBy: {
+                        Description: { 
+                            characterInstances: {
+                                character: {pbotID: $character}
+                            }
+                        }
+                    }
+                }`
+            } else if (filters.schema) {
+                filter += `, {
+                    describedBy: {
+                        Description: { 
+                            schema: {pbotID: $schema}
+                        }
+                    }
+                }`
+            }
+            filter +="]"
+        }
+        filter += "}"
+    }
+    console.log(filter)
+
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, ${groups} ${filters.collection ? ", $collection: ID" : ""}) {
+            query ($pbotID: ID, $name: String, ${groups} ${filters.collection ? ", $collection: ID" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.state ? ", $state: ID" : ""}) {
                 Specimen (pbotID: $pbotID, name: $name ${filter}) {
                     pbotID
                     name
@@ -271,6 +320,9 @@ const SpecimenQueryResults = ({queryParams}) => {
             filters={{
                 pbotID: queryParams.specimenID,
                 name: queryParams.name, 
+                schema: queryParams.character ? null : queryParams.schema || null,
+                character: queryParams.state ? null : queryParams.character || null,
+                state: queryParams.state.split("~,")[1] || null,
                 collection: queryParams.collection || null, 
                 organs: queryParams.organs || null,
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
