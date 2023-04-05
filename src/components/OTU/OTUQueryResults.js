@@ -15,12 +15,70 @@ function OTUList(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
     const groups = props.standAlone ? '' : '$groups: [ID!], ';
-    const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
-    
+    //const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
+
+    let filter = '';
+    if (!props.standAlone) {
+        filter = ", filter: {"
+        if (!filters.state && !filters.character && !filters.schema) {
+            filter += "elementOf_some: {pbotID_in: $groups}"
+        } else {
+            filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
+            //TODO: the graphql path below will change from exampleSpecimens to whatever we call
+            //the set of all specimens
+            if (filters.state) {
+                filter += `, {
+                    exampleSpecimens: {
+                        Specimen: {
+                            describedBy: {
+                                Description: { 
+                                    characterInstances: {
+                                        state: {
+                                            State: {pbotID: $state}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`
+            } else if (filters.character) {
+                filter += `, {
+                    exampleSpecimens: {
+                        Specimen: {
+                            describedBy: {
+                                Description: { 
+                                    characterInstances: {
+                                        character: {pbotID: $character}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`
+            } else if (filters.schema) {
+                filter += `, {
+                    exampleSpecimens: {
+                        Specimen: {
+                            describedBy: {
+                                Description: { 
+                                    schema: {pbotID: $schema}
+                                }
+                            }
+                        }
+                    }
+                }`
+            }
+            filter +="]"
+        }
+        filter += "}"
+    }
+    console.log(filter)
+
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups}) {
+            query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.state ? ", $state: ID" : ""}) {
                 OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species ${filter}) {
                     pbotID
                     name
@@ -169,6 +227,9 @@ const OTUQueryResults = ({queryParams}) => {
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
                 species: queryParams.species || null, 
+                schema: queryParams.character ? null : queryParams.schema || null,
+                character: queryParams.state ? null : queryParams.character || null,
+                state: queryParams.state ? queryParams.state.split("~,")[1] : null,
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
             }}
             includeSynonyms={queryParams.includeSynonyms} 

@@ -1,9 +1,63 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
+import { CharacterSelect } from '../Character/CharacterSelect.js';
+import { StateSelect } from '../State/StateSelect.js';
+import { alphabetize } from '../../util.js';
+import {
+    useQuery,
+    gql
+  } from "@apollo/client";
+  import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+  
+const SchemaSelect = (props) => {
+    console.log("SchemaSelect");
+    const gQL = gql`
+        query {
+            Schema {
+                pbotID
+                title
+            }            
+        }
+    `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                      
+    console.log(">>>>>>>>>>>>Schema results<<<<<<<<<<<<<");
+    console.log(data.Schema);
+    const schemas = alphabetize([...data.Schema], "title");
+    console.log(schemas);
+    
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="schema"
+            label="Schema"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {schemas.map((schema) => (
+                <MenuItem 
+                    key={schema.pbotID} 
+                    value={schema.pbotID}
+                >{schema.title}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 
 const OTUQueryForm = ({handleSubmit}) => {
@@ -13,6 +67,9 @@ const OTUQueryForm = ({handleSubmit}) => {
                 family: '', 
                 genus: '', 
                 species: '',
+                schema: '',
+                character: '',
+                state: '',
                 groups: [],
                 includeHolotypeDescription: false,
                 includeMergedDescription: false,
@@ -82,6 +139,23 @@ const OTUQueryForm = ({handleSubmit}) => {
                 />
                 <br />
                 
+                <SchemaSelect />
+                <br />
+
+                {props.values.schema !== '' &&
+                    <div>
+                        <CharacterSelect values={props.values} source="characterInstance"/>
+                        <br />
+                    </div>
+                }
+                
+                {props.values.character !== "" &&
+                    <div>
+                        <StateSelect values={props.values} source="characterInstance"/>
+                        <br />
+                    </div>
+                }
+
                 <GroupSelect/>
                 <br />
 
