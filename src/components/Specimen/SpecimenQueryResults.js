@@ -322,7 +322,7 @@ const SpecimenQueryResults = ({queryParams}) => {
                 name: queryParams.name, 
                 schema: queryParams.character ? null : queryParams.schema || null,
                 character: queryParams.state ? null : queryParams.character || null,
-                state: queryParams.state.split("~,")[1] || null,
+                state: queryParams.state ? queryParams.state.split("~,")[1] : null,
                 collection: queryParams.collection || null, 
                 organs: queryParams.organs || null,
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
