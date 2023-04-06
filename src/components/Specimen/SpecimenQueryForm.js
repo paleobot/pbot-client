@@ -1,65 +1,14 @@
-import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Button } from '@mui/material';
+import { Field, Form, Formik } from 'formik';
+import { CheckboxWithLabel, TextField } from 'formik-mui';
+import React from 'react';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, MenuItem } from '@mui/material';
-import { TextField, CheckboxWithLabel } from 'formik-mui';
-import {GroupSelect} from '../Group/GroupSelect.js';
-import {CollectionSelect} from '../Collection/CollectionSelect.js';
-import {OrganSelect} from '../Organ/OrganSelect.js';
 import { CharacterSelect } from '../Character/CharacterSelect.js';
+import { CollectionSelect } from '../Collection/CollectionSelect.js';
+import { GroupSelect } from '../Group/GroupSelect.js';
+import { OrganSelect } from '../Organ/OrganSelect.js';
+import { SchemaSelect } from '../Schema/SchemaSelect.js';
 import { StateSelect } from '../State/StateSelect.js';
-import { alphabetize } from '../../util.js';
-import {
-    useQuery,
-    gql
-  } from "@apollo/client";
-  import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-  
-const SchemaSelect = (props) => {
-    console.log("SchemaSelect");
-    const gQL = gql`
-        query {
-            Schema {
-                pbotID
-                title
-            }            
-        }
-    `;
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                      
-    console.log(">>>>>>>>>>>>Schema results<<<<<<<<<<<<<");
-    console.log(data.Schema);
-    const schemas = alphabetize([...data.Schema], "title");
-    console.log(schemas);
-    
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="schema"
-            label="Schema"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {schemas.map((schema) => (
-                <MenuItem 
-                    key={schema.pbotID} 
-                    value={schema.pbotID}
-                >{schema.title}</MenuItem>
-            ))}
-        </Field>
-    )
-}
 
 const SpecimenQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
