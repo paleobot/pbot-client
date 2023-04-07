@@ -43,7 +43,7 @@ function Specimens(props) {
                 filter += `, {
                     describedBy: {
                         Description: { 
-                            characterInstances: {
+                            characterInstances_some: {
                                 state: {
                                     State: {pbotID: $state}
                                 }
@@ -55,7 +55,7 @@ function Specimens(props) {
                 filter += `, {
                     describedBy: {
                         Description: { 
-                            characterInstances: {
+                            characterInstances_some: {
                                 character: {pbotID: $character}
                             }
                         }
