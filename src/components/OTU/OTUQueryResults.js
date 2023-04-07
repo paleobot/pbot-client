@@ -28,11 +28,11 @@ function OTUList(props) {
             //the set of all specimens
             if (filters.state) {
                 filter += `, {
-                    exampleSpecimens: {
+                    exampleSpecimens_some: {
                         Specimen: {
                             describedBy: {
                                 Description: { 
-                                    characterInstances: {
+                                    characterInstances_some: {
                                         state: {
                                             State: {pbotID: $state}
                                         }
@@ -44,11 +44,11 @@ function OTUList(props) {
                 }`
             } else if (filters.character) {
                 filter += `, {
-                    exampleSpecimens: {
+                    exampleSpecimens_some: {
                         Specimen: {
                             describedBy: {
                                 Description: { 
-                                    characterInstances: {
+                                    characterInstances_some: {
                                         character: {pbotID: $character}
                                     }
                                 }
@@ -58,7 +58,7 @@ function OTUList(props) {
                 }`
             } else if (filters.schema) {
                 filter += `, {
-                    exampleSpecimens: {
+                    exampleSpecimens_some: {
                         Specimen: {
                             describedBy: {
                                 Description: { 
