@@ -228,7 +228,6 @@ export const CharacterSelect = (props) => {
              </Field>
         }
 
-        <br />
         </>
     );
 

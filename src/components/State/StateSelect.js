@@ -179,7 +179,6 @@ export const StateSelect = (props) => {
         </Field>
         }
 
-        <br />
         </>
     );
 
