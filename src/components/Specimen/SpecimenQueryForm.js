@@ -76,17 +76,17 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 <br />
 
                 {props.values.schema !== '' &&
-                    <div>
+                    <>
                         <CharacterSelect values={props.values} source="characterInstance"/>
                         <br />
-                    </div>
+                    </>
                 }
                 
                 {props.values.character !== "" &&
-                    <div>
+                    <>
                         <StateSelect values={props.values} source="characterInstance"/>
                         <br />
-                    </div>
+                    </>
                 }
 
                 <GroupSelect/>
