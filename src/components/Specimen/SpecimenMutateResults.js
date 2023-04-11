@@ -47,8 +47,6 @@ const SpecimenMutateResults = ({queryParams}) => {
                 pbdboccid: queryParams.pbdboccid || null,
                 collection: queryParams.collection || null,
                 uploadImages: queryParams.images || null,
-                groups: queryParams.public ? 
-                    [publicGroupID] : queryParams.groups || null,
                 cascade: queryParams.cascade || false
             }}
             entity="Specimen"
