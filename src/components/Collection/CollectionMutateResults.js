@@ -25,6 +25,7 @@ const CollectionMutateResults = ({queryParams}) => {
                 country: queryParams.country || null,
                 pbdbid: queryParams.pbdbid || null,
                 references: queryParams.references || null,
+                cascade: queryParams.cascade || false,
                 groups: queryParams.public ? 
                     [publicGroupID] : queryParams.groups || null,
             }}

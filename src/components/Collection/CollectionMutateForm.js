@@ -474,6 +474,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     pbotID: '',
                     order:'',
                 }],
+                cascade: false,
                 public: true,
                 groups: [],
                 mode: mode,
@@ -661,6 +662,18 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     </>
                 }
                 
+                {(mode === "delete") &&
+                <div>
+                    <Field
+                        type="checkbox"
+                        component={CheckboxWithLabel}
+                        name="cascade"
+                        Label={{ label: 'Cascade' }}
+                    />
+                  <br />
+                </div>
+                }
+
                 <br />
                 <br />
 
