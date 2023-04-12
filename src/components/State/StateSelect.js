@@ -160,12 +160,12 @@ export const StateSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="state"
-            label="State"
+            name={props.multi ? "states" : "state"}
+            label={props.multi ? "States" : "State"}
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: false,
+                multiple: props.multi || false,
             }}
             disabled={false}
         >

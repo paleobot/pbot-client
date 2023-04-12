@@ -18,7 +18,7 @@ const SpecimenQueryForm = ({handleSubmit}) => {
         collection: '',
         schema: '',
         character: '',
-        state: '',
+        states: [],
         organs: [],
         groups: [],
         includeImages: false,
@@ -84,7 +84,7 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 
                 {props.values.character !== "" &&
                     <>
-                        <StateSelect values={props.values} source="characterInstance"/>
+                        <StateSelect values={props.values} source="characterInstance" multi={true}/>
                         <br />
                     </>
                 }

@@ -32,20 +32,20 @@ function Specimens(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.collection && !filters.state && !filters.character && !filters.schema) {
+        if (!filters.collection && !filters.states && !filters.character && !filters.schema) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
             if (filters.collection) {
                 filter += ", {collection: {pbotID: $collection}}"
             }
-            if (filters.state) {
+            if (filters.states) {
                 filter += `, {
                     describedBy: {
                         Description: { 
                             characterInstances_some: {
                                 state: {
-                                    State: {pbotID: $state}
+                                    State: {pbotID_in: $states}
                                 }
                             }
                         }
@@ -79,7 +79,7 @@ function Specimens(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, ${groups} ${filters.collection ? ", $collection: ID" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.state ? ", $state: ID" : ""}) {
+            query ($pbotID: ID, $name: String, ${groups} ${filters.collection ? ", $collection: ID" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
                 Specimen (pbotID: $pbotID, name: $name ${filter}) {
                     pbotID
                     name
@@ -321,8 +321,8 @@ const SpecimenQueryResults = ({queryParams}) => {
                 pbotID: queryParams.specimenID,
                 name: queryParams.name, 
                 schema: queryParams.character ? null : queryParams.schema || null,
-                character: queryParams.state ? null : queryParams.character || null,
-                state: queryParams.state ? queryParams.state.split("~,")[1] : null,
+                character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
+                states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
                 collection: queryParams.collection || null, 
                 organs: queryParams.organs || null,
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 

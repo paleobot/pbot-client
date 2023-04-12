@@ -20,13 +20,13 @@ function OTUList(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.state && !filters.character && !filters.schema) {
+        if (!filters.states && !filters.character && !filters.schema) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
             //TODO: the graphql path below will change from exampleSpecimens to whatever we call
             //the set of all specimens
-            if (filters.state) {
+            if (filters.states) {
                 filter += `, {
                     exampleSpecimens_some: {
                         Specimen: {
@@ -34,7 +34,7 @@ function OTUList(props) {
                                 Description: { 
                                     characterInstances_some: {
                                         state: {
-                                            State: {pbotID: $state}
+                                            State: {pbotID_in: $states}
                                         }
                                     }
                                 }
@@ -78,7 +78,7 @@ function OTUList(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.state ? ", $state: ID" : ""}) {
+            query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
                 OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species ${filter}) {
                     pbotID
                     name
@@ -228,8 +228,8 @@ const OTUQueryResults = ({queryParams}) => {
                 genus: queryParams.genus || null, 
                 species: queryParams.species || null, 
                 schema: queryParams.character ? null : queryParams.schema || null,
-                character: queryParams.state ? null : queryParams.character || null,
-                state: queryParams.state ? queryParams.state.split("~,")[1] : null,
+                character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
+                states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
             }}
             includeSynonyms={queryParams.includeSynonyms} 

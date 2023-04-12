@@ -17,7 +17,7 @@ const OTUQueryForm = ({handleSubmit}) => {
                 species: '',
                 schema: '',
                 character: '',
-                state: '',
+                states: [],
                 groups: [],
                 includeHolotypeDescription: false,
                 includeMergedDescription: false,
@@ -99,7 +99,7 @@ const OTUQueryForm = ({handleSubmit}) => {
                 
                 {props.values.character !== "" &&
                     <div>
-                        <StateSelect values={props.values} source="characterInstance"/>
+                        <StateSelect values={props.values} source="characterInstance" multi={true}/>
                         <br />
                     </div>
                 }
