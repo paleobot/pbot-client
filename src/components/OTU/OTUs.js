@@ -24,7 +24,7 @@ function OTUs(props) {
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : otus.map(({ pbotID, name, family, genus, species, holotype, mergedDescription, synonyms, elementOf}) => {
+    ) : otus.map(({ pbotID, name, family, genus, species, holotypeSpecimen, mergedDescription, synonyms, elementOf}) => {
         const directURL = new URL(window.location.origin + "/query/otu/" + pbotID);
         if (props.includeSynonyms) {
             directURL.searchParams.append("includeSynonyms", "true");
@@ -144,10 +144,10 @@ function OTUs(props) {
                     </div>
                     }
                     
-                    {holotype && holotype.Specimen.describedBy && holotype.Specimen.describedBy[0].Description.characterInstances && holotype.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
+                    {holotypeSpecimen && holotypeSpecimen.Specimen.describedBy && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
                     <div>
                         <div style={indent}><b>holotype description:</b></div>
-                        {alphabetize([...holotype.Specimen.describedBy], "Description.schema.title").map((d, i) => (
+                        {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => (
                             <div key={d.Description.schema.pbotID}>
                                 <div style={indent2}><b>from schema "{d.Description.schema.title}":</b></div>
                                 <CharacterInstances characterInstances={d.Description.characterInstances} />
