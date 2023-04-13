@@ -10,8 +10,9 @@ const OTUMutateResults = ({queryParams}) => {
         <Mutator 
             params={{
                 pbotID: queryParams.otu || null,
-                exampleSpecimens: queryParams.exampleSpecimens || null,
-                holotype: queryParams.holotypeSpecimen || null,
+                identifiedSpecimens: queryParams.identifiedSpecimens || null,
+                typeSpecimens: queryParams.typeSpecimens || null,
+                holotypeSpecimen: queryParams.holotypeSpecimen || null,
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
                 species: queryParams.species || null, 

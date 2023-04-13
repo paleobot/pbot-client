@@ -24,13 +24,19 @@ const OTUSelect = (props) => {
                     family
                     genus
                     species
-                  	exampleSpecimens {
+                    identifiedSpecimens {
                       Specimen {
                         name
                         pbotID
                       }
                     }
-                    holotype {
+                  	typeSpecimens {
+                      Specimen {
+                        name
+                        pbotID
+                      }
+                    }
+                    holotypeSpecimen {
                         Specimen {
                             name
                             pbotID
@@ -81,12 +87,13 @@ const OTUSelect = (props) => {
             onChange={(event,child) => {
                 console.log("onChange");
                 console.log(child.props);
-                console.log(child.props.dexamplespecimens);
+                console.log(child.props.didentifiedspecimens);
                 props.values.name = child.props.dname;
                 props.values.family = child.props.dfamily;
                 props.values.genus = child.props.dgenus;
                 props.values.species = child.props.dspecies;
-                props.values.exampleSpecimens = child.props.dexamplespecimens ? JSON.parse(child.props.dexamplespecimens) : [];
+                props.values.identifiedSpecimens = child.props.didentifiedspecimens ? JSON.parse(child.props.didentifiedspecimens) : [];
+                props.values.typeSpecimens = child.props.dtypespecimens ? JSON.parse(child.props.dtypespecimens) : [];
                 props.values.holotypeSpecimen = child.props.dholotypespecimen;
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 props.values.public = "true"=== child.props.dpublic || false;
@@ -104,8 +111,9 @@ const OTUSelect = (props) => {
                     dfamily={otu.family}
                     dgenus={otu.genus}
                     dspecies={otu.species}
-                    dexamplespecimens={otu.exampleSpecimens ? JSON.stringify(otu.exampleSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
-                    dholotypespecimen={otu.holotype.Specimen.pbotID}
+                    didentifiedspecimens={otu.identifiedSpecimens ? JSON.stringify(otu.identifiedSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
+                    dtypespecimens={otu.typeSpecimens ? JSON.stringify(otu.typeSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
+                    dholotypespecimen={otu.holotypeSpecimen.Specimen.pbotID}
                     dreferences={otu.references ? JSON.stringify(otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
                     dpublic={otu.elementOf && otu.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={otu.elementOf ? JSON.stringify(otu.elementOf.map(group => group.pbotID)) : null}
@@ -133,13 +141,22 @@ const SpecimenSelect = (props) => {
     if ("holotype" === props.type) {
         specimenGQL = gql`
             query {
-                Specimen (filter: {pbotID_in: ${JSON.stringify(props.values.exampleSpecimens)}}) {
+                Specimen (filter: {pbotID_in: ${JSON.stringify(props.values.typeSpecimens)}}) {
                     pbotID
                     name
                 }            
             }
         `;
-    } else {
+    } else if ("type" === props.type) {
+        specimenGQL = gql`
+            query {
+                Specimen (filter: {pbotID_in: ${JSON.stringify(props.values.identifiedSpecimens)}}) {
+                    pbotID
+                    name
+                }            
+            }
+        `;
+    } else /*"identified"*/ {
         specimenGQL = gql`
             query {
                 Specimen {
@@ -186,13 +203,13 @@ const SpecimenSelect = (props) => {
                 ))}
             </Field>
         )
-    } else {
+    } else if (props.type === "type") {
         return (
             <Field
                 component={TextField}
                 type="text"
-                name="exampleSpecimens"
-                label="Example specimens"
+                name="typeSpecimens"
+                label="Type specimens"
                 sx={{minWidth:"200px"}}
                 select={true}
                 SelectProps={{
@@ -200,7 +217,33 @@ const SpecimenSelect = (props) => {
                 }}
                 disabled={false}
                 onChange={(event,child) => {
-                    if (child.props.value === props.values.holotypeSpecimen) props.values.holotypeSpecimen = ''; //clear holotype if it is the example getting touched here
+                    if (child.props.value === props.values.holotypeSpecimen) props.values.holotypeSpecimen = ''; //clear holotype if it is the specimen getting touched here
+                    props.handleChange(event);
+                }}
+            >
+                {specimens.map(({ pbotID, name }) => (
+                    <MenuItem key={pbotID} value={pbotID} dname={name}>{name}</MenuItem>
+                ))}
+            </Field>
+        )
+    } else {
+        return (
+            <Field
+                component={TextField}
+                type="text"
+                name="identifiedSpecimens"
+                label="Identified specimens"
+                sx={{minWidth:"200px"}}
+                select={true}
+                SelectProps={{
+                    multiple: true,
+                }}
+                disabled={false}
+                onChange={(event,child) => {
+                    if (props.values.typeSpecimens.includes(child.props.value)) {
+                        if (child.props.value === props.values.holotypeSpecimen) props.values.holotypeSpecimen = ''; //clear holotype if it is the specimen getting touched here
+                        props.values.typeSpecimens = props.values.typeSpecimens.filter(specimen => specimen != child.props.value); //remove specimen from typeSpecimens
+                    }
                     props.handleChange(event);
                 }}
             >
@@ -216,7 +259,8 @@ const SpecimenSelect = (props) => {
 const OTUMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 otu: '',
-                exampleSpecimens: [],
+                identifiedSpecimens: [],
+                typeSpecimens: [],
                 holotypeSpecimen: '',
                 family: '', 
                 genus: '', 
@@ -276,7 +320,8 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
                 }),
                 holotypeSpecimen: Yup.string().required("Holotype specimen required"),
-                exampleSpecimens: Yup.array().min(1, "At least one example specimen required"),
+                typeSpecimens: Yup.array().min(1, "At least one type specimen required"),
+                identifiedSpecimens: Yup.array().min(1, "At least one identified specimen required"),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -345,7 +390,10 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 />
                 <br />
           
-                <SpecimenSelect type="example" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                <SpecimenSelect type="identified" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                <br />
+
+                <SpecimenSelect type="type" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
                 <br />
                 
                 <SpecimenSelect type="holotype" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>

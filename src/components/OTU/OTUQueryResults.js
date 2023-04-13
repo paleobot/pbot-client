@@ -28,7 +28,7 @@ function OTUList(props) {
             //the set of all specimens
             if (filters.states) {
                 filter += `, {
-                    exampleSpecimens_some: {
+                    identifiedSpecimens_some: {
                         Specimen: {
                             describedBy: {
                                 Description: { 
@@ -44,7 +44,7 @@ function OTUList(props) {
                 }`
             } else if (filters.character) {
                 filter += `, {
-                    exampleSpecimens_some: {
+                    identifiedSpecimens_some: {
                         Specimen: {
                             describedBy: {
                                 Description: { 
@@ -58,7 +58,7 @@ function OTUList(props) {
                 }`
             } else if (filters.schema) {
                 filter += `, {
-                    exampleSpecimens_some: {
+                    identifiedSpecimens_some: {
                         Specimen: {
                             describedBy: {
                                 Description: { 
@@ -158,7 +158,7 @@ function OTUList(props) {
                         stateValue
                         stateOrder
                     }
-                    holotype @include(if: $includeHolotypeDescription) {
+                    holotypeSpecimen @include(if: $includeHolotypeDescription) {
                         Specimen {
                             name
                             describedBy {

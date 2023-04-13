@@ -138,7 +138,15 @@ function Specimens(props) {
                             }
                         }
                     }
-                    exampleOf @include(if: $includeOTUs){
+                    identifiedAs @include(if: $includeOTUs){
+                        OTU {
+                            name
+                            family
+                            genus
+                            species
+                        }
+                    }
+                    typeOf @include(if: $includeOTUs){
                         OTU {
                             name
                             family
@@ -260,10 +268,23 @@ function Specimens(props) {
                         ))}
                     </div>
                 }
-                {s.exampleOf && s.exampleOf.length > 0 &&
+                {s.typeOf && s.typeOf.length > 0 &&
                     <div>
-                        <div style={indent}><b>example of:</b></div>
-                        {s.exampleOf.map((h, idx) => (
+                        <div style={indent}><b>type of:</b></div>
+                        {s.typeOf.map((h, idx) => (
+                            <div key={idx}>
+                                <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                                <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                                <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                                <div style={indent2}><b>species: {h.OTU.species}</b></div>
+                            </div>
+                        ))}
+                    </div>
+                }
+                {s.identifiedAs && s.identifiedAs.length > 0 &&
+                    <div>
+                        <div style={indent}><b>identified as:</b></div>
+                        {s.identifiedAs.map((h, idx) => (
                             <div key={idx}>
                                 <div style={indent2}><b>name: {h.OTU.name}</b></div>
                                 <div style={indent2}><b>family: {h.OTU.family}</b></div>
