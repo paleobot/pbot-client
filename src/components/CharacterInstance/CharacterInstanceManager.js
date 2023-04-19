@@ -191,7 +191,7 @@ const CharacterInstanceManager = (props) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         {/*<CharacterInstanceList deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} description={props.values.description}/>*/}
-                        <CharacterAccordion schema={props.values.schema} />
+                        <CharacterAccordion description={props.values.description} schema={props.values.schema} />
                         <Button
                             style={{marginTop:"1.5em"}}
                             type="button"
