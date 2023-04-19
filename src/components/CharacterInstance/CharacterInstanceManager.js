@@ -9,6 +9,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import { CharacterAccordion } from '../Character/CharacterAccordion.js';
 //import CharacterInstances from '../CharacterInstance/CharacterInstances.js';
 
 
@@ -189,7 +190,8 @@ const CharacterInstanceManager = (props) => {
                         Character instances
                     </AccordionSummary>
                     <AccordionDetails>
-                        <CharacterInstanceList deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} description={props.values.description}/>
+                        {/*<CharacterInstanceList deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} description={props.values.description}/>*/}
+                        <CharacterAccordion schema={props.values.schema} />
                         <Button
                             style={{marginTop:"1.5em"}}
                             type="button"
