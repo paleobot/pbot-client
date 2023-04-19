@@ -156,7 +156,7 @@ const CharacterInstanceSelect = (props) => {
         
 }
 
-const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema}) => {
+const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema, character}) => {
     console.log("CharacterInstanceMutateForm");
     //console.log(description)
     //console.log(schema)
@@ -164,7 +164,7 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema}) 
                 characterInstance: '',
                 description: description || '',
                 schema: schema || '',
-                character: '',
+                character: character || '',
                 state: '', 
                 quantity: '',
                 order: '1',
