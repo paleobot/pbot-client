@@ -4,11 +4,15 @@ import {
 import React from 'react';
 import { sort } from '../../util.js';
   
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, MenuItem } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Formik, Form, Field } from "formik";
+import { TextField } from "formik-mui";
 
 const Character = (props) => {
     const accstyle = {textAlign: "left", width: "100%"}
+    const states = props.character.states;
+
     if (props.character.characters && props.character.characters.length > 0) { 
         const characters = sort([...props.character.characters], "order", "name");
         return (
@@ -29,16 +33,39 @@ const Character = (props) => {
                             />
                         )       
                     })}
-                    {(props.character.states && props.character.states.length > 0) &&
+                    {(states && states.length > 0) &&
                         <> 
-                        {sort([...props.character.states], "order", "name").map((state) => {
-                            return (
-                                <State 
-                                    key={state.pbotID} 
-                                    state={state}
-                                />
-                            )       
-                        })}
+                           <Formik
+                                initialValues={{
+                                    states: [], 
+                                }}
+                           >
+                                {props => (
+                                <Form>
+                                <Field
+                                    component={TextField}
+                                    type="text"
+                                    name="states"
+                                    label="States"
+                                    fullWidth 
+                                    select={true}
+                                    SelectProps={{
+                                        multiple: true,
+                                    }}
+                                    disabled={false}
+                                >
+                                    {sortAndFlatten([...states], 0).map(({ pbotID, name, style }) => (
+                                        <MenuItem 
+                                            style={style}
+                                            key={pbotID} 
+                                            value={name + "~," + pbotID}
+                                        >{name}</MenuItem>
+                                    ))}
+                                </Field>
+                                </Form>
+                                )}
+                            </Formik>
+
                         </>
                     }
                 </AccordionDetails>
@@ -48,16 +75,38 @@ const Character = (props) => {
         return (
             <>
             <p><b>{props.character.name}</b></p>
-            {(props.character.states && props.character.states.length > 0) &&
+            {(states && states.length > 0) &&
                 <> 
-                {sort([...props.character.states], "order", "name").map((state) => {
-                    return (
-                        <State 
-                            key={state.pbotID} 
-                            state={state}
-                        />
-                    )       
-                })}
+                           <Formik
+                                initialValues={{
+                                    states: [], 
+                                }}
+                           >
+                                {props => (
+                                <Form>
+                                <Field
+                                    component={TextField}
+                                    type="text"
+                                    name="states"
+                                    label="States"
+                                    fullWidth 
+                                    select={true}
+                                    SelectProps={{
+                                        multiple: true,
+                                    }}
+                                    disabled={false}
+                                >
+                                    {sortAndFlatten([...states], 0).map(({ pbotID, name, style }) => (
+                                        <MenuItem 
+                                            style={style}
+                                            key={pbotID} 
+                                            value={name + "~," + pbotID}
+                                        >{name}</MenuItem>
+                                    ))}
+                                </Field>
+                                </Form>
+                                )}
+                            </Formik>
                 </>
             }
             </>
@@ -65,10 +114,39 @@ const Character = (props) => {
     }
 }
 
+const sortAndFlatten = (states, level) => {
+    const lstates = sort([...states], "order", "name");
+    
+    const indent = level * 2;
+    const fontWeight = level === 0 ? "bold" : "normal";
+    const style = {marginLeft: indent + "em", fontWeight: fontWeight};
+
+    let flatList = []; 
+    lstates.forEach((state) => {
+        
+        
+        const {states, ...lightState} = state; // remove characters
+        flatList.push({
+            ...lightState,
+            style: style,
+        });
+        
+        if (state.states && state.states.length > 0) {
+            flatList = flatList.concat(sortAndFlatten(state.states, level+1));
+        }
+        return flatList;
+        
+        
+    })
+    return flatList
+}
+
+/*
 const State = (props) => {
     const accstyle = {textAlign: "left", width: "100%"}
     if (props.state.states && props.state.states.length > 0) { 
-        const states = sort([...props.state.states], "order", "name");
+        //const states = sort([...props.state.states], "order", "name");
+        const states = sortAndFlatten([...props.state.states], 0);
         return (
             <Accordion style={accstyle} defaultExpanded={false}>
                 <AccordionSummary
@@ -79,17 +157,27 @@ const State = (props) => {
                     {props.state.name}
                 </AccordionSummary>
                 <AccordionDetails>
-                    <p>{props.state.name}</p>
-                    {states.map((state) => {
-                        return (
-                            <State 
-                                style={{marginLeft:"2em"}}
-                                key={state.pbotID} 
-                                state={state}
-                            />
-                        )       
-                    })}
-                </AccordionDetails>
+                    <Field
+                        component={TextField}
+                        type="text"
+                        name="states"
+                        label="States"
+                        fullWidth 
+                        select={true}
+                        SelectProps={{
+                            multiple: true,
+                        }}
+                        disabled={false}
+                    >
+                        {states.map(({ pbotID, name, style }) => (
+                            <MenuItem 
+                                style={style}
+                                key={pbotID} 
+                                value={name + "~," + pbotID}
+                            >{name}</MenuItem>
+                        ))}
+                    </Field>
+                    </AccordionDetails>
             </Accordion>
         ) 
     } else {
@@ -98,7 +186,7 @@ const State = (props) => {
         )
     }
 }
-
+*/
 export const CharacterAccordion = (props) => {
     const gQL = gql`
     fragment CharacterFields on Character {
