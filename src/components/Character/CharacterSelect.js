@@ -214,7 +214,7 @@ export const CharacterSelect = (props) => {
                 SelectProps={{
                     multiple: false,
                 }}
-                disabled={false}
+                disabled={props.disabled || false}
             >
             {characters.map((character) => {
                 return (
