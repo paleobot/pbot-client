@@ -18,8 +18,16 @@ export const sort = (list, sortField1, sortField2) => {
 
     return list.sort((a,b) => {
         //"z"/1000 forces null/blank/NaN to end of list
-        const field1A = a[sortField1] ? a[sortField1].toString().toUpperCase() : "z"; 
-        const field1B = b[sortField1] ? b[sortField1].toString().toUpperCase() : "z"; 
+        //const field1A = a[sortField1] ? a[sortField1].toString().toUpperCase() : "z"; 
+        //const field1B = b[sortField1] ? b[sortField1].toString().toUpperCase() : "z"; 
+        let field1A, field1B;
+        if (sortField1.startsWith("#")) {
+            field1A = a[sortField1.substring(1)] ? Number.parseFloat(a[sortField1.substring(1)]) : 1000; 
+            field1B = b[sortField1.substring(1)] ? Number.parseFloat(b[sortField1.substring(1)]) : 1000; 
+        } else {
+            field1A = a[sortField1] ? a[sortField1].toString().toUpperCase() : "z";
+            field1B = b[sortField1] ? b[sortField1].toString().toUpperCase() : "z";
+        }
 
         let field2A, field2B;
         if (sortField2.startsWith("#")) {
