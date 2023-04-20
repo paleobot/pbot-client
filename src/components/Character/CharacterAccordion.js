@@ -2,7 +2,7 @@ import {
     gql, useQuery
 } from "@apollo/client";
 import React, {useState} from 'react';
-import { sort } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
   
 import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -10,6 +10,85 @@ import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-mui";
 import CharacterInstanceMutateForm from "../CharacterInstance/CharacterInstanceMutateForm.js";
 import CharacterInstanceMutateResults from "../CharacterInstance/CharacterInstanceMutateResults.js";
+
+const CharacterInstanceDeleteDialog = (props) => {
+    const [showResult, setShowResult] = useState(false);
+
+    return (
+        <Dialog fullWidth={true} open={props.open}>
+            <DialogTitle>
+                Delete Character Instance
+            </DialogTitle>
+            <DialogContent>
+                {showResult &&
+                    <CharacterInstanceMutateResults queryParams={{
+                        //All we care about here is characterInstance.
+                        //The rest is stub data to satisfy the graphql interface. 
+                        characterInstance: props.deleteCI.pbotID,
+                        description: null,
+                        character: "x",
+                        state: "x~,y",
+                        quantity: "",
+                        order: "",
+                        mode: "delete"
+                    }}  handleClose={props.handleClose} />
+                }
+                {!showResult &&
+                <>
+                <p>You are about to delete the Character Instance <i>{props.deleteCI.character.name} - {props.deleteCI.state.State.name}</i></p>
+                <p>Are you sure you want to do this?</p>
+                </>
+                }
+            </DialogContent>
+            <DialogActions>
+                {showResult &&
+                    <Button onClick={props.handleClose} color="secondary">Ok</Button>
+                }
+                {!showResult &&
+                <>
+                    <Button onClick={()=>{setShowResult(true)}} color="secondary">Do it</Button>
+                    <Button onClick={() => {props.setDeleteCI(null); props.handleClose()}} color="secondary">Cancel</Button>
+                </>
+                }
+            </DialogActions>
+        </Dialog>
+    )
+}
+
+const massage = cI => {
+    cI.sortName01 = cI.state.order !== null ? `${cI.state.order}` : ``;
+    cI.sortName02 = `${cI.state.State.name}`.toUpperCase();
+    console.log("massage")
+    console.log(cI);
+    return cI
+};
+
+function CharacterInstances(props) {
+    //console.log("CharacterInstances");
+    //const [open, setOpen] = React.useState(false);
+ 
+    if (!props.characterInstances) return ''; 
+
+    let characterInstances = sort([...props.characterInstances].map(cI => massage({...cI})), "#sortName01", "sortName02");
+    
+    const style = {marginLeft:"4em"}
+    return characterInstances.map((cI) => (
+        <div key={cI.pbotID}  style={props.style || style}>
+            {(cI.state.value !== null && cI.state.value !== '') ? `${cI.state.value}` : `${cI.state.State.name}`}{cI.state.order ? `, order: ${cI.state.order}` : ``}
+            <Button
+                type="button"
+                variant="text" 
+                color="secondary" 
+                size="large"
+                onClick={() => {props.setDeleteCI(cI); props.setDeleteOpen(true)}}
+                sx={{width:"50px"}}
+            >
+                X
+            </Button>
+            <br />
+        </div>
+    ));
+}
 
 const CharacterInstanceDialog = (props) => {
     console.log("CharacterInstanceDialog")
@@ -48,10 +127,17 @@ const Character = (props) => {
     console.log("Character");
     console.log(props.schema)
     console.log(props.description)
+
     const [addDialogOpen, setAddDialogOpen] = React.useState(false);
     const handleAddDialogClose = () => {
         setAddDialogOpen(false);
     };
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
+    const [deleteCI, setDeleteCI] = React.useState(null);
+    const handleDeleteConfirmClose = () => {
+        setDeleteConfirmOpen(false);
+    };
+
 
     const accstyle = {textAlign: "left", width: "100%"}
     const states = props.character.states;
@@ -74,13 +160,7 @@ const Character = (props) => {
                 </AccordionSummary>
                 <AccordionDetails>
                     {(props.character.characterInstances && props.character.characterInstances.length > 0) &&
-                        <>
-                        {props.character.characterInstances.map(cI=> {
-                            return (
-                                <div>{cI.state.State.name}</div>
-                            )
-                        })}
-                        </>
+                        <CharacterInstances deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} characterInstances={props.character.characterInstances} />
                     }
                     {(states && states.length > 0) &&
                         <Button
@@ -111,13 +191,7 @@ const Character = (props) => {
             <>
             <div style={{marginTop: "1em"}}><b>{props.character.name}</b></div>
             {(props.character.characterInstances && props.character.characterInstances.length > 0) &&
-                <>
-                    {props.character.characterInstances.map(cI=> {
-                        return (
-                            <div>{cI.state.State.name}</div>
-                        )
-                    })}
-                </>
+                <CharacterInstances deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} characterInstances={props.character.characterInstances} />
             }
             {(states && states.length > 0) &&
                 <Button
@@ -136,85 +210,14 @@ const Character = (props) => {
         {addDialogOpen && 
             <CharacterInstanceDialog description={props.description} schema={props.schema} open={addDialogOpen} character={props.character.pbotID} handleClose={handleAddDialogClose}  />
         }
+        {deleteConfirmOpen && 
+            <CharacterInstanceDeleteDialog open={deleteConfirmOpen} deleteCI={deleteCI} setDeleteCI={setDeleteCI} handleClose={handleDeleteConfirmClose} />
+        }
         </>
     )
 
 }
 
-
-const sortAndFlatten = (states, level) => {
-    const lstates = sort([...states], "order", "name");
-    
-    const indent = level * 2;
-    const fontWeight = level === 0 ? "bold" : "normal";
-    const style = {marginLeft: indent + "em", fontWeight: fontWeight};
-
-    let flatList = []; 
-    lstates.forEach((state) => {
-        
-        
-        const {states, ...lightState} = state; // remove characters
-        flatList.push({
-            ...lightState,
-            style: style,
-        });
-        
-        if (state.states && state.states.length > 0) {
-            flatList = flatList.concat(sortAndFlatten(state.states, level+1));
-        }
-        return flatList;
-        
-        
-    })
-    return flatList
-}
-
-/*
-const State = (props) => {
-    const accstyle = {textAlign: "left", width: "100%"}
-    if (props.state.states && props.state.states.length > 0) { 
-        //const states = sort([...props.state.states], "order", "name");
-        const states = sortAndFlatten([...props.state.states], 0);
-        return (
-            <Accordion style={accstyle} defaultExpanded={false}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="required-content"
-                    id="required-header"                        
-                >
-                    {props.state.name}
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="states"
-                        label="States"
-                        fullWidth 
-                        select={true}
-                        SelectProps={{
-                            multiple: true,
-                        }}
-                        disabled={false}
-                    >
-                        {states.map(({ pbotID, name, style }) => (
-                            <MenuItem 
-                                style={style}
-                                key={pbotID} 
-                                value={name + "~," + pbotID}
-                            >{name}</MenuItem>
-                        ))}
-                    </Field>
-                    </AccordionDetails>
-            </Accordion>
-        ) 
-    } else {
-        return (
-            <p style={props.style}>{props.state.name}</p>
-        )
-    }
-}
-*/
 export const CharacterAccordion = (props) => {
     console.log("CharacterAccordion");
     console.log(props.schema)
@@ -229,11 +232,17 @@ export const CharacterAccordion = (props) => {
             name
         }
         characterInstances (filter: {description: {pbotID: $descriptionID}}) {
+            pbotID
+            character {
+                name
+            }
             state {
                 State {
                     name
                     pbotID
                 }
+                order
+                value
             }
         }
     }
