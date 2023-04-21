@@ -4,13 +4,52 @@ import {
 import React, {useState} from 'react';
 import { alphabetize, sort } from '../../util.js';
   
-import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
+import { /*Accordion, AccordionDetails, AccordionSummary,*/ Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-mui";
 import CharacterInstanceMutateForm from "../CharacterInstance/CharacterInstanceMutateForm.js";
 import CharacterInstanceMutateResults from "../CharacterInstance/CharacterInstanceMutateResults.js";
 
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+
+import { styled } from '@mui/material/styles';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+
+const Accordion = styled((props) => (
+    <MuiAccordion disableGutters elevation={0} square {...props} />
+  ))(({ theme }) => ({
+    border: `1px solid ${theme.palette.divider}`,
+    '&:not(:last-child)': {
+      //borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+  }));
+  
+  const AccordionSummary = styled((props) => (
+    <MuiAccordionSummary
+      
+      {...props}
+    />
+  ))(({ theme }) => ({
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? 'rgba(255, 255, 255, .05)'
+        : 'rgba(0, 0, 0, .03)',
+    }));
+  
+  const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
+  }));
+  
 const CharacterInstanceDeleteDialog = (props) => {
     const [showResult, setShowResult] = useState(false);
 
@@ -71,7 +110,7 @@ function CharacterInstances(props) {
 
     let characterInstances = sort([...props.characterInstances].map(cI => massage({...cI})), "#sortName01", "sortName02");
     
-    const style = {marginLeft:"4em"}
+    const style = {marginLeft:"2em"}
     return characterInstances.map((cI) => (
         <div key={cI.pbotID}  style={props.style || style}>
             {(cI.state.value !== null && cI.state.value !== '') ? `${cI.state.value}` : `${cI.state.State.name}`}{cI.state.order ? `, order: ${cI.state.order}` : ``}
@@ -81,9 +120,9 @@ function CharacterInstances(props) {
                 color="secondary" 
                 size="large"
                 onClick={() => {props.setDeleteCI(cI); props.setDeleteOpen(true)}}
-                sx={{width:"50px"}}
+                sx={{width:"50px", paddingTop: "0px", paddingBottom:"0px"}}
             >
-                X
+                <ClearOutlinedIcon fontSize="small"/>
             </Button>
             <br />
         </div>
@@ -123,11 +162,7 @@ const CharacterInstanceDialog = (props) => {
     )
 }
 
-const Character = (props) => {
-    console.log("Character");
-    console.log(props.schema)
-    console.log(props.description)
-
+const CharacterInstanceExec = (props) => {
     const [addDialogOpen, setAddDialogOpen] = React.useState(false);
     const handleAddDialogClose = () => {
         setAddDialogOpen(false);
@@ -137,43 +172,63 @@ const Character = (props) => {
     const handleDeleteConfirmClose = () => {
         setDeleteConfirmOpen(false);
     };
-
-
-    const accstyle = {textAlign: "left", width: "100%"}
+    
     const states = props.character.states;
 
-    let characters;
+    return (
+    <>
+        {(props.character.characterInstances && props.character.characterInstances.length > 0) &&
+            <CharacterInstances deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} characterInstances={props.character.characterInstances} />
+        }
+        {(states && states.length > 0) &&
+            <Button
+                type="button"
+                variant="text" 
+                color="secondary" 
+                onClick={()=>{console.log("click"); console.log(props.values); /*setDesc(props.values.description); setSch(props.values.schema);*/ setAddDialogOpen(true)}}
+                disabled={false}
+            >
+                <AddBoxOutlinedIcon/>
+                
+            </Button>
+        }
+
+        {addDialogOpen && 
+            <CharacterInstanceDialog description={props.description} schema={props.schema} open={addDialogOpen} character={props.character.pbotID} handleClose={handleAddDialogClose}  />
+        }
+        {deleteConfirmOpen && 
+            <CharacterInstanceDeleteDialog open={deleteConfirmOpen} deleteCI={deleteCI} setDeleteCI={setDeleteCI} handleClose={handleDeleteConfirmClose} />
+        }
+    </>
+    )
+}
+
+const Character = (props) => {
+    //console.log("Character");
+    //console.log(props.schema)
+    //console.log(props.description)
+
+    const accstyle = {textAlign: "left", width: "100%", marginTop: "1em"}
+
+    let subCharacters;
     if (props.character.characters && props.character.characters.length > 0) { 
-        characters = sort([...props.character.characters], "order", "name");
+        subCharacters = sort([...props.character.characters], "order", "name");
     }
 
     return (
         <>
-        {characters &&
-            <Accordion style={accstyle} defaultExpanded={false}>
+        {subCharacters &&
+            <Accordion style={accstyle} defaultExpanded={false} >
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="required-content"
-                    id="required-header"                        
+                    id="required-header"                         
                 >
                     <b>{props.character.name}</b>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {(props.character.characterInstances && props.character.characterInstances.length > 0) &&
-                        <CharacterInstances deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} characterInstances={props.character.characterInstances} />
-                    }
-                    {(states && states.length > 0) &&
-                        <Button
-                            type="button"
-                            variant="text" 
-                            color="secondary" 
-                            onClick={()=>{console.log("click"); console.log(props.values); /*setDesc(props.values.description); setSch(props.values.schema);*/ setAddDialogOpen(true)}}
-                            disabled={false}
-                        >
-                            Add character instance
-                        </Button>
-                    }
-                    {characters.map((character) => {
+                    <CharacterInstanceExec character={props.character} schema={props.schema} description={props.description}/>
+                   {subCharacters.map((character) => {
                         return (
                             <Character 
                                 key={character.pbotID} 
@@ -187,32 +242,13 @@ const Character = (props) => {
             </Accordion>
         } 
 
-        {!characters &&
+        {!subCharacters &&
             <>
-            <div style={{marginTop: "1em"}}><b>{props.character.name}</b></div>
-            {(props.character.characterInstances && props.character.characterInstances.length > 0) &&
-                <CharacterInstances deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} characterInstances={props.character.characterInstances} />
-            }
-            {(states && states.length > 0) &&
-                <Button
-                    type="button"
-                    variant="text" 
-                    color="secondary" 
-                    onClick={()=>{console.log("click"); console.log(props.values); /*setDesc(props.values.description); setSch(props.values.schema);*/ setAddDialogOpen(true)}}
-                    disabled={false}
-                >
-                    Add character instance
-                </Button>
-            }
+                <div style={{marginTop: "1em"}}><b>{props.character.name}</b></div>
+                <CharacterInstanceExec character={props.character} schema={props.schema} description={props.description}/>
             </>
         }
 
-        {addDialogOpen && 
-            <CharacterInstanceDialog description={props.description} schema={props.schema} open={addDialogOpen} character={props.character.pbotID} handleClose={handleAddDialogClose}  />
-        }
-        {deleteConfirmOpen && 
-            <CharacterInstanceDeleteDialog open={deleteConfirmOpen} deleteCI={deleteCI} setDeleteCI={setDeleteCI} handleClose={handleDeleteConfirmClose} />
-        }
         </>
     )
 
