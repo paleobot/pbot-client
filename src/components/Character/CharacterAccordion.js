@@ -4,7 +4,8 @@ import {
 import React, {useState} from 'react';
 import { alphabetize, sort } from '../../util.js';
   
-import { /*Accordion, AccordionDetails, AccordionSummary,*/ Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-mui";
@@ -13,6 +14,7 @@ import CharacterInstanceMutateResults from "../CharacterInstance/CharacterInstan
 
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -113,18 +115,33 @@ function CharacterInstances(props) {
     const style = {marginLeft:"2em"}
     return characterInstances.map((cI) => (
         <div key={cI.pbotID}  style={props.style || style}>
-            {(cI.state.value !== null && cI.state.value !== '') ? `${cI.state.value}` : `${cI.state.State.name}`}{cI.state.order ? `, order: ${cI.state.order}` : ``}
-            <Button
-                type="button"
-                variant="text" 
-                color="secondary" 
-                size="large"
-                onClick={() => {props.setDeleteCI(cI); props.setDeleteOpen(true)}}
-                sx={{width:"50px", paddingTop: "0px", paddingBottom:"0px"}}
-            >
-                <ClearOutlinedIcon fontSize="small"/>
-            </Button>
-            <br />
+            <Grid container spacing={2}>
+                <Grid xs={8} style={{padding:"5px"}}>
+                    {(cI.state.value !== null && cI.state.value !== '') ? `${cI.state.value}` : `${cI.state.State.name}`}{cI.state.order ? `, order: ${cI.state.order}` : ``}
+                </Grid>
+                <Grid xs={4} style={{padding:"5px"}}>
+                    <Button
+                        type="button"
+                        variant="text" 
+                        color="secondary" 
+                        size="small"
+                        onClick={() => {props.setEditCI(cI); props.setEditOpen(true)}}
+                        sx={{minWidth: "20px", padding: "0px"}}
+                    >
+                        <EditIcon fontSize="small"/>
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="text" 
+                        color="secondary" 
+                        size="small"
+                        onClick={() => {props.setDeleteCI(cI); props.setDeleteOpen(true)}}
+                        sx={{marginLeft: "10px", minWidth: "20px", padding:"0px"}}
+                    >
+                        <ClearOutlinedIcon fontSize="small"/>
+                    </Button>
+                </Grid>
+            </Grid>
         </div>
     ));
 }
@@ -162,11 +179,51 @@ const CharacterInstanceDialog = (props) => {
     )
 }
 
+const CharacterInstanceEditDialog = (props) => {
+    console.log("CharacterInstanceEditDialog")
+    console.log(props)
+    const [showResult, setShowResult] = useState(false);
+    const [queryParams, setQueryParams] = useState([]);
+
+    const handleSubmit = (values) => {
+        setQueryParams(values);
+        setShowResult(true);
+    }
+
+    return (
+        <Dialog fullWidth={true} open={props.open}>
+            <DialogTitle>
+                Edit character instance             
+            </DialogTitle>
+            <DialogContent>
+                {!showResult &&
+                <CharacterInstanceMutateForm handleSubmit={handleSubmit} mode="edit" description={props.description} schema={props.schema} character={props.character} characterInstance={props.editCI}/>
+                }
+                {showResult &&
+                <CharacterInstanceMutateResults queryParams={queryParams} handleClose={props.handleClose}/>
+                }
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={props.handleClose} color="secondary">
+                    {showResult ? "OK" : "Cancel"}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    )
+}
+
 const CharacterInstanceExec = (props) => {
     const [addDialogOpen, setAddDialogOpen] = React.useState(false);
     const handleAddDialogClose = () => {
         setAddDialogOpen(false);
     };
+
+    const [editDialogOpen, setEditDialogOpen] = React.useState(false);
+    const [editCI, setEditCI] = React.useState(null);
+    const handleEditDialogClose = () => {
+        setEditDialogOpen(false);
+    };
+
     const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
     const [deleteCI, setDeleteCI] = React.useState(null);
     const handleDeleteConfirmClose = () => {
@@ -178,7 +235,9 @@ const CharacterInstanceExec = (props) => {
     return (
     <>
         {(props.character.characterInstances && props.character.characterInstances.length > 0) &&
-            <CharacterInstances deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} characterInstances={props.character.characterInstances} />
+            <div style={{marginTop:"10px"}}>
+                <CharacterInstances deleteCI={deleteCI} setDeleteCI={setDeleteCI} setDeleteOpen={setDeleteConfirmOpen} editCI={editCI} setEditCI={setEditCI} setEditOpen={setEditDialogOpen} characterInstances={props.character.characterInstances} />
+            </div>
         }
         {(states && states.length > 0) &&
             <Button
@@ -195,6 +254,9 @@ const CharacterInstanceExec = (props) => {
 
         {addDialogOpen && 
             <CharacterInstanceDialog description={props.description} schema={props.schema} open={addDialogOpen} character={props.character.pbotID} handleClose={handleAddDialogClose}  />
+        }
+        {editDialogOpen && 
+            <CharacterInstanceEditDialog description={props.description} schema={props.schema}character={props.character.pbotID} open={editDialogOpen} editCI={editCI} setEditCI={setEditCI} handleClose={handleEditDialogClose} />
         }
         {deleteConfirmOpen && 
             <CharacterInstanceDeleteDialog open={deleteConfirmOpen} deleteCI={deleteCI} setDeleteCI={setDeleteCI} handleClose={handleDeleteConfirmClose} />

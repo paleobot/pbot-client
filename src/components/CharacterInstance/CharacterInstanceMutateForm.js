@@ -156,21 +156,26 @@ const CharacterInstanceSelect = (props) => {
         
 }
 
-const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema, character}) => {
+const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema, character, characterInstance}) => {
     console.log("CharacterInstanceMutateForm");
     //console.log(description)
     //console.log(schema)
+    console.log(characterInstance)
+    const cI = characterInstance ? characterInstance.pbotID : null;
+    const state = characterInstance ? `${characterInstance.state.State.name}~,${characterInstance.state.State.pbotID}` : null;
+    const order = characterInstance ? characterInstance.state.order : null;
+
     const initValues = {
-                characterInstance: '',
+                characterInstance: cI || '',
                 description: description || '',
                 schema: schema || '',
                 character: character || '',
-                state: '', 
+                state: state || '', 
                 quantity: '',
-                order: '1',
+                order: order || '1',
                 mode: mode,
     };
-    //console.log(initValues)
+    console.log(initValues)
             
     //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
     //allowing useEffect to call resetForm
@@ -227,7 +232,7 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema, c
                 <DescriptionSelect values={props.values} handleChange={props.handleChange}/>
                 }
                 
-                {(mode === "edit" || mode === "delete") && props.values.description !== '' &&
+                {(mode === "edit" || mode === "delete") && props.values.description !== '' && props.values.character === '' &&
                     <div>
                         <CharacterInstanceSelect values={props.values} handleChange={props.handleChange}/>
                         <br />
