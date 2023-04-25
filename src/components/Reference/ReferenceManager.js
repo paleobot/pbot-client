@@ -6,6 +6,8 @@ import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
 
 export const ReferenceManager = (props) => {
 
+    //const maxOrder = props.values.references.reduce((acc, ref) => parseInt(ref.order) > acc ? parseInt(ref.order) : acc, 0)
+
     const style = {marginTop: "1.5em"}
     return (
     <div style={style}>
@@ -54,7 +56,7 @@ export const ReferenceManager = (props) => {
                     type="button"
                     variant="text" 
                     color="secondary" 
-                    onClick={() => push({ pbotID: '', order: '' })}
+                    onClick={() => push({ pbotID: '', order: ''/*(maxOrder + 1).toString()*/  })}
                     disabled={props.values.references.length !== 0 && props.values.references[props.values.references.length-1].pbotID === ''}
                 >
                     Add reference
