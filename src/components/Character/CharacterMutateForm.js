@@ -369,11 +369,17 @@ const CharacterMutateForm = ({handleSubmit, mode}) => {
                 <SchemaSelect values={props.values} handleChange={props.handleChange}/>
                 
                 {(mode === "edit" || mode === "delete") && props.values.schema !== '' &&
+                    <>
                     <CharacterSelect source="character" values={props.values} handleChange={props.handleChange}/>
+                    <br />
+                    </>
                 }
                 
                 {((mode === "create" && props.values.schema) || (mode === "edit" && props.values.character)) &&
+                    <>
                     <CharacterSelect source="character" values={props.values} parent handleChange={props.handleChange}/>
+                    <br />
+                    </>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.character !== '')) &&
