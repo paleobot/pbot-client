@@ -164,7 +164,7 @@ const CharacterInstanceDialog = (props) => {
             </DialogTitle>
             <DialogContent>
                 {!showResult &&
-                <CharacterInstanceMutateForm handleSubmit={handleSubmit} mode="create" description={props.description} schema={props.schema} character={props.character}/>
+                <CharacterInstanceMutateForm handleSubmit={handleSubmit} mode="create" description={props.description} schema={props.schema} character={props.character} suggestedOrder={props.suggestedOrder}/>
                 }
                 {showResult &&
                 <CharacterInstanceMutateResults queryParams={queryParams} handleClose={props.handleClose}/>
@@ -232,6 +232,8 @@ const CharacterInstanceExec = (props) => {
     
     const states = props.character.states;
 
+    const maxCIOrder = props.character.characterInstances.reduce((acc, cI) => parseInt(cI.state.order) > acc ? parseInt(cI.state.order) : acc, 0)
+
     return (
     <>
         {(props.character.characterInstances && props.character.characterInstances.length > 0) &&
@@ -253,7 +255,7 @@ const CharacterInstanceExec = (props) => {
         }
 
         {addDialogOpen && 
-            <CharacterInstanceDialog description={props.description} schema={props.schema} open={addDialogOpen} character={props.character.pbotID} handleClose={handleAddDialogClose}  />
+            <CharacterInstanceDialog description={props.description} schema={props.schema} open={addDialogOpen} character={props.character.pbotID} handleClose={handleAddDialogClose}  suggestedOrder={(maxCIOrder + 1).toString()}/>
         }
         {editDialogOpen && 
             <CharacterInstanceEditDialog description={props.description} schema={props.schema}character={props.character.pbotID} open={editDialogOpen} editCI={editCI} setEditCI={setEditCI} handleClose={handleEditDialogClose} />
@@ -318,8 +320,8 @@ const Character = (props) => {
 
 export const CharacterAccordion = (props) => {
     console.log("CharacterAccordion");
-    console.log(props.schema)
-    console.log(props.description)
+    //console.log(props.schema)
+    //console.log(props.description)
     const gQL = gql`
     fragment CharacterFields on Character {
         pbotID

@@ -156,14 +156,16 @@ const CharacterInstanceSelect = (props) => {
         
 }
 
-const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema, character, characterInstance}) => {
+const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema, character, characterInstance, suggestedOrder}) => {
     console.log("CharacterInstanceMutateForm");
     //console.log(description)
     //console.log(schema)
     console.log(characterInstance)
     const cI = characterInstance ? characterInstance.pbotID : null;
     const state = characterInstance ? `${characterInstance.state.State.name}~,${characterInstance.state.State.pbotID}` : null;
-    const order = characterInstance ? characterInstance.state.order : null;
+    const order = characterInstance ? 
+        characterInstance.state.order : 
+        suggestedOrder ? suggestedOrder : null;
 
     const initValues = {
                 characterInstance: cI || '',
