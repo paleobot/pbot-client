@@ -13,8 +13,8 @@ export const alphabetize = (list, sortField) => {
 }
 
 export const sort = (list, sortField1, sortField2) => {
-    console.log("sort")
-    console.log(list);
+    //console.log("sort")
+    //console.log(list);
 
     return list.sort((a,b) => {
         //"z"/1000 forces null/blank/NaN to end of list
