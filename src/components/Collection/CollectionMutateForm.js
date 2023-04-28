@@ -1,7 +1,8 @@
 import React, { useState, useEffect }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Stack, Box, Typography } from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
@@ -478,6 +479,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 public: true,
                 groups: [],
                 mode: mode,
+                protectedSite: false,
     };
 
     //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
@@ -488,6 +490,11 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             formikRef.current.resetForm({values:initValues});
         }
     });
+
+    const [selectedTab, setSelectedTab] = React.useState('1');
+    const handleChange = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     const accstyle = {textAlign: "left", width: "70%"}
@@ -587,8 +594,25 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 />
                             </Stack>
 
-                            <CountrySelect />
+                            <Field
+                                component={TextField}
+                                name="gpsuncertainty"
+                                type="text"
+                                label="GPS coordinate uncertainty !"
+                            />
+                            <br />
 
+                            <CountrySelect />
+                            <br />
+
+                            <br />
+                            <Field 
+                                component={CheckboxWithLabel}
+                                name="protectedSite" 
+                                type="checkbox"
+                                Label={{label:"Protected site !"}}
+                            />
+                            
                             <Stack direction="row" spacing={4}>
                                 <IntervalSelect name="maxinterval" />
                                 <IntervalSelect name="mininterval" />
@@ -644,19 +668,181 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             Optional fields
                         </AccordionSummary>
                         <AccordionDetails>
-                            <EnvironmentSelect/>
-                            <br />
+                            <Box sx={{ width: '100%', typography: 'body1' }}>
+                                <TabContext value={selectedTab}>
+                                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                        <TabList 
+                                            textColor="secondary" 
+                                            indicatorColor="secondary" 
+                                            onChange={handleChange} 
+                                            aria-label="optional tabs"
+                                        >
+                                            <Tab label="Geographic" value="1"/>
+                                            <Tab label="Age" value="2"/>
+                                            <Tab label="Geologic" value="3"/>
+                                            <Tab label="Collecting" value="4"/>
+                                        </TabList>
+                                    </Box>
+                                    <TabPanel value="1">
+                                        <Field
+                                            component={TextField}
+                                            name="stateprovince"
+                                            type="text"
+                                            label="State/Province !"
+                                        />
+                                        <br />
 
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="collectors"
-                                label="Collectors"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
-                        </AccordionDetails>
+                                        <Field
+                                            component={TextField}
+                                            name="geores"
+                                            type="text"
+                                            label="Scale of geographic resolution !"
+                                        />
+                                        <br />
+
+                                        <Field
+                                            component={TextField}
+                                            name="geocomments"
+                                            type="text"
+                                            label="Comments on geographic information !"
+                                        />
+                                        <br />
+
+                                    </TabPanel>
+                                    <TabPanel value="2">
+                                        <Field
+                                            component={TextField}
+                                            name="directdate"
+                                            type="text"
+                                            label="Direct date !"
+                                        />
+                                        <br />
+
+                                        <Stack direction="row" spacing={4}>
+                                            <Field
+                                                component={TextField}
+                                                name="nummaxage"
+                                                type="text"
+                                                label="Numeric maximum age !"
+                                            />
+                                            <Field
+                                                component={TextField}
+                                                name="numminage"
+                                                type="text"
+                                                label="Numeric minimum age !"
+                                            />
+                                        </Stack>
+
+                                        <Field
+                                            component={TextField}
+                                            name="agecomments"
+                                            type="text"
+                                            label="Comments !"
+                                        />
+                                        <br />
+
+                                    </TabPanel>
+                                    <TabPanel value="3">
+                                        <Field
+                                            component={TextField}
+                                            name="addllith"
+                                            type="text"
+                                            label="Additional description of lithology !"
+                                        />
+                                        <br />
+
+                                        <br />
+                                        <Typography variant="h7">Stratigraphy</Typography>
+                                        
+                                        <div style={{marginLeft:"2em"}}>
+                                            <Field
+                                                component={TextField}
+                                                name="geologicgroup"
+                                                type="text"
+                                                label="Group !"
+                                            />
+                                            <br />
+
+                                            <Field
+                                                component={TextField}
+                                                name="geologicformation"
+                                                type="text"
+                                                label="Formation !"
+                                            />
+                                            <br />
+
+                                            <Field
+                                                component={TextField}
+                                                name="geologicmember"
+                                                type="text"
+                                                label="Member !"
+                                            />
+                                            <br />
+
+                                            <Field
+                                                component={TextField}
+                                                name="geologicbed"
+                                                type="text"
+                                                label="Bed !"
+                                            />
+                                            <br />
+
+                                            <Field
+                                                component={TextField}
+                                                name="stratigraphcomments"
+                                                type="text"
+                                                label="Comments on stratigraphy !"
+                                            />
+                                            <br />
+                                        </div>
+
+                                        <EnvironmentSelect/>
+                                        <br />
+
+                                        <Field
+                                            component={TextField}
+                                            name="environmentcomments"
+                                            type="text"
+                                            label="Comments on environment !"
+                                        />
+                                        <br />
+
+                                    </TabPanel>                            
+                                    <TabPanel value="4">
+                                        <Field
+                                            component={TextField}
+                                            type="text"
+                                            name="collectors"
+                                            label="Collectors"
+                                            fullWidth 
+                                            disabled={false}
+                                        />
+                                        <br />
+
+                                        <Field
+                                            component={TextField}
+                                            type="text"
+                                            name="collectionmethods"
+                                            label="Collection methods !"
+                                            fullWidth 
+                                            disabled={false}
+                                        />
+                                        <br />
+
+                                        <Field
+                                            component={TextField}
+                                            type="text"
+                                            name="collectionmethodscomments"
+                                            label="Comments on collection methods !"
+                                            fullWidth 
+                                            disabled={false}
+                                        />
+                                        <br />
+                                    </TabPanel>   
+                                </TabContext>
+                            </Box>                         
+  
+                      </AccordionDetails>
                     </Accordion>
                 
                     </>
