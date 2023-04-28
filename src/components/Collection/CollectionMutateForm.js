@@ -319,6 +319,7 @@ const CollectionSelect = (props) => {
                 sizeClasses
                 lat
                 lon
+                gpsCoordinateUncertainty
                 protectedSite
                 country
                 maxinterval
@@ -380,6 +381,7 @@ const CollectionSelect = (props) => {
                 props.values.sizeclasses = child.props.dsizeclasses ? JSON.parse(child.props.dsizeclasses) : [];
                 props.values.lat = child.props.dlat || '';
                 props.values.lon = child.props.dlon || '';
+                props.values.gpsuncertainty = child.props.dgpsuncertainty || '';
                 props.values.protectedSite = child.props.dprotectedsite;
                 props.values.country = child.props.dcountry || '';
                 props.values.maxinterval = child.props.dmaxinterval || '';
@@ -407,6 +409,7 @@ const CollectionSelect = (props) => {
                     dsizeclasses={collection.sizeClasses ? JSON.stringify(collection.sizeClasses.map(sizeClass => sizeClass)) : null}
                     dlat={collection.lat}
                     dlon={collection.lon}
+                    dgpsuncertainty={collection.gpsCoordinateUncertainty}
                     dprotectedsite={collection.protectedSite}
                     dcountry={collection.country}
                     dmaxinterval={collection.maxinterval}
@@ -477,6 +480,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 mininterval: '',
                 lat: '',
                 lon: '',
+                gpsuncertainty: '',
                 country: '',
                 lithology: '',
                 preservationmodes: [],
@@ -526,6 +530,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 mininterval: Yup.string(),
                 lat: Yup.string().required("latitude is a required field"), //for now
                 lon: Yup.string().required("longitude is a required field"), //for now
+                gpsuncertainty: Yup.number().required("gps uncertainty is required").positive().integer(),
                 protectedSite: Yup.boolean().required("Protection status is required"),
                 pbdbid: Yup.string(),
                 country: Yup.string().required(),
@@ -612,7 +617,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 component={TextField}
                                 name="gpsuncertainty"
                                 type="text"
-                                label="GPS coordinate uncertainty !"
+                                label="GPS coordinate uncertainty"
                             />
                             <br />
 
