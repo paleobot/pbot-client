@@ -12,7 +12,7 @@ const CollectionMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.collection || null,
                 name: queryParams.name || null,
-                mininterval: queryParams.mininterval || null,
+                mininterval: queryParams.mininterval || queryParams.maxinterval,
                 maxinterval: queryParams.maxinterval || null,
                 collectionType: queryParams.collectiontype || null,
                 sizeClasses: queryParams.sizeclasses || null,
@@ -22,6 +22,7 @@ const CollectionMutateResults = ({queryParams}) => {
                 collectors: queryParams.collectors || null,
                 lat: parseFloat(queryParams.lat) || null,
                 lon: parseFloat(queryParams.lon) || null,
+                protectedSite: queryParams.protectedSite || false,
                 country: queryParams.country || null,
                 pbdbid: queryParams.pbdbid || null,
                 references: queryParams.references || null,
