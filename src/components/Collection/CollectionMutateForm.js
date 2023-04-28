@@ -152,6 +152,16 @@ const IntervalSelect = (props) => {
             name={props.name}
             label={"maxinterval" === props.name ? "Maximum interval" : "Minimum interval"}
             select={true}
+            onChange={event => {
+                if (props.name === "mininterval") {
+                    props.setFieldValue("mininterval", event.target.value)
+                } else {
+                    props.setFieldValue("maxinterval", event.target.value)
+                    if (!props.values.mininterval) {
+                        props.setFieldValue("mininterval", event.target.value)
+                    }
+                }
+            }}
             SelectProps={{
                 multiple: false,
             }}
@@ -309,6 +319,7 @@ const CollectionSelect = (props) => {
                 sizeClasses
                 lat
                 lon
+                protectedSite
                 country
                 maxinterval
                 mininterval
@@ -369,6 +380,7 @@ const CollectionSelect = (props) => {
                 props.values.sizeclasses = child.props.dsizeclasses ? JSON.parse(child.props.dsizeclasses) : [];
                 props.values.lat = child.props.dlat || '';
                 props.values.lon = child.props.dlon || '';
+                props.values.protectedSite = child.props.dprotectedsite;
                 props.values.country = child.props.dcountry || '';
                 props.values.maxinterval = child.props.dmaxinterval || '';
                 props.values.mininterval = child.props.dmininterval || '';
@@ -395,6 +407,7 @@ const CollectionSelect = (props) => {
                     dsizeclasses={collection.sizeClasses ? JSON.stringify(collection.sizeClasses.map(sizeClass => sizeClass)) : null}
                     dlat={collection.lat}
                     dlon={collection.lon}
+                    dprotectedsite={collection.protectedSite}
                     dcountry={collection.country}
                     dmaxinterval={collection.maxinterval}
                     dmininterval={collection.mininterval}
@@ -513,6 +526,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 mininterval: Yup.string(),
                 lat: Yup.string().required("latitude is a required field"), //for now
                 lon: Yup.string().required("longitude is a required field"), //for now
+                protectedSite: Yup.boolean().required("Protection status is required"),
                 pbdbid: Yup.string(),
                 country: Yup.string().required(),
                 references: Yup.array().of(
@@ -610,12 +624,12 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 component={CheckboxWithLabel}
                                 name="protectedSite" 
                                 type="checkbox"
-                                Label={{label:"Protected site !"}}
+                                Label={{label:"Protected site"}}
                             />
                             
                             <Stack direction="row" spacing={4}>
-                                <IntervalSelect name="maxinterval" />
-                                <IntervalSelect name="mininterval" />
+                                <IntervalSelect name="maxinterval" values={props.values} setFieldValue={props.setFieldValue}/>
+                                <IntervalSelect name="mininterval" values={props.values} setFieldValue={props.setFieldValue}/>
                             </Stack>
                             
                             <LithologySelect />
