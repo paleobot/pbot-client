@@ -25,6 +25,7 @@ const CollectionMutateResults = ({queryParams}) => {
                 gpsCoordinateUncertainty: parseInt(queryParams.gpsuncertainty) || null,
                 protectedSite: queryParams.protectedSite || false,
                 country: queryParams.country || null,
+                state: queryParams.state || null,
                 pbdbid: queryParams.pbdbid || null,
                 references: queryParams.references || null,
                 cascade: queryParams.cascade || false,
