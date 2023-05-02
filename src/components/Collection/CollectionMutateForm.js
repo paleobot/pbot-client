@@ -17,6 +17,7 @@ import {
   gql
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
+import States from '../State/States.js';
 
 
 const CollectionTypeSelect = (props) => {
@@ -70,6 +71,39 @@ const SizeClassSelect = (props) => {
 }
 
 const CountrySelect = (props) => {
+    const [countries, setCountries] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setLoading(true);
+        //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=all&vocab=pbdb")
+        //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=1&vocab=pbdb")
+        fetch("/countries")
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                if (response.status_code) {
+                    throw new Error (response.errors[0]);
+                }
+                console.log("Countries response")
+                console.log(response)
+                setCountries(response.map(country => { 
+                    return {
+                        name: country.name,
+                        code: country.isoCode
+                    }
+                }));
+            }
+        ).catch (
+            (error) => {
+                console.log("error!")
+                console.log(error)
+                setError(error)
+            }
+        )
+    }, [])
     const style = {minWidth: "12ch"}
     return (
         <Field
@@ -86,9 +120,66 @@ const CountrySelect = (props) => {
         >
             {countries.map((country) => (
                 <MenuItem 
-                    key={country.Code} 
-                    value={country.Code}
-                >{`${country.Name} - ${country.Code}`}</MenuItem>
+                    key={country.code} 
+                    value={country.code}
+                >{`${country.name} - ${country.code}`}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const StateSelect = (props) => {
+    const [states, setStates] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (props.country === '') return
+        setLoading(true);
+        fetch(`/states/${props.country}`)
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                if (response.status_code) {
+                    throw new Error (response.errors[0]);
+                }
+                console.log("States response")
+                console.log(response)
+                setStates(response.map(state => { 
+                    return {
+                        name: state.name,
+                        code: state.isoCode
+                    }
+                }));
+            }
+        ).catch (
+            (error) => {
+                console.log("error!")
+                console.log(error)
+                setError(error)
+            }
+        )
+    }, [props.country])
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="state"
+            label="State/Province"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {states.map((state) => (
+                <MenuItem 
+                    key={state.code} 
+                    value={state.code}
+                >{`${state.name} - ${state.code}`}</MenuItem>
             ))}
         </Field>
     )
@@ -322,6 +413,7 @@ const CollectionSelect = (props) => {
                 gpsCoordinateUncertainty
                 protectedSite
                 country
+                state
                 maxinterval
                 mininterval
                 lithology
@@ -382,8 +474,9 @@ const CollectionSelect = (props) => {
                 props.values.lat = child.props.dlat || '';
                 props.values.lon = child.props.dlon || '';
                 props.values.gpsuncertainty = child.props.dgpsuncertainty || '';
-                props.values.protectedSite = child.props.dprotectedsite;
+                props.values.protectedSite = child.props.dprotectedsite === "true";
                 props.values.country = child.props.dcountry || '';
+                props.values.state = child.props.dstate || '';
                 props.values.maxinterval = child.props.dmaxinterval || '';
                 props.values.mininterval = child.props.dmininterval || '';
                 props.values.lithology = child.props.dlithology || '';
@@ -410,8 +503,9 @@ const CollectionSelect = (props) => {
                     dlat={collection.lat}
                     dlon={collection.lon}
                     dgpsuncertainty={collection.gpsCoordinateUncertainty}
-                    dprotectedsite={collection.protectedSite}
+                    dprotectedsite={collection.protectedSite === null ? '' : collection.protectedSite.toString()}
                     dcountry={collection.country}
+                    dstate={collection.state}
                     dmaxinterval={collection.maxinterval}
                     dmininterval={collection.mininterval}
                     dlithology={collection.lithology}
@@ -482,6 +576,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 lon: '',
                 gpsuncertainty: '',
                 country: '',
+                state: '',
                 lithology: '',
                 preservationmodes: [],
                 environment: '',
@@ -506,7 +601,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
         if (formikRef.current) {
             formikRef.current.resetForm({values:initValues});
         }
-    });
+    },[mode]);
 
     const [selectedTab, setSelectedTab] = React.useState('1');
     const handleChange = (event, newValue) => {
@@ -703,12 +798,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         </TabList>
                                     </Box>
                                     <TabPanel value="1">
-                                        <Field
-                                            component={TextField}
-                                            name="stateprovince"
-                                            type="text"
-                                            label="State/Province !"
-                                        />
+                                        <StateSelect country={props.values.country} />
                                         <br />
 
                                         <Field
