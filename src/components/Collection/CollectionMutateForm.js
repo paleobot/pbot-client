@@ -8,7 +8,7 @@ import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {collectionTypes, sizeClasses, countries} from "./Lists.js"
+import {collectionTypes, sizeClasses, geographicResolutionScale} from "./Lists.js"
 
 //import IntervalSelect from './IntervalSelect.js';
 
@@ -65,6 +65,31 @@ const SizeClassSelect = (props) => {
                     key={sc} 
                     value={sc}
                 >{sc}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const GeographicResolutionSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="geographicresolution"
+            label="Scale of geographic resolution"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {geographicResolutionScale.map((gR) => (
+                <MenuItem 
+                    key={gR} 
+                    value={gR}
+                >{gR}</MenuItem>
             ))}
         </Field>
     )
@@ -399,7 +424,7 @@ const EnvironmentSelect = (props) => {
 }
 
 const CollectionSelect = (props) => {
-    console.log("CollectionSelect");
+    //console.log("CollectionSelect");
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
     const gQL = gql`
         query {
@@ -411,6 +436,8 @@ const CollectionSelect = (props) => {
                 lat
                 lon
                 gpsCoordinateUncertainty
+                geographicResolution
+                geographicComments
                 protectedSite
                 country
                 state
@@ -445,10 +472,10 @@ const CollectionSelect = (props) => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
                       
-    console.log(">>>>>>>>>>>>Collection results<<<<<<<<<<<<<");
-    console.log(data.Collection);
+    //console.log(">>>>>>>>>>>>Collection results<<<<<<<<<<<<<");
+    //console.log(data.Collection);
     const collections = alphabetize([...data.Collection], "name");
-    console.log(collections);
+    //console.log(collections);
     
     const style = {minWidth: "12ch"}
     return (
@@ -474,6 +501,8 @@ const CollectionSelect = (props) => {
                 props.values.lat = child.props.dlat || '';
                 props.values.lon = child.props.dlon || '';
                 props.values.gpsuncertainty = child.props.dgpsuncertainty || '';
+                props.values.geographicresolution = child.props.dgeographicresolution || '';
+                props.values.geographiccomments = child.props.dgeographiccomments || '';
                 props.values.protectedSite = child.props.dprotectedsite === "true";
                 props.values.country = child.props.dcountry || '';
                 props.values.state = child.props.dstate || '';
@@ -503,6 +532,8 @@ const CollectionSelect = (props) => {
                     dlat={collection.lat}
                     dlon={collection.lon}
                     dgpsuncertainty={collection.gpsCoordinateUncertainty}
+                    dgeographicresolution={collection.geographicResolution}
+                    dgeographiccomments={collection.geographicComments}
                     dprotectedsite={collection.protectedSite === null ? '' : collection.protectedSite.toString()}
                     dcountry={collection.country}
                     dstate={collection.state}
@@ -513,7 +544,7 @@ const CollectionSelect = (props) => {
                     dcollectors={collection.collectors}
                     dpbdbid={collection.pbdbid}
                     dpreservationmodes={collection.preservationModes ? JSON.stringify(collection.preservationModes.map(preservationMode => preservationMode.pbotID)) : null}
-                    dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {console.log(">>>>>>>>>>Collection.name = "); console.log(collection.name); console.log("group.name ="); console.log(group.name); console.log(acc || "public" === group.name);return acc || "public" === group.name}, false).toString()}
+                    dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={collection.elementOf ? JSON.stringify(collection.elementOf.map(group => group.pbotID)) : null}
                     dspecimens={collection.specimens ? JSON.stringify(collection.specimens.map(specimen => specimen.pbotID)) : null}
                     dreferences={collection.references ? JSON.stringify(collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
@@ -575,6 +606,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 lat: '',
                 lon: '',
                 gpsuncertainty: '',
+                geographicresolution: '',
+                geographiccomments: '',
                 country: '',
                 state: '',
                 lithology: '',
@@ -598,6 +631,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     //allowing useEffect to call resetForm
     const formikRef = React.useRef();
     React.useEffect(() => {
+        console.log("useEffect (mode)")
         if (formikRef.current) {
             formikRef.current.resetForm({values:initValues});
         }
@@ -626,6 +660,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 lat: Yup.string().required("latitude is a required field"), //for now
                 lon: Yup.string().required("longitude is a required field"), //for now
                 gpsuncertainty: Yup.number().required("gps uncertainty is required").positive().integer(),
+                geographicresolution: Yup.string(),
+                geographiccomments: Yup.string(),
                 protectedSite: Yup.boolean().required("Protection status is required"),
                 pbdbid: Yup.string(),
                 country: Yup.string().required(),
@@ -801,19 +837,14 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         <StateSelect country={props.values.country} />
                                         <br />
 
-                                        <Field
-                                            component={TextField}
-                                            name="geores"
-                                            type="text"
-                                            label="Scale of geographic resolution !"
-                                        />
+                                        <GeographicResolutionSelect />
                                         <br />
 
                                         <Field
                                             component={TextField}
-                                            name="geocomments"
+                                            name="geographiccomments"
                                             type="text"
-                                            label="Comments on geographic information !"
+                                            label="Comments on geographic information"
                                         />
                                         <br />
 

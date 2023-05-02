@@ -23,6 +23,8 @@ const CollectionMutateResults = ({queryParams}) => {
                 lat: parseFloat(queryParams.lat) || null,
                 lon: parseFloat(queryParams.lon) || null,
                 gpsCoordinateUncertainty: parseInt(queryParams.gpsuncertainty) || null,
+                geographicResolution: queryParams.geographicresolution || null,
+                geographicComments: queryParams.geographiccomments || null,
                 protectedSite: queryParams.protectedSite || false,
                 country: queryParams.country || null,
                 state: queryParams.state || null,

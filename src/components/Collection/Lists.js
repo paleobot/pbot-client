@@ -15,7 +15,15 @@ export const sizeClasses = [
     "< 1 mm"
 ]
 
-//TODO: These should be obtained from somewhere (our api or pbdb)
+export const geographicResolutionScale = [
+    "hand sample",
+    "small collection (<10x10m)", 
+    "outcrop (<1x1km)", 
+    "local area (<100x100km)",
+    "basin"
+]
+
+//TODO: Remove this once query code is updated
 export const countries = [
     {
     "Code": "AF",
