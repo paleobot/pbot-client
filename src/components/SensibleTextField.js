@@ -1,27 +1,22 @@
 //Modified version of https://codereacter.medium.com/reducing-the-number-of-renders-when-using-formik-9790bf111ab9
 
-import React, { useState, useEffect, useCallback }from 'react';
-import {useDebouncedCallback} from 'use-debounce';
+import React, { useState, useEffect }from 'react';
 import { TextField } from 'formik-mui';
+import { useFormikContext } from 'formik';
 
 export const SensibleTextField = (props) => {
-    console.log("DebouncedTextField")
-    console.log(props.value)
+    //console.log("SensibleTextField")
     const [innerValue, setInnerValue] = useState('');
 
+    const formik = useFormikContext();
+
     useEffect(() => {
-        console.log("TFW useEffect")
-        if (props.value) {
-            setInnerValue(props.value);
-        } else {
-            setInnerValue('');
-        }
-    }, [props.value]);
+        setInnerValue(formik.values[props.field.name]);
+    }, [formik.values[props.field.name]]);
   
     const handleOnBlur = async (event) => {
-        if (props.onChange) {
-            props.onChange(event);
-        }
+        await formik.handleChange(event);
+        formik.handleBlur(event);
     };
   
     const handleOnChange = (event) => {
