@@ -10,15 +10,20 @@ export const SensibleTextField = (props) => {
 
     const formik = useFormikContext();
 
+    //This makes sure local val is updated whenever something happens to main val 
+    //(like form reset or populate from pbdb)
     useEffect(() => {
         setInnerValue(formik.values[props.field.name]);
     }, [formik.values[props.field.name]]);
-  
+    
+    //Field is losing focus. Update main val via formik's change handler. Then
+    //call formik's blur handler to make sure field is validated.  
     const handleOnBlur = async (event) => {
         await formik.handleChange(event);
         formik.handleBlur(event);
     };
   
+    //Only set local val
     const handleOnChange = (event) => {
         setInnerValue(event.currentTarget.value);
     };
