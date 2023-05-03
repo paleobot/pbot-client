@@ -18,7 +18,7 @@ import {
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
 import States from '../State/States.js';
-import { DebouncedTextField } from '../DebouncedTextField.js';
+import { SensibleTextField } from '../SensibleTextField.js';
 
 
 const CollectionTypeSelect = (props) => {
@@ -714,7 +714,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     <AccordionDetails>
                 
                             <Field
-                                component={DebouncedTextField}
+                                component={SensibleTextField}
                                 type="text"
                                 name="name"
                                 label="Name"
@@ -730,7 +730,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
 
                             <Stack direction="row" spacing={4}>
                                 <Field
-                                    component={DebouncedTextField}
+                                    component={SensibleTextField}
                                     type="text"
                                     name="lat"
                                     label="Latitude"
@@ -740,7 +740,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     onChange={props.handleChange}
                                 />
                                 <Field
-                                    component={DebouncedTextField}
+                                    component={SensibleTextField}
                                     type="text"
                                     name="lon"
                                     label="Longitude"
@@ -752,7 +752,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             </Stack>
 
                             <Field
-                                component={DebouncedTextField}
+                                component={SensibleTextField}
                                 name="gpsuncertainty"
                                 type="text"
                                 label="GPS coordinate uncertainty"
@@ -788,7 +788,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
 
                             <Stack direction="row" spacing={0}>
                                 <Field
-                                    component={DebouncedTextField}
+                                    component={SensibleTextField}
                                     type="text"
                                     name="pbdbid"
                                     label="PBDB ID"
@@ -852,7 +852,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         <br />
 
                                         <Field
-                                            component={DebouncedTextField}
+                                            component={SensibleTextField}
                                             name="geographiccomments"
                                             type="text"
                                             label="Comments on geographic information"
