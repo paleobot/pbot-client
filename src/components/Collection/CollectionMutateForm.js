@@ -720,8 +720,6 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 label="Name"
                                 fullWidth 
                                 disabled={false}
-                                value={props.values.name}
-                                onChange={props.handleChange}
                             />
                             <br />
 
@@ -736,8 +734,6 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     label="Latitude"
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
-                                    value={props.values.lat}
-                                    onChange={props.handleChange}
                                 />
                                 <Field
                                     component={SensibleTextField}
@@ -746,8 +742,6 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     label="Longitude"
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
-                                    value={props.values.lon}
-                                    onChange={props.handleChange}
                                 />
                             </Stack>
 
@@ -756,8 +750,6 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 name="gpsuncertainty"
                                 type="text"
                                 label="GPS coordinate uncertainty"
-                                value={props.values.gpsuncertainty}
-                                onChange={props.handleChange}
                             />
                             <br />
 
@@ -794,8 +786,6 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     label="PBDB ID"
                                     fullWidth 
                                     disabled={false}
-                                    value={props.values.pbdbid}
-                                    onChange={props.handleChange}
                                 />
                                 <PBDBSelect />
                             </Stack>
@@ -856,8 +846,6 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                             name="geographiccomments"
                                             type="text"
                                             label="Comments on geographic information"
-                                            value={props.values.geographiccomments}
-                                            onChange={props.handleChange}
                                         />
                                         <br />
 
