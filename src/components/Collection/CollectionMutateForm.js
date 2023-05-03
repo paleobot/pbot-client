@@ -18,6 +18,7 @@ import {
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
 import States from '../State/States.js';
+import { DebouncedTextField } from '../DebouncedTextField.js';
 
 
 const CollectionTypeSelect = (props) => {
@@ -657,8 +658,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 collectors: Yup.string(),
                 maxinterval: Yup.string().required("maximum interval is a required field"),
                 mininterval: Yup.string(),
-                lat: Yup.string().required("latitude is a required field"), //for now
-                lon: Yup.string().required("longitude is a required field"), //for now
+                lat: Yup.number().required("latitude is a required field").min(-90).max(90),
+                lon: Yup.number().required("longitude is a required field").min(-180).max(180),
                 gpsuncertainty: Yup.number().required("gps uncertainty is required").positive().integer(),
                 geographicresolution: Yup.string(),
                 geographiccomments: Yup.string(),
@@ -713,12 +714,14 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     <AccordionDetails>
                 
                             <Field
-                                component={TextField}
+                                component={DebouncedTextField}
                                 type="text"
                                 name="name"
                                 label="Name"
                                 fullWidth 
                                 disabled={false}
+                                value={props.values.name}
+                                onChange={props.handleChange}
                             />
                             <br />
 
@@ -727,28 +730,34 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
 
                             <Stack direction="row" spacing={4}>
                                 <Field
-                                    component={TextField}
+                                    component={DebouncedTextField}
                                     type="text"
                                     name="lat"
                                     label="Latitude"
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
+                                    value={props.values.lat}
+                                    onChange={props.handleChange}
                                 />
                                 <Field
-                                    component={TextField}
+                                    component={DebouncedTextField}
                                     type="text"
                                     name="lon"
                                     label="Longitude"
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
+                                    value={props.values.lon}
+                                    onChange={props.handleChange}
                                 />
                             </Stack>
 
                             <Field
-                                component={TextField}
+                                component={DebouncedTextField}
                                 name="gpsuncertainty"
                                 type="text"
                                 label="GPS coordinate uncertainty"
+                                value={props.values.gpsuncertainty}
+                                onChange={props.handleChange}
                             />
                             <br />
 
@@ -779,12 +788,14 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
 
                             <Stack direction="row" spacing={0}>
                                 <Field
-                                    component={TextField}
+                                    component={DebouncedTextField}
                                     type="text"
                                     name="pbdbid"
                                     label="PBDB ID"
                                     fullWidth 
                                     disabled={false}
+                                    value={props.values.pbdbid}
+                                    onChange={props.handleChange}
                                 />
                                 <PBDBSelect />
                             </Stack>
@@ -841,10 +852,12 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         <br />
 
                                         <Field
-                                            component={TextField}
+                                            component={DebouncedTextField}
                                             name="geographiccomments"
                                             type="text"
                                             label="Comments on geographic information"
+                                            value={props.values.geographiccomments}
+                                            onChange={props.handleChange}
                                         />
                                         <br />
 
