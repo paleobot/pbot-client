@@ -8,6 +8,9 @@ export const SensibleTextField = (props) => {
     //console.log("SensibleTextField")
     const [innerValue, setInnerValue] = useState('');
 
+    //Using formik context allows us access to everything we need, without the need
+    //for them to be passed through parameters. This makes SensibleTextField a truly
+    //drop-in replacement for TextField.
     const formik = useFormikContext();
 
     //This makes sure local val is updated whenever something happens to main val 
