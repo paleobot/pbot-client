@@ -8,7 +8,7 @@ import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {collectionTypes, sizeClasses, geographicResolutionScale, collectionMethods} from "./util/Lists.js"
+import {collectionTypes, sizeClasses, geographicResolutionScale, collectionMethods} from "./Lists.js"
 
 //import IntervalSelect from './IntervalSelect.js';
 
@@ -16,7 +16,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import PBDBSelect from './util/PBDBSelect.js';
+import PBDBSelect from './PBDBSelect.js';
 import States from '../State/States.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 import { DateEntry } from './DateEntry.js';
