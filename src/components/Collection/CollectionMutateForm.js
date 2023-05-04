@@ -19,6 +19,7 @@ import {
 import PBDBSelect from './PBDBSelect.js';
 import States from '../State/States.js';
 import { SensibleTextField } from '../SensibleTextField.js';
+import { DateEntry } from './DateEntry.js';
 
 
 const CollectionTypeSelect = (props) => {
@@ -448,6 +449,16 @@ const CollectionSelect = (props) => {
                 environment
                 collectors
                 pbdbid
+                directDate
+                directDateError
+                directDateType
+                numericAgeMin
+                numericAgeMinError
+                numericAgeMinType
+                numericAgeMax
+                numericAgeMaxError
+                numericAgeMaxType
+                ageComments
                 elementOf {
                     name
                     pbotID
@@ -513,6 +524,16 @@ const CollectionSelect = (props) => {
                 props.values.environment = child.props.denvironment || '';
                 props.values.collectors = child.props.dcollectors || '';
                 props.values.pbdbid = child.props.dpbdbid || '';
+                props.values.directdate = child.props.ddirectdate || '';
+                props.values.directdateerror = child.props.ddirectdateerror || '';
+                props.values.directdatetype = child.props.ddirectdatetype || '';
+                props.values.numericagemin = child.props.dnumericagemin || '';
+                props.values.numericageminerror = child.props.dnumericageminerror || '';
+                props.values.numericagemintype = child.props.dnumericagemintype || '';
+                props.values.numericagemax = child.props.dnumericagemax || '';
+                props.values.numericagemaxerror = child.props.dnumericagemaxerror || '';
+                props.values.numericagemaxtype = child.props.dnumericagemaxtype || '';
+                props.values.agecomments = child.props.dagecomments || '';
                 props.values.preservationmodes = child.props.dpreservationmodes ? JSON.parse(child.props.dpreservationmodes) : [];
                 props.values.public = "true"===child.props.dpublic;
                 props.values.origPublic = props.values.public;
@@ -544,6 +565,16 @@ const CollectionSelect = (props) => {
                     denvironment={collection.environment}
                     dcollectors={collection.collectors}
                     dpbdbid={collection.pbdbid}
+                    ddirectdate={collection.directDate}
+                    ddirectdateerror={collection.directDateError}
+                    ddirectdatetype={collection.directDateType}
+                    dnumericagemin={collection.numericAgeMin}
+                    dnumericageminerror={collection.numericAgeMinError}
+                    dnumericagemintype={collection.numericAgeMinType}
+                    dnumericagemax={collection.numericAgeMax}
+                    dnumericagemaxerror={collection.numericAgeMaxError}
+                    dnumericagemaxtype={collection.numericAgeMaxType}
+                    dagecomments={collection.ageComments}
                     dpreservationmodes={collection.preservationModes ? JSON.stringify(collection.preservationModes.map(preservationMode => preservationMode.pbotID)) : null}
                     dpublic={collection.elementOf && collection.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={collection.elementOf ? JSON.stringify(collection.elementOf.map(group => group.pbotID)) : null}
@@ -611,6 +642,16 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 geographiccomments: '',
                 country: '',
                 state: '',
+                directdate: '',
+                directdateerror: '',
+                directdatetype: '',
+                numericagemin: '',
+                numericageminerror: '',
+                numericagemintype: '',
+                numericagemax: '',
+                numericagemaxerror: '',
+                numericagemaxtype: '',
+                agecomments: '',
                 lithology: '',
                 preservationmodes: [],
                 environment: '',
@@ -666,6 +707,16 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 protectedSite: Yup.boolean().required("Protection status is required"),
                 pbdbid: Yup.string(),
                 country: Yup.string().required(),
+                directdate: Yup.number(),
+                directdateerror: Yup.number(),
+                directdatetype: Yup.string(),
+                numericagemin: Yup.number(),
+                numericageminerror: Yup.number(),
+                numericagemintype: Yup.string(),
+                numericagemax: Yup.number(),
+                numericagemaxerror: Yup.number(),
+                numericagemaxtype: Yup.string(),
+                agecomments: Yup.string(),
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
@@ -851,34 +902,18 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
 
                                     </TabPanel>
                                     <TabPanel value="2">
-                                        <Field
-                                            component={TextField}
-                                            name="directdate"
-                                            type="text"
-                                            label="Direct date !"
-                                        />
+                                        <DateEntry name="directdate" />
+                                        <br />
+                                        <DateEntry name="numericagemax" />
+                                        <br />
+                                        <DateEntry name="numericagemin" />
                                         <br />
 
-                                        <Stack direction="row" spacing={4}>
-                                            <Field
-                                                component={TextField}
-                                                name="nummaxage"
-                                                type="text"
-                                                label="Numeric maximum age !"
-                                            />
-                                            <Field
-                                                component={TextField}
-                                                name="numminage"
-                                                type="text"
-                                                label="Numeric minimum age !"
-                                            />
-                                        </Stack>
-
                                         <Field
-                                            component={TextField}
+                                            component={SensibleTextField}
                                             name="agecomments"
                                             type="text"
-                                            label="Comments !"
+                                            label="Comments"
                                         />
                                         <br />
 
