@@ -15,12 +15,25 @@ export const sizeClasses = [
     "< 1 mm"
 ]
 
+export const dateTypes = ["Ma", "Ka", "YBP"];
+
 export const geographicResolutionScale = [
     "hand sample",
     "small collection (<10x10m)", 
     "outcrop (<1x1km)", 
     "local area (<100x100km)",
     "basin"
+]
+
+export const collectionMethods = [
+    "sieve", 
+    "core", 
+    "census", 
+    "quarry", 
+    "surface (float)", 
+    "surface (in situ)", 
+    "salvage", 
+    "anthill"
 ]
 
 //TODO: Remove this once query code is updated
