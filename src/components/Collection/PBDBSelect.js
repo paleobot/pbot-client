@@ -158,12 +158,24 @@ export default function PBDBSelect(props) {
         if (populateAll) {
             //formikProps.setFieldValue("year", reference.year);
             formikProps.setFieldValue("name", collection.collection_name);
+            formikProps.setFieldValue("collectiontype", collection.collection_type);
             formikProps.setFieldValue("maxinterval", collection.early_interval || '');
             formikProps.setFieldValue("mininterval", collection.late_interval || '');
             formikProps.setFieldValue("lithology", collection.lithology1 || '');
             formikProps.setFieldValue("environment", collection.environment || '');
             formikProps.setFieldValue("lat", collection.lat);
             formikProps.setFieldValue("lon", collection.lng);
+            formikProps.setFieldValue("country", collection.cc);
+            formikProps.setFieldValue("state", collection.state);
+
+            formikProps.setFieldValue("numericagemax", collection.max_ma);
+            formikProps.setFieldValue("numericagemaxtype", "Ma");
+            formikProps.setFieldValue("numericagemin", collection.min_ma);
+            formikProps.setFieldValue("numericagemintype", "Ma");
+
+            formikProps.setFieldValue("stratigraphiccomments", collection.stratcomments);
+            formikProps.setFieldValue("collectingcomments", collection.collection_comments);
+
             //formikProps.setFieldValue("publisher", reference.journal || reference.booktitle);
             //formikProps.setFieldValue("doi", (reference.identifier && reference.identifier.type === "doi") ? reference.identifier.id : null);
         }
