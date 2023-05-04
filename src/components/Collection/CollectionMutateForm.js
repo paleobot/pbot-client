@@ -8,7 +8,7 @@ import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {collectionTypes, sizeClasses, geographicResolutionScale} from "./Lists.js"
+import {collectionTypes, sizeClasses, geographicResolutionScale, collectionMethods} from "./util/Lists.js"
 
 //import IntervalSelect from './IntervalSelect.js';
 
@@ -16,7 +16,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import PBDBSelect from './PBDBSelect.js';
+import PBDBSelect from './util/PBDBSelect.js';
 import States from '../State/States.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 import { DateEntry } from './DateEntry.js';
@@ -67,6 +67,31 @@ const SizeClassSelect = (props) => {
                     key={sc} 
                     value={sc}
                 >{sc}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const CollectionMethodSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="collectionmethods"
+            label="Collection methods"
+            select={true}
+            SelectProps={{
+                multiple: true,
+            }}
+            disabled={false}
+        >
+            {collectionMethods.map((cm) => (
+                <MenuItem 
+                    key={cm} 
+                    value={cm}
+                >{cm}</MenuItem>
             ))}
         </Field>
     )
@@ -446,8 +471,17 @@ const CollectionSelect = (props) => {
                 maxinterval
                 mininterval
                 lithology
+                additionalLithology
+                stratigraphicGroup
+                stratigraphicFormation
+                stratigraphicMember
+                stratigraphicBed
+                stratigraphicComments
                 environment
+                environmentComments
                 collectors
+                collectionMethods
+                collectingComments
                 pbdbid
                 directDate
                 directDateError
@@ -521,8 +555,17 @@ const CollectionSelect = (props) => {
                 props.values.maxinterval = child.props.dmaxinterval || '';
                 props.values.mininterval = child.props.dmininterval || '';
                 props.values.lithology = child.props.dlithology || '';
+                props.values.additionallithology = child.props.dadditionallithology || '';
+                props.values.stratigraphicgroup = child.props.dstratigraphicgroup || '';
+                props.values.stratigraphicformation = child.props.dstratigraphicformation || '';
+                props.values.stratigraphicmember = child.props.dstratigraphicmember || '';
+                props.values.stratigraphicbed = child.props.dstratigraphicbed || '';
+                props.values.stratigraphiccomments = child.props.dstratigraphiccomments || '';
                 props.values.environment = child.props.denvironment || '';
+                props.values.environmentcomments = child.props.denvironmentcomments || '';
                 props.values.collectors = child.props.dcollectors || '';
+                props.values.collectionmethods = child.props.dcollectionmethods ? JSON.parse(child.props.dcollectionmethods) : [];
+                props.values.collectingcomments = child.props.dcollectingcomments || '';
                 props.values.pbdbid = child.props.dpbdbid || '';
                 props.values.directdate = child.props.ddirectdate || '';
                 props.values.directdateerror = child.props.ddirectdateerror || '';
@@ -562,8 +605,17 @@ const CollectionSelect = (props) => {
                     dmaxinterval={collection.maxinterval}
                     dmininterval={collection.mininterval}
                     dlithology={collection.lithology}
+                    dadditionallithology={collection.additionalLithology}
+                    dstratigraphicgroup={collection.stratigraphicGroup}
+                    dstratigraphicformation={collection.stratigraphicFormation}
+                    dstratigraphicmember={collection.stratigraphicMember}
+                    dstratigraphicbed={collection.stratigraphicBed}
+                    dstratigraphiccomments={collection.stratigraphicComments}
                     denvironment={collection.environment}
+                    denvironmentcomments={collection.environmentComments}
                     dcollectors={collection.collectors}
+                    dcollectionmethods={collection.collectionMethods ? JSON.stringify(collection.collectionMethods.map(cm => cm)) : null}
+                    dcollectingcomments={collection.collectingComments}
                     dpbdbid={collection.pbdbid}
                     ddirectdate={collection.directDate}
                     ddirectdateerror={collection.directDateError}
@@ -653,9 +705,18 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 numericagemaxtype: '',
                 agecomments: '',
                 lithology: '',
-                preservationmodes: [],
+                additionallithology: '',
+                stratigraphicgroup: '',
+                stratigraphicformation: '',
+                stratigraphicmember: '',
+                stratigraphicbed: '',
+                stratigraphiccomments: '',
                 environment: '',
+                environmentcomments: '',
+                preservationmodes: [],
                 collectors: '',
+                collectionmethods: [],
+                collectingcomments: '',
                 sizeclasses: [],
                 pbdbid: '',
                 references: [{
@@ -694,9 +755,18 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 lithology: Yup.string().required(),
-                preservationmodes: Yup.array().of(Yup.string()).min(1, "preservation modes must have at least one entry"),
+                additionallithology: Yup.string(),
+                stratigraphicgroup: Yup.string(),
+                stratigraphicformation: Yup.string(),
+                stratigraphicmember: Yup.string(),
+                stratigraphicbed: Yup.string(),
+                stratigraphiccomments: Yup.string(),
                 environment: Yup.string(),
+                environmentcomments: Yup.string(),
+                preservationmodes: Yup.array().of(Yup.string()).min(1, "preservation modes must have at least one entry"),
                 collectors: Yup.string(),
+                collectionmethods: Yup.array().of(Yup.string()),
+                collectingcomments: Yup.string(),
                 maxinterval: Yup.string().required("maximum interval is a required field"),
                 mininterval: Yup.string(),
                 lat: Yup.number().required("latitude is a required field").min(-90).max(90),
@@ -920,10 +990,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     </TabPanel>
                                     <TabPanel value="3">
                                         <Field
-                                            component={TextField}
-                                            name="addllith"
+                                            component={SensibleTextField}
+                                            name="additionallithology"
                                             type="text"
-                                            label="Additional description of lithology !"
+                                            label="Additional description of lithology"
                                         />
                                         <br />
 
@@ -932,42 +1002,42 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         
                                         <div style={{marginLeft:"2em"}}>
                                             <Field
-                                                component={TextField}
-                                                name="geologicgroup"
+                                                component={SensibleTextField}
+                                                name="stratigraphicgroup"
                                                 type="text"
-                                                label="Group !"
+                                                label="Group"
                                             />
                                             <br />
 
                                             <Field
-                                                component={TextField}
-                                                name="geologicformation"
+                                                component={SensibleTextField}
+                                                name="stratigraphicformation"
                                                 type="text"
-                                                label="Formation !"
+                                                label="Formation"
                                             />
                                             <br />
 
                                             <Field
-                                                component={TextField}
-                                                name="geologicmember"
+                                                component={SensibleTextField}
+                                                name="stratigraphicmember"
                                                 type="text"
-                                                label="Member !"
+                                                label="Member"
                                             />
                                             <br />
 
                                             <Field
-                                                component={TextField}
-                                                name="geologicbed"
+                                                component={SensibleTextField}
+                                                name="stratigraphicbed"
                                                 type="text"
-                                                label="Bed !"
+                                                label="Bed"
                                             />
                                             <br />
 
                                             <Field
-                                                component={TextField}
-                                                name="stratigraphcomments"
+                                                component={SensibleTextField}
+                                                name="stratigraphiccomments"
                                                 type="text"
-                                                label="Comments on stratigraphy !"
+                                                label="Comments on stratigraphy"
                                             />
                                             <br />
                                         </div>
@@ -976,10 +1046,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         <br />
 
                                         <Field
-                                            component={TextField}
+                                            component={SensibleTextField}
                                             name="environmentcomments"
                                             type="text"
-                                            label="Comments on environment !"
+                                            label="Comments on environment"
                                         />
                                         <br />
 
@@ -995,21 +1065,14 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         />
                                         <br />
 
-                                        <Field
-                                            component={TextField}
-                                            type="text"
-                                            name="collectionmethods"
-                                            label="Collection methods !"
-                                            fullWidth 
-                                            disabled={false}
-                                        />
+                                        <CollectionMethodSelect />
                                         <br />
 
                                         <Field
-                                            component={TextField}
+                                            component={SensibleTextField}
                                             type="text"
-                                            name="collectionmethodscomments"
-                                            label="Comments on collection methods !"
+                                            name="collectingcomments"
+                                            label="Comments on collection methods"
                                             fullWidth 
                                             disabled={false}
                                         />
