@@ -5,7 +5,7 @@ export const collectionTypes = [
     "taphonomic", 
     "taxonomic", 
     "general",
-    "fanual/floral"
+    "faunal/floral"
 ]
 
 //TODO: These should be obtained from somewhere (our api or pbdb)
