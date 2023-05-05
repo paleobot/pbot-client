@@ -5,6 +5,8 @@ import { Button, AppBar, Tabs, Tab, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {collectionTypes, countries} from "./Lists.js"
+import { CountrySelect } from './CountrySelect.js'
+import { StateSelect } from './StateSelect.js'
 
 const CollectionTypeSelect = (props) => {
     const style = {minWidth: "12ch"}
@@ -31,37 +33,12 @@ const CollectionTypeSelect = (props) => {
     )
 }
 
-const CountrySelect = (props) => {
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="country"
-            label="Country"
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {countries.map((country) => (
-                <MenuItem 
-                    key={country.Code} 
-                    value={country.Code}
-                >{`${country.Name} - ${country.Code}`}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
-
 const CollectionQueryForm = ({handleSubmit}) => {
     const initValues = {
         collectionID: '', 
         name: '', 
         country: '',
+        state: '',
         collectiontype: '',
         groups: [],
         includeSpecimens: false
@@ -82,6 +59,8 @@ const CollectionQueryForm = ({handleSubmit}) => {
                 handleSubmit(values)
             }}
         >
+
+            {props => (
             <Form>
                 <Field 
                     component={TextField}
@@ -109,6 +88,9 @@ const CollectionQueryForm = ({handleSubmit}) => {
                 <CountrySelect />
                 <br />
                 
+                <StateSelect country={props.values.country} />
+                <br />
+
                 <GroupSelect/>
                 <br />
                 
@@ -128,6 +110,7 @@ const CollectionQueryForm = ({handleSubmit}) => {
                 <br />
                 <br />
             </Form>
+            )}
         </Formik>
     
     );
