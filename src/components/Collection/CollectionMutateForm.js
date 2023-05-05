@@ -9,6 +9,8 @@ import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {collectionTypes, sizeClasses, geographicResolutionScale, collectionMethods} from "./Lists.js"
+import { CountrySelect } from './CountrySelect.js'
+import { StateSelect } from './StateSelect.js'
 
 //import IntervalSelect from './IntervalSelect.js';
 
@@ -117,121 +119,6 @@ const GeographicResolutionSelect = (props) => {
                     key={gR} 
                     value={gR}
                 >{gR}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
-const CountrySelect = (props) => {
-    const [countries, setCountries] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        setLoading(true);
-        //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=all&vocab=pbdb")
-        //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=1&vocab=pbdb")
-        fetch("/countries")
-        .then(res => res.json())
-        .then(
-            (response) => {
-                setLoading(false);
-                if (response.status_code) {
-                    throw new Error (response.errors[0]);
-                }
-                console.log("Countries response")
-                console.log(response)
-                setCountries(response.map(country => { 
-                    return {
-                        name: country.name,
-                        code: country.isoCode
-                    }
-                }));
-            }
-        ).catch (
-            (error) => {
-                console.log("error!")
-                console.log(error)
-                setError(error)
-            }
-        )
-    }, [])
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="country"
-            label="Country"
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {countries.map((country) => (
-                <MenuItem 
-                    key={country.code} 
-                    value={country.code}
-                >{`${country.name} - ${country.code}`}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
-const StateSelect = (props) => {
-    const [states, setStates] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        if (props.country === '') return
-        setLoading(true);
-        fetch(`/states/${props.country}`)
-        .then(res => res.json())
-        .then(
-            (response) => {
-                setLoading(false);
-                if (response.status_code) {
-                    throw new Error (response.errors[0]);
-                }
-                console.log("States response")
-                console.log(response)
-                setStates(response.map(state => { 
-                    return {
-                        name: state.name,
-                        code: state.isoCode
-                    }
-                }));
-            }
-        ).catch (
-            (error) => {
-                console.log("error!")
-                console.log(error)
-                setError(error)
-            }
-        )
-    }, [props.country])
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="state"
-            label="State/Province"
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {states.map((state) => (
-                <MenuItem 
-                    key={state.code} 
-                    value={state.code}
-                >{`${state.name} - ${state.code}`}</MenuItem>
             ))}
         </Field>
     )
