@@ -1,3 +1,9 @@
+export const confidenceQualitative = [
+    "high", 
+    "medium", 
+    "low"
+]
+
 //TODO: These should be obtained from somewhere (our api or pbdb)
 export const collectionTypes = [
     "biostratigraphic", 
