@@ -15,6 +15,7 @@ import {
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { confidenceQualitative } from '../Collection/Lists.js';
 import { OrganSelect } from '../Organ/OrganSelect.js';
+import { SensibleTextField } from '../SensibleTextField.js';
 
 const QualityIndexSelect = (props) => {
     const style = {minWidth: "12ch"}
@@ -23,8 +24,8 @@ const QualityIndexSelect = (props) => {
             style={style}
             component={TextField}
             type="text"
-            name="qualityindex"
-            label="Quality index !"
+            name="qualityIndex"
+            label="Quality index"
             select={true}
             SelectProps={{
                 multiple: false,
@@ -64,8 +65,8 @@ const PartsPreservedSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="partspreserved"
-            label="Parts preserved !"
+            name="partsPreserved"
+            label="Parts preserved"
             fullWidth 
             select={true}
             SelectProps={{
@@ -84,6 +85,48 @@ const PartsPreservedSelect = (props) => {
     )
 }
 
+const NotableFeaturesSelect = (props) => {
+    console.log("NotableFeaturesSelect");
+    const gQL = gql`
+            query {
+                Feature {
+                    pbotID
+                    name
+                }            
+            }
+        `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                     
+    const features = alphabetize([...data.Feature], "name");
+    console.log(features)
+    
+    return (
+        <Field
+            component={TextField}
+            type="text"
+            name="notableFeatures"
+            label="Notable features"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: true,
+            }}
+            disabled={false}
+         >
+            {features.map(({ pbotID, name }) => (
+                <MenuItem 
+                    key={pbotID} 
+                    value={pbotID}
+                    data-name={name}
+                >{name}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const OTUSelect = (props) => {
     console.log("OTUSelect");
@@ -94,9 +137,19 @@ const OTUSelect = (props) => {
                 OTU {
                     pbotID
                     name
+                    authority
+                    diagnosis
+                    qualityIndex
+                    partsPreserved {
+                        pbotID
+                    }
+                    notableFeatures {
+                        pbotID
+                    }
                     family
                     genus
                     species
+                    additionalClades
                     identifiedSpecimens {
                       Specimen {
                         name
@@ -162,9 +215,15 @@ const OTUSelect = (props) => {
                 console.log(child.props);
                 console.log(child.props.didentifiedspecimens);
                 props.values.name = child.props.dname;
-                props.values.family = child.props.dfamily;
-                props.values.genus = child.props.dgenus;
-                props.values.species = child.props.dspecies;
+                props.values.authority = child.props.dauthority || '';
+                props.values.diagnosis = child.props.ddiagnosis || '';
+                props.values.qualityIndex = child.props.dqualityindex || '';
+                props.values.partsPreserved = child.props.dpartspreserved ? JSON.parse(child.props.dpartspreserved) : [];
+                props.values.notableFeatures = child.props.dnotablefeatures ? JSON.parse(child.props.dnotablefeatures) : [];
+                props.values.family = child.props.dfamily || '';
+                props.values.genus = child.props.dgenus || '';
+                props.values.species = child.props.dspecies || '';
+                props.values.additionalClades = child.props.dadditionalclades || '';
                 props.values.identifiedSpecimens = child.props.didentifiedspecimens ? JSON.parse(child.props.didentifiedspecimens) : [];
                 props.values.typeSpecimens = child.props.dtypespecimens ? JSON.parse(child.props.dtypespecimens) : [];
                 props.values.holotypeSpecimen = child.props.dholotypespecimen;
@@ -181,9 +240,15 @@ const OTUSelect = (props) => {
                     key={otu.pbotID} 
                     value={otu.pbotID} 
                     dname={otu.name} 
+                    dauthority={otu.authority} 
+                    ddiagnosis={otu.diagnosis} 
+                    dqualityindex={otu.qualityIndex} 
+                    dpartspreserved={otu.partsPreserved ? JSON.stringify(otu.partsPreserved.map(pp => pp.pbotID)) : null}
+                    dnotablefeatures={otu.notableFeatures ? JSON.stringify(otu.notableFeatures.map(nf => nf.pbotID)) : null}
                     dfamily={otu.family}
                     dgenus={otu.genus}
                     dspecies={otu.species}
+                    dadditionalclades={otu.additionalClades}
                     didentifiedspecimens={otu.identifiedSpecimens ? JSON.stringify(otu.identifiedSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
                     dtypespecimens={otu.typeSpecimens ? JSON.stringify(otu.typeSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
                     dholotypespecimen={otu.holotypeSpecimen.Specimen.pbotID}
@@ -332,14 +397,19 @@ const SpecimenSelect = (props) => {
 const OTUMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 otu: '',
-                partspreserved: [],
                 identifiedSpecimens: [],
                 typeSpecimens: [],
                 holotypeSpecimen: '',
                 family: '', 
                 genus: '', 
                 species: '',
+                additionalClades: '',
                 name: '',
+                authority: '',
+                diagnosis: '',
+                qualityIndex: '',
+                partsPreserved: [],
+                notableFeatures: [],
                 references: [{
                     pbotID: '',
                     order:'',
@@ -357,7 +427,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
         if (formikRef.current) {
             formikRef.current.resetForm({values:initValues});
         }
-    });
+    },[mode]);
     
     const [selectedTab, setSelectedTab] = React.useState('1');
     const handleChange = (event, newValue) => {
@@ -372,19 +442,16 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
             innerRef={formikRef}
             initialValues={initValues}
             validationSchema={Yup.object({
-                family: Yup.string().nullable().when("type", {
-                    is: (val) => val === "OTU",
-                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
-                }),
-                genus: Yup.string().nullable().when("type", {
-                    is: (val) => val === "OTU",
-                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
-                }),
-                species: Yup.string().nullable().when("type", {
-                    is: (val) => val === "OTU",
-                    then: Yup.string().required().max(30, 'Must be 30 characters or less')
-                }),
+                family: Yup.string().max(30, 'Must be 30 characters or less'),
+                genus: Yup.string().max(30, 'Must be 30 characters or less'),
+                species: Yup.string().max(30, 'Must be 30 characters or less'),
+                additionalClades: Yup.string(),
                 name: Yup.string().nullable().required(),
+                authority: Yup.string().required(),
+                diagnosis: Yup.string().required(),
+                qualityIndex: Yup.string().required("Quality index is required"),
+                partsPreserved: Yup.array().of(Yup.string()).required("Parts preserved is required"),
+                notableFeatures: Yup.array().of(Yup.string()).required("Notable features is required"),
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
@@ -439,7 +506,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                     <AccordionDetails>
 
                         <Field 
-                            component={TextField}
+                            component={SensibleTextField}
                             name="name" 
                             type="text" 
                             label="Name"
@@ -448,19 +515,19 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         <br />
                
                         <Field 
-                            component={TextField}
+                            component={SensibleTextField}
                             name="authority" 
                             type="text" 
-                            label="Authority !"
+                            label="Authority"
                             disabled={false}
                         />
                         <br />
                
                         <Field 
-                            component={TextField}
+                            component={SensibleTextField}
                             name="diagnosis" 
                             type="text" 
-                            label="Diagnosis !"
+                            label="Diagnosis"
                             disabled={false}
                         />
                         <br />
@@ -471,7 +538,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         <br />
                
                         <Field 
-                            component={TextField}
+                            component={SensibleTextField}
                             name="majortaxongroup" 
                             type="text" 
                             label="Major taxon group !"
@@ -480,7 +547,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         <br />
                
                         <Field 
-                            component={TextField}
+                            component={SensibleTextField}
                             name="pbdbparenttaxon" 
                             type="text" 
                             label="PBDB parent taxon !"
@@ -540,19 +607,11 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                                     </TabList>
                                 </Box>
                                 <TabPanel value="1">
-                                    <Field 
-                                        component={TextField}
-                                        name="notablefeaturespreserved" 
-                                        type="text" 
-                                        label="Notable features preserved !"
-                                        disabled={false}
-                                    />
-                                    <br />
-
+                                    <NotableFeaturesSelect />
                                 </TabPanel>
                                 <TabPanel value="2">
                                     <Field 
-                                        component={TextField}
+                                        component={SensibleTextField}
                                         name="family" 
                                         type="text" 
                                         label="Family"
@@ -561,28 +620,32 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                                     <br />
                                     
                                     <Field 
-                                        component={TextField}                
+                                        component={SensibleTextField}                
                                         name="genus" 
                                         type="text" 
                                         label="Genus"
                                         disabled={false}
-                                        onChange={event => {
-                                            props.handleChange(event)
-                                        }}
                                     />
                                     <br />
                                     
                                     <Field 
-                                        component={TextField}
+                                        component={SensibleTextField}
                                         name="species" 
                                         type="text" 
-                                        label="Species"
+                                        label="Specific epithet"
                                         disabled={false}
-                                        onChange={event => {
-                                            props.handleChange(event)
-                                        }}
                                     />
                                     <br />
+
+                                    <Field 
+                                        component={SensibleTextField}
+                                        name="additionalClades" 
+                                        type="text" 
+                                        label="Additional clades"
+                                        disabled={false}
+                                    />
+                                    <br />
+
                                 </TabPanel>
                             </TabContext>
                         </Box>

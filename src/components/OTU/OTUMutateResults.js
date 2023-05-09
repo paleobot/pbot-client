@@ -16,7 +16,13 @@ const OTUMutateResults = ({queryParams}) => {
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
                 species: queryParams.species || null, 
+                additionalClades: queryParams.additionalClades || null, 
                 name: queryParams.name || null,
+                authority: queryParams.authority || null,
+                diagnosis: queryParams.diagnosis || null,
+                qualityIndex: queryParams.qualityIndex || null,
+                partsPreserved: queryParams.partsPreserved || null,
+                notableFeatures: queryParams.notableFeatures || null,
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
                     [publicGroupID] : queryParams.groups || null,
