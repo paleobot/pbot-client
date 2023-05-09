@@ -1,16 +1,89 @@
 ﻿import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, AccordionSummary, AccordionDetails, Box, Accordion } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
   gql
 } from "@apollo/client";
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { confidenceQualitative } from '../Collection/Lists.js';
+import { OrganSelect } from '../Organ/OrganSelect.js';
+
+const QualityIndexSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="qualityindex"
+            label="Quality index !"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {confidenceQualitative.map((cQ) => (
+                <MenuItem 
+                    key={cQ} 
+                    value={cQ}
+                >{cQ}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
+const PartsPreservedSelect = (props) => {
+    console.log("PartsPreservedSelect");
+    const gQL = gql`
+            query {
+                Organ {
+                    pbotID
+                    type
+                }            
+            }
+        `;
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+                                     
+    const organs = alphabetize([...data.Organ], "type");
+    console.log(organs)
+    
+    return (
+        <Field
+            component={TextField}
+            type="text"
+            name="partspreserved"
+            label="Parts preserved !"
+            fullWidth 
+            select={true}
+            SelectProps={{
+                multiple: true,
+            }}
+            disabled={false}
+         >
+            {organs.map(({ pbotID, type }) => (
+                <MenuItem 
+                    key={pbotID} 
+                    value={pbotID}
+                    data-type={type}
+                >{type}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
 
 const OTUSelect = (props) => {
     console.log("OTUSelect");
@@ -259,6 +332,7 @@ const SpecimenSelect = (props) => {
 const OTUMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 otu: '',
+                partspreserved: [],
                 identifiedSpecimens: [],
                 typeSpecimens: [],
                 holotypeSpecimen: '',
@@ -285,7 +359,13 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
         }
     });
     
+    const [selectedTab, setSelectedTab] = React.useState('1');
+    const handleChange = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
+
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -348,75 +428,166 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 {(mode === "create" || (mode === "edit" && props.values.otu !== '')) &&
                 <div>
                 
-                <Field 
-                    component={TextField}
-                    name="name" 
-                    type="text" 
-                    label="Name"
-                    disabled={false}
-                />
-                <br />
-               
-                <Field 
-                    component={TextField}
-                    name="family" 
-                    type="text" 
-                    label="Family"
-                    disabled={false}
-                />
-                <br />
-                
-                <Field 
-                    component={TextField}                
-                    name="genus" 
-                    type="text" 
-                    label="Genus"
-                    disabled={false}
-                    onChange={event => {
-                        props.handleChange(event)
-                    }}
-                />
-                <br />
-                
-                <Field 
-                    component={TextField}
-                    name="species" 
-                    type="text" 
-                    label="Species"
-                    disabled={false}
-                    onChange={event => {
-                        props.handleChange(event)
-                    }}
-                />
-                <br />
-          
-                <SpecimenSelect type="identified" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
-                <br />
+                <Accordion style={accstyle} defaultExpanded={true}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Required fields
+                    </AccordionSummary>
+                    <AccordionDetails>
 
-                <SpecimenSelect type="type" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
-                <br />
+                        <Field 
+                            component={TextField}
+                            name="name" 
+                            type="text" 
+                            label="Name"
+                            disabled={false}
+                        />
+                        <br />
+               
+                        <Field 
+                            component={TextField}
+                            name="authority" 
+                            type="text" 
+                            label="Authority !"
+                            disabled={false}
+                        />
+                        <br />
+               
+                        <Field 
+                            component={TextField}
+                            name="diagnosis" 
+                            type="text" 
+                            label="Diagnosis !"
+                            disabled={false}
+                        />
+                        <br />
+
+                        <PartsPreservedSelect />
+
+                        <QualityIndexSelect />
+                        <br />
+               
+                        <Field 
+                            component={TextField}
+                            name="majortaxongroup" 
+                            type="text" 
+                            label="Major taxon group !"
+                            disabled={false}
+                        />
+                        <br />
+               
+                        <Field 
+                            component={TextField}
+                            name="pbdbparenttaxon" 
+                            type="text" 
+                            label="PBDB parent taxon !"
+                            disabled={false}
+                        />
+                        <br />
+                        <ReferenceManager values={props.values}/>
+                        <br />
                 
-                <SpecimenSelect type="holotype" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
-                <br />
+                        <SpecimenSelect type="identified" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        <br />
+
+                        <SpecimenSelect type="type" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        <br />
+                        
+                        <SpecimenSelect type="holotype" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        <br />
+
+                        <Field 
+                            component={CheckboxWithLabel}
+                            name="public" 
+                            type="checkbox"
+                            Label={{label:"Public"}}
+                            disabled={(mode === "edit" && props.values.origPublic)}
+                        />
+                        <br />
+                        
+                        {!props.values.public &&
+                        <div>
+                            <GroupSelect />
+                            <br />
+                        </div>
+                        }
+                    </AccordionDetails>
+                </Accordion>
                 
-                <ReferenceManager values={props.values}/>
-                <br />
-                
-                <Field 
-                    component={CheckboxWithLabel}
-                    name="public" 
-                    type="checkbox"
-                    Label={{label:"Public"}}
-                    disabled={(mode === "edit" && props.values.origPublic)}
-                />
-                <br />
-                
-                {!props.values.public &&
-                <div>
-                    <GroupSelect />
-                    <br />
-                </div>
-                }
+                <Accordion style={accstyle}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="optional-content"
+                        id="optional-header"                        
+                    >
+                        Optional fields
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Box sx={{ width: '100%', typography: 'body1' }}>
+                            <TabContext value={selectedTab}>
+                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                    <TabList 
+                                        textColor="secondary" 
+                                        indicatorColor="secondary" 
+                                        onChange={handleChange} 
+                                        aria-label="optional tabs"
+                                    >
+                                        <Tab label="Specimens & preservation" value="1"/>
+                                        <Tab label="Taxonomy" value="2"/>
+                                    </TabList>
+                                </Box>
+                                <TabPanel value="1">
+                                    <Field 
+                                        component={TextField}
+                                        name="notablefeaturespreserved" 
+                                        type="text" 
+                                        label="Notable features preserved !"
+                                        disabled={false}
+                                    />
+                                    <br />
+
+                                </TabPanel>
+                                <TabPanel value="2">
+                                    <Field 
+                                        component={TextField}
+                                        name="family" 
+                                        type="text" 
+                                        label="Family"
+                                        disabled={false}
+                                    />
+                                    <br />
+                                    
+                                    <Field 
+                                        component={TextField}                
+                                        name="genus" 
+                                        type="text" 
+                                        label="Genus"
+                                        disabled={false}
+                                        onChange={event => {
+                                            props.handleChange(event)
+                                        }}
+                                    />
+                                    <br />
+                                    
+                                    <Field 
+                                        component={TextField}
+                                        name="species" 
+                                        type="text" 
+                                        label="Species"
+                                        disabled={false}
+                                        onChange={event => {
+                                            props.handleChange(event)
+                                        }}
+                                    />
+                                    <br />
+                                </TabPanel>
+                            </TabContext>
+                        </Box>
+                    </AccordionDetails>
+                </Accordion>
                 
                 </div>
                 }
