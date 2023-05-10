@@ -8,8 +8,8 @@ import {
   gql
 } from "@apollo/client";
 
-export const OrganSelect = (props) => {
-    console.log("OrganSelect");
+export const PartsPreservedSelect = (props) => {
+    console.log("PartsPreservedSelect");
     const gQL = gql`
             query {
                 Organ {
@@ -31,8 +31,8 @@ export const OrganSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name="organs"
-            label="Organs"
+            name="partsPreserved"
+            label="Parts preserved"
             fullWidth 
             select={true}
             SelectProps={{
