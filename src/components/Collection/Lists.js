@@ -4,6 +4,31 @@ export const confidenceQualitative = [
     "low"
 ]
 
+export const majorTaxonGroups = [
+    "Accelleratii incredibus",
+    "Velocitus tremenjus",
+    "Hotroddicus supersonicus",
+    "Speedipus rex",
+    "Velocitus delectiblus",
+    "Tastyus supersonicus",
+    "Birdibus zippibus",
+    "Velocitus incalcublii",
+    "Disappearialis quickius",
+    "Boulevardius burnupius",
+    "Carnivorous vulgaris",
+    "Eatibus anythingus",
+    "Eatius birdius",
+    "Eternalii famishiis",
+    "Famishus vulgaris",
+    "Carnivorous slobbius",
+    "Apetitus giganticus",
+    "Hungrii fleabaggius",
+    "Appetitius uncontrolibus",
+    "Grotesques appetitus",
+    "Dogius ignoramii",
+    "Canis idioticus",
+]
+
 //TODO: These should be obtained from somewhere (our api or pbdb)
 export const collectionTypes = [
     "biostratigraphic", 
