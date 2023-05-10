@@ -39,7 +39,8 @@ const SpecimenMutateResults = ({queryParams}) => {
                 pbotID: queryParams.specimen || null,
                 name: queryParams.name || null,
                 references: queryParams.references || null,
-                organIDs: queryParams.organs || null,
+                partsPreservedIDs: queryParams.partsPreserved || null,
+                notableFeaturesIDs: queryParams.notableFeatures || null,
                 preservationModeID: queryParams.preservationMode || null,
                 descriptionIDs: queryParams.describedBy || null,
                 idigbiouuid: queryParams.idigbiouuid || null,
@@ -47,7 +48,9 @@ const SpecimenMutateResults = ({queryParams}) => {
                 pbdboccid: queryParams.pbdboccid || null,
                 collection: queryParams.collection || null,
                 uploadImages: queryParams.images || null,
-                cascade: queryParams.cascade || false
+                cascade: queryParams.cascade || false,
+                groups: queryParams.public ? 
+                    [publicGroupID] : queryParams.groups || null,
             }}
             entity="Specimen"
             mode={queryParams.mode}

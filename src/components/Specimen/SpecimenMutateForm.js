@@ -8,12 +8,13 @@ import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import {ImageManager} from '../Image/ImageManager.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
-import {OrganSelect} from '../Organ/OrganSelect.js';
+import {PartsPreservedSelect} from '../Organ/PartsPreservedSelect.js';
 
 import {
   useQuery,
   gql
 } from "@apollo/client";
+import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
@@ -29,7 +30,10 @@ const SpecimenSelect = (props) => {
                     idigbiouuid
                     pbdbcid
                     pbdboccid
-                    organs {
+                    partsPreserved {
+                        pbotID
+                    }
+                    notableFeatures {
                         pbotID
                     }
                     describedBy {
@@ -81,7 +85,8 @@ const SpecimenSelect = (props) => {
             onChange={(event,child) => {
                 //props.resetForm();
                 props.values.name = child.props.dname;
-                props.values.organs = child.props.dorgans ? JSON.parse(child.props.dorgans) : [];
+                props.values.partsPreserved = child.props.dpartspreserved ? JSON.parse(child.props.dpartspreserved) : [];
+                props.values.notableFeatures = child.props.dnotablefeatures ? JSON.parse(child.props.dnotablefeatures) : [];
                  props.values.preservationMode = child.props.dpreservationmode ? child.props.dpreservationmode : '';
                 props.values.describedBy = child.props.ddescribedby ? JSON.parse(child.props.ddescribedby) : [];
                 props.values.idigbiouuid = child.props.didigbiouuid ? child.props.didigbiouuid : '';
@@ -100,7 +105,8 @@ const SpecimenSelect = (props) => {
                     key={specimen.pbotID} 
                     value={specimen.pbotID}
                     dname={specimen.name}
-                    dorgans={specimen.organs ? JSON.stringify(specimen.organs.map(organ => organ.pbotID)) : null}
+                    dpartspreserved={specimen.partsPreserved ? JSON.stringify(specimen.partsPreserved.map(organ => organ.pbotID)) : null}
+                    dnotablefeatures={specimen.notableFeatures ? JSON.stringify(specimen.notableFeatures.map(feature => feature.pbotID)) : null}
                     dpreservationmode={specimen.preservationMode ? specimen.preservationMode.pbotID : null}
                     ddescribedby={specimen.describedBy ? JSON.stringify(specimen.describedBy.map(d => d.Description.pbotID)) : ''}
                     didigbiouuid={specimen.idigbiouuid}
@@ -206,7 +212,8 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 specimen: '',
                 name: '',
-                organs: [],
+                partsPreserved: [],
+                notableFeatures: [],
                 preservationMode: '',
                 describedBy: [],
                 idigbiouuid: '',
@@ -217,6 +224,8 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                     order:'',
                 }],
                 collection: '',
+                public: true,
+                groups: [],
                 cascade: false,
                 mode: mode,
     };    
@@ -237,7 +246,8 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
-                organs: Yup.array().of(Yup.string()).min(1, "At least one organ required"),
+                partsPreserved: Yup.array().of(Yup.string()).min(1, "At least one part is required"),
+                notableFeatures: Yup.array().of(Yup.string()),
                 preservationMode: Yup.string().required(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
                 references: Yup.array().of(
@@ -249,6 +259,11 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             .typeError('Reference order is required')
                     })
                 ),
+                public: Yup.boolean(),
+                groups: Yup.array().of(Yup.string()).when('public', {
+                    is: false,
+                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
+                }),
                 collection: Yup.string().required(),
                 images: Yup.array().of(
                     Yup.object().shape({
@@ -300,7 +315,10 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                     
                     <ReferenceManager values={props.values}/>
 
-                    <OrganSelect />
+                    <PartsPreservedSelect />
+                    <br />
+
+                    <NotableFeaturesSelect />
                     <br />
 
                     <PreservationModeSelect />
@@ -345,7 +363,22 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                     <CollectionSelect />
                     <br />
 
-                                    
+                    <Field 
+                            component={CheckboxWithLabel}
+                            name="public" 
+                            type="checkbox"
+                            Label={{label:"Public"}}
+                            disabled={(mode === "edit" && props.values.origPublic)}
+                    />
+                    <br />
+                        
+                    {!props.values.public &&
+                    <div>
+                        <GroupSelect />
+                        <br />
+                    </div>
+                    }
+                                
                     </div>
                 }
                 
