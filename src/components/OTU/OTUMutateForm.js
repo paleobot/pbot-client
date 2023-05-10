@@ -13,9 +13,34 @@ import {
   gql
 } from "@apollo/client";
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { confidenceQualitative } from '../Collection/Lists.js';
+import { confidenceQualitative, majorTaxonGroups } from '../Collection/Lists.js';
 import { OrganSelect } from '../Organ/OrganSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
+
+const MajorTaxonGroupSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="majorTaxonGroup"
+            label="Major taxon group"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {majorTaxonGroups.map((t) => (
+                <MenuItem 
+                    key={t} 
+                    value={t}
+                >{t}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const QualityIndexSelect = (props) => {
     const style = {minWidth: "12ch"}
@@ -42,6 +67,7 @@ const QualityIndexSelect = (props) => {
     )
 }
 
+/*
 const PartsPreservedSelect = (props) => {
     console.log("PartsPreservedSelect");
     const gQL = gql`
@@ -127,6 +153,7 @@ const NotableFeaturesSelect = (props) => {
         </Field>
     )
 }
+*/
 
 const OTUSelect = (props) => {
     console.log("OTUSelect");
@@ -140,12 +167,8 @@ const OTUSelect = (props) => {
                     authority
                     diagnosis
                     qualityIndex
-                    partsPreserved {
-                        pbotID
-                    }
-                    notableFeatures {
-                        pbotID
-                    }
+                    majorTaxonGroup
+                    pbdbParentTaxon
                     family
                     genus
                     species
@@ -218,8 +241,8 @@ const OTUSelect = (props) => {
                 props.values.authority = child.props.dauthority || '';
                 props.values.diagnosis = child.props.ddiagnosis || '';
                 props.values.qualityIndex = child.props.dqualityindex || '';
-                props.values.partsPreserved = child.props.dpartspreserved ? JSON.parse(child.props.dpartspreserved) : [];
-                props.values.notableFeatures = child.props.dnotablefeatures ? JSON.parse(child.props.dnotablefeatures) : [];
+                props.values.majorTaxonGroup = child.props.dmajortaxongroup || '';
+                props.values.pbdbParentTaxon = child.props.dpbdbparenttaxon || '';
                 props.values.family = child.props.dfamily || '';
                 props.values.genus = child.props.dgenus || '';
                 props.values.species = child.props.dspecies || '';
@@ -243,8 +266,8 @@ const OTUSelect = (props) => {
                     dauthority={otu.authority} 
                     ddiagnosis={otu.diagnosis} 
                     dqualityindex={otu.qualityIndex} 
-                    dpartspreserved={otu.partsPreserved ? JSON.stringify(otu.partsPreserved.map(pp => pp.pbotID)) : null}
-                    dnotablefeatures={otu.notableFeatures ? JSON.stringify(otu.notableFeatures.map(nf => nf.pbotID)) : null}
+                    dmajortaxongroup={otu.majorTaxonGroup}
+                    dpbdbparenttaxon={otu.pbdbParentTaxon}
                     dfamily={otu.family}
                     dgenus={otu.genus}
                     dspecies={otu.species}
@@ -400,6 +423,8 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 identifiedSpecimens: [],
                 typeSpecimens: [],
                 holotypeSpecimen: '',
+                majorTaxonGroups: '',
+                pbdbParentTaxon: '',
                 family: '', 
                 genus: '', 
                 species: '',
@@ -408,8 +433,6 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 authority: '',
                 diagnosis: '',
                 qualityIndex: '',
-                partsPreserved: [],
-                notableFeatures: [],
                 references: [{
                     pbotID: '',
                     order:'',
@@ -442,6 +465,28 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
             innerRef={formikRef}
             initialValues={initValues}
             validationSchema={Yup.object({
+                majorTaxonGroup: Yup.string().max(30, 'Must be 30 characters or less'),
+                pbdbParentTaxon: Yup.string().test(
+                    'isPBDBTaxon', 
+                    ({message}) => `${message}`,
+                    async (value, context) => {
+                        let url = `https://paleobiodb.org/data1.2/taxa/single.json?name=${value}&vocab=pbdb`;
+                        console.log(url)
+                       try {
+                            const response = await fetch(url);
+                            if (response.ok) {
+                                return true;
+                            } else if (response.status === 404) {
+                                   return context.createError({message: "Taxon not found in PBDB"})
+                            } else {
+                                const body = await response.json();
+                                return context.createError({message: `Error from PBDB: ${body.errors[0]}`})
+                            }
+                          } catch (error) {
+                            console.error("PBDB fetch error", error);
+                            return context.createError({message: "Network error, unable to access PBDB"})
+                          }
+                }),
                 family: Yup.string().max(30, 'Must be 30 characters or less'),
                 genus: Yup.string().max(30, 'Must be 30 characters or less'),
                 species: Yup.string().max(30, 'Must be 30 characters or less'),
@@ -450,8 +495,6 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 authority: Yup.string().required(),
                 diagnosis: Yup.string().required(),
                 qualityIndex: Yup.string().required("Quality index is required"),
-                partsPreserved: Yup.array().of(Yup.string()).required("Parts preserved is required"),
-                notableFeatures: Yup.array().of(Yup.string()).required("Notable features is required"),
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
@@ -528,32 +571,26 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                             name="diagnosis" 
                             type="text" 
                             label="Diagnosis"
+                            multiline={true}
                             disabled={false}
                         />
                         <br />
-
-                        <PartsPreservedSelect />
 
                         <QualityIndexSelect />
                         <br />
                
-                        <Field 
-                            component={SensibleTextField}
-                            name="majortaxongroup" 
-                            type="text" 
-                            label="Major taxon group !"
-                            disabled={false}
-                        />
+                        <MajorTaxonGroupSelect />
                         <br />
                
                         <Field 
                             component={SensibleTextField}
-                            name="pbdbparenttaxon" 
+                            name="pbdbParentTaxon" 
                             type="text" 
-                            label="PBDB parent taxon !"
+                            label="PBDB parent taxon"
                             disabled={false}
                         />
                         <br />
+
                         <ReferenceManager values={props.values}/>
                         <br />
                 
@@ -593,62 +630,42 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         Optional fields
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Box sx={{ width: '100%', typography: 'body1' }}>
-                            <TabContext value={selectedTab}>
-                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                    <TabList 
-                                        textColor="secondary" 
-                                        indicatorColor="secondary" 
-                                        onChange={handleChange} 
-                                        aria-label="optional tabs"
-                                    >
-                                        <Tab label="Specimens & preservation" value="1"/>
-                                        <Tab label="Taxonomy" value="2"/>
-                                    </TabList>
-                                </Box>
-                                <TabPanel value="1">
-                                    <NotableFeaturesSelect />
-                                </TabPanel>
-                                <TabPanel value="2">
-                                    <Field 
-                                        component={SensibleTextField}
-                                        name="family" 
-                                        type="text" 
-                                        label="Family"
-                                        disabled={false}
-                                    />
-                                    <br />
-                                    
-                                    <Field 
-                                        component={SensibleTextField}                
-                                        name="genus" 
-                                        type="text" 
-                                        label="Genus"
-                                        disabled={false}
-                                    />
-                                    <br />
-                                    
-                                    <Field 
-                                        component={SensibleTextField}
-                                        name="species" 
-                                        type="text" 
-                                        label="Specific epithet"
-                                        disabled={false}
-                                    />
-                                    <br />
+                        <Field 
+                            component={SensibleTextField}
+                            name="family" 
+                            type="text" 
+                            label="Family"
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <Field 
+                            component={SensibleTextField}                
+                            name="genus" 
+                            type="text" 
+                            label="Genus"
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <Field 
+                            component={SensibleTextField}
+                            name="species" 
+                            type="text" 
+                            label="Specific epithet"
+                            disabled={false}
+                        />
+                        <br />
 
-                                    <Field 
-                                        component={SensibleTextField}
-                                        name="additionalClades" 
-                                        type="text" 
-                                        label="Additional clades"
-                                        disabled={false}
-                                    />
-                                    <br />
+                        <Field 
+                            component={SensibleTextField}
+                            name="additionalClades" 
+                            type="text" 
+                            label="Additional clades"
+                            disabled={false}
+                        />
+                        <br />
 
-                                </TabPanel>
-                            </TabContext>
-                        </Box>
                     </AccordionDetails>
                 </Accordion>
                 

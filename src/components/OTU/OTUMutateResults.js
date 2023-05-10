@@ -13,6 +13,8 @@ const OTUMutateResults = ({queryParams}) => {
                 identifiedSpecimens: queryParams.identifiedSpecimens || null,
                 typeSpecimens: queryParams.typeSpecimens || null,
                 holotypeSpecimen: queryParams.holotypeSpecimen || null,
+                majorTaxonGroup: queryParams.majorTaxonGroup || null,
+                pbdbParentTaxon: queryParams.pbdbParentTaxon || null,
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
                 species: queryParams.species || null, 
@@ -21,8 +23,6 @@ const OTUMutateResults = ({queryParams}) => {
                 authority: queryParams.authority || null,
                 diagnosis: queryParams.diagnosis || null,
                 qualityIndex: queryParams.qualityIndex || null,
-                partsPreserved: queryParams.partsPreserved || null,
-                notableFeatures: queryParams.notableFeatures || null,
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
                     [publicGroupID] : queryParams.groups || null,
