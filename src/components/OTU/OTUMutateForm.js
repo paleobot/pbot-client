@@ -1,20 +1,17 @@
-﻿import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+﻿import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Button, MenuItem } from '@mui/material';
+import { Field, Form, Formik } from 'formik';
+import { CheckboxWithLabel, TextField } from 'formik-mui';
+import React from 'react';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, AccordionSummary, AccordionDetails, Box, Accordion } from '@mui/material';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
-import {GroupSelect} from '../Group/GroupSelect.js';
-import {ReferenceManager} from '../Reference/ReferenceManager.js';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { GroupSelect } from '../Group/GroupSelect.js';
+import { ReferenceManager } from '../Reference/ReferenceManager.js';
 
 import {
-  useQuery,
-  gql
+    gql, useQuery
 } from "@apollo/client";
-import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { confidenceQualitative, majorTaxonGroups } from '../Collection/Lists.js';
-import { OrganSelect } from '../Organ/OrganSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 
 const MajorTaxonGroupSelect = (props) => {
@@ -66,94 +63,6 @@ const QualityIndexSelect = (props) => {
         </Field>
     )
 }
-
-/*
-const PartsPreservedSelect = (props) => {
-    console.log("PartsPreservedSelect");
-    const gQL = gql`
-            query {
-                Organ {
-                    pbotID
-                    type
-                }            
-            }
-        `;
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                                     
-    const organs = alphabetize([...data.Organ], "type");
-    console.log(organs)
-    
-    return (
-        <Field
-            component={TextField}
-            type="text"
-            name="partsPreserved"
-            label="Parts preserved"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: true,
-            }}
-            disabled={false}
-         >
-            {organs.map(({ pbotID, type }) => (
-                <MenuItem 
-                    key={pbotID} 
-                    value={pbotID}
-                    data-type={type}
-                >{type}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
-const NotableFeaturesSelect = (props) => {
-    console.log("NotableFeaturesSelect");
-    const gQL = gql`
-            query {
-                Feature {
-                    pbotID
-                    name
-                }            
-            }
-        `;
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                                     
-    const features = alphabetize([...data.Feature], "name");
-    console.log(features)
-    
-    return (
-        <Field
-            component={TextField}
-            type="text"
-            name="notableFeatures"
-            label="Notable features"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: true,
-            }}
-            disabled={false}
-         >
-            {features.map(({ pbotID, name }) => (
-                <MenuItem 
-                    key={pbotID} 
-                    value={pbotID}
-                    data-name={name}
-                >{name}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-*/
 
 const OTUSelect = (props) => {
     console.log("OTUSelect");
