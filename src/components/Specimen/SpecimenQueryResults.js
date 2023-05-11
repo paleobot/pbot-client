@@ -98,8 +98,11 @@ function Specimens(props) {
                     idigbiouuid
                     pbdbcid
                     pbdboccid
-                    organs {
+                    partsPreserved {
                         type
+                    }
+                    notableFeatures {
+                        name
                     }
                     elementOf {
                         name
@@ -236,7 +239,8 @@ function Specimens(props) {
                 <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
                 <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
-                <div style={indent}><b>organs:</b> {s.organs.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
+                <div style={indent}><b>partsPreserved:</b> {s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
+                <div style={indent}><b>notableFeatures:</b> {s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}</div>
                 {/*A mild shenanigan here to handle old specimen nodes without PRESERVED_BY relationships*/}
                 <div style={indent}><b>preservation mode:</b> {s.preservationMode && s.preservationMode.constructor.name === "Object" ? s.preservationMode.name : "unspecified"}</div>
                 <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
@@ -345,7 +349,8 @@ const SpecimenQueryResults = ({queryParams}) => {
                 character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
                 collection: queryParams.collection || null, 
-                organs: queryParams.organs || null,
+                partsPreserved: queryParams.partsPreserved || null,
+                notableFeatures: queryParams.notableFeatures || null,
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
             }}
             includeImages={queryParams.includeImages}

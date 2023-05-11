@@ -6,9 +6,10 @@ import * as Yup from 'yup';
 import { CharacterSelect } from '../Character/CharacterSelect.js';
 import { CollectionSelect } from '../Collection/CollectionSelect.js';
 import { GroupSelect } from '../Group/GroupSelect.js';
-import { OrganSelect } from '../Organ/OrganSelect.js';
+import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
 import { SchemaSelect } from '../Schema/SchemaSelect.js';
 import { StateSelect } from '../State/StateSelect.js';
+import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 
 const SpecimenQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
@@ -19,7 +20,8 @@ const SpecimenQueryForm = ({handleSubmit}) => {
         schema: '',
         character: '',
         states: [],
-        organs: [],
+        partsPreserved: [],
+        notableFeatures: [],
         groups: [],
         includeImages: false,
         includeDescriptions: false,
@@ -69,9 +71,12 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 <CollectionSelect />
                 <br />
 
-                <OrganSelect/>
+                <PartsPreservedSelect/>
                 <br />
                 
+                <NotableFeaturesSelect />
+                <br />
+
                 <SchemaSelect />
                 <br />
 
