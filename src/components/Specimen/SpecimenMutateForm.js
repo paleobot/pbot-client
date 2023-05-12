@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select, SimpleFileUpload } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
@@ -9,12 +9,15 @@ import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import {ImageManager} from '../Image/ImageManager.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
 import {PartsPreservedSelect} from '../Organ/PartsPreservedSelect.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
   gql
 } from "@apollo/client";
 import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
+import { SensibleTextField } from '../SensibleTextField.js';
+import { PersonManager } from '../Person/PersonManager.js';
 
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
@@ -27,6 +30,10 @@ const SpecimenSelect = (props) => {
                     preservationMode {
                         pbotID
                     }
+                    repository
+                    otherRepositoryLink
+                    notes
+                    gbifID
                     idigbiouuid
                     pbdbcid
                     pbdboccid
@@ -89,6 +96,10 @@ const SpecimenSelect = (props) => {
                 props.values.notableFeatures = child.props.dnotablefeatures ? JSON.parse(child.props.dnotablefeatures) : [];
                  props.values.preservationMode = child.props.dpreservationmode ? child.props.dpreservationmode : '';
                 props.values.describedBy = child.props.ddescribedby ? JSON.parse(child.props.ddescribedby) : [];
+                props.values.repository = child.props.drepository ? child.props.drepository : '';
+                props.values.otherRepositoryLink = child.props.dotherrepositorylink ? child.props.dotherrepositorylink : '';
+                props.values.notes = child.props.dnotes ? child.props.dnotes : '';
+                props.values.gbifID = child.props.dgbifid ? child.props.dgbifid : '';
                 props.values.idigbiouuid = child.props.didigbiouuid ? child.props.didigbiouuid : '';
                 props.values.pbdbcid = child.props.dpbdbcid ? child.props.dpbdbcid : '';
                 props.values.pbdboccid = child.props.dpbdboccid ? child.props.dpbdboccid : '';
@@ -109,6 +120,10 @@ const SpecimenSelect = (props) => {
                     dnotablefeatures={specimen.notableFeatures ? JSON.stringify(specimen.notableFeatures.map(feature => feature.pbotID)) : null}
                     dpreservationmode={specimen.preservationMode ? specimen.preservationMode.pbotID : null}
                     ddescribedby={specimen.describedBy ? JSON.stringify(specimen.describedBy.map(d => d.Description.pbotID)) : ''}
+                    drepository={specimen.repository}
+                    dotherrepositorylink={specimen.otherRepositoryLink}
+                    dnotes={specimen.notes}
+                    dgbifid={specimen.gbifID}
                     didigbiouuid={specimen.idigbiouuid}
                     dpbdbcid={specimen.pbdbcid}
                     dpbdboccid={specimen.pbdboccid}
@@ -216,6 +231,11 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 notableFeatures: [],
                 preservationMode: '',
                 describedBy: [],
+                repository: '',
+                otherRepositoryLink: '',
+                notes: '',
+                identifiers: [],
+                gbifID: '',
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
@@ -239,6 +259,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
         }
     });
     
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -249,6 +270,11 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 partsPreserved: Yup.array().of(Yup.string()).min(1, "At least one part is required"),
                 notableFeatures: Yup.array().of(Yup.string()),
                 preservationMode: Yup.string().required(),
+                repository: Yup.string().required(),
+                otherRepositoryLink: Yup.string(),
+                notes: Yup.string(),
+                //identifiers: Yup.array().of(Yup.string()),
+                gbifID: Yup.string(),
                 idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
                 references: Yup.array().of(
                     Yup.object().shape({
@@ -302,75 +328,55 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 {(mode === "create" || (mode === "edit" && props.values.specimen !== '')) &&
                     <div>
                     
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="name"
-                        label="Name"
-                        fullWidth 
-                        disabled={false}
-                    >
-                    </Field>
-                    <br />
-                    
-                    <ReferenceManager values={props.values}/>
+                    <Accordion style={accstyle} defaultExpanded={true}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="required-content"
+                            id="required-header"                        
+                        >
+                            Required fields
+                        </AccordionSummary>
+                        <AccordionDetails>
 
-                    <PartsPreservedSelect />
-                    <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="name"
+                                label="Name"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+                        
+                            <CollectionSelect />
+                            <br />
 
-                    <NotableFeaturesSelect />
-                    <br />
+                            <PartsPreservedSelect />
+                            <br />
 
-                    <PreservationModeSelect />
-                    <br />
+                            <PreservationModeSelect />
+                            <br />
 
-                   <DescriptionSelect/>
-                    <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="repository"
+                                label="Repository"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
 
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="idigbiouuid"
-                        label="iDigBio UUID"
-                        fullWidth 
-                        disabled={false}
-                    >
-                    </Field>
-                    <br />
-
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="pbdbcid"
-                        label="PBDB cid"
-                        fullWidth 
-                        disabled={false}
-                    >
-                    </Field>
-                    <br />
-
-                    <Field
-                        component={TextField}
-                        type="text"
-                        name="pbdboccid"
-                        label="PBDB occid"
-                        fullWidth 
-                        disabled={false}
-                    >
-                    </Field>
-                    <br />
-                    
-                    <CollectionSelect />
-                    <br />
-
-                    <Field 
-                            component={CheckboxWithLabel}
-                            name="public" 
-                            type="checkbox"
-                            Label={{label:"Public"}}
-                            disabled={(mode === "edit" && props.values.origPublic)}
-                    />
-                    <br />
+                            <Field 
+                                component={CheckboxWithLabel}
+                                name="public" 
+                                type="checkbox"
+                                Label={{label:"Public"}}
+                                disabled={(mode === "edit" && props.values.origPublic)}
+                            />
+                            <br />
                         
                     {!props.values.public &&
                     <div>
@@ -379,9 +385,105 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                     </div>
                     }
                                 
+
+                        </AccordionDetails>
+                    </Accordion>
+                    
+                    <Accordion style={accstyle}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="optional-content"
+                            id="optional-header"                        
+                        >
+                            Optional fields
+                        </AccordionSummary>
+                        <AccordionDetails>
+
+                            <ReferenceManager values={props.values}/>
+
+                            <NotableFeaturesSelect />
+                            <br />
+
+
+                            <DescriptionSelect/>
+                            <br />
+
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="idigbiouuid"
+                                label="iDigBio specimen ID"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="gbifID"
+                                label="GBIF specimen ID"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="otherRepositoryLink"
+                                label="Other repository link"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="pbdbcid"
+                                label="PBDB cid"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="pbdboccid"
+                                label="PBDB occid"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+
+                            <PersonManager label= "Identified by" xname="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
+                            <br />
+
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="notes"
+                                label="Notes"
+                                multiline={true}
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+
+                        </AccordionDetails>
+                    </Accordion>
+                        
                     </div>
                 }
-                
+                    
                 {(mode === "delete") &&
                 <div>
                     <Field

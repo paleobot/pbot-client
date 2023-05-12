@@ -9,8 +9,10 @@ import { useMutation } from "@apollo/client/react/hooks/useMutation.js";
 const SpecimenMutateResults = ({queryParams}) => {
     console.log("-------------------SpecimenMutateResults--------------------");
     console.log(queryParams);
-    console.log(queryParams.references);
-    console.log(queryParams.references[0].pbotID);
+    //console.log(queryParams.identifiers);
+    //console.log(queryParams.identifiers[0].pbotID);
+    //const ids = queryParams.identifiers.map(({searchName, order, ...keepAttrs}) => keepAttrs) 
+    //console.log(ids)
     //console.log(queryParams.file);
     //console.log(queryParams.image)
 
@@ -38,11 +40,16 @@ const SpecimenMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.specimen || null,
                 name: queryParams.name || null,
+                //identifiers: queryParams.identifiers.map(({searchName, order, ...keepAttrs}) => keepAttrs)  || null, 
                 references: queryParams.references || null,
                 partsPreservedIDs: queryParams.partsPreserved || null,
                 notableFeaturesIDs: queryParams.notableFeatures || null,
                 preservationModeID: queryParams.preservationMode || null,
                 descriptionIDs: queryParams.describedBy || null,
+                repository: queryParams.repository || null,
+                otherRepositoryLink: queryParams.otherRepositoryLink || null,
+                notes: queryParams.notes || null,
+                gbifID: queryParams.gbifID || null,
                 idigbiouuid: queryParams.idigbiouuid || null,
                 pbdbcid: queryParams.pbdbcid || null,
                 pbdboccid: queryParams.pbdboccid || null,
