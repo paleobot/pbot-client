@@ -61,6 +61,9 @@ const SpecimenSelect = (props) => {
                         }
                         order
                     }
+                    identifiers {
+                        pbotID
+                    }
                 }            
             }
         `;
@@ -108,6 +111,7 @@ const SpecimenSelect = (props) => {
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 props.values.collection = child.props.dcollection ? child.props.dcollection : '';
+                props.values.identifiers = child.props.didentifiers ? JSON.parse(child.props.didentifiers) : [];
                 props.handleChange(event);
             }}
         >
@@ -131,6 +135,7 @@ const SpecimenSelect = (props) => {
                     dgroups={specimen.elementOf ? JSON.stringify(specimen.elementOf.map(group => group.pbotID)) : null}
                     dreferences={specimen.references ? JSON.stringify(specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
                     dcollection={specimen.collection ? specimen.collection.pbotID : ''}
+                    didentifiers={specimen.identifiers ? JSON.stringify(specimen.identifiers) : null}
                 >{specimen.name}</MenuItem>
             ))}
         </Field>

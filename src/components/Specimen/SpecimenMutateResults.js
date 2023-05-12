@@ -40,7 +40,7 @@ const SpecimenMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.specimen || null,
                 name: queryParams.name || null,
-                //identifiers: queryParams.identifiers.map(({searchName, order, ...keepAttrs}) => keepAttrs)  || null, 
+                identifiers: queryParams.identifiers.map(({pbotID}) => pbotID)  || null, 
                 references: queryParams.references || null,
                 partsPreservedIDs: queryParams.partsPreserved || null,
                 notableFeaturesIDs: queryParams.notableFeatures || null,
