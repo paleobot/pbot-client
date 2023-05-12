@@ -409,10 +409,11 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             <NotableFeaturesSelect />
                             <br />
 
-
+                            {/*
                             <DescriptionSelect/>
                             <br />
-
+                            */}
+                            
                             <Field
                                 component={SensibleTextField}
                                 type="text"
