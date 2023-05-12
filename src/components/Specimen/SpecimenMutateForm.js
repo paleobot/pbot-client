@@ -413,7 +413,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             <DescriptionSelect/>
                             <br />
                             */}
-                            
+
                             <Field
                                 component={SensibleTextField}
                                 type="text"
@@ -447,6 +447,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             </Field>
                             <br />
 
+                            {/*
                             <Field
                                 component={SensibleTextField}
                                 type="text"
@@ -468,7 +469,8 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             >
                             </Field>
                             <br />
-
+                            */}
+                            
                             <PersonManager label= "Identified by" xname="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
                             <br />
 
