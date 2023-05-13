@@ -19,6 +19,8 @@ function Specimens(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
+    console.log(filters)
+
     const groups = props.standAlone ? '' : '$groups: [ID!], ';
     /*
     const filter = props.standAlone ? '' : `,  filter: {
@@ -32,12 +34,25 @@ function Specimens(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.collection && !filters.states && !filters.character && !filters.schema) {
+        if (!filters.collection && !filters.preservationMode && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
             if (filters.collection) {
                 filter += ", {collection: {pbotID: $collection}}"
+            }
+            if (filters.preservationMode) {
+                filter += ", {preservationMode: {pbotID: $preservationMode}}"
+            }
+            if (filters.partsPreserved) {
+                console.log("adding partsPreserved")
+                filter += ", {partsPreserved_some: {pbotID_in: $partsPreserved}}"
+            }
+            if (filters.notableFeatures) {
+                filter += ", {notableFeatures_some: {pbotID_in: $notableFeatures}}"
+            }
+            if (filters.identifiers) {
+                filter += ", {identifiers: {pbotID_in: $identifiers}}"
             }
             if (filters.states) {
                 filter += `, {
@@ -79,8 +94,8 @@ function Specimens(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, ${groups} ${filters.collection ? ", $collection: ID" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
-                Specimen (pbotID: $pbotID, name: $name ${filter}) {
+            query ($pbotID: ID, $name: String, $idigbiouuid: String, $gbifID: String, ${groups} ${filters.preservationMode ? ", $preservationMode: ID" : ""} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.identifiers ? ", $identifiers: [ID!]" : ""} ${filters.collection ? ", $collection: ID" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
+                Specimen (pbotID: $pbotID, name: $name idigbiouuid: $idigbiouuid gbifID: $gbifID ${filter}) {
                     pbotID
                     name
                 }
@@ -338,7 +353,7 @@ function Specimens(props) {
 
 const SpecimenQueryResults = ({queryParams}) => {
     console.log("SpecimenQueryResults");
-    console.log(queryParams);
+    console.log(queryParams); 
     
     return (
         <Specimens 
@@ -349,8 +364,12 @@ const SpecimenQueryResults = ({queryParams}) => {
                 character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
                 collection: queryParams.collection || null, 
-                partsPreserved: queryParams.partsPreserved || null,
-                notableFeatures: queryParams.notableFeatures || null,
+                partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
+                notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
+                preservationMode: queryParams.preservationMode || null,
+                idigbiouuid: queryParams.idigbiouuid || null,
+                gbifID: queryParams.gbifID || null,
+                identifiers: queryParams.identifiers && queryParams.identifiers.length > 0 ?queryParams.identifiers.map(({pbotID}) => pbotID)  : null, 
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
             }}
             includeImages={queryParams.includeImages}

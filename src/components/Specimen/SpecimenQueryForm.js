@@ -7,9 +7,12 @@ import { CharacterSelect } from '../Character/CharacterSelect.js';
 import { CollectionSelect } from '../Collection/CollectionSelect.js';
 import { GroupSelect } from '../Group/GroupSelect.js';
 import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
+import { PersonManager } from '../Person/PersonManager.js';
 import { SchemaSelect } from '../Schema/SchemaSelect.js';
+import { SensibleTextField } from '../SensibleTextField.js';
 import { StateSelect } from '../State/StateSelect.js';
 import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
+import { PreservationModeSelect } from './PreservationModeSelect.js';
 
 const SpecimenQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
@@ -22,6 +25,10 @@ const SpecimenQueryForm = ({handleSubmit}) => {
         states: [],
         partsPreserved: [],
         notableFeatures: [],
+        preservationMode: '',
+        gbifID: '',
+        idigbiouuid: '',
+        identifiers: [],
         groups: [],
         includeImages: false,
         includeDescriptions: false,
@@ -51,7 +58,7 @@ const SpecimenQueryForm = ({handleSubmit}) => {
             {props => (
             <Form>
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
                     name="specimenID" 
                     type="text"
                     label="Specimen ID"
@@ -60,7 +67,7 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 <br />
                 
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
                     name="name" 
                     type="text" 
                     label="Name"
@@ -77,8 +84,32 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 <NotableFeaturesSelect />
                 <br />
 
+                <PreservationModeSelect />
+                <br />
+
                 <SchemaSelect />
                 <br />
+
+                <PersonManager label= "Identified by" xname="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
+
+                <Field 
+                    component={SensibleTextField}
+                    name="idigbiouuid" 
+                    type="text" 
+                    label="iDigBio specimen ID"
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={SensibleTextField}
+                    name="gbifID" 
+                    type="text" 
+                    label="GBIF specimen ID"
+                    disabled={false}
+                />
+                <br />
+
 
                 {props.values.schema !== '' &&
                     <>
