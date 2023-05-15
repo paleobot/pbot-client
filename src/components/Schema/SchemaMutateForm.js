@@ -12,6 +12,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import { PersonManager } from '../Person/PersonManager.js';
 
 const SchemaSelect = (props) => {
     console.log("SchemaSelect");
@@ -217,7 +218,7 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
 
                 <ReferenceManager values={props.values}/>
                 
-                <AuthorManager values={props.values} handleChange={props.handleChange}/>
+                <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
 
                 <Field 
                     component={CheckboxWithLabel}

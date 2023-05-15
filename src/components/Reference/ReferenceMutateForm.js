@@ -14,6 +14,7 @@ import {
   gql
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
+import { PersonManager } from '../Person/PersonManager.js';
 
 const ReferenceMutateForm = ({handleSubmit, mode}) => {
     
@@ -129,7 +130,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 />
                 <br />
 
-                <AuthorManager values={props.values} handleChange={props.handleChange}/>
+                <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
 
                         
                 <Grid container spacing={2} direction="row">
