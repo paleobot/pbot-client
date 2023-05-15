@@ -18,6 +18,7 @@ import {
 import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 import { PersonManager } from '../Person/PersonManager.js';
+import { PreservationModeSelect } from './PreservationModeSelect.js';
 
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
@@ -142,47 +143,6 @@ const SpecimenSelect = (props) => {
     )
 }
 
-const PreservationModeSelect = (props) => {
-    console.log("PreservationModeSelect");
-    console.log(props);
-    const gQL = gql`
-            query {
-                PreservationMode {
-                    name
-                    pbotID
-                }            
-            }
-        `;
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                                 
-    console.log(data.preservationModes);
-    const preservationModes = alphabetize([...data.PreservationMode], "name");
-    
-    return (
-        <Field
-            component={TextField}
-            type="text"
-            name="preservationMode"
-            label="Preservation mode"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {preservationModes.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
-            ))}
-        </Field>
-    )
-        
-}
-
 const DescriptionSelect = (props) => {
     console.log("DescriptionSelect");
     console.log(props);
@@ -244,10 +204,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 idigbiouuid: '',
                 pbdbcid: '',
                 pbdboccid: '',
-                references: [{
-                    pbotID: '',
-                    order:'',
-                }],
+                references: [],
                 collection: '',
                 public: true,
                 groups: [],
@@ -288,6 +245,13 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                         order: Yup.string()
                             .required('Reference order is required')
                             .typeError('Reference order is required')
+                    })
+                ),
+                identifiers: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Identifier name is required'),
+                        
                     })
                 ),
                 public: Yup.boolean(),
@@ -404,7 +368,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                         </AccordionSummary>
                         <AccordionDetails>
 
-                            <ReferenceManager values={props.values}/>
+                            <ReferenceManager values={props.values} optional={true}/>
 
                             <NotableFeaturesSelect />
                             <br />
@@ -470,8 +434,8 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             </Field>
                             <br />
                             */}
-                            
-                            <PersonManager label= "Identified by" xname="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
+
+                            <PersonManager label="Identified by" name="identifiers" omitOrder={true} optional={true} values={props.values} handleChange={props.handleChange}/>
                             <br />
 
                             <Field
