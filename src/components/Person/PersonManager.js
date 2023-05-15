@@ -12,7 +12,7 @@ import { PersonSelect } from './PersonSelect.js';
 export const PersonManager = (props) => {
     console.log("PersonManager");
 
-    const name = props.xname ? props.xname : "authors";
+    const name = props.name ? props.name : "authors";
     console.log(name)
     console.log(props.values)
     console.log(props.values[name])
@@ -21,13 +21,13 @@ export const PersonManager = (props) => {
     return (
     <div style={style}>
         <InputLabel>
-            {props.label ? props.label : name.charAt(0).toUpperCase() + props.name.slice(1)}
+            {props.label ? props.label : name.charAt(0).toUpperCase() + name.slice(1)}
         </InputLabel>
         <FieldArray name={name}>
             {({ insert, remove, push }) => (
             <div>
             <Grid container direction="column">
-                {props.values[name].length > 0 &&
+                {props.values[name] && props.values[name].length > 0 &&
                     props.values[name].map((p, index) => { 
                         //props.values.authors[index].order = index+1; 
                         return (
@@ -48,6 +48,7 @@ export const PersonManager = (props) => {
                                     />
                                 </Grid>
                                 }
+                                {(index > 0 || props.optional) &&
                                 <Grid item xs={1}>
                                     <Button
                                         type="button"
@@ -61,19 +62,21 @@ export const PersonManager = (props) => {
                                         X
                                     </Button>
                                 </Grid>
+                                }
                             </Grid>
                         )
-                    })}
-                </Grid>
-                <Button
-                    type="button"
-                    variant="text" 
-                    color="secondary" 
-                    onClick={() => push({ pbotID: '', order: '' })}
-                    disabled={props.values[name].length !== 0 && props.values[name][props.values[name].length-1].pbotID === ''}
-                >
-                    Add {name}
-                </Button>
+                    })
+                }
+            </Grid>
+            <Button
+                type="button"
+                variant="text" 
+                color="secondary" 
+                onClick={() => push({ pbotID: '', order: '' })}
+                disabled={props.values[name] && props.values[name].length !== 0 && props.values[name][props.values[name].length-1].pbotID === ''}
+            >
+                Add {name}
+            </Button>
             </div>
             )}
         </FieldArray>
