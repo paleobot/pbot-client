@@ -379,6 +379,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                     'isPBDBTaxon', 
                     ({message}) => `${message}`,
                     async (value, context) => {
+                        if (!value) return true;
                         let url = `https://paleobiodb.org/data1.2/taxa/single.json?name=${value}&vocab=pbdb`;
                         console.log(url)
                        try {
