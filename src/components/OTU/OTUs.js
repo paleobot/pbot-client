@@ -144,7 +144,9 @@ function OTUs(props) {
                     </div>
                     }
                     
-                    {holotypeSpecimen && holotypeSpecimen.Specimen.describedBy && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
+                    {holotypeSpecimen && holotypeSpecimen.Specimen.describedBy && 
+                    holotypeSpecimen.Specimen.describedBy[0] &&
+                    holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
                     <div>
                         <div style={indent}><b>holotype description:</b></div>
                         {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => (
