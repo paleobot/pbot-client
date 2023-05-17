@@ -107,11 +107,21 @@ function Specimens(props) {
                 Specimen (pbotID: $pbotID, name: $name ${filter}) {
                     pbotID
                     name
+                    collection {
+                        name
+                    }
+                    repository
+                    otherRepositoryLink
+                    notes
+                    identifiers {
+                        given
+                        surname
+                    } 
                     preservationMode {
                         name
                     }
                     idigbiouuid
-                    pbdbcid
+                    gbifID
                     pbdboccid
                     partsPreserved {
                         type
@@ -254,13 +264,24 @@ function Specimens(props) {
                 <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
                 <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
+                <div style={indent}><b>collection:</b> {s.collection.name}</div>
                 <div style={indent}><b>partsPreserved:</b> {s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
                 <div style={indent}><b>notableFeatures:</b> {s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}</div>
                 {/*A mild shenanigan here to handle old specimen nodes without PRESERVED_BY relationships*/}
                 <div style={indent}><b>preservation mode:</b> {s.preservationMode && s.preservationMode.constructor.name === "Object" ? s.preservationMode.name : "unspecified"}</div>
-                <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
-                <div style={indent}><b>pbdbcid:</b> {s.pbdbcid}</div>
-                <div style={indent}><b>pbdboccid:</b> {s.pbdboccid}</div>
+                <div style={indent}><b>repository:</b> {s.repository}</div>
+                <div style={indent}><b>other repository link:</b> {s.otherRepositoryLink}</div>
+                {s.identifiers && s.identifiers.length > 0 &&
+                    <div>
+                        <div style={indent}><b>identifiers:</b></div>
+                        {s.identifiers.map((i, idx) => (
+                            <div key={idx} style={indent2}>{i.given + " " + i.surname}</div>
+                        ))}
+                    </div>
+                }
+               <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
+                <div style={indent}><b>gbifID:</b> {s.gbifID}</div>
+                <div style={indent}><b>notes:</b> {s.notes}</div>
                 {s.images && s.images.length > 0 &&
                     <div style={carousel}>
                     {/*can't use thumbs because SecureImage does not immediately make image available*/}
