@@ -236,8 +236,48 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 otherRepositoryLink: Yup.string(),
                 notes: Yup.string(),
                 //identifiers: Yup.array().of(Yup.string()),
-                gbifID: Yup.string(),
-                idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
+                //gbifID: Yup.string(),
+                gbifID: Yup.string().test(
+                    'isgbifID', 
+                    ({message}) => `${message}`,
+                    async (value, context) => {
+                        if (!value) return true;
+                        let url = `https://api.gbif.org/v1/occurrence/${value}`;
+                        console.log(url)
+                        try {
+                            const response = await fetch(url);
+                            if (response.ok) {
+                                return true;
+                            } else {
+                                   return context.createError({message: `ID not found in GBIF.`})
+                            } 
+                        } catch (error) {
+                            console.error("GBIF fetch error", error);
+                            return context.createError({message: "Network error, unable to access GBIF"})
+                        }
+                }),
+                //idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
+                idigbiouuid: Yup.string().test(
+                    'isidigbiouuid', 
+                    ({message}) => `${message}`,
+                    async (value, context) => {
+                        if (!value) return true;
+                        let url = `https://search.idigbio.org/v2/search/records?rq={"uuid":"${value}"}`;
+                        console.log(url)
+                        try {
+                            const response = await fetch(url);
+                            const json = await response.json();
+                            console.log(json)
+                            if (response.ok && json.itemCount > 0) {
+                                return true;
+                            } else {
+                                   return context.createError({message: `UUID not found in iDigBio.`})
+                            } 
+                        } catch (error) {
+                            console.error("iDigBio fetch error", error);
+                            return context.createError({message: "Network error, unable to access iDigBio"})
+                        }
+                }),
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
