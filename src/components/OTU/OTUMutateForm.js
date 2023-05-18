@@ -1,5 +1,5 @@
 ﻿import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, MenuItem } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, MenuItem, Typography } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React from 'react';
@@ -382,20 +382,20 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         if (!value) return true;
                         let url = `https://paleobiodb.org/data1.2/taxa/single.json?name=${value}&vocab=pbdb`;
                         console.log(url)
-                       try {
+                        try {
                             const response = await fetch(url);
                             if (response.ok) {
                                 return true;
                             } else if (response.status === 404) {
-                                   return context.createError({message: "Taxon not found in PBDB"})
+                                   return context.createError({message: `Taxon not found in PBDB.`})
                             } else {
                                 const body = await response.json();
                                 return context.createError({message: `Error from PBDB: ${body.errors[0]}`})
                             }
-                          } catch (error) {
+                        } catch (error) {
                             console.error("PBDB fetch error", error);
                             return context.createError({message: "Network error, unable to access PBDB"})
-                          }
+                        }
                 }),
                 family: Yup.string().max(30, 'Must be 30 characters or less'),
                 genus: Yup.string().max(30, 'Must be 30 characters or less'),
@@ -499,6 +499,13 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                             label="PBDB parent taxon"
                             disabled={false}
                         />
+                        {props.errors.pbdbParentTaxon &&
+                        <div>
+                            <Typography variant="caption">
+                                (Available taxa can be found at <a href="https://paleobiodb.org/classic/checkTaxonInfo">https://paleobiodb.org/classic/checkTaxonInfo)</a>
+                            </Typography>
+                        </div>
+                        }
                         <br />
 
                         <ReferenceManager values={props.values}/>
