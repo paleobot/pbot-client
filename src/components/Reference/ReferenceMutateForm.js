@@ -17,7 +17,7 @@ import PBDBSelect from './PBDBSelect.js';
 import { PersonManager } from '../Person/PersonManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { SensibleTextField } from '../SensibleTextField.js';
-import { publicationTypes } from "../Collection/Lists.js"
+import { publicationTypes } from "../../Lists.js"
 
 const PublicationTypeSelect = (props) => {
     const style = {minWidth: "12ch"}

@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
-import {collectionTypes, countries} from "./Lists.js"
+import {collectionTypes, countries} from "../../Lists.js"
 import { CountrySelect } from './CountrySelect.js'
 import { StateSelect } from './StateSelect.js'
 

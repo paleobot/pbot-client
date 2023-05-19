@@ -11,7 +11,7 @@ import { ReferenceManager } from '../Reference/ReferenceManager.js';
 import {
     gql, useQuery
 } from "@apollo/client";
-import { confidenceQualitative, majorTaxonGroups } from '../Collection/Lists.js';
+import { confidenceQualitative, majorTaxonGroups } from '../../Lists.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 
 const MajorTaxonGroupSelect = (props) => {

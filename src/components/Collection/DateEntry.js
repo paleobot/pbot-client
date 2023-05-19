@@ -4,7 +4,7 @@ import { MenuItem, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { TextField } from 'formik-mui';
 import { SensibleTextField } from '../SensibleTextField';
-import { dateTypes } from "./Lists.js"
+import { dateTypes } from "../../Lists.js"
 
 const DateType = (props) => {
     const style = {minWidth: "12ch", width:"30%"}

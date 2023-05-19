@@ -8,7 +8,7 @@ import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {collectionTypes, sizeClasses, geographicResolutionScale, collectionMethods} from "./Lists.js"
+import {collectionTypes, sizeClasses, geographicResolutionScale, collectionMethods} from "../../Lists.js"
 import { CountrySelect } from './CountrySelect.js'
 import { StateSelect } from './StateSelect.js'
 
