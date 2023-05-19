@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Box, Stack } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select, SimpleFileUpload } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
@@ -19,6 +19,8 @@ import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 import { PersonManager } from '../Person/PersonManager.js';
 import { PreservationModeSelect } from './PreservationModeSelect.js';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import IDigBioSelect from './IDigBioSelect.js';
 
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
@@ -202,6 +204,8 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 identifiers: [],
                 gbifID: '',
                 idigbiouuid: '',
+                idigbioInstitutionCode: '',
+                idigbioCatalogNumber: '',
                 pbdbcid: '',
                 pbdboccid: '',
                 references: [],
@@ -221,6 +225,11 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
         }
     });
     
+    const [selectedTab, setSelectedTab] = React.useState('1');
+    const handleTabChange = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
+
     const accstyle = {textAlign: "left", width: "70%"}
     return (
        
@@ -408,87 +417,140 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                         </AccordionSummary>
                         <AccordionDetails>
 
-                            <ReferenceManager values={props.values} optional={true}/>
+                            <TabContext value={selectedTab}>
+                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                    <TabList 
+                                        textColor="secondary" 
+                                        indicatorColor="secondary" 
+                                        onChange={handleTabChange} 
+                                        aria-label="optional tabs"
+                                    >
+                                        <Tab label="iDigBio" value="1"/>
+                                        <Tab label="Other" value="2"/>
+                                    </TabList>
+                                </Box>
+                                <TabPanel value="1">
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="idigbioInstitutionCode"
+                                        label="Institution code !"
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
 
-                            <NotableFeaturesSelect />
-                            <br />
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="idigbioCatalogNumber"
+                                        label="Catalog number !"
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
 
-                            {/*
-                            <DescriptionSelect/>
-                            <br />
-                            */}
+                                    {/*
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="idigbiouuid"
+                                        label="UUID !"
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
+                                    */}
+ 
+                                    <Stack direction="row" spacing={0}>
+                                        <Field
+                                            component={SensibleTextField}
+                                            type="text"
+                                            name="idigbiouuid"
+                                            label="UUID !"
+                                            fullWidth 
+                                            disabled={false}
+                                        />
+                                        <IDigBioSelect />
+                                    </Stack>
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="idigbiouuid"
-                                label="iDigBio specimen ID"
-                                fullWidth 
-                                disabled={false}
-                            >
-                            </Field>
-                            <br />
+                                </TabPanel>
+                                <TabPanel value="2">
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="gbifID"
-                                label="GBIF specimen ID"
-                                fullWidth 
-                                disabled={false}
-                            >
-                            </Field>
-                            <br />
+                                    <ReferenceManager values={props.values} optional={true}/>
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="otherRepositoryLink"
-                                label="Other repository link"
-                                fullWidth 
-                                disabled={false}
-                            >
-                            </Field>
-                            <br />
+                                    <NotableFeaturesSelect />
+                                    <br />
 
-                            {/*
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="pbdbcid"
-                                label="PBDB cid"
-                                fullWidth 
-                                disabled={false}
-                            >
-                            </Field>
-                            <br />
+                                    {/*
+                                    <DescriptionSelect/>
+                                    <br />
+                                    */}
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="pbdboccid"
-                                label="PBDB occid"
-                                fullWidth 
-                                disabled={false}
-                            >
-                            </Field>
-                            <br />
-                            */}
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="gbifID"
+                                        label="GBIF specimen ID"
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
 
-                            <PersonManager label="Identified by" name="identifiers" omitOrder={true} optional={true} values={props.values} handleChange={props.handleChange}/>
-                            <br />
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="otherRepositoryLink"
+                                        label="Other repository link"
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="notes"
-                                label="Notes"
-                                multiline={true}
-                                fullWidth 
-                                disabled={false}
-                            >
-                            </Field>
-                            <br />
+                                    {/*
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="pbdbcid"
+                                        label="PBDB cid"
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
+
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="pbdboccid"
+                                        label="PBDB occid"
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
+                                    */}
+
+                                    <PersonManager label="Identified by" name="identifiers" omitOrder={true} optional={true} values={props.values} handleChange={props.handleChange}/>
+
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="notes"
+                                        label="Notes"
+                                        multiline={true}
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
+                                </TabPanel>
+                            </TabContext>
 
                         </AccordionDetails>
                     </Accordion>
