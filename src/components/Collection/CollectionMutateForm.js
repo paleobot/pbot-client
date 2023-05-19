@@ -628,7 +628,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     },[mode]);
 
     const [selectedTab, setSelectedTab] = React.useState('1');
-    const handleChange = (event, newValue) => {
+    const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
     
@@ -833,7 +833,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         <TabList 
                                             textColor="secondary" 
                                             indicatorColor="secondary" 
-                                            onChange={handleChange} 
+                                            onChange={handleTabChange} 
                                             aria-label="optional tabs"
                                         >
                                             <Tab label="Geographic" value="1"/>
