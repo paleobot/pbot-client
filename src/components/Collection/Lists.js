@@ -29,6 +29,22 @@ export const majorTaxonGroups = [
     "Canis idioticus",
 ]
 
+export const publicationTypes = [
+    "journal article", 
+    "book", 
+    "book chapter", 
+    "book/book chapter", 
+    "serial monograph", 
+    "compendium", 
+    "Ph.D. thesis", 
+    "M.S. thesis", 
+    "abstract", 
+    "guidebook", 
+    "news article", 
+    "unpublished", 
+    "instcoll"    
+]
+
 //TODO: These should be obtained from somewhere (our api or pbdb)
 export const collectionTypes = [
     "biostratigraphic", 
