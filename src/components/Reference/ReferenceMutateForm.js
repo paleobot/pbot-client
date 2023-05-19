@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, Link, IconButton, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Tooltip } from '@mui/material';
+import { Button, Link, IconButton, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Tooltip, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
@@ -15,6 +15,35 @@ import {
 } from "@apollo/client";
 import PBDBSelect from './PBDBSelect.js';
 import { PersonManager } from '../Person/PersonManager.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { SensibleTextField } from '../SensibleTextField.js';
+import { publicationTypes } from "../Collection/Lists.js"
+
+const PublicationTypeSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="publicationType"
+            label="Publication type !"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {publicationTypes.map((pt) => (
+                <MenuItem 
+                    key={pt} 
+                    value={pt}
+                >{pt}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
 
 const ReferenceMutateForm = ({handleSubmit, mode}) => {
     
@@ -45,6 +74,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -100,85 +130,157 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "create" || (mode === "edit" && props.values.reference !== '')) &&
                 <div>
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="title"
-                    label="Title"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                    <Accordion style={accstyle} defaultExpanded={true}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="required-content"
+                            id="required-header"                        
+                        >
+                            Required fields
+                        </AccordionSummary>
+                        <AccordionDetails>
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="publisher"
-                    label="Publisher"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
-                
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="year"
-                    label="Year"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="title"
+                                label="Title"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
+                            <PublicationTypeSelect />
+                            <br />
+                            
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="year"
+                                label="Year"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                        
-                <Grid container spacing={2} direction="row">
-                    <Grid item xs={5}>
-                        <Field
-                            component={TextField}
-                            type="text"
-                            name="pbdbid"
-                            label="PBDB ID"
-                            fullWidth 
-                            disabled={false}
-                        />
-                    </Grid>
-                    <Grid item xs={1}>
-                        <PBDBSelect />
-                    </Grid>
-                </Grid>
-                       
-                        
-                <br />
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="firstPageNumber"
+                                label="First page number !"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="doi"
-                    label="DOI"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
-                <br />
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="lastPageNumber"
+                                label="Last page number !"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                <Field 
-                    component={CheckboxWithLabel}
-                    name="public" 
-                    type="checkbox"
-                    Label={{label:"Public"}}
-                    disabled={(mode === "edit" && props.values.origPublic)}
-                />
-                <br />
-                
-                {!props.values.public &&
-                <div>
-                    <GroupSelect />
-                    <br />
-                </div>
-                }
-                
+                            <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
+
+                            <Field 
+                                component={CheckboxWithLabel}
+                                name="public" 
+                                type="checkbox"
+                                Label={{label:"Public"}}
+                                disabled={(mode === "edit" && props.values.origPublic)}
+                            />
+                            <br />
+                            
+                            {!props.values.public &&
+                            <div>
+                                <GroupSelect />
+                                <br />
+                            </div>
+                            }
+
+                        </AccordionDetails>
+                    </Accordion>            
+
+                    <Accordion style={accstyle} defaultExpanded={false}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="required-content"
+                            id="required-header"                        
+                        >
+                            Optional fields
+                        </AccordionSummary>
+                        <AccordionDetails>
+
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="serialName"
+                                label="Serial name !"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
+
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="publicationVolume"
+                                label="Publication volume !"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
+
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="editors"
+                                label="Editors !"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
+
+                            <Stack direction="row" spacing={0}>
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="pbdbid"
+                                    label="PBDB ID"
+                                    fullWidth 
+                                    disabled={false}
+                                />
+                                <PBDBSelect />
+                            </Stack>
+                                
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="notes"
+                                label="Notes !"
+                                fullWidth 
+                                multiline
+                                disabled={false}
+                            />
+                            <br />
+
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="doi"
+                                label="DOI"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
+                            
+                        </AccordionDetails>
+                    </Accordion>
+
+                            
                 </div>
                 }
                 
