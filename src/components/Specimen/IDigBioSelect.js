@@ -26,20 +26,13 @@ const IDigBioDialog = (props) => {
 
     useEffect(() => {
         setLoading(true);
+
+        //Convenient test url: https://search.idigbio.org/v2/search/records?rq={%22data.dwc:institutionCode%22:%22INECOL%22,%22data.dwc:catalogNumber%22:%22100%22}
         let url = props.values.idigbiouuid ?
             `https://search.idigbio.org/v2/search/records?rq={"uuid":"${props.values.idigbiouuid}"}` :
             `https://search.idigbio.org/v2/search/records/?rq={"data.dwc:catalogNumber":"${props.values.idigbioCatalogNumber}","data.dwc:institutionCode":"${props.values.idigbioInstitutionCode}"}` 
-        /*
-        if (!props.values.pbdbid) {
-            url = props.values.name ? `${url}&coll_match=%${props.values.name}%` : url;
-            url = props.values.lat && props.values.lon ? `${url}&loc=${WKTBuffer(props.values.lat, props.values.lon)}` : url;
-            console.log(props.values)
-            console.log(props.values.authors)
-        }
-        */
         console.log(url);
         
-        //fetch("https://paleobiodb.org/data1.2/refs/single.json?id=6930&show=both&vocab=bibjson")
         fetch(url)
         .then(res => res.json())
         .then(
