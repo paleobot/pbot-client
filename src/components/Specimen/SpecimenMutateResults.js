@@ -51,6 +51,8 @@ const SpecimenMutateResults = ({queryParams}) => {
                 notes: queryParams.notes || null,
                 gbifID: queryParams.gbifID || null,
                 idigbiouuid: queryParams.idigbiouuid || null,
+                idigbioInstitutionCode: queryParams.idigbioInstitutionCode || null,
+                idigbioCatalogNumber: queryParams.idigbioCatalogNumber || null,
                 pbdbcid: queryParams.pbdbcid || null,
                 pbdboccid: queryParams.pbdboccid || null,
                 collection: queryParams.collection || null,

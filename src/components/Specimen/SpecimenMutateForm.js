@@ -38,6 +38,8 @@ const SpecimenSelect = (props) => {
                     notes
                     gbifID
                     idigbiouuid
+                    idigbioInstitutionCode
+                    idigbioCatalogNumber
                     pbdbcid
                     pbdboccid
                     partsPreserved {
@@ -107,6 +109,8 @@ const SpecimenSelect = (props) => {
                 props.values.notes = child.props.dnotes ? child.props.dnotes : '';
                 props.values.gbifID = child.props.dgbifid ? child.props.dgbifid : '';
                 props.values.idigbiouuid = child.props.didigbiouuid ? child.props.didigbiouuid : '';
+                props.values.idigbioInstitutionCode = child.props.didigbioinstitutioncode ? child.props.didigbioinstitutioncode : '';
+                props.values.idigbioCatalogNumber = child.props.didigbiocatalognumber ? child.props.didigbiocatalognumber : '';
                 props.values.pbdbcid = child.props.dpbdbcid ? child.props.dpbdbcid : '';
                 props.values.pbdboccid = child.props.dpbdboccid ? child.props.dpbdboccid : '';
                 props.values.public =  "true"===child.props.dpublic;;
@@ -132,6 +136,8 @@ const SpecimenSelect = (props) => {
                     dnotes={specimen.notes}
                     dgbifid={specimen.gbifID}
                     didigbiouuid={specimen.idigbiouuid}
+                    didigbioinstitutioncode={specimen.idigbioInstitutionCode}
+                    didigbiocatalognumber={specimen.idigbioCatalogNumber}
                     dpbdbcid={specimen.pbdbcid}
                     dpbdboccid={specimen.pbdboccid}
                     dpublic={specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
@@ -223,7 +229,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
         if (formikRef.current) {
             formikRef.current.resetForm({values:initValues});
         }
-    });
+    },[mode]);
     
     const [selectedTab, setSelectedTab] = React.useState('1');
     const handleTabChange = (event, newValue) => {
@@ -266,6 +272,8 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                         }
                 }),
                 //idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
+                idigbioInstitutionCode: Yup.string(),
+                idigbioCatalogNumber: Yup.string(),
                 idigbiouuid: Yup.string().test(
                     'isidigbiouuid', 
                     ({message}) => `${message}`,
@@ -434,7 +442,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                                         component={SensibleTextField}
                                         type="text"
                                         name="idigbioInstitutionCode"
-                                        label="Institution code !"
+                                        label="Institution code"
                                         fullWidth 
                                         disabled={false}
                                     >
@@ -445,32 +453,19 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                                         component={SensibleTextField}
                                         type="text"
                                         name="idigbioCatalogNumber"
-                                        label="Catalog number !"
+                                        label="Catalog number"
                                         fullWidth 
                                         disabled={false}
                                     >
                                     </Field>
                                     <br />
 
-                                    {/*
-                                    <Field
-                                        component={SensibleTextField}
-                                        type="text"
-                                        name="idigbiouuid"
-                                        label="UUID !"
-                                        fullWidth 
-                                        disabled={false}
-                                    >
-                                    </Field>
-                                    <br />
-                                    */}
- 
                                     <Stack direction="row" spacing={0}>
                                         <Field
                                             component={SensibleTextField}
                                             type="text"
                                             name="idigbiouuid"
-                                            label="UUID !"
+                                            label="UUID"
                                             fullWidth 
                                             disabled={false}
                                         />
@@ -494,7 +489,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                                         component={SensibleTextField}
                                         type="text"
                                         name="gbifID"
-                                        label="GBIF specimen ID"
+                                        label="GBIF specimen ID !"
                                         fullWidth 
                                         disabled={false}
                                     >
