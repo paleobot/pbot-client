@@ -31,18 +31,17 @@ export const majorTaxonGroups = [
 
 export const publicationTypes = [
     "journal article", 
-    "book", 
-    "book chapter", 
-    "book/book chapter", 
-    "serial monograph", 
+    "standalone book",
+    "edited book of contributed articles", 
+    "contributed article in edited book", 
+    "unpublished"    
+]
+
+export const bookTypes = [
+    "thesis", 
+    "monograph", 
     "compendium", 
-    "Ph.D. thesis", 
-    "M.S. thesis", 
-    "abstract", 
-    "guidebook", 
-    "news article", 
-    "unpublished", 
-    "instcoll"    
+    "other"
 ]
 
 //TODO: These should be obtained from somewhere (our api or pbdb)
