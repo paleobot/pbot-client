@@ -23,7 +23,18 @@ export const InnerReferenceSelect = (props) => {
                 Reference {
                     pbotID
                     title
+                    publicationType
+                    firstPage
+                    lastPage
+                    journal
+                    bookTitle
+                    publicationVolume
+                    publicationNumber
                     publisher
+                    description
+                    bookType
+                    editors
+                    notes
                     year
                     doi
                     pbdbid
@@ -47,7 +58,6 @@ export const InnerReferenceSelect = (props) => {
                 Reference (filter: {pbotID_not_in: $excludeList}){
                     pbotID
                     title
-                    publisher
                     year
                 }            
             }
@@ -74,7 +84,7 @@ export const InnerReferenceSelect = (props) => {
                 const newRef = {...reference};
                 console.log(newRef);
 
-                newRef.name = reference.title + ", " + reference.publisher + ", " + reference.year;
+                newRef.name = reference.title + ", " + reference.year;
                 return newRef;
             }), 
         "name");
@@ -104,7 +114,7 @@ export const InnerReferenceSelect = (props) => {
                             key={reference.pbotID} 
                             value={reference.pbotID}
                             dreference={JSON.stringify(reference)}
-                        >{reference.title + ", " + reference.publisher + ", " + reference.year}</MenuItem>
+                        >{reference.title + ", " + reference.year}</MenuItem>
                     ))}
                 </Field>
             )            
@@ -191,7 +201,18 @@ export const ReferenceSelect = (props) => {
             formikProps.setFieldValue("pbdbid", reference.pbdbid || '');
             formikProps.setFieldValue("year", reference.year || '');
             formikProps.setFieldValue("title", reference.title || '');
+            formikProps.setFieldValue("publicationType", reference.publicationType || '');
+            formikProps.setFieldValue("firstPage", reference.firstPage || '');
+            formikProps.setFieldValue("lastPage", reference.lastPage || '');
+            formikProps.setFieldValue("journal", reference.journal || '');
+            formikProps.setFieldValue("bookTitle", reference.bookTitle || '');
+            formikProps.setFieldValue("publicationVolume", reference.publicationVolume || '');
+            formikProps.setFieldValue("publicationNumber", reference.publicationNumber || '');
             formikProps.setFieldValue("publisher", reference.publisher || '');
+            formikProps.setFieldValue("description", reference.description || '');
+            formikProps.setFieldValue("bookType", reference.bookType || '');
+            formikProps.setFieldValue("editors", reference.editors || '');
+            formikProps.setFieldValue("notes", reference.notes || '');
             formikProps.setFieldValue("doi", reference.doi || '');
             formikProps.setFieldValue("authors", authors);
             formikProps.setFieldValue("groups", groups);

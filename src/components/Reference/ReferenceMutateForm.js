@@ -18,6 +18,11 @@ import { PersonManager } from '../Person/PersonManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { SensibleTextField } from '../SensibleTextField.js';
 import { publicationTypes } from "../../Lists.js"
+import JournalFields from './ReferenceFieldComponents/JournalFields.js'
+import StandaloneBookFields from './ReferenceFieldComponents/StandaloneBookFields.js'
+import EditedCollectionFields from './ReferenceFieldComponents/EditedCollectionFields.js'
+import ContributedArticleFields from './ReferenceFieldComponents/ContributedArticleFields.js'
+import UnpublishedFields from './ReferenceFieldComponents/UnpublishedFields.js'
 
 const PublicationTypeSelect = (props) => {
     const style = {minWidth: "12ch"}
@@ -27,7 +32,7 @@ const PublicationTypeSelect = (props) => {
             component={TextField}
             type="text"
             name="publicationType"
-            label="Publication type !"
+            label="Publication type"
             select={true}
             SelectProps={{
                 multiple: false,
@@ -50,7 +55,17 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 reference: '',
                 title: '',
+                publicationType:  '',
+                firstPage:  '',
+                lastPage:  '',
+                journal:  '',
+                publicationVolume:  '',
+                publicationNumber: '',
                 publisher: '',
+                description: '',
+                bookType: '',
+                editors:  '',
+                notes:  '',
                 year: '',
                 authors: [{
                     pbotID: '',
@@ -81,8 +96,80 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
             innerRef={formikRef}
             initialValues={initValues}
             validationSchema={Yup.object({
-                title: Yup.string().required(),
-                publisher: Yup.string().required(),
+                title: Yup.string().when("publicationType", {
+                    is: (val) => (
+                        val === "journal article" || 
+                        val === "standalone book" || 
+                        val === "unpublished"
+                    ),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                publicationType: Yup.string().required(),
+                firstPage: Yup.number().integer().positive().when("publicationType", {
+                    is: (val) => (
+                        val === "standalone book" || 
+                        val === "edited book of contributed articles" || 
+                        val === "contributed article in edited book"
+                    ),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                lastPage: Yup.number().integer().positive().when("publicationType", {
+                    is: (val) => (
+                        val === "standalone book" || 
+                        val === "edited book of contributed articles" || 
+                        val === "contributed article in edited book"
+                    ),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                journal: Yup.string().when("publicationType", {
+                    is: (val) => (val === "journal article"),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                publicationVolume: Yup.string().when("publicationType", {
+                    is: (val) => (val === "journal article"),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                bookTitle: Yup.string().when("publicationType", {
+                    is: (val) => (
+                       val === "edited book of contributed articles" || 
+                        val === "contributed article in edited book"
+                    ),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                editors: Yup.string().when("publicationType", {
+                    is: (val) => (
+                       val === "edited book of contributed articles" || 
+                        val === "contributed article in edited book"
+                    ),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                publisher: Yup.number().integer().positive().when("publicationType", {
+                    is: (val) => (
+                        val === "standalone book" || 
+                        val === "edited book of contributed articles" || 
+                        val === "contributed article in edited book"
+                    ),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                bookType: Yup.string().when("publicationType", {
+                    is: (val) => (val === "standalone book"),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                description: Yup.string().when("publicationType", {
+                    is: (val) => (val === "unpublished"),
+                    then: (schema) => schema.required(),
+                    otherwise: (schema) => schema
+                }),
+                notes: Yup.string(),
                 year: Yup.date().required(),
                 //authors: Yup.array().of(Yup.string()).min(1, "Must specify at least one author"),
                 authors: Yup.array().of(
@@ -128,162 +215,34 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                     </>            
                 }
                 
-                {(mode === "create" || (mode === "edit" && props.values.reference !== '')) &&
-                <div>
-                    <Accordion style={accstyle} defaultExpanded={true}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="required-content"
-                            id="required-header"                        
-                        >
-                            Required fields
-                        </AccordionSummary>
-                        <AccordionDetails>
+                {(mode === "create" || (mode === "edit" && props.values.reference !== '')) &&                 
+                    <>
+                    <PublicationTypeSelect />
 
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="title"
-                                label="Title"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
+                    {props.values.publicationType === "journal article" &&
+                        <JournalFields values={props.values} />
+                    }       
 
-                            <PublicationTypeSelect />
-                            <br />
-                            
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="year"
-                                label="Year"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
+                    {props.values.publicationType === "standalone book" &&
+                        <StandaloneBookFields values={props.values} />
+                    } 
 
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="firstPageNumber"
-                                label="First page number !"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
+                    {props.values.publicationType === "edited book of contributed articles" &&
+                        <EditedCollectionFields values={props.values} />
+                    }       
 
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="lastPageNumber"
-                                label="Last page number !"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
+                    {props.values.publicationType === "contributed article in edited book" &&
+                        <ContributedArticleFields values={props.values} />
+                    }       
 
-                            <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
+                    {props.values.publicationType === "unpublished" &&
+                        <UnpublishedFields values={props.values} />
+                    }       
 
-                            <Field 
-                                component={CheckboxWithLabel}
-                                name="public" 
-                                type="checkbox"
-                                Label={{label:"Public"}}
-                                disabled={(mode === "edit" && props.values.origPublic)}
-                            />
-                            <br />
-                            
-                            {!props.values.public &&
-                            <div>
-                                <GroupSelect />
-                                <br />
-                            </div>
-                            }
-
-                        </AccordionDetails>
-                    </Accordion>            
-
-                    <Accordion style={accstyle} defaultExpanded={false}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="required-content"
-                            id="required-header"                        
-                        >
-                            Optional fields
-                        </AccordionSummary>
-                        <AccordionDetails>
-
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="serialName"
-                                label="Serial name !"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
-
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="publicationVolume"
-                                label="Publication volume !"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
-
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="editors"
-                                label="Editors !"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
-
-                            <Stack direction="row" spacing={0}>
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="pbdbid"
-                                    label="PBDB ID"
-                                    fullWidth 
-                                    disabled={false}
-                                />
-                                <PBDBSelect />
-                            </Stack>
-                                
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="notes"
-                                label="Notes !"
-                                fullWidth 
-                                multiline
-                                disabled={false}
-                            />
-                            <br />
-
-                            <Field
-                                component={TextField}
-                                type="text"
-                                name="doi"
-                                label="DOI"
-                                fullWidth 
-                                disabled={false}
-                            />
-                            <br />
-                            
-                        </AccordionDetails>
-                    </Accordion>
-
-                            
-                </div>
+                    </>
                 }
-                
+                <br />
+                            
                 <br />
                 <br />
 
