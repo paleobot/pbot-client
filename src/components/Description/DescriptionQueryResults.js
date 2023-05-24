@@ -27,7 +27,6 @@ function DescriptionList(props) {
                     references {
                         Reference {
                             title
-                            publisher
                             year
                         }
                         order
@@ -48,7 +47,6 @@ function DescriptionList(props) {
                     references {
                         Reference {
                             title
-                            publisher
                             year
                         }
                         order

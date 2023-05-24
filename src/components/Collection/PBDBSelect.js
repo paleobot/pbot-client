@@ -176,7 +176,6 @@ export default function PBDBSelect(props) {
             formikProps.setFieldValue("stratigraphiccomments", collection.stratcomments);
             formikProps.setFieldValue("collectingcomments", collection.collection_comments);
 
-            //formikProps.setFieldValue("publisher", reference.journal || reference.booktitle);
             //formikProps.setFieldValue("doi", (reference.identifier && reference.identifier.type === "doi") ? reference.identifier.id : null);
         }
         setOpen(false);

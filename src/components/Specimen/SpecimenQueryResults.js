@@ -135,7 +135,6 @@ function Specimens(props) {
                     references {
                         Reference {
                             title
-                            publisher
                             year
                         }
                         order
@@ -338,7 +337,7 @@ function Specimens(props) {
                     <div>
                         <div style={indent}><b>references:</b></div>
                         {alphabetize([...s.references], "order").map((reference, idx) => (
-                            <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                            <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
                         ))}
                     </div>
                 }

@@ -29,7 +29,7 @@ function Descriptions(props) {
                 <div>
                     <div style={indent}><b>references:</b></div>
                     {alphabetize([...references], "order").map(reference => (
-                        <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                        <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
                     ))}
                 </div>
             </div>

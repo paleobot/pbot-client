@@ -44,7 +44,6 @@ function Schemas(props) {
                         Reference {
                             pbotID
                             title
-                            publisher
                             year
                         }
                         order
@@ -134,7 +133,6 @@ function Schemas(props) {
                         Reference {
                             pbotID
                             title
-                            publisher
                             year
                         }
                         order
@@ -221,7 +219,7 @@ function Schemas(props) {
                         <div>
                             <div style={indent}><b>references:</b></div>
                             {alphabetize([...schema.references], "order").map(reference => (
-                                <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.publisher}, {reference.Reference.year}</div>
+                                <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
                             ))}
                         </div>
                     }
