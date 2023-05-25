@@ -150,7 +150,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                     then: (schema) => schema.required(),
                     otherwise: (schema) => schema
                 }),
-                publisher: Yup.number().integer().positive().when("publicationType", {
+                publisher: Yup.string().when("publicationType", {
                     is: (val) => (
                         val === "standalone book" || 
                         val === "edited book of contributed articles" || 
