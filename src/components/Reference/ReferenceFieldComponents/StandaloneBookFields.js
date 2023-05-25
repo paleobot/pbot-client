@@ -1,6 +1,6 @@
-import { Accordion, AccordionDetails, AccordionSummary, Stack } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, MenuItem, Stack } from '@mui/material';
 import { Field } from 'formik';
-import { CheckboxWithLabel } from 'formik-mui';
+import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React from 'react';
 import { GroupSelect } from '../../Group/GroupSelect.js';
 
@@ -8,8 +8,32 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PersonManager } from '../../Person/PersonManager.js';
 import { SensibleTextField } from '../../SensibleTextField.js';
 import PBDBSelect from '../PBDBSelect.js';
+import { bookTypes } from "../../../Lists.js"
 
-
+const BookTypeSelect = (props) => {
+    const style = {minWidth: "12ch"}
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="bookType"
+            label="Type"
+            select={true}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {bookTypes.map((bt) => (
+                <MenuItem 
+                    key={bt} 
+                    value={bt}
+                >{bt}</MenuItem>
+            ))}
+        </Field>
+    )
+}
 
 const StandaloneBookFields = (props) => {
         
@@ -80,14 +104,7 @@ const StandaloneBookFields = (props) => {
                     />
                     <br />
 
-                    <Field
-                        component={SensibleTextField}
-                        type="text"
-                        name="bookType"
-                        label="Type"
-                        fullWidth 
-                        disabled={false}
-                    />
+                    <BookTypeSelect />
                     <br />
 
                     <Field 
