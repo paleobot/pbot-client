@@ -62,7 +62,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
         if (formikRef.current) {
             formikRef.current.resetForm({values:initValues});
         }
-    });
+    },[mode]);
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     const accstyle = {textAlign: "left", width: "70%"}
