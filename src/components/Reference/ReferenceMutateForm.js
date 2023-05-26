@@ -8,6 +8,7 @@ import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {AuthorManager} from '../Person/AuthorManager.js';
 import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
+import {PublicationTypeSelect} from './PublicationTypeSelect.js';
 
 import {
   useQuery,
@@ -24,32 +25,6 @@ import EditedCollectionFields from './ReferenceFieldComponents/EditedCollectionF
 import ContributedArticleFields from './ReferenceFieldComponents/ContributedArticleFields.js'
 import UnpublishedFields from './ReferenceFieldComponents/UnpublishedFields.js'
 
-const PublicationTypeSelect = (props) => {
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="publicationType"
-            label="Publication type"
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {publicationTypes.map((pt) => (
-                <MenuItem 
-                    key={pt} 
-                    value={pt}
-                >{pt}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
-
 const ReferenceMutateForm = ({handleSubmit, mode}) => {
     
     const initValues = {
@@ -61,6 +36,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 journal:  '',
                 publicationVolume:  '',
                 publicationNumber: '',
+                bookTitle: '',
                 publisher: '',
                 description: '',
                 bookType: '',
@@ -136,7 +112,6 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 }),
                 bookTitle: Yup.string().when("publicationType", {
                     is: (val) => (
-                       val === "edited book of contributed articles" || 
                         val === "contributed article in edited book"
                     ),
                     then: (schema) => schema.required(),
