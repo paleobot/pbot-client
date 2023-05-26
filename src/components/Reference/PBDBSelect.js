@@ -23,8 +23,13 @@ const PBDBDialog = (props) => {
         setLoading(true);
         let url = props.values.pbdbid ?
             `https://paleobiodb.org/data1.2/refs/single.json?id=${props.values.pbdbid}&show=both&vocab=bibjson` :
-            "https://paleobiodb.org/data1.2/refs/list.json?show=both&vocab=bibjson" 
+            "https://paleobiodb.org/data1.2/refs/list.json?show=both&vocab=bibjson&limit=100" 
         if (!props.values.pbdbid) {
+            url = props.values.publicationType === "journal article" ? `${url}&pub_type=journal article` : url;
+            url = props.values.publicationType === "standalone book" ? `${url}&pub_type=book, serial monograph, compendium, Ph.D. thesis, M.S. thesis, guidebook` : url;
+            url = props.values.publicationType === "edited book of contributed articles" ? `${url}&pub_type=book` : url;
+            url = props.values.publicationType === "contributed article in edited book" ? `${url}&pub_type=book/book chapter` : url;
+            url = props.values.publicationType === "unpublished" ? `${url}&pub_type=unpublished` : url;
             url = props.values.title ? `${url}&ref_title=%${props.values.title}%` : url;
             url = props.values.year ? `${url}&ref_pubyr=${props.values.year}` : url;
             url = props.values.doi ? `${url}&ref_doi=${props.values.doi}` : url;
@@ -174,7 +179,7 @@ export default function PBDBSelect(props) {
                     size="large"
                     onClick={()=>{setOpen(true)}}
                     sx={{width:"50px"}}
-                    disabled={!(formikProps.values.title || formikProps.values.journal || formikProps.values.bookTitle ||formikProps.values.year || formikProps.values.doi || formikProps.values.pbdbid || formikProps.values.authors[0].searchName)}
+                    disabled={!(formikProps.values.publicationType || formikProps.values.title || formikProps.values.journal || formikProps.values.bookTitle ||formikProps.values.year || formikProps.values.doi || formikProps.values.pbdbid || formikProps.values.authors[0].searchName)}
 
                 >
                     <SearchIcon/>
