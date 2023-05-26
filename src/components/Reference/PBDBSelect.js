@@ -28,7 +28,7 @@ const PBDBDialog = (props) => {
             url = props.values.title ? `${url}&ref_title=%${props.values.title}%` : url;
             url = props.values.year ? `${url}&ref_pubyr=${props.values.year}` : url;
             url = props.values.doi ? `${url}&ref_doi=${props.values.doi}` : url;
-            url = props.values.publisher ? `${url}&pub_title=${props.values.publisher}` : url;
+            url = props.values.journal || props.values.bookTitle ? `${url}&pub_title=${props.values.journal ? props.values.journal : props.values.bookTitle}` : url;
             const authors = alphabetize(props.values.authors, "order").reduce((str, author, idx) => {
                 return idx === 0 ? 
                     author.searchName : 
@@ -148,7 +148,18 @@ export default function PBDBSelect(props) {
         if (populateAll) {
             formikProps.setFieldValue("year", reference.year);
             formikProps.setFieldValue("title", reference.title);
-            formikProps.setFieldValue("publisher", reference.journal || reference.booktitle);
+            formikProps.setFieldValue("journal", reference.journal)
+            formikProps.setFieldValue("bookTitle", reference.booktitle);
+            formikProps.setFieldValue("publicationVolume", reference.volume);
+            formikProps.setFieldValue("publicationNumber", reference.number);
+            //formikProps.setFieldValue("editors", reference.editor);
+            formikProps.setFieldValue("notes", reference._comments);
+            if (reference.pages) {
+                const pages = reference.pages.split("--");
+                if (pages.length === 2)
+                formikProps.setFieldValue("firstPage", pages[0]);
+                formikProps.setFieldValue("lastPage", pages[1]);
+            }
             formikProps.setFieldValue("doi", (reference.identifier && reference.identifier.type === "doi") ? reference.identifier.id : null);
         }
         setOpen(false);
@@ -163,7 +174,7 @@ export default function PBDBSelect(props) {
                     size="large"
                     onClick={()=>{setOpen(true)}}
                     sx={{width:"50px"}}
-                    disabled={!(formikProps.values.title || formikProps.values.publisher || formikProps.values.year || formikProps.values.doi || formikProps.values.pbdbid || formikProps.values.authors[0].searchName)}
+                    disabled={!(formikProps.values.title || formikProps.values.journal || formikProps.values.bookTitle ||formikProps.values.year || formikProps.values.doi || formikProps.values.pbdbid || formikProps.values.authors[0].searchName)}
 
                 >
                     <SearchIcon/>
