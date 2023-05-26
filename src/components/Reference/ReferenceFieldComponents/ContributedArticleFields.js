@@ -18,6 +18,8 @@ const ContributedArticleFields = (props) => {
     return (
                        
         <div>
+        {!props.query &&
+            <>
             <Accordion style={accstyle} defaultExpanded={true}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -164,7 +166,108 @@ const ContributedArticleFields = (props) => {
                     
                 </AccordionDetails>
             </Accordion>
+            </>
+        }
+        {props.query &&
+            <>
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="title"
+                        label="Chapter title"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
 
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="bookTitle"
+                        label="Book title"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="year"
+                        label="Year"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="publisher"
+                        label="Publisher"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="firstPage"
+                        label="First page number"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="lastPage"
+                        label="Last page number"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="pbdbid"
+                        label="PBDB ID"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="doi"
+                        label="DOI"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+                    
+                    <Field 
+                        component={CheckboxWithLabel}
+                        name="public" 
+                        type="checkbox"
+                        Label={{label:"Public"}}
+                        disabled={false}
+                    />
+                    <br />
+                    
+                    {!props.values.public &&
+                    <div>
+                        <GroupSelect />
+                        <br />
+                    </div>
+                    }
+
+            </>
+        }      
                     
         </div>
     
