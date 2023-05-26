@@ -4,15 +4,33 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
+import {PublicationTypeSelect} from './PublicationTypeSelect.js';
+import JournalFields from './ReferenceFieldComponents/JournalFields.js'
+import StandaloneBookFields from './ReferenceFieldComponents/StandaloneBookFields.js'
+import EditedCollectionFields from './ReferenceFieldComponents/EditedCollectionFields.js'
+import ContributedArticleFields from './ReferenceFieldComponents/ContributedArticleFields.js'
+import UnpublishedFields from './ReferenceFieldComponents/UnpublishedFields.js'
 
 const ReferenceQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
     const initValues = {
         referenceID: '', 
         title: '', 
-        year: '', 
+        publicationType:  '',
+        firstPage:  '',
+        lastPage:  '',
+        journal:  '',
+        publicationVolume:  '',
+        publicationNumber: '',
+        bookTitle: '',
         publisher: '',
+        bookType: '',
+        editors:  '',
+        year: '', 
+        doi: '',
+        pbdbid: '',
         groups: [],
+        public: false,
     };
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -38,59 +56,29 @@ const ReferenceQueryForm = ({handleSubmit}) => {
                 //setShowOTUs(true);
             }}
         >
+            {props => (
             <Form>
-                <Field 
-                    component={TextField}
-                    name="referenceID" 
-                    type="text"
-                    label="Reference ID"
-                    disabled={false}
-                    variant="standard"
-                />
-                <br />
-                
-                <Field 
-                    component={TextField}
-                    name="title" 
-                    type="text" 
-                    label="Title"
-                    disabled={false}
-                    variant="standard"
-                />
-                <br />
-                
-                <Field 
-                    component={TextField}                
-                    name="year" 
-                    type="text" 
-                    label="Year"
-                    disabled={false}
-                    variant="standard"
-                />
-                <br />
-                
-                <Field 
-                    component={TextField}                
-                    name="publisher" 
-                    type="text" 
-                    label="Publisher"
-                    disabled={false}
-                    variant="standard"
-                />
-                <br />
-                
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="pbdbid"
-                    label="PBDB ID"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
-                
-                <GroupSelect/>
-                <br />
+                <PublicationTypeSelect />
+
+                {props.values.publicationType === "journal article" &&
+                    <JournalFields values={props.values} query/>
+                }       
+
+                {props.values.publicationType === "standalone book" &&
+                    <StandaloneBookFields values={props.values} query/>
+                } 
+
+                {props.values.publicationType === "edited book of contributed articles" &&
+                    <EditedCollectionFields values={props.values} query/>
+                }       
+
+                {props.values.publicationType === "contributed article in edited book" &&
+                    <ContributedArticleFields values={props.values} query/>
+                }       
+
+                {props.values.publicationType === "unpublished" &&
+                    <UnpublishedFields values={props.values} query/>
+                }       
 
                 <br />
                 <br />
@@ -99,6 +87,7 @@ const ReferenceQueryForm = ({handleSubmit}) => {
                 <br />
                 <br />
             </Form>
+            )}
         </Formik>
     
     );
