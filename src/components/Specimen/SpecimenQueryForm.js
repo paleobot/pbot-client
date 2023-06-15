@@ -90,6 +90,20 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 <SchemaSelect />
                 <br />
 
+                {props.values.schema !== '' &&
+                    <>
+                        <CharacterSelect values={props.values} source="characterInstance"/>
+                        <br />
+                    </>
+                }
+                
+                {props.values.character !== "" &&
+                    <>
+                        <StateSelect values={props.values} source="characterInstance" multi={true}/>
+                        <br />
+                    </>
+                }
+
                 <PersonManager label= "Identified by" xname="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
 
                 <Field 
@@ -109,21 +123,6 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                     disabled={false}
                 />
                 <br />
-
-
-                {props.values.schema !== '' &&
-                    <>
-                        <CharacterSelect values={props.values} source="characterInstance"/>
-                        <br />
-                    </>
-                }
-                
-                {props.values.character !== "" &&
-                    <>
-                        <StateSelect values={props.values} source="characterInstance" multi={true}/>
-                        <br />
-                    </>
-                }
 
                 <GroupSelect/>
                 <br />
