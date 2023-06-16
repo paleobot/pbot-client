@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
+import { SensibleTextField } from '../SensibleTextField.js';
 
 import {
   useQuery,
@@ -18,6 +19,7 @@ const GroupSelect = (props) => {
             Group (filter: {name_not: "public"}) {
                 pbotID
                 name
+                purpose
                 members {
                     pbotID
                 }
@@ -52,6 +54,7 @@ const GroupSelect = (props) => {
             onChange={(event,child) => {
                 //props.resetForm();
                 props.values.name = child.props.dname || '';
+                props.values.purpose = child.props.dpurpose || '';
                 props.values.members = child.props.dmembers ? JSON.parse(child.props.dmembers) : [];
                 props.handleChange(event);
             }}
@@ -61,6 +64,7 @@ const GroupSelect = (props) => {
                     key={group.pbotID} 
                     value={group.pbotID}
                     dname={group.name}
+                    dpurpose={group.purpose}
                     dmembers={group.members ? JSON.stringify(group.members.map(member => member.pbotID)) : null}
                 >{group.name}</MenuItem>
             ))}
@@ -136,6 +140,7 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 group: '', 
                 name: '',
+                purpose: '',
                 members: [],
                 mode: mode,
     };
@@ -157,6 +162,7 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
+                purpose: Yup.string().required(),
                 members: Yup.array().of(Yup.string())//.min(1, "at least one member required"),
             })}
             onSubmit={(values, {resetForm}) => {
@@ -187,11 +193,22 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
                 {(mode === "create" || (mode === "edit" && props.values.group !== '')) &&
                     <div>
                     <Field
-                        component={TextField}
+                        component={SensibleTextField}
                         type="text"
                         name="name"
                         label="Name"
                         fullWidth 
+                        disabled={false}
+                    />
+                    <br />
+
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="purpose"
+                        label="Purpose"
+                        fullWidth 
+                        multiline
                         disabled={false}
                     />
                     <br />

@@ -11,6 +11,7 @@ const GroupMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.group || null,
                 name: queryParams.name || null,
+                purpose: queryParams.purpose || null,
                 members: queryParams.members || null 
             }}
             entity="Group"
