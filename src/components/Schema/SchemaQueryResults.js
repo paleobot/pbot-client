@@ -37,6 +37,13 @@ function Schemas(props) {
                     title
                     year
                     acknowledgments
+                    purpose
+                    partsPreserved {
+                        type
+                    }
+                    notableFeatures {
+                        name
+                    }
                     elementOf {
                         name
                     }
@@ -126,6 +133,13 @@ function Schemas(props) {
                     title
                     year
                     acknowledgments
+                    purpose
+                    partsPreserved {
+                        type
+                    }
+                    notableFeatures {
+                        name
+                    }
                     elementOf {
                         name
                     }
@@ -214,7 +228,24 @@ function Schemas(props) {
 
                     <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
                     <div style={indent}><b>year:</b> {schema.year} </div>
+                    <div style={indent}><b>purpose:</b> {schema.purpose} </div>
                     {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
+                    {schema.partsPreserved && schema.partsPreserved.length > 0 &&
+                        <div>
+                            <div style={indent}><b>parts preserved:</b></div>
+                            {alphabetize([...schema.partsPreserved], "type").map(partPreserved => (
+                                <div key={partPreserved.type} style={indent2}>{partPreserved.type}</div>
+                            ))}
+                        </div>
+                    }
+                    {schema.notableFeatures && schema.notableFeatures.length > 0 &&
+                        <div>
+                            <div style={indent}><b>notable features:</b></div>
+                            {alphabetize([...schema.notableFeatures], "name").map(notableFeature => (
+                                <div key={notableFeature.name} style={indent2}>{notableFeature.name}</div>
+                            ))}
+                        </div>
+                    }
                     {schema.references && schema.references.length > 0 &&
                         <div>
                             <div style={indent}><b>references:</b></div>
@@ -261,6 +292,8 @@ const SchemaQueryResults = ({queryParams}) => {
                 pbotID: queryParams.schemaID,
                 title: queryParams.title, 
                 year: queryParams.year, 
+                partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
+                notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
                 groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
             }}
             includeCharacters={queryParams.includeCharacters} 
