@@ -17,12 +17,32 @@ function Schemas(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
     const groups = props.standAlone ? '' : ', $groups: [ID!] ';
-    const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
+    //const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
     
+    let filter = '';
+    if (!props.standAlone) {
+        filter = ", filter: {"
+        if (!filters.partsPreserved && !filters.notableFeatures) {
+            filter += "elementOf_some: {pbotID_in: $groups}"
+        } else {
+            filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
+            if (filters.partsPreserved) {
+                console.log("adding partsPreserved")
+                filter += ", {partsPreserved_some: {pbotID_in: $partsPreserved}}"
+            }
+            if (filters.notableFeatures) {
+                filter += ", {notableFeatures_some: {pbotID_in: $notableFeatures}}"
+            }
+            filter +="]"
+        }
+        filter += "}"
+    }
+    console.log(filter)
+
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String ${groups}) {
+            query ($pbotID: ID, $title: String, $year: String ${groups} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""}) {
                 Schema (pbotID: $pbotID, title: $title, year: $year ${filter}) {
                     pbotID
                     title
