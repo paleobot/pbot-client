@@ -1,28 +1,39 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import {AuthorManager} from '../Person/AuthorManager.js';
+import {PartsPreservedSelect} from '../Organ/PartsPreservedSelect.js';
+import { NotableFeaturesSelect } from '../Specimen/NotableFeaturesSelect.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
   gql
 } from "@apollo/client";
 import { PersonManager } from '../Person/PersonManager.js';
+import { SensibleTextField } from '../SensibleTextField.js';
 
 const SchemaSelect = (props) => {
     console.log("SchemaSelect");
-    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
     const gQL = gql`
         query {
             Schema {
                 pbotID
                 title
                 year
+                acknowledgments
+                purpose
+                partsPreserved {
+                    pbotID
+                }
+                notableFeatures {
+                    pbotID
+                }
                 references {
                     Reference {
                         pbotID
@@ -71,6 +82,10 @@ const SchemaSelect = (props) => {
                 //props.resetForm();
                 props.values.title = child.props.dtitle || '';
                 props.values.year = child.props.dyear || '';
+                props.values.acknowledgments = child.props.dacknowledgments || '';
+                props.values.purpose = child.props.dpurpose || '';
+                props.values.partsPreserved = child.props.dpartspreserved ? JSON.parse(child.props.dpartspreserved) : [];
+                props.values.notableFeatures = child.props.dnotablefeatures ? JSON.parse(child.props.dnotablefeatures) : [];
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 props.values.authors = child.props.dauthors ? JSON.parse(child.props.dauthors) : [];
                 props.values.public = "true" === child.props.dpublic || false;
@@ -85,6 +100,10 @@ const SchemaSelect = (props) => {
                     value={schema.pbotID}
                     dtitle={schema.title}
                     dyear={schema.year}
+                    dacknowledgments={schema.acknowledgments}
+                    dpurpose={schema.purpose}
+                    dpartspreserved={schema.partsPreserved ? JSON.stringify(schema.partsPreserved.map(organ => organ.pbotID)) : null}
+                    dnotablefeatures={schema.notableFeatures ? JSON.stringify(schema.notableFeatures.map(feature => feature.pbotID)) : null}
                     dreferences={schema.references ? JSON.stringify(schema.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
                     dauthors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order || ''}})) : null}
                     dpublic={schema.elementOf && schema.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
@@ -101,6 +120,9 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
                 title: '',
                 year: '',
                 acknowledgments: '',
+                purpose: '',
+                partsPreserved: [],
+                notableFeatures: [],
                 references: [{
                     pbotID: '',
                     order:'',
@@ -125,6 +147,7 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -134,6 +157,9 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
                 title: Yup.string().required(),
                 year: Yup.date().required(),
                 acknowledgments: Yup.string(),
+                purpose: Yup.string().required(),
+                partsPreserved: Yup.array().of(Yup.string()).min(1, "At least one part is required"),
+                notableFeatures: Yup.array().of(Yup.string()),
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
@@ -186,55 +212,98 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "create" || (mode === "edit" && props.values.schema !== '')) &&
                 <div>
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="title"
-                    label="Title"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                    <Accordion style={accstyle} defaultExpanded={true}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="required-content"
+                            id="required-header"                        
+                        >
+                            Required fields
+                        </AccordionSummary>
+                        <AccordionDetails>
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="year"
-                    label="Year"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="title"
+                                label="Title"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                <Field
-                    component={TextField}
-                    type="text"
-                    name="acknowledgments"
-                    label="Acknowledgments"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="year"
+                                label="Year"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                <ReferenceManager values={props.values}/>
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="purpose"
+                                label="Purpose"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
+
+                            <PartsPreservedSelect />
+                            <br />
+
+                            <ReferenceManager values={props.values}/>
                 
-                <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
+                            <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
 
-                <Field 
-                    component={CheckboxWithLabel}
-                    name="public" 
-                    type="checkbox"
-                    Label={{label:"Public"}}
-                    disabled={(mode === "edit" && props.values.origPublic)}
-                />
-                <br />
-                
-                {!props.values.public &&
-                <div>
-                    <GroupSelect />
-                    <br />
-                </div>
-                }
+                            <Field 
+                                component={CheckboxWithLabel}
+                                name="public" 
+                                type="checkbox"
+                                Label={{label:"Public"}}
+                                disabled={(mode === "edit" && props.values.origPublic)}
+                            />
+                            <br />
+                            
+                            {!props.values.public &&
+                            <div>
+                                <GroupSelect />
+                                <br />
+                            </div>
+                            }
+
+
+                        </AccordionDetails>
+                    </Accordion>
+                    
+                    <Accordion style={accstyle}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="optional-content"
+                            id="optional-header"                        
+                        >
+                            Optional fields
+                        </AccordionSummary>
+                        <AccordionDetails>
+
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="acknowledgments"
+                                label="Acknowledgments"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
+
+                            <NotableFeaturesSelect />
+                            <br />
+
+                        </AccordionDetails>
+                    </Accordion>
                 
                 </div>
                 }
