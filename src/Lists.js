@@ -37,6 +37,13 @@ export const publicationTypes = [
     "unpublished"    
 ]
 
+export const imageCategories = [
+    "holotype/exemplar", 
+    "other type specimen", 
+    "shows key feature", 
+    "no priority"    
+]
+
 export const bookTypes = [
     "thesis", 
     "monograph", 
