@@ -13,10 +13,11 @@ const ImageMutateResults = ({queryParams}) => {
                 pbotID: queryParams.image || null,
                 imageOf: queryParams.specimen || null, 
                 image: queryParams.uploadImage || null,
+                category: queryParams.category || null,
                 link: queryParams.link || null,
                 citation: queryParams.citation || null,
                 caption: queryParams.caption || null,
-                type: queryParams.type || null,
+                //type: queryParams.type || null,
                 groups: queryParams.public ? 
                     [publicGroupID] : queryParams.groups || null,
             }}
