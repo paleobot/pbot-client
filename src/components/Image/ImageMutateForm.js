@@ -7,6 +7,7 @@ import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {SecureImage} from './SecureImage.js';
 import {LinkDialog} from "./LinkDialog.js";
+import { SensibleTextField } from '../SensibleTextField.js';
 
 import {
   useQuery,
@@ -14,6 +15,7 @@ import {
   useApolloClient,
   useMutation,
 } from "@apollo/client";
+import { ImageCategorySelect } from './ImageCategorySelect.js';
 
 const PreviewImage = (props) => {
     console.log("UploadImage");
@@ -250,6 +252,7 @@ const ImageSelect = (props) => {
                 Image (filter: { OR: [{imageOf: {pbotID: "${props.values.specimen}"}}, {imageOf: null}]}) {
                     pbotID
                     link
+                    category
                     citation
                     caption
                     type
@@ -287,6 +290,7 @@ const ImageSelect = (props) => {
             onChange={(event,child) => {
                 //props.resetForm();
                 props.values.link = child.props.dlink ? child.props.dlink : '';
+                props.values.category = child.props.dcategory ? child.props.dcategory : '';
                 props.values.citation = child.props.dcitation ? child.props.dcitation : '';
                 props.values.caption = child.props.dcaption ? child.props.dcaption : '';
                 props.values.type = child.props.dtype ? JSON.parse(child.props.dtype) : '';
@@ -301,6 +305,7 @@ const ImageSelect = (props) => {
                     key={image.pbotID} 
                     value={image.pbotID}
                     dlink={image.link}
+                    dcategory={image.category}
                     dcitation={image.citation}
                     dcaption={image.caption}
                     dtype={image.type}
@@ -324,6 +329,7 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                 specimen: '',
                 uploadImage:'',
                 link: '',
+                category: '',
                 citation: '',
                 caption: '',
                 type: '',
@@ -359,6 +365,7 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                         then: Yup.mixed().required("File or link required"),
                         otherwise: Yup.mixed()
                     }),
+                category: Yup.string().required(),
                 citation: Yup.string().required(),
                 caption: Yup.string().required(),
                 type: Yup.string(),
@@ -441,9 +448,12 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                         <ErrorMessage name="uploadImage">
                             { msg => <div style={{ color: 'red' }}>{msg}</div> }
                         </ErrorMessage>
-                        
+
+                        <ImageCategorySelect />
+                        <br />
+
                         <Field
-                            component={TextField}
+                            component={SensibleTextField}
                             type="text"
                             name="citation"
                             label="Citation"
@@ -453,7 +463,7 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                         <br />
 
                         <Field
-                            component={TextField}
+                            component={SensibleTextField}
                             type="text"
                             name="caption"
                             label="Caption"
@@ -462,8 +472,9 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                         />
                         <br />
 
+                        {/*}
                         <Field
-                            component={TextField}
+                            component={SensibleTextField}
                             type="text"
                             name="type"
                             label="Type"
@@ -471,6 +482,7 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                             disabled={false}
                         />
                         <br />
+                        */}
 
                         <Field 
                             component={CheckboxWithLabel}
