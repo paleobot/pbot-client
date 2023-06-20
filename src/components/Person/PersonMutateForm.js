@@ -5,6 +5,7 @@ import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, M
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
+import { SensibleTextField } from '../SensibleTextField.js';
 
 import {
   useQuery,
@@ -16,6 +17,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
         person: '',
         given: '',
+        middle: '',
         surname: '',
         email: '',
         orcid: '',
@@ -40,6 +42,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
           initialValues={initValues}
             validationSchema={Yup.object({
                 given: Yup.string().required(),
+                middle: Yup.string(),
                 surname: Yup.string().required(),
                 email: Yup.string().email(),
                 groups: Yup.array().of(Yup.string()).required(),
@@ -69,7 +72,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 {(mode === "create" || (mode === "edit" && props.values.person !== '')) &&
                 <div>
                 <Field
-                    component={TextField}
+                    component={SensibleTextField}
                     type="text"
                     name="given"
                     label="Given"
@@ -79,7 +82,17 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 <br />
 
                 <Field
-                    component={TextField}
+                    component={SensibleTextField}
+                    type="text"
+                    name="middle"
+                    label="Middle name/initial"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
+
+                <Field
+                    component={SensibleTextField}
                     type="text"
                     name="surname"
                     label="Surname"
@@ -89,7 +102,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 <br />
 
                 <Field
-                    component={TextField}
+                    component={SensibleTextField}
                     type="text"
                     name="email"
                     label="Email"
@@ -99,7 +112,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 <br />
 
                 <Field
-                    component={TextField}
+                    component={SensibleTextField}
                     type="text"
                     name="orcid"
                     label="ORCID"

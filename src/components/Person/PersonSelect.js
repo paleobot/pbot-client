@@ -23,6 +23,7 @@ export const InnerPersonSelect = (props) => {
                 Person {
                     pbotID
                     given
+                    middle
                     surname
                     email
                     orcid
@@ -37,6 +38,7 @@ export const InnerPersonSelect = (props) => {
                 Person (filter: {AND: [{given_not: "guest"}, {surname_not: "guest"}, {pbotID_not_in: $excludeList}]}) {
                     pbotID
                     given
+                    middle
                     surname
                 }            
             }
@@ -93,7 +95,7 @@ export const InnerPersonSelect = (props) => {
                             key={person.pbotID} 
                             value={person.pbotID}
                             dperson={JSON.stringify(person)}
-                        >{person.given} {person.surname}</MenuItem>
+                        >{person.given}{person.middle ? ` ${person.middle}` : ''} {person.surname}</MenuItem>
                     ))}
                 </Field>
             )            
@@ -126,7 +128,7 @@ export const InnerPersonSelect = (props) => {
                             value={person.pbotID}
                             dperson={JSON.stringify({...person, searchName: person.surname})}
                             dsearchname={person.surname}
-                        >{person.given} {person.surname}</MenuItem>
+                        >{person.given}{person.middle ? ` ${person.middle}` : ''} {person.surname}</MenuItem>
                     ))}
                 </Field>
             )
@@ -188,6 +190,7 @@ export const PersonSelect = (props) => {
             const groups = person.memberOf ? person.memberOf.map(group => {return group.pbotID}) : [];
 
             formikProps.setFieldValue("given", person.given || '');
+            formikProps.setFieldValue("middle", person.middle || '');
             formikProps.setFieldValue("surname", person.surname || '');
             formikProps.setFieldValue("email", person.email || '');
             formikProps.setFieldValue("orcid", person.orcid || '');

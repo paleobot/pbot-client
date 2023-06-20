@@ -10,6 +10,7 @@ const PersonMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.person || null,
                 given: queryParams.given || null,
+                middle: queryParams.middle || null,
                 surname: queryParams.surname || null,
                 email: queryParams.email || null,
                 orcid: queryParams.orcid || null,
