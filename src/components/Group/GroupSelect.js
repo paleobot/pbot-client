@@ -56,7 +56,7 @@ export const GroupSelect = (props) => {
             SelectProps={{
                 multiple: true,
             }}
-            disabled={false}
+            sx={props.sx}
         >
             {groups.map(({ pbotID, name }) => (
                 <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>

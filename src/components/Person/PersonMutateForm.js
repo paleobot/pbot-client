@@ -121,10 +121,9 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 />
                 <br />
 
-
-                <GroupSelect />
+                <GroupSelect sx={{display:"none"}} />
                 <br />
-                
+
                 </div>
                 }
                 
