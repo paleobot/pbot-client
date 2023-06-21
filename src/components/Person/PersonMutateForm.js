@@ -1,11 +1,12 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
@@ -35,6 +36,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
     });
             
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -71,59 +73,82 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "create" || (mode === "edit" && props.values.person !== '')) &&
                 <div>
-                <Field
-                    component={SensibleTextField}
-                    type="text"
-                    name="given"
-                    label="Given"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                <Accordion style={accstyle} defaultExpanded={true}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Required fields
+                    </AccordionSummary>
+                    <AccordionDetails>
 
-                <Field
-                    component={SensibleTextField}
-                    type="text"
-                    name="middle"
-                    label="Middle name/initial"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="given"
+                            label="Given"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
 
-                <Field
-                    component={SensibleTextField}
-                    type="text"
-                    name="surname"
-                    label="Surname"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="surname"
+                            label="Surname"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
 
-                <Field
-                    component={SensibleTextField}
-                    type="text"
-                    name="email"
-                    label="Email"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                        <GroupSelect sx={{display:"none"}} />
+                        <br />
+                    </AccordionDetails>
+                </Accordion>
 
-                <Field
-                    component={SensibleTextField}
-                    type="text"
-                    name="orcid"
-                    label="ORCID"
-                    fullWidth 
-                    disabled={false}
-                />
-                <br />
+                <Accordion style={accstyle}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="optional-content"
+                        id="optional-header"                        
+                    >
+                        Optional fields
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="middle"
+                            label="Middle name/initial"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
 
-                <GroupSelect sx={{display:"none"}} />
-                <br />
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="email"
+                            label="Email"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
 
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="orcid"
+                            label="ORCID"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <br />
+
+                    </AccordionDetails>
+                </Accordion>
                 </div>
                 }
                 
