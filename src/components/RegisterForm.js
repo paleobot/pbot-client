@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Grid, Button } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { SensibleTextField } from './SensibleTextField.js';
 
 const host = window.location.host;
 
@@ -106,14 +107,20 @@ const RegisterForm = ({ setShowRegistration }) => {
         <Formik
             initialValues={{
                 givenName: '',
+                middleName: '',
                 surname: '',
                 email: '', 
+                reason: '',
+                bio: '',
                 password: '', 
                 confirmPassword: '',
+                useExistingUser: false,
             }}
             validationSchema={Yup.object({
                 givenName: Yup.string()
                     .required("Given Name is required")
+                    .max(30, 'Must be 30 characters or less'),
+                middleName: Yup.string()
                     .max(30, 'Must be 30 characters or less'),
                 surname: Yup.string()
                     .required("Surname is required")
@@ -122,6 +129,9 @@ const RegisterForm = ({ setShowRegistration }) => {
                     .required("Email is required")
                     .max(30, 'Must be 30 characters or less')
                     .email("Must be a valid email address"),
+                reason: Yup.string()
+                    .required("Reason is required"),
+                bio: Yup.string(),
                 password: Yup.string()
                     .required("Password is required")
                     .min(6, "Passwords must contain at least six characters")
@@ -134,7 +144,7 @@ const RegisterForm = ({ setShowRegistration }) => {
         {({ status }) => (
         <Form>
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
                     name="givenName" 
                     type="text"
                     label="Given Name"
@@ -143,7 +153,16 @@ const RegisterForm = ({ setShowRegistration }) => {
                 <br />
 
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
+                    name="middleName" 
+                    type="text"
+                    label="Middle Name/Initial"
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={SensibleTextField}
                     name="surname" 
                     type="text"
                     label="Surname"
@@ -152,7 +171,7 @@ const RegisterForm = ({ setShowRegistration }) => {
                 <br />
 
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
                     name="email" 
                     type="text"
                     label="Email"
@@ -161,7 +180,27 @@ const RegisterForm = ({ setShowRegistration }) => {
                 <br />
                 
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
+                    name="reason" 
+                    type="text"
+                    label="Why do you want a PBot account?"
+                    multiline
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={SensibleTextField}
+                    name="bio" 
+                    type="text"
+                    label="Short bio"
+                    multiline
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={SensibleTextField}
                     name="password" 
                     type="password" 
                     label="Password"
@@ -170,7 +209,7 @@ const RegisterForm = ({ setShowRegistration }) => {
                 <br />
                 
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
                     name="confirmPassword" 
                     type="password" 
                     label="Confirm password"
