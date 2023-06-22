@@ -24,7 +24,7 @@ export const LinkDialog = (props) => {
 
     return (
         <div>
-        <Button color="secondary" onClick={handleClickOpen}>
+        <Button variant="outlined" color="secondary" onClick={handleClickOpen}>
             Link
         </Button>
         <Dialog open={open} onClose={handleClose}>
