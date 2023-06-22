@@ -25,6 +25,8 @@ export const ReferenceManager = (props) => {
                                 <Grid item >
                                     <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)} />
                                 </Grid>
+
+                                {!props.single &&
                                 <Grid item >
                                     <Field
                                         component={TextField}
@@ -34,7 +36,9 @@ export const ReferenceManager = (props) => {
                                         sx={{width:"75px"}}
                                     />
                                 </Grid>
-                                 {(index > 0 || props.optional) &&
+                                }
+
+                                {(!props.single && (index > 0 || props.optional)) &&
                                 <Grid item xs={1} sx={{ display: "flex", justifyContent: "flex-start" }}>
                                     <Button
                                         type="button"
@@ -52,6 +56,7 @@ export const ReferenceManager = (props) => {
                         )
                     })}
                 {/*</Grid>*/}
+                {!props.single &&
                 <Button
                     type="button"
                     variant="text" 
@@ -61,6 +66,7 @@ export const ReferenceManager = (props) => {
                 >
                     Add reference
                 </Button>
+                }
             </div>
             )}
         </FieldArray>
