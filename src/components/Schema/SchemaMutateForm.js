@@ -40,12 +40,6 @@ const SchemaSelect = (props) => {
                     }
                     order
                 }
-                authoredBy {
-                    Person {
-                        pbotID
-                    }
-                    order
-                }
                 elementOf {
                     name
                     pbotID
@@ -87,7 +81,6 @@ const SchemaSelect = (props) => {
                 props.values.partsPreserved = child.props.dpartspreserved ? JSON.parse(child.props.dpartspreserved) : [];
                 props.values.notableFeatures = child.props.dnotablefeatures ? JSON.parse(child.props.dnotablefeatures) : [];
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
-                props.values.authors = child.props.dauthors ? JSON.parse(child.props.dauthors) : [];
                 props.values.public = "true" === child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
                 props.values.groups = child.props.dgroups ? JSON.parse(child.props.dgroups) : [];
@@ -105,7 +98,6 @@ const SchemaSelect = (props) => {
                     dpartspreserved={schema.partsPreserved ? JSON.stringify(schema.partsPreserved.map(organ => organ.pbotID)) : null}
                     dnotablefeatures={schema.notableFeatures ? JSON.stringify(schema.notableFeatures.map(feature => feature.pbotID)) : null}
                     dreferences={schema.references ? JSON.stringify(schema.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
-                    dauthors={schema.authoredBy ? JSON.stringify(schema.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order || ''}})) : null}
                     dpublic={schema.elementOf && schema.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={schema.elementOf ? JSON.stringify(schema.elementOf.map(group => group.pbotID)) : null}
                 >{schema.title}</MenuItem>
@@ -125,11 +117,6 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
                 notableFeatures: [],
                 references: [{
                     pbotID: '',
-                    order:'',
-                }],
-                authors: [{
-                    pbotID: '',
-                    order:'',
                 }],
                 public: true,
                 groups: [],
@@ -163,22 +150,9 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
-                            .required('Reference title is required'),
-                        order: Yup.string()
-                            .required('Reference order is required')
-                            .typeError('Reference order is required')
+                            .required('Reference is required'),
                     })
-                ),
-                //authors: Yup.array().of(Yup.string()).min(1, "Must specify at least one author"),
-                authors: Yup.array().of(
-                    Yup.object().shape({
-                        pbotID: Yup.string()
-                            .required('Author name is required'),
-                        order: Yup.string()
-                            .required('Author order is required')
-                            .typeError('Author order is required')
-                    })
-                ).min(1, "Must specify at least one author"),
+                ).min(1, "Reference is required"),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -255,9 +229,8 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
                             <PartsPreservedSelect />
                             <br />
 
-                            <ReferenceManager values={props.values}/>
-                
-                            <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
+                            <ReferenceManager values={props.values} single/>
+                            <br />
 
                             <Field 
                                 component={CheckboxWithLabel}

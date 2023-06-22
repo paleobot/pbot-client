@@ -17,8 +17,6 @@ const SchemaMutateResults = ({queryParams}) => {
                 purpose: queryParams.purpose || null,
                 partsPreservedIDs: queryParams.partsPreserved || null,
                 notableFeaturesIDs: queryParams.notableFeatures || null,
-                authors: queryParams.authors.map(({searchName, ...keepAttrs}) => keepAttrs) || null, 
-                //authors: queryParams.authors.map(author => author.name) || null, 
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
                     [publicGroupID] : queryParams.groups || null,
