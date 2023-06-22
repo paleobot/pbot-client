@@ -1,10 +1,11 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import { SensibleTextField } from '../SensibleTextField.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
@@ -155,6 +156,7 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -192,29 +194,54 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "create" || (mode === "edit" && props.values.group !== '')) &&
                     <div>
-                    <Field
-                        component={SensibleTextField}
-                        type="text"
-                        name="name"
-                        label="Name"
-                        fullWidth 
-                        disabled={false}
-                    />
-                    <br />
+                    <Accordion style={accstyle} defaultExpanded={true}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="required-content"
+                            id="required-header"                        
+                        >
+                            Required fields
+                        </AccordionSummary>
+                        <AccordionDetails>
 
-                    <Field
-                        component={SensibleTextField}
-                        type="text"
-                        name="purpose"
-                        label="Purpose"
-                        fullWidth 
-                        multiline
-                        disabled={false}
-                    />
-                    <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="name"
+                                label="Name"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                    <MemberSelect />
-                    <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="purpose"
+                                label="Purpose"
+                                fullWidth 
+                                multiline
+                                disabled={false}
+                            />
+                            <br />
+
+                            <MemberSelect />
+                            <br />
+                        </AccordionDetails>
+                    </Accordion>
+
+                    <Accordion style={accstyle} disabled={true}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="optional-content"
+                            id="optional-header"                        
+                        >
+                            Optional fields
+                        </AccordionSummary>
+                        <AccordionDetails >
+                            None
+                        </AccordionDetails>
+                    </Accordion>
 
                     </div>
                 }
