@@ -1,13 +1,14 @@
 import React, { useState, useEffect }from 'react';
 import { Formik, Field, Form, ErrorMessage, useFormikContext } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Box } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Box, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select, SimpleFileUpload } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {SecureImage} from './SecureImage.js';
 import {LinkDialog} from "./LinkDialog.js";
 import { SensibleTextField } from '../SensibleTextField.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
@@ -348,6 +349,7 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -412,94 +414,113 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
 
                     {("create" === props.values.mode || ("edit" === props.values.mode && props.values.image !== '')) &&
                         <div>
-                        <InputLabel>
-                            Image
-                        </InputLabel>
-                        {!props.values.uploadImage && !props.values.link &&
-                            <Grid container spacing={2} direction="row">
-                                <Grid item xs={5}>
-                                    <Button color="secondary" component="label">
-                                        File
-                                    <input 
-                                        name="uploadImage"
-                                        hidden 
-                                        accept="image/*" 
-                                        onChange={(event) => {
-                                            console.log("------------onChange---------------");
-                                            //props.values.uploadImage = event.target.files[0]
-                                            props.setFieldValue("uploadImage",event.target.files[0]);
-                                            console.log(props.values.uploadImage);
-                                        }}
-                                        type="file" 
-                                    />
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={2}>
-                                    or
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <LinkDialog values={props.values}/>
-                                </Grid>
-                            </Grid>
-                        }
-                        {(props.values.uploadImage || props.values.link) &&
-                            <PreviewImage values={props.values}/>
-                        }
-                        <ErrorMessage name="uploadImage">
-                            { msg => <div style={{ color: 'red' }}>{msg}</div> }
-                        </ErrorMessage>
+                        <Accordion style={accstyle} defaultExpanded={true}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Required fields
+                            </AccordionSummary>
+                            <AccordionDetails>
 
-                        <ImageCategorySelect />
-                        <br />
+                                <InputLabel>
+                                    Image
+                                </InputLabel>
+                                {!props.values.uploadImage && !props.values.link &&
+                                    <Stack direction="row" spacing={3}>
+                                            <Button variant="outlined" color="secondary" component="label">
+                                                File
+                                                <input 
+                                                    name="uploadImage"
+                                                    hidden 
+                                                    accept="image/*" 
+                                                    onChange={(event) => {
+                                                        console.log("------------onChange---------------");
+                                                        //props.values.uploadImage = event.target.files[0]
+                                                        props.setFieldValue("uploadImage",event.target.files[0]);
+                                                        console.log(props.values.uploadImage);
+                                                    }}
+                                                    type="file" 
+                                                />
+                                            </Button>
+                                            <span>or</span>
+                                            <LinkDialog values={props.values}/>
+                                    </Stack>
+                                }
+                                {(props.values.uploadImage || props.values.link) &&
+                                    <PreviewImage values={props.values}/>
+                                }
+                                <ErrorMessage name="uploadImage">
+                                    { msg => <div style={{ color: 'red' }}>{msg}</div> }
+                                </ErrorMessage>
 
-                        <Field
-                            component={SensibleTextField}
-                            type="text"
-                            name="citation"
-                            label="Citation"
-                            fullWidth 
-                            disabled={false}
-                        />
-                        <br />
+                                <ImageCategorySelect />
+                                <br />
 
-                        <Field
-                            component={SensibleTextField}
-                            type="text"
-                            name="caption"
-                            label="Caption"
-                            fullWidth 
-                            disabled={false}
-                        />
-                        <br />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="citation"
+                                    label="Citation"
+                                    fullWidth 
+                                    disabled={false}
+                                />
+                                <br />
 
-                        {/*}
-                        <Field
-                            component={SensibleTextField}
-                            type="text"
-                            name="type"
-                            label="Type"
-                            fullWidth 
-                            disabled={false}
-                        />
-                        <br />
-                        */}
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="caption"
+                                    label="Caption"
+                                    fullWidth 
+                                    disabled={false}
+                                />
+                                <br />
 
-                        <Field 
-                            component={CheckboxWithLabel}
-                            name="public" 
-                            type="checkbox"
-                            Label={{label:"Public"}}
-                            disabled={(mode === "edit" && props.values.origPublic)}
-                        />
-                        <br />
+                                {/*}
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="type"
+                                    label="Type"
+                                    fullWidth 
+                                    disabled={false}
+                                />
+                                <br />
+                                */}
+
+                                <Field 
+                                    component={CheckboxWithLabel}
+                                    name="public" 
+                                    type="checkbox"
+                                    Label={{label:"Public"}}
+                                    disabled={(mode === "edit" && props.values.origPublic)}
+                                />
+                                <br />
+                                
+                                {!props.values.public &&
+                                <div>
+                                    <GroupSelect />
+                                    <br />
+                                </div>
+                                }
+                            </AccordionDetails>
+                        </Accordion>
+
+                        <Accordion style={accstyle} disabled={true}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="optional-content"
+                                id="optional-header"                        
+                            >
+                                Optional fields
+                            </AccordionSummary>
+                            <AccordionDetails >
+                                None
+                            </AccordionDetails>
+                        </Accordion>
                         
-                        {!props.values.public &&
-                        <div>
-                            <GroupSelect />
-                            <br />
-                        </div>
-                        }
-                    
                         </div>
                     }
                     </div>
