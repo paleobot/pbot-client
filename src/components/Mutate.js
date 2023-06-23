@@ -44,7 +44,6 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                     <FormControlLabel value="synonym" control={<Radio />} label="Synonym" labelPlacement="end"/>
                     <FormControlLabel value="comment" control={<Radio />} label="Comment" labelPlacement="end"/>
                     <FormControlLabel value="description" control={<Radio />} label="Description" labelPlacement="end"/>
-                    <FormControlLabel value="characterinstance" control={<Radio />} label="Character Instance" labelPlacement="end"/>
                     <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end" />
                     <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end" />
                     <Divider />
@@ -131,10 +130,6 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                         <DescriptionMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
-                    {selectedForm === "characterinstance" &&
-                        <CharacterInstanceMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-                    
                     {selectedForm === "specimen" &&
                         <SpecimenMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
