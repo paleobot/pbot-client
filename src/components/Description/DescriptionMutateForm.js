@@ -1,12 +1,13 @@
 ﻿import React, { useState }from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import { Button, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Button, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import CharacterInstanceManager from '../CharacterInstance/CharacterInstanceManager.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
@@ -232,6 +233,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -282,42 +284,66 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                 {(mode === "create" || (mode === "edit" && props.values.description !== '')) &&
                 <div>
                 
-                <Field 
-                    component={TextField}
-                    name="name" 
-                    type="text" 
-                    label="Name"
-                    fullWidth
-                    disabled={false}
-                />
-                <br />
+                <Accordion style={accstyle} defaultExpanded={true}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Required fields
+                    </AccordionSummary>
+                    <AccordionDetails>
                 
-                <SchemaSelect />
-                <br />
-                
-                <ReferenceManager values={props.values}/>
+                        <Field 
+                            component={TextField}
+                            name="name" 
+                            type="text" 
+                            label="Name"
+                            fullWidth
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <SchemaSelect />
+                        <br />
+                        
+                        <ReferenceManager values={props.values}/>
 
-              <div>
-                <SpecimenSelect handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
-                <br />
-                </div>
-                          
-                <Field 
-                    component={CheckboxWithLabel}
-                    name="public" 
-                    type="checkbox"
-                    Label={{label:"Public"}}
-                    disabled={(mode === "edit" && props.values.origPublic)}
-                />
-                <br />
-                
-                {!props.values.public &&
-                <div>
-                    <GroupSelect />
-                    <br />
-                </div>
-                }
-                
+                        <div>
+                        <SpecimenSelect handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        <br />
+                        </div>
+                                
+                        <Field 
+                            component={CheckboxWithLabel}
+                            name="public" 
+                            type="checkbox"
+                            Label={{label:"Public"}}
+                            disabled={(mode === "edit" && props.values.origPublic)}
+                        />
+                        <br />
+                        
+                        {!props.values.public &&
+                        <div>
+                            <GroupSelect />
+                            <br />
+                        </div>
+                        }
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} disabled={true}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="optional-content"
+                        id="optional-header"                        
+                    >
+                        Optional fields
+                    </AccordionSummary>
+                    <AccordionDetails >
+                        None
+                    </AccordionDetails>
+                </Accordion>
                 </div>
                 }
                 <br />

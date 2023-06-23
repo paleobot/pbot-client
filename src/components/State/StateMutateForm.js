@@ -1,11 +1,12 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import { StateSelect } from "../State/StateSelect.js"
 import { CharacterSelect } from "../Character/CharacterSelect.js"
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
@@ -247,6 +248,7 @@ const StateMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -281,65 +283,99 @@ const StateMutateForm = ({handleSubmit, mode}) => {
                 <SchemaSelect values={props.values} handleChange={props.handleChange}/>
                 
                 {props.values.schema !== '' &&
+                    <>
                     <CharacterSelect source="state" values={props.values} handleChange={props.handleChange} />
+                    <br />
+                    </>
                 }
 
                 {(props.values.character !== "" && (mode === "edit" || mode === "delete")) &&
+                    <>
                     <StateSelect source="state" values={props.values} handleChange={props.handleChange}/>
+                    <br />
+                    </>
                 }
                  
                 {((mode === "create" && props.values.character) || (mode === "edit" && props.values.state)) &&
+                    <>
                     <StateSelect source="state" values={props.values} parent handleChange={props.handleChange}/>
+                    <br />
+                    </>
                 }
                 
                 {(mode === "create" || (mode === "edit" && props.values.state !== '')) &&
                     <>
-                        <Field
-                            type="checkbox"
-                            component={CheckboxWithLabel}
-                            name="quantitative"
-                            Label={{ label: 'Quantitative' }}
-                            onChange={event => {
-                                if (props.values.quantitative) {
-                                    props.values.name=""
-                                } else {
-                                    props.values.name="quantity"
-                                }
-                                props.handleChange(event);
-                            }}
-                        />
-                        <br />
+                    <Accordion style={accstyle} defaultExpanded={true}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="required-content"
+                            id="required-header"                        
+                        >
+                            Required fields
+                        </AccordionSummary>
+                        <AccordionDetails>
+                
+                            <Field
+                                type="checkbox"
+                                component={CheckboxWithLabel}
+                                name="quantitative"
+                                Label={{ label: 'Quantitative' }}
+                                onChange={event => {
+                                    if (props.values.quantitative) {
+                                        props.values.name=""
+                                    } else {
+                                        props.values.name="quantity"
+                                    }
+                                    props.handleChange(event);
+                                }}
+                            />
+                            <br />
 
-                        <Field
-                            component={TextField}
-                            type="text"
-                            name="name"
-                            label="Name"
-                            fullWidth 
-                            disabled={props.values.quantitative}
-                        />
-                        <br />
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="name"
+                                label="Name"
+                                fullWidth 
+                                disabled={props.values.quantitative}
+                            />
+                            <br />
 
-                        <Field
-                            component={TextField}
-                            type="text"
-                            name="definition"
-                            label="Definition"
-                            fullWidth 
-                            disabled={false}
-                        />
-                        <br />
 
-                        <Field
-                            component={TextField}
-                            type="text"
-                            name="order"
-                            label="Order"
-                            fullWidth 
-                            disabled={false}
-                        />
-                        <br />
+                        </AccordionDetails>
+                    </Accordion>
+
+                    <Accordion style={accstyle}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="optional-content"
+                            id="optional-header"                        
+                        >
+                            Optional fields
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="definition"
+                                label="Definition"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
+
+                            <Field
+                                component={TextField}
+                                type="text"
+                                name="order"
+                                label="Order"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
                      
+                        </AccordionDetails>
+                    </Accordion>
                     </>
                 }
                 
