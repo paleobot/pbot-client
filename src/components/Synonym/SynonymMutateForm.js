@@ -1,11 +1,12 @@
 ﻿import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
   useQuery,
@@ -174,6 +175,7 @@ const SynonymMutateForm = ({handleSubmit, mode}) => {
     });
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -221,39 +223,62 @@ const SynonymMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "create" || (mode === "edit" && props.values.synonym !== '')) &&
                 <div>
+                <Accordion style={accstyle} defaultExpanded={true}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Required fields
+                    </AccordionSummary>
+                    <AccordionDetails>
                 
-                <Field 
-                    component={TextField}
-                    name="explanation" 
-                    type="text" 
-                    label="Explanation"
-                    fullWidth
-                    disabled={false}
-                />
-                <br />
-                
-                <OTUSelect values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
-                <br />
-                
-                <ReferenceManager values={props.values}/>
-                <br />
-                
-                <Field 
-                    component={CheckboxWithLabel}
-                    name="public" 
-                    type="checkbox"
-                    Label={{label:"Public"}}
-                    disabled={(mode === "edit" && props.values.origPublic)}
-                />
-                <br />
-                
-                {!props.values.public &&
-                <div>
-                    <GroupSelect />
-                    <br />
-                </div>
-                }
-                
+                        <Field 
+                            component={TextField}
+                            name="explanation" 
+                            type="text" 
+                            label="Explanation"
+                            fullWidth
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <OTUSelect values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        <br />
+                        
+                        <ReferenceManager values={props.values}/>
+                        <br />
+                        
+                        <Field 
+                            component={CheckboxWithLabel}
+                            name="public" 
+                            type="checkbox"
+                            Label={{label:"Public"}}
+                            disabled={(mode === "edit" && props.values.origPublic)}
+                        />
+                        <br />
+                        
+                        {!props.values.public &&
+                        <div>
+                            <GroupSelect />
+                            <br />
+                        </div>
+                        }
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} disabled={true}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="optional-content"
+                        id="optional-header"                        
+                    >
+                        Optional fields
+                    </AccordionSummary>
+                    <AccordionDetails >
+                        None
+                    </AccordionDetails>
+                </Accordion>                      
                 </div>
                 }
                 
