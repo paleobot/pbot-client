@@ -25,6 +25,7 @@ import Logout from './components/Logout';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import Home from './components/Home';
+import ReferenceDirectQueryResults from './components/Reference/ReferenceDirectQueryResults';
 
 /*
 //This approach is from https://stackoverflow.com/a/74411049
@@ -197,6 +198,11 @@ const router = createBrowserRouter([
         path: "/query/otu/:otuid",
         //path: "/otu/:otuid",
         element: <OTUDirectQueryResults/>
+    },
+    {
+        path: "/query/reference/:referenceid",
+        //path: "/reference/:referenceid",
+        element: <ReferenceDirectQueryResults/>
     },
     {
         path: "/query/schema/:schemaid",
