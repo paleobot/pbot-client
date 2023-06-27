@@ -376,7 +376,7 @@ function Specimens(props) {
             }
 
             {!props.standAlone &&
-            <Link color="success.main" underline="hover" href={directURL}  target="_blank"><b>{s.name || "(name missing)"}</b></Link>
+            <Link style={indent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{s.name || "(name missing)"}</b></Link>
             }
 
         </div>
