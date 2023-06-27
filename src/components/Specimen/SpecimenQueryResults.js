@@ -230,6 +230,7 @@ function Specimens(props) {
             directURL.searchParams.append("includeOTUs", "true");
         }
             
+        const header1 = {marginLeft:"2em", marginTop:"10px"}
         return (
         <div key={s.pbotID} style={style}>
             { props.standAlone &&     
@@ -262,36 +263,51 @@ function Specimens(props) {
                 </Grid>
                 <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
+                <div style={header1}><Typography variant="h6">Identity</Typography></div>
                 <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
                 <div style={indent}><b>collection:</b> {s.collection.name}</div>
-                <div style={indent}><b>partsPreserved:</b> {s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
-                <div style={indent}><b>notableFeatures:</b> {s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}</div>
+                <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
+                <div style={indent}><b>gbifID:</b> {s.gbifID}</div>
+                <div style={indent}><b>references:</b></div>
+                {s.references && s.references.length > 0 &&
+                    <div>
+                        {alphabetize([...s.references], "order").map((reference, idx) => (
+                            <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
+                        ))}
+                    </div>
+                }
+
+                <div style={header1}><Typography variant="h6">Preservation</Typography></div>
+                <div style={indent}><b>parts preserved:</b> {s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
+                    <div style={indent}><b>notable features:</b> {s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}</div>
+
                 {/*A mild shenanigan here to handle old specimen nodes without PRESERVED_BY relationships*/}
                 <div style={indent}><b>preservation mode:</b> {s.preservationMode && s.preservationMode.constructor.name === "Object" ? s.preservationMode.name : "unspecified"}</div>
+
+                <div style={header1}><Typography variant="h6">Repository</Typography></div>
                 <div style={indent}><b>repository:</b> {s.repository}</div>
                 <div style={indent}><b>other repository link:</b> {s.otherRepositoryLink}</div>
-                {s.identifiers && s.identifiers.length > 0 &&
+
+                <div style={header1}><Typography variant="h6">Identification</Typography></div>
+                <div style={indent}><b>identifiers:</b></div>
+                 {s.identifiers && s.identifiers.length > 0 &&
                     <div>
-                        <div style={indent}><b>identifiers:</b></div>
                         {s.identifiers.map((i, idx) => (
                             <div key={idx} style={indent2}>{i.given + " " + i.surname}</div>
                         ))}
                     </div>
                 }
-               <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
-                <div style={indent}><b>gbifID:</b> {s.gbifID}</div>
-                <div style={indent}><b>notes:</b> {s.notes}</div>
-                {s.images && s.images.length > 0 &&
-                    <div style={carousel}>
-                    {/*can't use thumbs because SecureImage does not immediately make image available*/}
-                    <Carousel showThumbs={false}>  
-                        {s.images.map((image) => (
-                            <div key={image.pbotID} >
-                                {/*<img src={image.link} alt={image.caption}/>*/}
-                                <SecureImage src={image.link}/>
+                {s.identifiedAs && s.identifiedAs.length > 0 &&
+                    <div>
+                        <div style={indent}><b>identified as:</b></div>
+                        {s.identifiedAs.map((h, idx) => (
+                            <div key={idx}>
+                                <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                                <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                                <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                                <div style={indent2}><b>species: {h.OTU.species}</b></div>
                             </div>
                         ))}
-                    </Carousel>
                     </div>
                 }
                 {s.holotypeOf && s.holotypeOf.length > 0 &&
@@ -320,26 +336,24 @@ function Specimens(props) {
                         ))}
                     </div>
                 }
-                {s.identifiedAs && s.identifiedAs.length > 0 &&
-                    <div>
-                        <div style={indent}><b>identified as:</b></div>
-                        {s.identifiedAs.map((h, idx) => (
-                            <div key={idx}>
-                                <div style={indent2}><b>name: {h.OTU.name}</b></div>
-                                <div style={indent2}><b>family: {h.OTU.family}</b></div>
-                                <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
-                                <div style={indent2}><b>species: {h.OTU.species}</b></div>
+
+                <div style={indent}><b>notes:</b> {s.notes}</div>
+
+                {s.images && s.images.length > 0 &&
+                <>
+                <div style={header1}><Typography variant="h6">Images</Typography></div>
+                    <div style={carousel}>
+                    {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                    <Carousel showThumbs={false}>  
+                        {s.images.map((image) => (
+                            <div key={image.pbotID} >
+                                {/*<img src={image.link} alt={image.caption}/>*/}
+                                <SecureImage src={image.link}/>
                             </div>
                         ))}
+                    </Carousel>
                     </div>
-                }
-                {s.references && s.references.length > 0 &&
-                    <div>
-                        <div style={indent}><b>references:</b></div>
-                        {alphabetize([...s.references], "order").map((reference, idx) => (
-                            <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
-                        ))}
-                    </div>
+                </>
                 }
                 {s.describedBy && s.describedBy.length > 0 &&
                     <div>
