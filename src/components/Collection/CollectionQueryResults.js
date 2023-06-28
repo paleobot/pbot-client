@@ -122,6 +122,7 @@ function Collections(props) {
     const collections = alphabetize([...data.Collection], "name");
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
+    const listIndent = {marginLeft:"2em"}
     const header1 = {marginLeft:"2em", marginTop:"10px"}
     const header2 = {marginLeft:"4em"}
     const indent = {marginLeft:"4em"}
@@ -264,7 +265,7 @@ function Collections(props) {
                 }
 
                 {!props.standAlone &&
-                <Link style={indent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{collection.name || "(name missing)"}</b></Link>
+                <Link style={listIndent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{collection.name || "(name missing)"}</b></Link>
                 }
 
             </div>
