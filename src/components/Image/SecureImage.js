@@ -67,6 +67,9 @@ export class SecureImage extends React.Component {
             return "Loading...";
         }
 
+        //To rerender popup as images load, per https://github.com/mui/material-ui/issues/10595
+        window.dispatchEvent(new CustomEvent('resize'));
+        
         return <img src={this.state.imageSrc} alt={this.props.alt} width={this.props.width} />;
     }
 }
