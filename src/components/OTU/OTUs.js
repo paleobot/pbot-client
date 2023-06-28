@@ -39,6 +39,7 @@ function OTUs(props) {
             directURL.searchParams.append("includeMergedDescription", "true");
         }
             
+        const header1 = {marginLeft:"2em", marginTop:"10px"}
         return (
             <div key={pbotID} style={style}>
                 { props.standalone &&     
@@ -71,7 +72,12 @@ function OTUs(props) {
                     </Grid>
 
                     <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
+
+                    <div style={header1}><Typography variant="h6">Identity</Typography></div>
                     <div style={indent}><b>pbotID:</b> {pbotID}</div>
+
+
+                    <div style={header1}><Typography variant="h6">Taxonomy</Typography></div>
                     <div style={indent}><b>family:</b> {family}</div>
                     <div style={indent}><b>genus:</b> {genus}</div>
                     <div style={indent}><b>species:</b> {species}</div>
@@ -148,7 +154,7 @@ function OTUs(props) {
                     holotypeSpecimen.Specimen.describedBy[0] &&
                     holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
                     <div>
-                        <div style={indent}><b>holotype description:</b></div>
+                        <div style={header1}><Typography variant="h6">Holotype description</Typography></div>
                         {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => (
                             <div key={d.Description.schema.pbotID}>
                                 <div style={indent2}><b>from schema "{d.Description.schema.title}":</b></div>
@@ -160,7 +166,7 @@ function OTUs(props) {
                     
                     {mergedDescription && mergedDescription.length > 0 &&
                     <div>
-                        <div style={indent}><b>merged description:</b></div>
+                        <div style={header1}><Typography variant="h6">Merged description</Typography></div>
                         {alphabetize([...mergedDescription], "schema").reduce((acc, ci) => acc.includes(ci.schema) ? acc : acc.concat(ci.schema),[]).map((s,i) => (
                             <div key={i}>
                                 <div style={indent2}><b>from schema "{s}":</b></div>
