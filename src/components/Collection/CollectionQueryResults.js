@@ -18,7 +18,9 @@ function Specimens(props) { //TODO: move this to standalone file in Specimens fo
     return specimens.map(({pbotID, name}) => {
         const directURL = new URL(window.location.origin + "/query/specimen/" + pbotID);
         return (
+            <div>
             <Link key={pbotID} style={style} color="success.main" underline="hover" href={directURL}  target="_blank">{name}</Link>
+            </div>
         )
     });
 }
