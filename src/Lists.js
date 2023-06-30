@@ -30,11 +30,11 @@ export const majorTaxonGroups = [
 ]
 
 export const publicationTypes = [
-    "journal article", 
-    "standalone book",
-    "edited book of contributed articles", 
-    "contributed article in edited book", 
-    "unpublished"    
+    {name: "journal article", authorsRequired: true}, 
+    {name: "standalone book", authorsRequired: true},
+    {name: "edited book of contributed articles", authorsRequired: false}, 
+    {name: "contributed article in edited book", authorsRequired: true}, 
+    {name: "unpublished", authorsRequired: true}   
 ]
 
 export const imageCategories = [

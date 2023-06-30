@@ -20,16 +20,8 @@ export const PublicationTypeSelect = (props) => {
             SelectProps={{
                 multiple: false,
             }}
-            onChange={event => {
-                //This onChange is to initials values.authors correctly for the publicationType.
-                //I don't like that these are hard-coded while we are pulling the values from a 
-                //separate list. Should probably make that a list of objects with author init value
-                //field in each or something.
-                console.log(event)
-                if (event.target.value === "journal article" || 
-                    event.target.value === "standalone book" || 
-                    event.target.value === "contributed article in edited book" ||
-                    event.target.value === "unpublished") {
+            onChange={(event, child) => {
+                if (child.props.dauthorsrequired === "true") {
                     formikProps.values.authors = [{
                         pbotID: '',
                         order:'',
@@ -44,10 +36,10 @@ export const PublicationTypeSelect = (props) => {
         >
             {publicationTypes.map((pt) => (
                 <MenuItem 
-                    key={pt} 
-                    value={pt}
-                    authorrequired="true"
-                >{pt}</MenuItem>
+                    key={pt.name} 
+                    value={pt.name}
+                    dauthorsrequired={pt.authorsRequired.toString()}
+                >{pt.name}</MenuItem>
             ))}
         </Field>
     )
