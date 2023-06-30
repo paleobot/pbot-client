@@ -9,6 +9,7 @@ import { FormControlUnstyledContext } from '@mui/base';
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import NavBar from './components/NavBar';
 import { AuthProvider } from './components/AuthContext';
+import { GlobalProvider } from './components/GlobalContext';
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -31,6 +32,7 @@ function App(props) {
     //localStorage.removeItem('PBOTMutationToken');
     return (
         <div className="App">
+            <GlobalProvider>
             <AuthProvider>
                 <NavBar />
                 <Outlet />
@@ -45,6 +47,7 @@ function App(props) {
                 <br />
             <Footer />
            </AuthProvider>
+           </GlobalProvider>
         </div>
     );
 }
