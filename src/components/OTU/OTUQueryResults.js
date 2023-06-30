@@ -4,12 +4,15 @@ import {
   gql
 } from "@apollo/client";
 import OTUs from "./OTUs.js";
-import {publicGroupID} from '../Group/GroupSelect.js';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext.js';
 
 function OTUList(props) {
     console.log("OTUList");
     console.log(props);
     console.log(props.filters.genus);
+
+    const global = useContext(GlobalContext);
 
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
@@ -209,7 +212,7 @@ function OTUList(props) {
     console.log(data.OTU);
     
     return (
-        <OTUs public={(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0])} otus={data.OTU} standalone={props.standAlone} includeSynonyms={props.includeSynonyms} includeComments={props.includeComments} includeHolotypeDescription={props.includeHolotypeDescription} includeMergedDescription={props.includeMergedDescription}/>
+        <OTUs public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} otus={data.OTU} standalone={props.standAlone} includeSynonyms={props.includeSynonyms} includeComments={props.includeComments} includeHolotypeDescription={props.includeHolotypeDescription} includeMergedDescription={props.includeMergedDescription}/>
     );
 
 }
@@ -218,7 +221,8 @@ const OTUQueryResults = ({queryParams}) => {
     console.log("OTUQueryResults");
     console.log("queryParams");
     console.log(queryParams);
-    console.log(publicGroupID);
+
+    const global = useContext(GlobalContext);
 
     return (
         <OTUList 
@@ -230,7 +234,7 @@ const OTUQueryResults = ({queryParams}) => {
                 schema: queryParams.character ? null : queryParams.schema || null,
                 character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
-                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSynonyms={queryParams.includeSynonyms} 
             includeComments={queryParams.includeComments} 

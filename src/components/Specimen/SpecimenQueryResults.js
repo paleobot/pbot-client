@@ -6,16 +6,19 @@ import {
 import { Link, Grid, Typography } from '@mui/material';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize } from '../../util.js';
-import {publicGroupID} from '../Group/GroupSelect.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import {Carousel} from 'react-responsive-carousel'
 import {SecureImage} from '../Image/SecureImage.js';
 import logo from '../../PBOT-logo-transparent.png';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext';
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
     console.log(props);
  
+    const global = useContext(GlobalContext);
+
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
@@ -216,7 +219,7 @@ function Specimens(props) {
     const carousel = {width: "60%", marginLeft: "2em", borderStyle:"solid"}
     return (specimens.length === 0) ? (
         <div style={style}>
-            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
+            No {(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
     ) : specimens.map((s) => {
         const directURL = new URL(window.location.origin + "/query/specimen/" + s.pbotID);
@@ -389,6 +392,8 @@ const SpecimenQueryResults = ({queryParams}) => {
     console.log("SpecimenQueryResults");
     console.log(queryParams); 
     
+    const global = useContext(GlobalContext);
+
     return (
         <Specimens 
             filters={{
@@ -404,7 +409,7 @@ const SpecimenQueryResults = ({queryParams}) => {
                 idigbiouuid: queryParams.idigbiouuid || null,
                 gbifID: queryParams.gbifID || null,
                 identifiers: queryParams.identifiers && queryParams.identifiers.length > 0 ?queryParams.identifiers.map(({pbotID}) => pbotID)  : null, 
-                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeImages={queryParams.includeImages}
             includeDescriptions={queryParams.includeDescriptions} 

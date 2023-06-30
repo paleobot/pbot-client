@@ -10,8 +10,8 @@ import {
 import PersonQueryForm from './PersonQueryForm.js';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonQueryResults from './PersonQueryResults.js';
-import { publicGroupID } from '../Group/GroupSelect.js';
-
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext.js';
 
 export const InnerPersonSelect = (props) => {
     console.log("InnerPersonSelect");
@@ -170,6 +170,8 @@ export const PersonSelect = (props) => {
     console.log("PersonSelect");
     console.log(props)
 
+    const global = useContext(GlobalContext);
+
     const formikProps = useFormikContext()
 
     const [open, setOpen] = React.useState(false);
@@ -195,7 +197,7 @@ export const PersonSelect = (props) => {
             formikProps.setFieldValue("email", person.email || '');
             formikProps.setFieldValue("orcid", person.orcid || '');
             formikProps.setFieldValue("groups", groups || '');
-            formikProps.setFieldValue("public", groups.includes(publicGroupID));
+            formikProps.setFieldValue("public", groups.includes(global.publicGroupID));
         } else {
             const searchName = `${props.name.slice(0,-6)}searchName`;
             formikProps.setFieldValue(searchName, person.surname);

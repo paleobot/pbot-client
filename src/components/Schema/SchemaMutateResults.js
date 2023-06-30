@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext';
 import Mutator from '../Mutator';
-import {publicGroupID} from '../Group/GroupSelect.js';
 
 const SchemaMutateResults = ({queryParams}) => {
     console.log("SchemaMutateResults");
     console.log(queryParams);
     console.log(queryParams.authors);
     
+    const global = useContext(GlobalContext);
+
     return (
         <Mutator
             params={{
@@ -19,7 +22,7 @@ const SchemaMutateResults = ({queryParams}) => {
                 notableFeaturesIDs: queryParams.notableFeatures || null,
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
-                    [publicGroupID] : queryParams.groups || null,
+                    [global.publicGroupID] : queryParams.groups || null,
                 cascade: queryParams.cascade || false
             }}
             entity="Schema"

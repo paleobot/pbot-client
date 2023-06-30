@@ -5,8 +5,9 @@ import {
 } from "@apollo/client";
 import { Link, Grid, Typography, Stack } from '@mui/material';
 import { alphabetize } from '../../util.js';
-import {publicGroupID} from '../Group/GroupSelect.js';
 import logo from '../../PBOT-logo-transparent.png';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext.js';
 
 function Specimens(props) { //TODO: move this to standalone file in Specimens folder?
     console.log("Specimens");
@@ -30,6 +31,8 @@ function Collections(props) {
     console.log(props);
     console.log(props.filters.genus);
     
+    const global = useContext(GlobalContext);
+
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
@@ -131,7 +134,7 @@ function Collections(props) {
     const indent2 = {marginLeft:"6em"}
     return (collections.length === 0) ? (
         <div style={style}>
-            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
+            No {(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
     ) : collections.map((collection) => {
 
@@ -279,7 +282,9 @@ function Collections(props) {
 const CollectionQueryResults = ({queryParams}) => {
     console.log("CollectionQueryResults")
     console.log(queryParams);
-    console.log(publicGroupID);
+
+    const global = useContext(GlobalContext);
+   
     return (
         <Collections 
             filters={{
@@ -288,7 +293,7 @@ const CollectionQueryResults = ({queryParams}) => {
                 country: queryParams.country || null,
                 state: queryParams.state || null,
                 collectionType: queryParams.collectiontype || null,
-                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSpecimens={queryParams.includeSpecimens} 
             standAlone={queryParams.standAlone} 

@@ -8,8 +8,6 @@ import {
   gql
 } from "@apollo/client";
 
-export let publicGroupID;
-
 export const GroupSelect = (props) => {
     console.log("GroupSelect");
 
@@ -31,6 +29,8 @@ export const GroupSelect = (props) => {
     
     
     const groups = alphabetize(
+        [...data.Group],
+        /*
         data.Group.reduce((acc, group) => {
             const newGroup = {...group};
             console.log(newGroup);
@@ -40,10 +40,11 @@ export const GroupSelect = (props) => {
             } else {
                 return acc.concat(newGroup);
             }
-        }, []), 
-    "name");
+        }, []),
+        */ 
+        "name"
+    );
     console.log(groups)
-    console.log(publicGroupID);
     
     return (
         <Field

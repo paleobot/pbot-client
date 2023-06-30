@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext';
 import Mutator from '../Mutator';
-import {publicGroupID} from '../Group/GroupSelect.js';
 
 const ReferenceMutateResults = ({queryParams}) => {
     console.log("ReferenceMutateResults");
     console.log(queryParams);
     console.log(queryParams.authors);
+
+    const global = useContext(GlobalContext);
 
     return (
         <Mutator
@@ -29,7 +32,7 @@ const ReferenceMutateResults = ({queryParams}) => {
                 pbdbid: queryParams.pbdbid || null,
                 doi: queryParams.doi || null,
                 groups: queryParams.public ? 
-                    [publicGroupID] : queryParams.groups || null,
+                    [global.publicGroupID] : queryParams.groups || null,
             }}
             entity="Reference"
             mode={queryParams.mode}

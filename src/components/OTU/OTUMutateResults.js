@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext';
 import Mutator from '../Mutator';
-import {publicGroupID} from '../Group/GroupSelect.js';
 
 const OTUMutateResults = ({queryParams}) => {
     console.log("OTUMutateResults");
     console.log(queryParams);
+
+    const global = useContext(GlobalContext);
 
     return (
         <Mutator 
@@ -25,7 +28,7 @@ const OTUMutateResults = ({queryParams}) => {
                 qualityIndex: queryParams.qualityIndex || null,
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
-                    [publicGroupID] : queryParams.groups || null,
+                    [global.publicGroupID] : queryParams.groups || null,
             }}
             entity="OTU"
             mode={queryParams.mode}

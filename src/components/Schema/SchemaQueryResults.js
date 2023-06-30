@@ -6,13 +6,16 @@ import {
 import { Link, Grid, Typography } from '@mui/material';
 import Characters from "../Character/Characters";
 import { alphabetize } from '../../util.js';
-import {publicGroupID} from '../Group/GroupSelect.js';
 import logo from '../../PBOT-logo-transparent.png';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext';
 
 function Schemas(props) {
     console.log(props);
     console.log(props.filters.genus);
     
+    const global = useContext(GlobalContext);
+
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
@@ -205,7 +208,7 @@ function Schemas(props) {
     const indent2 = {marginLeft:"4em"}
     return (schemas.length === 0) ? (
         <div style={style}>
-            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
+            No {(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
     ) : schemas.map((schema) => {
 
@@ -305,7 +308,9 @@ function Schemas(props) {
 const SchemaQueryResults = ({queryParams}) => {
     console.log("SchemaQueryResults")
     console.log(queryParams);
-    console.log(publicGroupID);
+
+    const global = useContext(GlobalContext);
+
     return (
         <Schemas 
             filters={{
@@ -314,7 +319,7 @@ const SchemaQueryResults = ({queryParams}) => {
                 year: queryParams.year, 
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
-                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeCharacters={queryParams.includeCharacters} 
             standAlone={queryParams.standAlone} 

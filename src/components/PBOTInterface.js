@@ -2,7 +2,6 @@ import React, { useState }from 'react';
 import { AppBar, Tabs, Tab, Box } from '@mui/material';
 import Result from './Result';
 import Action from './Action';
-import {publicGroupID, GroupSelect} from './Group/GroupSelect.js';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 
 import {ApolloProvider} from "@apollo/client";
@@ -12,6 +11,7 @@ import {
     useLocation
 } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import { GlobalProvider } from './GlobalContext';
 
 const PBOTInterface = (props) => {
     console.log("----------PBOTInterface--------------");

@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Mutator from '../Mutator';
-import {publicGroupID} from '../Group/GroupSelect.js';
+import { GlobalContext } from '../GlobalContext.js';
 
 const ImageMutateResults = ({queryParams}) => {
     console.log("ImageMutateResults");
     console.log(queryParams);
     console.log(queryParams.specimens);
+
+    const global = useContext(GlobalContext);
+    console.log(global)
+    console.log(global.publicGroupID)
 
     return (
         <Mutator
@@ -19,7 +23,7 @@ const ImageMutateResults = ({queryParams}) => {
                 caption: queryParams.caption || null,
                 //type: queryParams.type || null,
                 groups: queryParams.public ? 
-                    [publicGroupID] : queryParams.groups || null,
+                    [global.publicGroupID] : queryParams.groups || null,
             }}
             entity="Image"
             mode={queryParams.mode}

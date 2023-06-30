@@ -4,12 +4,15 @@ import {
   gql
 } from "@apollo/client";
 import Descriptions from "./Descriptions.js";
-import {publicGroupID} from '../Group/GroupSelect.js';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext.js';
 
 function DescriptionList(props) {
     console.log("DescriptionList");
     console.log(props);
     console.log(props.filters.genus);
+
+    const global = useContext(GlobalContext);
 
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
@@ -80,13 +83,15 @@ function DescriptionList(props) {
     if (error) return <p>Error :(</p>;
            
     return (
-        <Descriptions public={(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0])} descriptions={data.Description}/>
+        <Descriptions public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} descriptions={data.Description}/>
     );
 
 }
 
 const DescriptionQueryResults = ({queryParams}) => {
     console.log(queryParams);
+
+    const global = useContext(GlobalContext);
 
     return (
         <DescriptionList 
@@ -96,7 +101,7 @@ const DescriptionQueryResults = ({queryParams}) => {
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
                 species: queryParams.species || null, 
-                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeComplex={queryParams.includeComplex} 
         />

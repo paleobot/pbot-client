@@ -10,8 +10,8 @@ import {
 import ReferenceQueryForm from './ReferenceQueryForm.js';
 import SearchIcon from '@mui/icons-material/Search';
 import ReferenceQueryResults from './ReferenceQueryResults.js';
-import { publicGroupID } from '../Group/GroupSelect.js';
-
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext.js';
 
 export const InnerReferenceSelect = (props) => {
     console.log("InnerReferenceSelect");
@@ -177,6 +177,7 @@ export const ReferenceSelect = (props) => {
     console.log(props.name)
     console.log(props.values)
 
+    const global = useContext(GlobalContext);
     const formikProps = useFormikContext()
 
     const [open, setOpen] = React.useState(false);
@@ -216,7 +217,7 @@ export const ReferenceSelect = (props) => {
             formikProps.setFieldValue("doi", reference.doi || '');
             formikProps.setFieldValue("authors", authors);
             formikProps.setFieldValue("groups", groups);
-            formikProps.setFieldValue("public", groups.includes(publicGroupID));
+            formikProps.setFieldValue("public", groups.includes(global.publicGroupID));
         }
 
         setOpen(false);

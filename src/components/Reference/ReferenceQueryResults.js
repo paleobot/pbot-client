@@ -4,14 +4,17 @@ import {
   gql
 } from "@apollo/client";
 import { alphabetize } from '../../util.js';
-import {publicGroupID} from '../Group/GroupSelect.js';
 import { Link, Grid, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext.js';
 
 function References(props) {
     console.log("References")
     console.log(props);
     
+    const global = useContext(GlobalContext);
+
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     console.log(filters)
@@ -121,7 +124,7 @@ function References(props) {
     }
     return (references.length === 0) ? (
         <div style={style}>
-            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
+            No {(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
     ) : references.map((reference) => {
         console.log("*********************************")
@@ -205,6 +208,8 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => 
     console.log("ReferenceQueryResults")
     console.log(queryParams);
 
+    const global = useContext(GlobalContext);
+
     return (
         <References 
             filters={{
@@ -224,7 +229,7 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => 
                 doi: queryParams.doi || null,
                 //groups: queryParams.public ? 
                 //    [publicGroupID] : queryParams.groups || null,
-                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups,
+                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups,
             }}
             select={select}
             handleSelect={handleSelect}

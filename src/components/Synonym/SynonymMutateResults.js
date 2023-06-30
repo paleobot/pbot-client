@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
+import { GlobalContext } from '../GlobalContext';
 import Mutator from '../Mutator';
-import {publicGroupID} from '../Group/GroupSelect.js';
 
 const SynonymMutateResults = ({queryParams}) => {
     console.log("SynonymMutateResults");
     console.log(queryParams);
+
+    const global = useContext(GlobalContext);
 
     return (
         <Mutator 
@@ -14,7 +16,7 @@ const SynonymMutateResults = ({queryParams}) => {
                 otus: queryParams.otus || null,
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
-                    [publicGroupID] : queryParams.groups || null,
+                    [global.publicGroupID] : queryParams.groups || null,
             }}
             entity="Synonym"
             mode={queryParams.mode}

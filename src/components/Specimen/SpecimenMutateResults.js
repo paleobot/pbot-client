@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
-import {publicGroupID} from '../Group/GroupSelect.js';
 
 import { gql } from "@apollo/client/core";
 import { useApolloClient } from "@apollo/client/react/hooks/useApolloClient.js";
 import { useMutation } from "@apollo/client/react/hooks/useMutation.js";
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext';
 
 const SpecimenMutateResults = ({queryParams}) => {
     console.log("-------------------SpecimenMutateResults--------------------");
@@ -34,7 +35,8 @@ const SpecimenMutateResults = ({queryParams}) => {
         });
     });
     */
-    
+    const global = useContext(GlobalContext);
+
     return (
         <Mutator
             params={{
@@ -59,7 +61,7 @@ const SpecimenMutateResults = ({queryParams}) => {
                 uploadImages: queryParams.images || null,
                 cascade: queryParams.cascade || false,
                 groups: queryParams.public ? 
-                    [publicGroupID] : queryParams.groups || null,
+                    [global.publicGroupID] : queryParams.groups || null,
             }}
             entity="Specimen"
             mode={queryParams.mode}

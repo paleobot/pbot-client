@@ -4,12 +4,15 @@ import {
   gql
 } from "@apollo/client";
 import { alphabetize } from '../../util.js';
-import {publicGroupID} from '../Group/GroupSelect.js';
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext.js';
 
 function Persons(props) {
     console.log(props);
     
+    const global = useContext(GlobalContext);
+
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
@@ -59,7 +62,7 @@ function Persons(props) {
     }
     return (people.length === 0) ? (
         <div style={style}>
-            No {(filters.groups && filters.groups.length === 1 && publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
+            No {(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
         </div>
     ) : people.map((person) => (
         <div key={person.pbotID} style={style}>
@@ -76,6 +79,8 @@ function Persons(props) {
 const PersonQueryResults = ({queryParams, select, handleSelect, exclude}) => {
     console.log(queryParams);
 
+    const global = useContext(GlobalContext);
+
     return (
         <Persons 
             filters={{
@@ -84,7 +89,7 @@ const PersonQueryResults = ({queryParams, select, handleSelect, exclude}) => {
                 surname: queryParams.surname || null, 
                 email: queryParams.email || null, 
                 orcid: queryParams.orcid || null, 
-                groups: queryParams.groups.length === 0 ? [publicGroupID] : queryParams.groups, 
+                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             select={select}
             handleSelect={handleSelect}

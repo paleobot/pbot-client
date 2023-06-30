@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
-import {publicGroupID} from '../Group/GroupSelect.js';
+import { useContext } from 'react';
+import { GlobalContext } from '../GlobalContext';
 
 const CollectionMutateResults = ({queryParams}) => {
     console.log("CollectionMutateResults");
     console.log(queryParams);
     console.log(queryParams.specimens);
+
+    const global = useContext(GlobalContext);
 
     return (
         <Mutator
@@ -51,7 +54,7 @@ const CollectionMutateResults = ({queryParams}) => {
                 references: queryParams.references || null,
                 cascade: queryParams.cascade || false,
                 groups: queryParams.public ? 
-                    [publicGroupID] : queryParams.groups || null,
+                    [global.publicGroupID] : queryParams.groups || null,
             }}
             entity="Collection"
             mode={queryParams.mode}
