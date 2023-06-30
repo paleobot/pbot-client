@@ -43,11 +43,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 editors:  '',
                 notes:  '',
                 year: '',
-                authors: [{
-                    pbotID: '',
-                    order:'',
-                    searchName:'',
-                }],
+                authors: [],
                 doi: '',
                 pbdbid: '',
                 public: true,
@@ -76,6 +72,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                     is: (val) => (
                         val === "journal article" || 
                         val === "standalone book" || 
+                        val === "edited book of contributed articles" || 
                         val === "unpublished"
                     ),
                     then: (schema) => schema.required(),
@@ -146,7 +143,6 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 }),
                 notes: Yup.string(),
                 year: Yup.date().required(),
-                //authors: Yup.array().of(Yup.string()).min(1, "Must specify at least one author"),
                 authors: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
@@ -156,7 +152,17 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                             .typeError('Author order is required'),
                         searchName: Yup.string(),
                     })
-                ).min(1, "Must specify at least one author"),
+                ).when("publicationType", {
+                    is: (val) => (
+                        val === "journal article" || 
+                        val === "standalone book" || 
+                        val === "contributed article in edited book" ||
+                        val === "unpublished"
+                    ),
+                    then: (schema) => schema.min(1, "Must specify at least one author"),
+                    otherwise: (schema) => schema
+
+                }),
                 public: Yup.boolean(),
                 doi: Yup.string(),
                 pbdbid: Yup.string(),
