@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {client} from '../../ApolloClientSetup.js';
 import { AppBar, Typography, Link } from '@mui/material';
 import CollectionQueryResults from './CollectionQueryResults';
+import { GlobalProvider } from '../GlobalContext';
 
 const CollectionDirectQueryResults = () => {
     const { collectionid } = useParams();
@@ -20,9 +21,11 @@ const CollectionDirectQueryResults = () => {
             standAlone: true,
         };
         return (
+            <GlobalProvider>
             <ApolloProvider client={client}>
                 <CollectionQueryResults queryParams={queryParams} />
             </ApolloProvider>
+            </GlobalProvider>
         );
     } else {
         return (

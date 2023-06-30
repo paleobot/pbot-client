@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {client} from '../../ApolloClientSetup.js';
 import { AppBar, Typography, Link } from '@mui/material';
 import SpecimenQueryResults from './SpecimenQueryResults';
+import { GlobalProvider } from '../GlobalContext';
 
 const SpecimenDirectQueryResults = () => {
     const { specimenid } = useParams();
@@ -23,9 +24,11 @@ const SpecimenDirectQueryResults = () => {
             standAlone: true,
         };
         return (
+            <GlobalProvider>
             <ApolloProvider client={client}>
                 <SpecimenQueryResults queryParams={queryParams} />
             </ApolloProvider>
+            </GlobalProvider>
         );
     } else {
         return (

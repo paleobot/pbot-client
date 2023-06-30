@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {client} from '../../ApolloClientSetup.js';
 import { AppBar, Typography, Link } from '@mui/material';
 import OTUQueryResults from './OTUQueryResults';
+import { GlobalProvider } from '../GlobalContext';
 
 const OTUDirectQueryResults = () => {
     const { otuid } = useParams();
@@ -23,9 +24,11 @@ const OTUDirectQueryResults = () => {
             standAlone: true,
         };
         return (
+            <GlobalProvider>
             <ApolloProvider client={client}>
                 <OTUQueryResults queryParams={queryParams} />
             </ApolloProvider>
+            </GlobalProvider>
         );
     } else {
         return (

@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {client} from '../../ApolloClientSetup.js';
 import { AppBar, Typography, Link } from '@mui/material';
 import ReferenceQueryResults from './ReferenceQueryResults';
+import { GlobalProvider } from '../GlobalContext';
 
 const ReferenceDirectQueryResults = () => {
     const { referenceid } = useParams();
@@ -19,9 +20,11 @@ const ReferenceDirectQueryResults = () => {
             standAlone: true,
         };
         return (
+            <GlobalProvider>
             <ApolloProvider client={client}>
                 <ReferenceQueryResults queryParams={queryParams} />
             </ApolloProvider>
+            </GlobalProvider>
         );
     } else {
         return (

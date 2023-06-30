@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {client} from '../../ApolloClientSetup.js';
 import { AppBar, Typography, Link } from '@mui/material';
 import SchemaQueryResults from './SchemaQueryResults';
+import { GlobalProvider } from '../GlobalContext';
 
 const SchemaDirectQueryResults = () => {
     const { schemaid } = useParams();
@@ -20,9 +21,11 @@ const SchemaDirectQueryResults = () => {
             standAlone: true,
         };
         return (
+            <GlobalProvider>
             <ApolloProvider client={client}>
                 <SchemaQueryResults queryParams={queryParams} />
             </ApolloProvider>
+            </GlobalProvider>
         );
     } else {
         return (
