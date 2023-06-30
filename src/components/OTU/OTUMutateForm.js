@@ -100,7 +100,7 @@ const OTUSelect = (props) => {
                             pbotID
                         }
                     }
-                    references {
+                    references (orderBy: order_asc) {
                         Reference {
                             pbotID
                         }

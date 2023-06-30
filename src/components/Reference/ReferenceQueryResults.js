@@ -73,7 +73,7 @@ function References(props) {
                     bookType 
                     pbdbid 
                     doi                    
-                    authoredBy {
+                    authoredBy (orderBy: order_asc) {
                         Person {
                             pbotID
                             given

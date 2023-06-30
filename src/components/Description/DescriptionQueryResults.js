@@ -27,7 +27,7 @@ function DescriptionList(props) {
                     family
                     genus
                     species
-                    references {
+                    references (orderBy: order_asc) {
                         Reference {
                             title
                             year
@@ -47,7 +47,7 @@ function DescriptionList(props) {
                     family
                     genus
                     species
-                    references {
+                    references (orderBy: order_asc) {
                         Reference {
                             title
                             year

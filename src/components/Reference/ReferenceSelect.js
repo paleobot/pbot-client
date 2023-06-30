@@ -38,7 +38,7 @@ export const InnerReferenceSelect = (props) => {
                     year
                     doi
                     pbdbid
-                    authoredBy {
+                    authoredBy (orderBy: order_asc) {
                         Person {
                             pbotID
                             given

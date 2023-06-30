@@ -36,7 +36,7 @@ const DescriptionSelect = (props) => {
                         name
                         pbotID
                     }
-                    references {
+                    references (orderBy: order_asc) {
                         Reference {
                             pbotID
                         }

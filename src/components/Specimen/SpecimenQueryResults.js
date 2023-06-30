@@ -135,7 +135,7 @@ function Specimens(props) {
                     elementOf {
                         name
                     }
-                    references {
+                    references (orderBy: order_asc) {
                         Reference {
                             title
                             year

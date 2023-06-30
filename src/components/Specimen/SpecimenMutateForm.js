@@ -60,7 +60,7 @@ const SpecimenSelect = (props) => {
                     collection {
                         pbotID
                     }
-                    references {
+                    references (orderBy: order_asc) {
                         Reference {
                             pbotID
                         }

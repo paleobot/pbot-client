@@ -31,7 +31,7 @@ const CommentSelect = (props) => {
                         __typename
                     }
                 }
-                references {
+                references (orderBy: order_asc) {
                     Reference {
                         pbotID
                     }
