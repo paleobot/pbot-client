@@ -22,7 +22,7 @@ export const ReferenceManager = (props) => {
                     props.values.references.map((reference, index) => { 
                         return (
                             <Grid container item spacing={2} direction="row" key={index}>
-                                <Grid item >
+                                <Grid item xs={8}>
                                     <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)} />
                                 </Grid>
 
