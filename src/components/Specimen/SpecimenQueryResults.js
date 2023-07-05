@@ -292,7 +292,7 @@ function Specimens(props) {
                 <div style={indent}><b>other repository link:</b> {s.otherRepositoryLink}</div>
 
                 <div style={header1}><Typography variant="h6">Identification</Typography></div>
-                <div style={indent}><b>identifiers:</b></div>
+                <div style={indent}><b>identified by:</b></div>
                  {s.identifiers && s.identifiers.length > 0 &&
                     <div>
                         {s.identifiers.map((i, idx) => (
