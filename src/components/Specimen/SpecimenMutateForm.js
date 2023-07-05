@@ -208,7 +208,6 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 otherRepositoryLink: '',
                 notes: '',
                 identifiers: [],
-                gbifID: '',
                 idigbiouuid: '',
                 idigbioInstitutionCode: '',
                 idigbioCatalogNumber: '',
@@ -252,6 +251,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 notes: Yup.string(),
                 //identifiers: Yup.array().of(Yup.string()),
                 //gbifID: Yup.string(),
+                /*
                 gbifID: Yup.string().test(
                     'isgbifID', 
                     ({message}) => `${message}`,
@@ -271,6 +271,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             return context.createError({message: "Network error, unable to access GBIF"})
                         }
                 }),
+                */
                 //idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
                 idigbioInstitutionCode: Yup.string(),
                 idigbioCatalogNumber: Yup.string(),
@@ -433,11 +434,43 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                                         onChange={handleTabChange} 
                                         aria-label="optional tabs"
                                     >
-                                        <Tab label="iDigBio" value="1"/>
-                                        <Tab label="Other" value="2"/>
+                                        <Tab label="Other" value="1"/>
+                                        <Tab label="iDigBio" value="2"/>
                                     </TabList>
                                 </Box>
                                 <TabPanel value="1">
+
+                                    <NotableFeaturesSelect />
+                                    <br />
+
+                                    <ReferenceManager values={props.values} optional={true}/>
+
+                                    <PersonManager label="Identified by" name="identifiers" omitOrder={true} optional={true} values={props.values} handleChange={props.handleChange}/>
+
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="otherRepositoryLink"
+                                        label="Other repository link"
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
+
+                                    <Field
+                                        component={SensibleTextField}
+                                        type="text"
+                                        name="notes"
+                                        label="Notes"
+                                        multiline={true}
+                                        fullWidth 
+                                        disabled={false}
+                                    >
+                                    </Field>
+                                    <br />
+                                </TabPanel>
+                                <TabPanel value="2">
                                     <Field
                                         component={SensibleTextField}
                                         type="text"
@@ -472,78 +505,6 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                                         <IDigBioSelect />
                                     </Stack>
 
-                                </TabPanel>
-                                <TabPanel value="2">
-
-                                    <ReferenceManager values={props.values} optional={true}/>
-
-                                    <NotableFeaturesSelect />
-                                    <br />
-
-                                    {/*
-                                    <DescriptionSelect/>
-                                    <br />
-                                    */}
-
-                                    <Field
-                                        component={SensibleTextField}
-                                        type="text"
-                                        name="gbifID"
-                                        label="GBIF specimen ID !"
-                                        fullWidth 
-                                        disabled={false}
-                                    >
-                                    </Field>
-                                    <br />
-
-                                    <Field
-                                        component={SensibleTextField}
-                                        type="text"
-                                        name="otherRepositoryLink"
-                                        label="Other repository link"
-                                        fullWidth 
-                                        disabled={false}
-                                    >
-                                    </Field>
-                                    <br />
-
-                                    {/*
-                                    <Field
-                                        component={SensibleTextField}
-                                        type="text"
-                                        name="pbdbcid"
-                                        label="PBDB cid"
-                                        fullWidth 
-                                        disabled={false}
-                                    >
-                                    </Field>
-                                    <br />
-
-                                    <Field
-                                        component={SensibleTextField}
-                                        type="text"
-                                        name="pbdboccid"
-                                        label="PBDB occid"
-                                        fullWidth 
-                                        disabled={false}
-                                    >
-                                    </Field>
-                                    <br />
-                                    */}
-
-                                    <PersonManager label="Identified by" name="identifiers" omitOrder={true} optional={true} values={props.values} handleChange={props.handleChange}/>
-
-                                    <Field
-                                        component={SensibleTextField}
-                                        type="text"
-                                        name="notes"
-                                        label="Notes"
-                                        multiline={true}
-                                        fullWidth 
-                                        disabled={false}
-                                    >
-                                    </Field>
-                                    <br />
                                 </TabPanel>
                             </TabContext>
 
