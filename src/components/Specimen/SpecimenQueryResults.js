@@ -151,6 +151,7 @@ function Specimens(props) {
                         Description {
                             pbotID
                             name
+                            notes
                             schema {
                                 title
                             }
@@ -363,7 +364,8 @@ function Specimens(props) {
                         <div style={indent}><b>descriptions:</b></div>
                         {s.describedBy.map((d,idx) => (
                             <div key={idx}>
-                                <div style={indent2}><b>{d.Description.schema.title}</b></div>
+                                <div style={indent2}><b>from schema "{d.Description.schema.title}"</b></div>
+                                <div style={indent3}><b>notes:</b> {d.Description.notes}</div>
                                 {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
                                 <div>
                                     <CharacterInstances style={indent3}  characterInstances={d.Description.characterInstances} />
