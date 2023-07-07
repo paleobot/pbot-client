@@ -17,6 +17,7 @@ const DescriptionMutateResults = ({queryParams}) => {
                 schemaID: queryParams.schema || null,
                 references: queryParams.references || null,
                 name: queryParams.name || null,
+                notes: queryParams.notes || null,
                 groups: queryParams.public ? 
                     [global.publicGroupID] : queryParams.groups || null,
                 cascade: queryParams.cascade || false

@@ -13,6 +13,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import { SensibleTextField } from '../SensibleTextField.js';
 
 const DescriptionSelect = (props) => {
     console.log("DescriptionSelect");
@@ -23,6 +24,7 @@ const DescriptionSelect = (props) => {
                 Description {
                     pbotID
                     name
+                    notes
                   	schema {
                       pbotID
                     }
@@ -97,6 +99,7 @@ const DescriptionSelect = (props) => {
                 console.log(child.props.dtype);
                 props.values.schema = child.props.dschema;
                 props.values.name = child.props.dname;
+                props.values.notes = child.props.dnotes;
                 props.values.specimens = child.props.dspecimens ? JSON.parse(child.props.dspecimens) : [];
                 props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
@@ -112,6 +115,7 @@ const DescriptionSelect = (props) => {
                     value={description.pbotID} 
                     dschema={description.schema.pbotID} 
                     dname={description.name} 
+                    dnotes={description.notes} 
                     dspecimens={description.specimens ? JSON.stringify(description.specimens.map(specimen => specimen.Specimen.pbotID)) : []}
                     dpublic={description.elementOf && description.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false).toString()}
                     dgroups={description.elementOf ? JSON.stringify(description.elementOf.map(group => group.pbotID)) : null}
@@ -217,6 +221,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                 }],
                 specimens: [],
                 name: '',
+                notes: '',
                 public: true,
                 groups: [],
                 cascade: false,
@@ -256,6 +261,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                     })
                 ),
                 name: Yup.string().nullable().required(),
+                notes: Yup.string().nullable(),
                 public: Yup.boolean(),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
@@ -295,7 +301,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                     <AccordionDetails>
                 
                         <Field 
-                            component={TextField}
+                            component={SensibleTextField}
                             name="name" 
                             type="text" 
                             label="Name"
@@ -332,7 +338,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                     </AccordionDetails>
                 </Accordion>
 
-                <Accordion style={accstyle} disabled={true}>
+                <Accordion style={accstyle} disabled={false}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="optional-content"
@@ -341,7 +347,16 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                         Optional fields
                     </AccordionSummary>
                     <AccordionDetails >
-                        None
+                        <Field 
+                            component={SensibleTextField}
+                            name="notes" 
+                            type="text" 
+                            label="Notes"
+                            fullWidth
+                            disabled={false}
+                        />
+                        <br />
+                        
                     </AccordionDetails>
                 </Accordion>
                 </div>

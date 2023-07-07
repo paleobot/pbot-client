@@ -24,6 +24,7 @@ function Descriptions(props) {
                 <div style={indent}><b>species:</b>{species}</div>
             </div>
             }
+            <div style={indent}><b>notes:</b>{notes}</div>
             {references && references.length > 0 &&
             <div>
                 <div>
