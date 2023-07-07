@@ -158,7 +158,8 @@ function OTUs(props) {
                         {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => (
                             <div key={d.Description.schema.pbotID}>
                                 <div style={indent2}><b>from schema "{d.Description.schema.title}":</b></div>
-                                <CharacterInstances characterInstances={d.Description.characterInstances} />
+                                <div style={indent3}><b>notes:</b> {d.Description.notes}</div>
+                                <CharacterInstances style={indent3} characterInstances={d.Description.characterInstances} />
                             </div>
                         ))}
                     </div>

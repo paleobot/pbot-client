@@ -167,6 +167,7 @@ function OTUList(props) {
                             describedBy {
                                 Description {
                                     name
+                                    notes
                                     schema {
                                         pbotID
                                         title
