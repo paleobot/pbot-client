@@ -4,6 +4,21 @@ import { alphabetize } from '../../util.js';
 import { Link, Grid, Typography } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 
+//TODO: Might be worth moving this to its own file and using elsewhere
+const DirectQueryLink = (props) => {
+    console.log("DirectQueryLink")
+    const url = new URL(`${window.location.origin}/query/${props.type}/${props.pbotID}`);
+    console.log(props.params)
+    //props.params.forEach(p => console.log(p))
+    if (props.params) props.params.forEach(p => {
+        console.log(p)
+        url.searchParams.append(p, "true");
+    })
+    return (
+        <Link style={props.style} color="success.main" underline="hover" href={url}  target="_blank"><b>{props.text || url.toString()}</b></Link>
+    )
+}
+
 function OTUs(props) {
     console.log("OTUs");
     console.log(props.otus);
@@ -24,21 +39,21 @@ function OTUs(props) {
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : otus.map(({ pbotID, name, family, genus, species, holotypeSpecimen, mergedDescription, synonyms, elementOf}) => {
-        const directURL = new URL(window.location.origin + "/query/otu/" + pbotID);
+    ) : otus.map(({ pbotID, name, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, species, additionalClades, holotypeSpecimen, mergedDescription, synonyms, elementOf}) => {
+       const directQParams = [];
         if (props.includeSynonyms) {
-            directURL.searchParams.append("includeSynonyms", "true");
+            directQParams.push("includeSynonyms");
         }
         if (props.includeComments) {
-            directURL.searchParams.append("includeComments", "true");
+            directQParams.push("includeComments");
         }
         if (props.includeHolotypeDescription) {
-            directURL.searchParams.append("includeHolotypeDescription", "true");
+            directQParams.push("includeHolotypeDescription");
         }
         if (props.includeMergedDescription) {
-            directURL.searchParams.append("includeMergedDescription", "true");
+            directQParams.push("includeMergedDescription");
         }
-            
+
         const header1 = {marginLeft:"2em", marginTop:"10px"}
         return (
             <div key={pbotID} style={style}>
@@ -71,16 +86,21 @@ function OTUs(props) {
                         </Grid>
                     </Grid>
 
-                    <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
+                    <div style={indent}><b>direct link:</b> <DirectQueryLink type="otu" pbotID={pbotID} params={directQParams} /></div>
 
                     <div style={header1}><Typography variant="h6">Identity</Typography></div>
                     <div style={indent}><b>pbotID:</b> {pbotID}</div>
 
 
                     <div style={header1}><Typography variant="h6">Taxonomy</Typography></div>
+                    <div style={indent}><b>diagnosis:</b> {diagnosis}</div>
+                    <div style={indent}><b>qualityIndex:</b> {qualityIndex}</div>
+                    <div style={indent}><b>majorTaxonGroup:</b> {majorTaxonGroup}</div>
+                    <div style={indent}><b>pbdbParentTaxon:</b> {pbdbParentTaxon}</div>
                     <div style={indent}><b>family:</b> {family}</div>
                     <div style={indent}><b>genus:</b> {genus}</div>
                     <div style={indent}><b>species:</b> {species}</div>
+                    <div style={indent}><b>additional clades:</b> {additionalClades}</div>
                     
                     {synonyms && synonyms.length > 0 &&
                     <div>
@@ -152,9 +172,10 @@ function OTUs(props) {
                     
                     {holotypeSpecimen && holotypeSpecimen.Specimen.describedBy && 
                     holotypeSpecimen.Specimen.describedBy[0] &&
-                    holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 &&
-                    <div>
+                    holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 &&            
+                    <div> 
                         <div style={header1}><Typography variant="h6">Holotype description</Typography></div>
+                        <div style={indent2}><b>specimen direct link:</b> <DirectQueryLink type="specimen" pbotID={holotypeSpecimen.Specimen.pbotID} params={["includeDescriptions"]} /></div>
                         {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => (
                             <div key={d.Description.schema.pbotID}>
                                 <div style={indent2}><b>from schema "{d.Description.schema.title}":</b></div>
@@ -184,7 +205,7 @@ function OTUs(props) {
 
 
                 {!props.standalone &&
-                <Link style={indent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{name || "(title missing)"}</b></Link>
+                <DirectQueryLink style={indent} type="otu" pbotID={pbotID} params={directQParams} text={name || "(title missing)"} />
                 }
             </div>
         )
