@@ -94,6 +94,12 @@ function OTUList(props) {
                 OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species ${filter}) {
                     pbotID
                     name
+                    authority
+                    diagnosis
+                    qualityIndex
+                    majorTaxonGroup
+                    pbdbParentTaxon
+                    additionalClades
                     family
                     genus
                     species
@@ -164,6 +170,7 @@ function OTUList(props) {
                     holotypeSpecimen @include(if: $includeHolotypeDescription) {
                         Specimen {
                             name
+                            pbotID
                             describedBy {
                                 Description {
                                     name
