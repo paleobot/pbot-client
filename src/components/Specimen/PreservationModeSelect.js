@@ -25,24 +25,27 @@ export const PreservationModeSelect = (props) => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
                                  
-    console.log(data.preservationModes);
     const preservationModes = alphabetize([...data.PreservationMode], "name");
     
     return (
         <Field
             component={TextField}
             type="text"
-            name="preservationMode"
-            label="Preservation mode"
+            name="preservationModes"
+            label="Preservation modes"
             fullWidth 
             select={true}
             SelectProps={{
-                multiple: false,
+                multiple: true,
             }}
+            defaultValue={[]} //No f*ing idea why this is necessary here but not in others
             disabled={false}
         >
             {preservationModes.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
+                <MenuItem 
+                    key={pbotID} 
+                    value={pbotID}
+                >{name}</MenuItem>
             ))}
         </Field>
     )

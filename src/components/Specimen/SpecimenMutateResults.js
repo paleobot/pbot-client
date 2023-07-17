@@ -46,7 +46,7 @@ const SpecimenMutateResults = ({queryParams}) => {
                 references: queryParams.references || null,
                 partsPreservedIDs: queryParams.partsPreserved || null,
                 notableFeaturesIDs: queryParams.notableFeatures || null,
-                preservationModeID: queryParams.preservationMode || null,
+                preservationModeIDs: queryParams.preservationModes || null,
                 descriptionIDs: queryParams.describedBy || null,
                 repository: queryParams.repository || null,
                 otherRepositoryLink: queryParams.otherRepositoryLink || null,

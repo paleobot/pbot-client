@@ -30,7 +30,7 @@ const SpecimenSelect = (props) => {
                 Specimen {
                     pbotID
                     name
-                    preservationMode {
+                    preservationModes {
                         pbotID
                     }
                     repository
@@ -102,7 +102,7 @@ const SpecimenSelect = (props) => {
                 props.values.name = child.props.dname;
                 props.values.partsPreserved = child.props.dpartspreserved ? JSON.parse(child.props.dpartspreserved) : [];
                 props.values.notableFeatures = child.props.dnotablefeatures ? JSON.parse(child.props.dnotablefeatures) : [];
-                 props.values.preservationMode = child.props.dpreservationmode ? child.props.dpreservationmode : '';
+                props.values.preservationModes = child.props.dpreservationmodes ? JSON.parse(child.props.dpreservationmodes) : [];
                 props.values.describedBy = child.props.ddescribedby ? JSON.parse(child.props.ddescribedby) : [];
                 props.values.repository = child.props.drepository ? child.props.drepository : '';
                 props.values.otherRepositoryLink = child.props.dotherrepositorylink ? child.props.dotherrepositorylink : '';
@@ -129,7 +129,7 @@ const SpecimenSelect = (props) => {
                     dname={specimen.name}
                     dpartspreserved={specimen.partsPreserved ? JSON.stringify(specimen.partsPreserved.map(organ => organ.pbotID)) : null}
                     dnotablefeatures={specimen.notableFeatures ? JSON.stringify(specimen.notableFeatures.map(feature => feature.pbotID)) : null}
-                    dpreservationmode={specimen.preservationMode ? specimen.preservationMode.pbotID : null}
+                    dpreservationmodes={specimen.preservationModes ? JSON.stringify(specimen.preservationModes.map(p => p.pbotID)) : null}
                     ddescribedby={specimen.describedBy ? JSON.stringify(specimen.describedBy.map(d => d.Description.pbotID)) : ''}
                     drepository={specimen.repository}
                     dotherrepositorylink={specimen.otherRepositoryLink}
@@ -202,7 +202,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 name: '',
                 partsPreserved: [],
                 notableFeatures: [],
-                preservationMode: '',
+                preservationModes: [],
                 describedBy: [],
                 repository: '',
                 otherRepositoryLink: '',
@@ -229,7 +229,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
             formikRef.current.resetForm({values:initValues});
         }
     },[mode]);
-    
+
     const [selectedTab, setSelectedTab] = React.useState('1');
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -245,7 +245,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 name: Yup.string().required(),
                 partsPreserved: Yup.array().of(Yup.string()).min(1, "At least one part is required"),
                 notableFeatures: Yup.array().of(Yup.string()),
-                preservationMode: Yup.string().required(),
+                preservationModes: Yup.array().of(Yup.string()).min(1, "At least one preservation mode is required"),
                 repository: Yup.string().required(),
                 otherRepositoryLink: Yup.string(),
                 notes: Yup.string(),
@@ -442,7 +442,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
 
                                     <NotableFeaturesSelect />
                                     <br />
-
+                
                                     <ReferenceManager values={props.values} optional={true}/>
 
                                     <PersonManager label="Identified by" name="identifiers" omitOrder={true} optional={true} values={props.values} handleChange={props.handleChange}/>
