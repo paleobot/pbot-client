@@ -256,7 +256,7 @@ const StateMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
-                definition: Yup.string().required(),
+                definition: Yup.string(),
                 order: Yup.number().integer(),
                 schema: Yup.string().required(),
                 character: Yup.string().required(),
@@ -303,7 +303,7 @@ const StateMutateForm = ({handleSubmit, mode}) => {
                     </>
                 }
                 
-                {(mode === "create" || (mode === "edit" && props.values.state !== '')) &&
+                {((mode === "create" && props.values.character) || (mode === "edit" && props.values.state !== '')) &&
                     <>
                     <Accordion style={accstyle} defaultExpanded={true}>
                         <AccordionSummary
