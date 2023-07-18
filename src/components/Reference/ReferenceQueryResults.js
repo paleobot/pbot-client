@@ -169,6 +169,7 @@ function References(props) {
 
                 <div style={header1}><Typography variant="h6">Identity</Typography></div>
                 <div style={indent}><b>pbotID:</b> {reference.pbotID}</div>
+                <div style={indent}><b>title:</b> {reference.title}</div>
                 {reference.publicationType && <div style={indent}><b>publicationType</b> {reference.publicationType} </div>}
                 {reference.doi && <div style={indent}><b>doi:</b> {reference.doi} </div>}
                 {reference.pbdbid && <div style={indent}><b>pbdb id:</b> {reference.pbdbid} </div>}
