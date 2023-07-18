@@ -2,7 +2,7 @@ import React from 'react';
 import { sort } from '../../util.js';
 import { Field } from 'formik';
 import { TextField } from 'formik-mui';
-import { MenuItem } from '@mui/material';
+import { MenuItem, Typography } from '@mui/material';
 import {
     useQuery,
     gql
@@ -64,6 +64,7 @@ const sortAndFlatten = (characters, level) => {
 }
 
 export const CharacterSelect = (props) => {
+    console.log("CharacterSelect")
     const gQL = gql`
     fragment CharacterFields on Character {
         pbotID
@@ -127,7 +128,11 @@ export const CharacterSelect = (props) => {
     const name =  props.parent ? "parentCharacter" : "character";
     let level = 0;
     const style = {minWidth: "12ch"}
-    return data.Schema[0].characters && data.Schema[0].characters.length === 0 ? null : (
+    return data.Schema[0].characters && data.Schema[0].characters.length === 0 ? 
+        (
+            <Typography variant="subtitle1" color="red">Schema has no Characters</Typography>
+        ) : 
+        (
         <>
         {props.source === "state" &&
             <Field
