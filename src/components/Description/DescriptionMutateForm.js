@@ -331,7 +331,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                         
                         {!props.values.public &&
                         <div>
-                            <GroupSelect />
+                            <GroupSelect omitPublic={true}/>
                             <br />
                         </div>
                         }

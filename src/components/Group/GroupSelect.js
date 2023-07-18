@@ -29,19 +29,9 @@ export const GroupSelect = (props) => {
     
     
     const groups = alphabetize(
-        [...data.Group],
-        /*
-        data.Group.reduce((acc, group) => {
-            const newGroup = {...group};
-            console.log(newGroup);
-            if ("public" === newGroup.name) {
-                publicGroupID = newGroup.pbotID;
-                return acc.concat(newGroup);
-            } else {
-                return acc.concat(newGroup);
-            }
-        }, []),
-        */ 
+        props.omitPublic ?
+            [...data.Group].filter(group => "public" !== group.name) :
+            [...data.Group],
         "name"
     );
     console.log(groups)

@@ -501,7 +501,7 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                                 
                                 {!props.values.public &&
                                 <div>
-                                    <GroupSelect />
+                                    <GroupSelect omitPublic={true} />
                                     <br />
                                 </div>
                                 }
