@@ -227,9 +227,7 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => 
                 year: queryParams.year || null,
                 pbdbid: queryParams.pbdbid || null,
                 doi: queryParams.doi || null,
-                //groups: queryParams.public ? 
-                //    [publicGroupID] : queryParams.groups || null,
-                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups,
+                groups: [global.publicGroupID],
             }}
             select={select}
             handleSelect={handleSelect}

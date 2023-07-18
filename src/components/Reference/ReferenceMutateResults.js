@@ -31,8 +31,7 @@ const ReferenceMutateResults = ({queryParams}) => {
                 authors: queryParams.authors.map(({searchName, ...keepAttrs}) => keepAttrs)  || null, 
                 pbdbid: queryParams.pbdbid || null,
                 doi: queryParams.doi || null,
-                groups: queryParams.public ? 
-                    [global.publicGroupID] : queryParams.groups || null,
+                groups: [global.publicGroupID],
             }}
             entity="Reference"
             mode={queryParams.mode}

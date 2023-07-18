@@ -71,22 +71,6 @@ const JournalFields = (props) => {
                     />
                     <br />
 
-                    <Field 
-                        component={CheckboxWithLabel}
-                        name="public" 
-                        type="checkbox"
-                        Label={{label:"Public"}}
-                        disabled={(props.values.mode === "edit" && props.values.origPublic)}
-                    />
-                    <br />
-                    
-                    {!props.values.public &&
-                    <div>
-                        <GroupSelect />
-                        <br />
-                    </div>
-                    }
-
                 </AccordionDetails>
             </Accordion>            
 
@@ -259,23 +243,6 @@ const JournalFields = (props) => {
                     />
                     <br />
                     
-                    <Field 
-                        component={CheckboxWithLabel}
-                        name="public" 
-                        type="checkbox"
-                        Label={{label:"Public"}}
-                        disabled={false}
-                    />
-                    <br />
-                    
-                    {!props.values.public &&
-                    <div>
-                        <GroupSelect />
-                        <br />
-                    </div>
-                    }
-
-
             </>
         }      
         </div>
