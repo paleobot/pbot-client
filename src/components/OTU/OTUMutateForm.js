@@ -502,7 +502,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         {props.errors.pbdbParentTaxon &&
                         <div>
                             <Typography variant="caption">
-                                (Available taxa can be found at <a href="https://paleobiodb.org/classic/checkTaxonInfo">https://paleobiodb.org/classic/checkTaxonInfo)</a>
+                                (Available taxa can be found at <a target="_blank" href="https://paleobiodb.org/classic/checkTaxonInfo">https://paleobiodb.org/classic/checkTaxonInfo)</a>
                             </Typography>
                         </div>
                         }
