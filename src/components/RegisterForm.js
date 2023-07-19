@@ -112,6 +112,7 @@ const RegisterForm = ({ setShowRegistration }) => {
                 email: '', 
                 reason: '',
                 bio: '',
+                orcid: '',
                 password: '', 
                 confirmPassword: '',
                 useExistingUser: false,
@@ -132,6 +133,7 @@ const RegisterForm = ({ setShowRegistration }) => {
                 reason: Yup.string()
                     .required("Reason is required"),
                 bio: Yup.string(),
+                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{4}/, {message: "not a valid orcid"}),
                 password: Yup.string()
                     .required("Password is required")
                     .min(6, "Passwords must contain at least six characters")
@@ -195,6 +197,17 @@ const RegisterForm = ({ setShowRegistration }) => {
                     type="text"
                     label="Short bio"
                     multiline
+                    disabled={false}
+                />
+                <br />
+
+                <Field
+                    component={SensibleTextField}
+                    type="text"
+                    name="orcid"
+                    label="ORCID"
+                    fullWidth 
+                    prefix="https://orcid.org/"
                     disabled={false}
                 />
                 <br />
