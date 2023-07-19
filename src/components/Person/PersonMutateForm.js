@@ -47,6 +47,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 middle: Yup.string(),
                 surname: Yup.string().required(),
                 email: Yup.string().email(),
+                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{4}/, {message: "not a valid orcid"}),
                 groups: Yup.array().of(Yup.string()).required(),
             })}
             onSubmit={(values, {resetForm}) => {
@@ -143,6 +144,7 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                             name="orcid"
                             label="ORCID"
                             fullWidth 
+                            prefix="https://orcid.org/"
                             disabled={false}
                         />
                         <br />
