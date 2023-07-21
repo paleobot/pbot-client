@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize, sort } from '../../util.js';
 import {CharacterSelect} from "../Character/CharacterSelect.js";
@@ -381,11 +381,6 @@ const CharacterMutateForm = ({handleSubmit, mode}) => {
                     <>
                     <CharacterSelect source="character" values={props.values} parent handleChange={props.handleChange}/>
                     <br />
-                    </>
-                }
-                
-                {(mode === "create" || (mode === "edit" && props.values.character !== '')) &&
-                    <>
                     <Accordion style={accstyle} defaultExpanded={true}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
@@ -455,7 +450,10 @@ const CharacterMutateForm = ({handleSubmit, mode}) => {
                 <br />
                 <br />
 
-                <Button type="submit" variant="contained" color="primary">Submit</Button>
+                <Stack direction="row" spacing={2}>
+                    <Button type="submit" variant="contained" color="primary">Submit</Button>
+                    <Button type="reset" variant="outlined" color="secondary">Reset</Button>
+                </Stack>
                 <br />
                 <br />
             </Form>
