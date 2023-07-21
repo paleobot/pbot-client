@@ -1,7 +1,7 @@
 ﻿import React, { useState }from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
-import { Button, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Button, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
@@ -390,7 +390,10 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                <br />
                 <br />
 
-                <Button type="submit" variant="contained" color="primary">Submit</Button>
+                <Stack direction="row" spacing={2}>
+                    <Button type="submit" variant="contained" color="primary">Submit</Button>
+                    <Button type="reset" variant="outlined" color="secondary">Reset</Button>
+                </Stack>
                 <br />
                 <br />
             </Form>

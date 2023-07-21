@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React from 'react';
@@ -152,7 +152,10 @@ const OTUQueryForm = ({handleSubmit}) => {
                 <br />
                 <br />
 
-                <Button type="submit" variant="contained" color="primary">Submit</Button>
+                <Stack direction="row" spacing={2}>
+                    <Button type="submit" variant="contained" color="primary">Submit</Button>
+                    <Button type="reset" variant="outlined" color="secondary">Reset</Button>
+                </Stack>
                 <br />
                 <br />
             </Form>

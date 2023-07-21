@@ -1,5 +1,5 @@
 ﻿import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, MenuItem, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, MenuItem, Stack, Typography } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React from 'react';
@@ -610,7 +610,10 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 <br />
                 <br />
 
-                <Button type="submit" variant="contained" color="primary">Submit</Button>
+                <Stack direction="row" spacing={2}>
+                    <Button type="submit" variant="contained" color="primary">Submit</Button>
+                    <Button type="reset" variant="outlined" color="secondary">Reset</Button>
+                </Stack>
                 <br />
                 <br />
             </Form>

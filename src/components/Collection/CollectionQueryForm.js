@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, MenuItem } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, MenuItem, Stack } from '@mui/material';
 import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {collectionTypes, countries} from "../../Lists.js"
@@ -106,7 +106,10 @@ const CollectionQueryForm = ({handleSubmit}) => {
                 <br />
                 <br />
 
-                <Button type="submit" variant="contained" color="primary">Submit</Button>
+                <Stack direction="row" spacing={2}>
+                    <Button type="submit" variant="contained" color="primary">Submit</Button>
+                    <Button type="reset" variant="outlined" color="secondary">Reset</Button>
+                </Stack>
                 <br />
                 <br />
             </Form>
