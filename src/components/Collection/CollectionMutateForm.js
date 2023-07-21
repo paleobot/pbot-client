@@ -114,6 +114,7 @@ const GeographicResolutionSelect = (props) => {
             }}
             disabled={false}
         >
+            <MenuItem value=""><i>None</i></MenuItem>
             {geographicResolutionScale.map((gR) => (
                 <MenuItem 
                     key={gR} 
@@ -327,6 +328,7 @@ const EnvironmentSelect = (props) => {
             }}
             disabled={false}
         >
+            <MenuItem value=""><i>None</i></MenuItem>
             {environments.map((env, idx) => (
                 <MenuItem 
                     key={idx} 
@@ -843,7 +845,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                         </TabList>
                                     </Box>
                                     <TabPanel value="1">
-                                        <StateSelect country={props.values.country} />
+                                        <StateSelect country={props.values.country} includeNone/>
                                         <br />
 
                                         <GeographicResolutionSelect />
@@ -989,7 +991,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 <br />
                 <br />
 
-                <Button type="submit" variant="contained" color="primary">Submit</Button>
+                <Stack direction="row" spacing={2}>
+                    <Button type="submit" variant="contained" color="primary">Submit</Button>
+                    <Button type="reset" variant="outlined" color="secondary">Reset</Button>
+                </Stack>
                 <br />
                 <br />
             </Form>
