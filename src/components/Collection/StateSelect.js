@@ -50,6 +50,9 @@ export const StateSelect = (props) => {
             }}
             disabled={false}
         >
+            {props.includeNone &&
+            <MenuItem value=""><i>None</i></MenuItem>
+            }
             {states.map((state) => (
                 <MenuItem 
                     key={state.code} 
