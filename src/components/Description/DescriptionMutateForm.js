@@ -263,6 +263,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                 name: Yup.string().nullable().required(),
                 notes: Yup.string().nullable(),
                 public: Yup.boolean(),
+                specimens: Yup.array().of(Yup.string()).min(1, "At least one specimen required"),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
