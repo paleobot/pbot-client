@@ -125,6 +125,74 @@ const GeographicResolutionSelect = (props) => {
     )
 }
 
+
+const TimescaleSelect = (props) => {
+    //console.log("TimescaleSelect")
+    const [timescales, setTimescales] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setLoading(true);
+        fetch("https://macrostrat.org/api/v2/defs/timescales?all")
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                if (response.status_code) {
+                    throw new Error (response.errors[0]);
+                }
+                //console.log("Timescale result")
+                //console.log(response.success.data)
+                setTimescales(response.success.data.map(ts => { 
+                    return {
+                        name: ts.timescale,
+                        maxAge: ts.max_age,
+                        minAge: ts.min_age
+                    }
+                }));
+            }
+        ).catch (
+            (error) => {
+                console.log("error!")
+                console.log(error)
+                setError(error)
+            }
+        )
+    }, [])
+
+    const style = {minWidth: "12ch", width:"35%"}
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>Error :(</p>
+
+    return (
+        <Field
+            style={style}
+            component={TextField}
+            type="text"
+            name="timescale"
+            label="Timescale"
+            select={true}
+            onChange={event => {
+                props.setFieldValue("maxinterval", '');
+                props.setFieldValue("mininterval", '');
+                props.setFieldValue("timescale", event.target.value);
+            }}
+            SelectProps={{
+                multiple: false,
+            }}
+            disabled={false}
+        >
+            {timescales.map((ts) => (
+                <MenuItem 
+                    key={ts.name} 
+                    value={ts.name}
+                >{`${ts.name} (${ts.maxAge} - ${ts.minAge} Ma)`}</MenuItem>
+            ))}
+        </Field>
+    )
+}
+
 const IntervalSelect = (props) => {
     const [intervals, setIntervals] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -138,10 +206,9 @@ const IntervalSelect = (props) => {
     }
 
     useEffect(() => {
+        if (!props.values.timescale) return;
         setLoading(true);
-        //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=all&vocab=pbdb")
-        //fetch("https://paleobiodb.org/data1.2/intervals/list.json?scale_id=1&vocab=pbdb")
-        fetch("https://macrostrat.org/api/v1/defs/intervals?timescale_id=1")
+        fetch(`https://macrostrat.org/api/v2/defs/intervals?timescale=${props.values.timescale}`)
         .then(res => res.json())
         .then(
             (response) => {
@@ -156,9 +223,11 @@ const IntervalSelect = (props) => {
                     }
                 })))
                 */
-                setIntervals(response.success.data.map(int => { //only care about name
+                setIntervals(response.success.data.map(int => { 
                     return {
-                        name: int.name
+                        name: int.name,
+                        maxAge: int.b_age,
+                        minAge: int.t_age
                     }
                 }));
             }
@@ -169,7 +238,7 @@ const IntervalSelect = (props) => {
                 setError(error)
             }
         )
-    }, [])
+    }, [props.values.timescale])
 
     const style = {minWidth: "12ch", width:"35%"}
     if (loading) return <p>Loading...</p>
@@ -196,13 +265,13 @@ const IntervalSelect = (props) => {
             SelectProps={{
                 multiple: false,
             }}
-            disabled={false}
+            disabled={!props.values.timescale}
         >
             {intervals.map((interval) => (
                 <MenuItem 
                     key={interval.name} 
                     value={interval.name}
-                >{interval.name}</MenuItem>
+                >{`${interval.name} (${interval.maxAge} - ${interval.minAge} Ma)`}</MenuItem>
             ))}
         </Field>
     )
@@ -357,6 +426,7 @@ const CollectionSelect = (props) => {
                 protectedSite
                 country
                 state
+                timescale
                 maxinterval
                 mininterval
                 lithology
@@ -441,6 +511,7 @@ const CollectionSelect = (props) => {
                 props.values.protectedSite = child.props.dprotectedsite === "true";
                 props.values.country = child.props.dcountry || '';
                 props.values.state = child.props.dstate || '';
+                props.values.timescale = child.props.dtimescale || '';
                 props.values.maxinterval = child.props.dmaxinterval || '';
                 props.values.mininterval = child.props.dmininterval || '';
                 props.values.lithology = child.props.dlithology || '';
@@ -491,6 +562,7 @@ const CollectionSelect = (props) => {
                     dprotectedsite={collection.protectedSite === null ? '' : collection.protectedSite.toString()}
                     dcountry={collection.country}
                     dstate={collection.state}
+                    dtimescale={collection.timescale}
                     dmaxinterval={collection.maxinterval}
                     dmininterval={collection.mininterval}
                     dlithology={collection.lithology}
@@ -574,6 +646,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 collection: '', 
                 name: '',
                 collectiontype: '',
+                timescale: '',
                 maxinterval: '',
                 mininterval: '',
                 lat: '',
@@ -656,6 +729,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 collectors: Yup.string(),
                 collectionmethods: Yup.array().of(Yup.string()),
                 collectingcomments: Yup.string(),
+                timescale: Yup.string().required("timescale is a required field"),
                 maxinterval: Yup.string().required("maximum interval is a required field"),
                 mininterval: Yup.string(),
                 lat: Yup.number().required("latitude is a required field").min(-90).max(90),
@@ -773,6 +847,9 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 type="checkbox"
                                 Label={{label:"Protected site"}}
                             />
+                            <br />
+
+                            <TimescaleSelect values={props.values} setFieldValue={props.setFieldValue}/>
                             
                             <Stack direction="row" spacing={4}>
                                 <IntervalSelect name="maxinterval" values={props.values} setFieldValue={props.setFieldValue}/>

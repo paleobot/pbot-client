@@ -15,6 +15,7 @@ const CollectionMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.collection || null,
                 name: queryParams.name || null,
+                timescale: queryParams.timescale || null,
                 mininterval: queryParams.mininterval || queryParams.maxinterval,
                 maxinterval: queryParams.maxinterval || null,
                 collectionType: queryParams.collectiontype || null,

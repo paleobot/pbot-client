@@ -65,6 +65,7 @@ function Collections(props) {
                     protectedSite
                     country
                     state
+                    timescale
                     maxinterval
                     mininterval
                     lithology
@@ -198,6 +199,7 @@ function Collections(props) {
                     <div style={indent}><b>comments on geographic information:</b> {collection.geographicComments}</div>
                     
                     <div style={header1}><Typography variant="h6">Age</Typography></div>
+                    <div style={indent}><b>timescale:</b> {collection.timescale}</div>
                     <div style={indent}><b>max interval:</b> {collection.maxinterval}</div>
                     <div style={indent}><b>min interval:</b> {collection.mininterval}</div>
                     <div style={indent}>
