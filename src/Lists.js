@@ -70,14 +70,14 @@ export const geographicResolutionScale = [
 ]
 
 export const collectionMethods = [
-    "sieve", 
-    "core", 
-    "census", 
-    "quarry", 
-    "surface (float)", 
-    "surface (in situ)", 
-    "salvage", 
-    "anthill"
+    "bulk",
+    "sieve",
+    "core",
+    "quarrying",
+    "surface (float)",
+    "surface (in situ)",
+    "salvage",
+    "anthill",  
 ]
 
 //TODO: Remove this once query code is updated
