@@ -12,7 +12,7 @@ import { PersonSelect } from './PersonSelect.js';
 export const PersonManager = (props) => {
     console.log("PersonManager");
 
-    const maxOrder = props.values.authors.reduce((acc, author) => parseInt(author.order) > acc ? parseInt(author.order) : acc, 0)
+    const maxOrder = !props.omitOrder ? props.values.authors.reduce((acc, author) => parseInt(author.order) > acc ? parseInt(author.order) : acc, 0) : 0;
 
     const name = props.name ? props.name : "authors";
     console.log(name)
