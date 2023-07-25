@@ -44,12 +44,12 @@ export const bookTypes = [
 
 //TODO: These should be obtained from somewhere (our api or pbdb)
 export const collectionTypes = [
-    "biostratigraphic", 
-    "paleoecologic", 
-    "taphonomic", 
-    "taxonomic", 
-    "general",
-    "faunal/floral"
+    "archaeologic",
+    "biostratigraphic",
+    "paleoecologic",
+    "taphonomic",
+    "taxonomic",
+    "general faunal/floral",    
 ]
 
 //TODO: These should be obtained from somewhere (our api or pbdb)
