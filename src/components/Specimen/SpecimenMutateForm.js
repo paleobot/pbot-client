@@ -215,8 +215,6 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 pbdboccid: '',
                 references: [],
                 collection: '',
-                public: true,
-                groups: [],
                 cascade: false,
                 mode: mode,
     };    
@@ -313,10 +311,6 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                     })
                 ),
                 public: Yup.boolean(),
-                groups: Yup.array().of(Yup.string()).when('public', {
-                    is: false,
-                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
-                }),
                 collection: Yup.string().required(),
                 images: Yup.array().of(
                     Yup.object().shape({
@@ -396,22 +390,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             </Field>
                             <br />
 
-                            <Field 
-                                component={CheckboxWithLabel}
-                                name="public" 
-                                type="checkbox"
-                                Label={{label:"Public"}}
-                                disabled={(mode === "edit" && props.values.origPublic)}
-                            />
-                            <br />
-                        
-                    {!props.values.public &&
-                    <div>
-                        <GroupSelect  omitPublic={true} />
-                        <br />
-                    </div>
-                    }
-                                
+                            {/*Note: Specimens inherit groups from their Collection*/}
 
                         </AccordionDetails>
                     </Accordion>
