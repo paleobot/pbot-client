@@ -114,12 +114,6 @@ export const InnerPersonSelect = (props) => {
                     onChange={(e,c) => {
                         console.log("click")
                         props.handleSelect(JSON.parse(c.props.dperson))
-                        /*
-                        console.log(props.values)
-                        props.values.authors[e.target.name.split('.')[1]].searchName=c.props.dsearchname;
-                        console.log(props.values.authors) 
-                        props.handleChange(e)
-                        */
                     }}
                 >
                     {persons.map((person) => (
@@ -199,6 +193,7 @@ export const PersonSelect = (props) => {
             formikProps.setFieldValue("groups", groups || '');
             formikProps.setFieldValue("public", groups.includes(global.publicGroupID));
         } else {
+            formikProps.setFieldValue(props.name.replace(/\.pbotID$/, ".order"), (props.maxOrder+1).toString() )
             const searchName = `${props.name.slice(0,-6)}searchName`;
             formikProps.setFieldValue(searchName, person.surname);
         }

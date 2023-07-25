@@ -12,6 +12,8 @@ import { PersonSelect } from './PersonSelect.js';
 export const PersonManager = (props) => {
     console.log("PersonManager");
 
+    const maxOrder = props.values.authors.reduce((acc, author) => parseInt(author.order) > acc ? parseInt(author.order) : acc, 0)
+
     const name = props.name ? props.name : "authors";
     console.log(name)
     console.log(props.values)
@@ -34,7 +36,7 @@ export const PersonManager = (props) => {
                             <Grid container spacing={2} direction="row" key={index}>
                                 <Grid item xs={0}>
                                     {console.log(props.values[name].filter(person => person.pbotID !== person.pbotID))}
-                                    <PersonSelect name={`${name}.${index}.pbotID`} exclude={props.values[name].filter(person => person.pbotID !== p.pbotID)}/>
+                                    <PersonSelect name={`${name}.${index}.pbotID`} exclude={props.values[name].filter(person => person.pbotID !== p.pbotID)} maxOrder={maxOrder}/>
                                 </Grid>
                                 {!props.omitOrder &&
                                 <Grid item xs={1}>

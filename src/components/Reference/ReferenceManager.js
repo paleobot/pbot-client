@@ -5,8 +5,10 @@ import { TextField } from 'formik-mui';
 import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
 
 export const ReferenceManager = (props) => {
+    //console.log("ReferenceManager")
 
-    //const maxOrder = props.values.references.reduce((acc, ref) => parseInt(ref.order) > acc ? parseInt(ref.order) : acc, 0)
+    const maxOrder = props.values.references.reduce((acc, ref) => parseInt(ref.order) > acc ? parseInt(ref.order) : acc, 0)
+    //console.log("maxOrder = " + maxOrder)
 
     const style = {marginTop: "1.5em"}
     return (
@@ -23,7 +25,7 @@ export const ReferenceManager = (props) => {
                         return (
                             <Grid container item spacing={2} direction="row" key={index}>
                                 <Grid item xs={8}>
-                                    <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)} />
+                                    <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)} maxOrder={maxOrder} />
                                 </Grid>
 
                                 {!props.single &&

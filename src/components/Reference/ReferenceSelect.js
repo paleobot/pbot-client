@@ -129,10 +129,17 @@ export const InnerReferenceSelect = (props) => {
                     SelectProps={{
                         multiple: false,
                     }}
+                    onChange={(event, child) => {
+                        props.handleSelect(JSON.parse(child.props.dreference))
+                    }}
                     disabled={false}
                 >
-                    {references.map(({ pbotID, name }) => (
-                        <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
+                    {references.map((reference) => (
+                        <MenuItem 
+                            key={reference.pbotID} 
+                            value={reference.pbotID}
+                            dreference={JSON.stringify(reference)}
+                        >{reference.name}</MenuItem>
                     ))}
                 </Field>
             )
@@ -218,6 +225,8 @@ export const ReferenceSelect = (props) => {
             formikProps.setFieldValue("authors", authors);
             formikProps.setFieldValue("groups", groups);
             formikProps.setFieldValue("public", groups.includes(global.publicGroupID));
+        } else {
+            formikProps.setFieldValue(props.name.replace(/\.pbotID$/, ".order"), (props.maxOrder+1).toString() )
         }
 
         setOpen(false);
