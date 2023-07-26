@@ -40,22 +40,28 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
         return (
                 <FormControl component="fieldset">
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                    <FormControlLabel value="otu" control={<Radio />} label="OTU" labelPlacement="end"/>
-                    <FormControlLabel value="synonym" control={<Radio />} label="Synonym" labelPlacement="end"/>
-                    <FormControlLabel value="comment" control={<Radio />} label="Comment" labelPlacement="end"/>
-                    <FormControlLabel value="description" control={<Radio />} label="Description" labelPlacement="end"/>
-                    <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end" />
-                    <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end" />
-                    <Divider />
-                    <FormControlLabel value="reference" control={<Radio />} label="Reference" labelPlacement="end" />
-                    <FormControlLabel value="schema" control={<Radio />} label="Schema" labelPlacement="end" />
-                    <FormControlLabel value="character" control={<Radio />} label="Character" labelPlacement="end" />
-                    <FormControlLabel value="state" control={<Radio />} label="State" labelPlacement="end" />
-                    <Divider />
-                    <FormControlLabel value="group" control={<Radio />} label="Group" labelPlacement="end" />
-                    <FormControlLabel value="person" control={<Radio />} label="Person" labelPlacement="end" />
-                    <Divider />
-                    <FormControlLabel value="image" control={<Radio />} label="Image" labelPlacement="end" />
+                        <FormControlLabel value="otu" control={<Radio />} label="Taxa (OTU)" labelPlacement="end"/>
+                        <FormControlLabel value="description" control={<Radio />} label="Description" labelPlacement="end"/>
+                        <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end" />
+                        <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end" />
+                        <FormControlLabel value="image" control={<Radio />} label="Image" labelPlacement="end" />
+
+                        <Divider />
+
+                        <FormControlLabel value="person" control={<Radio />} label="Person" labelPlacement="end" />
+                        <FormControlLabel value="reference" control={<Radio />} label="Reference" labelPlacement="end" />
+                        <FormControlLabel value="group" control={<Radio />} label="Group" labelPlacement="end" />
+
+                        <Divider />
+
+                        <FormControlLabel value="schema" control={<Radio />} label="Schema" labelPlacement="end" />
+                        <FormControlLabel value="character" control={<Radio />} label="Character" labelPlacement="end" />
+                        <FormControlLabel value="state" control={<Radio />} label="State" labelPlacement="end" />
+
+                        <Divider />
+                        
+                        <FormControlLabel value="synonym" control={<Radio />} label="Synonym" labelPlacement="end"/>
+                        <FormControlLabel value="comment" control={<Radio />} label="Comment" labelPlacement="end"/>
                     </RadioGroup>
                 </FormControl>
         );    
