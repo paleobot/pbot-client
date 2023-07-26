@@ -15,7 +15,7 @@ const DateType = (props) => {
             component={TextField}
             type="text"
             name={props.name}
-            label="Date type"
+            label="Units"
             select={true}
             SelectProps={{
                 multiple: false,
