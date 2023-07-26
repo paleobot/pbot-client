@@ -462,7 +462,7 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                                     component={SensibleTextField}
                                     type="text"
                                     name="citation"
-                                    label="Citation"
+                                    label="Credit"
                                     fullWidth 
                                     disabled={false}
                                 />
