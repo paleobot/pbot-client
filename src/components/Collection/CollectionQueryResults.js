@@ -196,7 +196,7 @@ function Collections(props) {
                     <div style={indent}><b>state:</b> {collection.state}</div>
                     <div style={indent}><b>protected site:</b> {collection.protectedSite}</div>
                     <div style={indent}><b>scale of geographic resolution:</b> {collection.geographicResolution}</div>
-                    <div style={indent}><b>comments on geographic information:</b> {collection.geographicComments}</div>
+                    <div style={indent}><b>notes on geographic information:</b> {collection.geographicComments}</div>
                     
                     <div style={header1}><Typography variant="h6">Age</Typography></div>
                     <div style={indent}><b>timescale:</b> {collection.timescale}</div>
@@ -223,7 +223,7 @@ function Collections(props) {
                             <b>numeric minimum age type:</b> {collection.numericAgeMinType}
                         </Stack>
                     </div>
-                    <div style={indent}><b>comments on age information:</b> {collection.ageComments}</div>
+                    <div style={indent}><b>notes on age information:</b> {collection.ageComments}</div>
 
                     <div style={header1}><Typography variant="h6">Geologic</Typography></div>
                     <div style={indent}><b>lithology:</b> {collection.lithology}</div>
@@ -233,9 +233,9 @@ function Collections(props) {
                     <div style={indent2}><b>formation:</b> {collection.stratigraphicFormation}</div>
                     <div style={indent2}><b>member:</b> {collection.stratigraphicMember}</div>
                     <div style={indent2}><b>bed:</b> {collection.stratigraphicBed}</div>
-                    <div style={indent2}><b>comments on stratigraphy:</b> {collection.stratigraphicComments}</div>
+                    <div style={indent2}><b>notes on stratigraphy:</b> {collection.stratigraphicComments}</div>
                     <div style={indent}><b>environment:</b> {collection.environment}</div>
-                    <div style={indent}><b>comments on environment:</b> {collection.environmentComments}</div>
+                    <div style={indent}><b>notes on environment:</b> {collection.environmentComments}</div>
 
                     <div style={header1}><Typography variant="h6">Collecting</Typography></div>
                     <div style={indent}><b>collection type:</b> {collection.collectionType}</div>
@@ -257,7 +257,7 @@ function Collections(props) {
                     }
                     <div style={indent}><b>collection methods:</b> {collection.collectionMethods}</div>
                     <div style={indent}><b>collectors:</b> {collection.collectors}</div>
-                    <div style={indent}><b>comments about collecting methods:</b> {collection.collectionComments}</div>
+                    <div style={indent}><b>notes about collecting methods:</b> {collection.collectionComments}</div>
 
 
                     {collection.specimens && collection.specimens.length > 0 &&
