@@ -9,7 +9,7 @@ import {
   } from "@apollo/client";
   
 const CharacterMenuItems = (props) => {
-    const characters = sort([...props.characters], "order", "name");
+    const characters = sort([...props.characters], "#order", "name");
 
     const indent = props.level * 2;
     const fontWeight = props.level === 0 ? "bold" : "normal";
@@ -37,7 +37,7 @@ const CharacterMenuItems = (props) => {
 }
 
 const sortAndFlatten = (characters, level) => {
-    const chars = sort([...characters], "order", "name");
+    const chars = sort([...characters], "#order", "name");
     
     const indent = level * 2;
     const fontWeight = level === 0 ? "bold" : "normal";
