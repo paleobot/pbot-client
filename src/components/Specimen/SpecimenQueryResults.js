@@ -37,15 +37,15 @@ function Specimens(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.collection && !filters.preservationMode && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema) {
+        if (!filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
             if (filters.collection) {
                 filter += ", {collection: {pbotID: $collection}}"
             }
-            if (filters.preservationMode) {
-                filter += ", {preservationMode: {pbotID: $preservationMode}}"
+            if (filters.preservationModes) {
+                filter += ", {preservationModes: {pbotID_in: $preservationModes}}"
             }
             if (filters.partsPreserved) {
                 console.log("adding partsPreserved")
@@ -97,7 +97,7 @@ function Specimens(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $idigbiouuid: String, $gbifID: String, ${groups} ${filters.preservationMode ? ", $preservationMode: ID" : ""} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.identifiers ? ", $identifiers: [ID!]" : ""} ${filters.collection ? ", $collection: ID" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
+            query ($pbotID: ID, $name: String, $idigbiouuid: String, $gbifID: String, ${groups} ${filters.preservationModes ? ", $preservationModes: [ID]" : ""} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.identifiers ? ", $identifiers: [ID!]" : ""} ${filters.collection ? ", $collection: ID" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
                 Specimen (pbotID: $pbotID, name: $name idigbiouuid: $idigbiouuid gbifID: $gbifID ${filter}) {
                     pbotID
                     name
@@ -120,7 +120,7 @@ function Specimens(props) {
                         given
                         surname
                     } 
-                    preservationMode {
+                    preservationModes {
                         name
                     }
                     idigbiouuid
@@ -275,7 +275,7 @@ function Specimens(props) {
                 <div style={indent}><b>references:</b></div>
                 {s.references && s.references.length > 0 &&
                     <div>
-                        {alphabetize([...s.references], "order").map((reference, idx) => (
+                        -?{alphabetize([...s.references], "order").map((reference, idx) => (
                             <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
                         ))}
                     </div>
@@ -285,8 +285,7 @@ function Specimens(props) {
                 <div style={indent}><b>parts preserved:</b> {s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
                     <div style={indent}><b>notable features:</b> {s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}</div>
 
-                {/*A mild shenanigan here to handle old specimen nodes without PRESERVED_BY relationships*/}
-                <div style={indent}><b>preservation mode:</b> {s.preservationMode && s.preservationMode.constructor.name === "Object" ? s.preservationMode.name : "unspecified"}</div>
+                <div style={indent}><b>preservation modes:</b> {s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}</div>
 
                 <div style={header1}><Typography variant="h6">Repository</Typography></div>
                 <div style={indent}><b>repository:</b> {s.repository}</div>
