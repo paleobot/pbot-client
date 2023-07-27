@@ -9,7 +9,7 @@ import {
   } from "@apollo/client";
 
 const sortAndFlatten = (states, level) => {
-    const lstates = sort([...states], "order", "name");
+    const lstates = sort([...states], "#order", "name");
     
     const indent = level * 2;
     const fontWeight = level === 0 ? "bold" : "normal";

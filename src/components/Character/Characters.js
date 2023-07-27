@@ -19,7 +19,7 @@ function Characters(props) {
         return 0;
     });
     */
-   const characters = sort([...props.characters], "order", "name");
+   const characters = sort([...props.characters], "#order", "name");
 
     
     const style = props.top ? {marginLeft:"4em"} : {marginLeft:"2em"};

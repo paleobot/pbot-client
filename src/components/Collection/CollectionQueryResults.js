@@ -4,7 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import { Link, Grid, Typography, Stack } from '@mui/material';
-import { alphabetize } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
@@ -19,9 +19,7 @@ function Specimens(props) { //TODO: move this to standalone file in Specimens fo
     return specimens.map(({pbotID, name}) => {
         const directURL = new URL(window.location.origin + "/query/specimen/" + pbotID);
         return (
-            <div>
             <Link key={pbotID} style={style} color="success.main" underline="hover" href={directURL}  target="_blank">{name}</Link>
-            </div>
         )
     });
 }
@@ -185,7 +183,7 @@ function Collections(props) {
                     {collection.references && collection.references.length > 0 &&
                         <div>
                             <div style={indent}><b>references:</b></div>
-                            {alphabetize([...collection.references], "order").map(reference => (
+                            {sort([...collection.references], "#order").map(reference => (
                                 <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
                             ))}
                         </div>

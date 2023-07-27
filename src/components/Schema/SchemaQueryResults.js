@@ -5,7 +5,7 @@ import {
 } from "@apollo/client";
 import { Link, Grid, Typography } from '@mui/material';
 import Characters from "../Character/Characters";
-import { alphabetize } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext';
@@ -272,7 +272,7 @@ function Schemas(props) {
                     {schema.references && schema.references.length > 0 &&
                         <div>
                             <div style={indent}><b>references:</b></div>
-                            {alphabetize([...schema.references], "order").map(reference => (
+                            {sort([...schema.references], "#order").map(reference => (
                                 <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
                             ))}
                         </div>
@@ -280,7 +280,7 @@ function Schemas(props) {
                     {schema.authoredBy && schema.authoredBy.length > 0 &&
                         <div>
                             <div style={indent}><b>authors:</b></div>
-                            {alphabetize([...schema.authoredBy], "order").map(author => (
+                            {sort([...schema.authoredBy], "#order").map(author => (
                                 <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
                             ))}
                         </div>

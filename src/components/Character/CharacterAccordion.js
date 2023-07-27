@@ -276,7 +276,7 @@ const Character = (props) => {
 
     let subCharacters;
     if (props.character.characters && props.character.characters.length > 0) { 
-        subCharacters = sort([...props.character.characters], "order", "name");
+        subCharacters = sort([...props.character.characters], "#order", "name");
     }
 
     return (
@@ -386,7 +386,7 @@ export const CharacterAccordion = (props) => {
     console.log(">>>>>>>>>>>>Results<<<<<<<<<<<<<");
     console.log(data.Schema[0].characters);
 
-    const characters = sort([...data.Schema[0].characters], "order", "name");
+    const characters = sort([...data.Schema[0].characters], "#order", "name");
     //const states = sort([...data.Schema[0].states], "order", "name");
 
     const style = {minWidth: "12ch"}

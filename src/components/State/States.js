@@ -17,7 +17,7 @@ function States(props) {
         return 0;
     });
     */
-    const states = sort([...props.states], "order", "name");
+    const states = sort([...props.states], "#order", "name");
 
     const myUL = {marginTop:"0", marginBottom:"0"}
     return (

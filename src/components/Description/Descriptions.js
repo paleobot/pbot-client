@@ -1,6 +1,6 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { alphabetize } from '../../util.js';
+import { sort } from '../../util.js';
 
 function Descriptions(props) {
     console.log("Descriptions");
@@ -29,7 +29,7 @@ function Descriptions(props) {
             <div>
                 <div>
                     <div style={indent}><b>references:</b></div>
-                    {alphabetize([...references], "order").map(reference => (
+                    {sort([...references], "#order").map(reference => (
                         <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
                     ))}
                 </div>

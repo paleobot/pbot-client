@@ -3,7 +3,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { alphabetize } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
 import { Link, Grid, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
@@ -186,7 +186,7 @@ function References(props) {
                 {reference.firstPage && <div style={indent}><b>firstPage</b> {reference.firstPage} </div>}
                 {reference.lastPage && <div style={indent}><b>lastPage</b> {reference.lastPage} </div>} 
                 <div style={indent}><b>authors:</b></div>
-                    {alphabetize([...reference.authoredBy], "order").map(author => (
+                    {sort([...reference.authoredBy], "#order").map(author => (
                         <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
                     ))}
                 
