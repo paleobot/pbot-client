@@ -932,7 +932,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                             component={SensibleTextField}
                                             name="geographiccomments"
                                             type="text"
-                                            label="Comments on geographic information"
+                                            label="Notes on geographic information"
                                         />
                                         <br />
 
@@ -949,7 +949,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                             component={SensibleTextField}
                                             name="agecomments"
                                             type="text"
-                                            label="Comments"
+                                            label="Notes on geographic age"
                                         />
                                         <br />
 
@@ -1003,7 +1003,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                                 component={SensibleTextField}
                                                 name="stratigraphiccomments"
                                                 type="text"
-                                                label="Comments on stratigraphy"
+                                                label="Notes on stratigraphy"
                                             />
                                             <br />
                                         </div>
@@ -1015,7 +1015,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                             component={SensibleTextField}
                                             name="environmentcomments"
                                             type="text"
-                                            label="Comments on environment"
+                                            label="Notes on environment"
                                         />
                                         <br />
 
@@ -1038,7 +1038,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                             component={SensibleTextField}
                                             type="text"
                                             name="collectingcomments"
-                                            label="Comments on collection methods"
+                                            label="Notes on collection methods"
                                             fullWidth 
                                             disabled={false}
                                         />
