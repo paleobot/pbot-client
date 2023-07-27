@@ -10,7 +10,7 @@ import { Checkbox, FormControlLabel, Grid, IconButton, Link, List, ListItem, Lis
 import { Field, useFormikContext } from 'formik';
 import SearchIcon from '@mui/icons-material/Search';
 import { responsePathAsArray } from 'graphql';
-import { alphabetize } from '../../util';
+import { sort } from '../../util';
 
 
 const PBDBDialog = (props) => {
@@ -34,7 +34,7 @@ const PBDBDialog = (props) => {
             url = props.values.year ? `${url}&ref_pubyr=${props.values.year}` : url;
             url = props.values.doi ? `${url}&ref_doi=${props.values.doi}` : url;
             url = props.values.journal || props.values.bookTitle ? `${url}&pub_title=${props.values.journal ? props.values.journal : props.values.bookTitle}` : url;
-            const authors = alphabetize(props.values.authors, "order").reduce((str, author, idx) => {
+            const authors = sort(props.values.authors, "#order").reduce((str, author, idx) => {
                 return idx === 0 ? 
                     author.searchName : 
                     idx === 1 ?
