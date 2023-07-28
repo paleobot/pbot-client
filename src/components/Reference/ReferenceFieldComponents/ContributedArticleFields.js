@@ -43,16 +43,6 @@ const ContributedArticleFields = (props) => {
                     <Field
                         component={SensibleTextField}
                         type="text"
-                        name="bookTitle"
-                        label="Book title"
-                        fullWidth 
-                        disabled={false}
-                    />
-                    <br />
-
-                    <Field
-                        component={SensibleTextField}
-                        type="text"
                         name="year"
                         label="Year"
                         fullWidth 
@@ -61,6 +51,16 @@ const ContributedArticleFields = (props) => {
                     <br />
 
                     <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
+
+                    <Field
+                        component={SensibleTextField}
+                        type="text"
+                        name="bookTitle"
+                        label="Book title"
+                        fullWidth 
+                        disabled={false}
+                    />
+                    <br />
 
                     <Field
                         component={SensibleTextField}
