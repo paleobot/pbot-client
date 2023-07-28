@@ -833,7 +833,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 component={SensibleTextField}
                                 name="gpsuncertainty"
                                 type="text"
-                                label="GPS coordinate uncertainty"
+                                label="GPS coordinate uncertainty (meters)"
                             />
                             <br />
 
