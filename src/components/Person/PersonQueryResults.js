@@ -24,6 +24,7 @@ function Persons(props) {
                     surname
                     email
                     orcid
+                    bio
                 }
             }
         `;
@@ -70,6 +71,7 @@ function Persons(props) {
             <div style={indent}><b>pbotID:</b> {person.pbotID}</div>
             <div style={indent}><b>email:</b> {person.email}</div> 
             <div style={indent}><b>orcid:</b> {person.orcid} </div>
+            <div style={indent}><b>bio:</b> {person.bio} </div>
             <br />
         </div>
     ));
