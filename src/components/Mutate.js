@@ -112,7 +112,7 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                                     <EditIcon />
                                 </Tooltip>
                             </ToggleButton>
-                            <ToggleButton value="delete" aria-label="delete" >
+                            <ToggleButton value="delete" aria-label="delete" disabled={selectedForm === "person"}>
                                 <Tooltip title="Delete">
                                     <RemoveIcon />
                                 </Tooltip>
