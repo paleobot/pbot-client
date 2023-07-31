@@ -14,6 +14,9 @@ const OTUMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.otu || null,
                 identifiedSpecimens: queryParams.identifiedSpecimens || null,
+                partsPreservedIDs: queryParams.partsPreserved || null,
+                notableFeaturesIDs: queryParams.notableFeatures || null,
+                notes: queryParams.notes || null,
                 typeSpecimens: queryParams.typeSpecimens || null,
                 holotypeSpecimen: queryParams.holotypeSpecimen || null,
                 majorTaxonGroup: queryParams.majorTaxonGroup || null,

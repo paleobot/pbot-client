@@ -23,12 +23,19 @@ function OTUList(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.states && !filters.character && !filters.schema) {
+        if (!filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
             //TODO: the graphql path below will change from exampleSpecimens to whatever we call
             //the set of all specimens
+            if (filters.partsPreserved) {
+                console.log("adding partsPreserved")
+                filter += ", {partsPreserved_some: {pbotID_in: $partsPreserved}}"
+            }
+            if (filters.notableFeatures) {
+                filter += ", {notableFeatures_some: {pbotID_in: $notableFeatures}}"
+            }
             if (filters.states) {
                 filter += `, {
                     identifiedSpecimens_some: {
@@ -81,7 +88,7 @@ function OTUList(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
+            query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
                 OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species ${filter}) {
                     pbotID
                     name
@@ -103,6 +110,13 @@ function OTUList(props) {
                     family
                     genus
                     species
+                    notes
+                    partsPreserved {
+                        type
+                    }
+                    notableFeatures {
+                        name
+                    }
                     elementOf {
                         name
                     }
@@ -242,6 +256,8 @@ const OTUQueryResults = ({queryParams}) => {
                 schema: queryParams.character ? null : queryParams.schema || null,
                 character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
+                partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
+                notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSynonyms={queryParams.includeSynonyms} 
