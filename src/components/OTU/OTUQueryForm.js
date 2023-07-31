@@ -5,7 +5,9 @@ import React from 'react';
 import * as Yup from 'yup';
 import { CharacterSelect } from '../Character/CharacterSelect.js';
 import { GroupSelect } from '../Group/GroupSelect.js';
+import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
 import { SchemaSelect } from '../Schema/SchemaSelect.js';
+import { NotableFeaturesSelect } from '../Specimen/NotableFeaturesSelect.js';
 import { StateSelect } from '../State/StateSelect.js';
 
 const OTUQueryForm = ({handleSubmit}) => {
@@ -18,6 +20,8 @@ const OTUQueryForm = ({handleSubmit}) => {
                 schema: '',
                 character: '',
                 states: [],
+                partsPreserved: [],
+                notableFeatures: [],
                 groups: [],
                 includeHolotypeDescription: false,
                 includeMergedDescription: false,
@@ -103,6 +107,12 @@ const OTUQueryForm = ({handleSubmit}) => {
                         <br />
                     </div>
                 }
+
+                <PartsPreservedSelect/>
+                <br />
+                
+                <NotableFeaturesSelect />
+                <br />
 
                 <GroupSelect/>
                 <br />

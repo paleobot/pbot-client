@@ -13,6 +13,8 @@ import {
 } from "@apollo/client";
 import { confidenceQualitative, majorTaxonGroups } from '../../Lists.js';
 import { SensibleTextField } from '../SensibleTextField.js';
+import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
+import { NotableFeaturesSelect } from '../Specimen/NotableFeaturesSelect.js';
 
 const MajorTaxonGroupSelect = (props) => {
     const style = {minWidth: "12ch"}
@@ -82,6 +84,7 @@ const OTUSelect = (props) => {
                     genus
                     species
                     additionalClades
+                    notes
                     identifiedSpecimens {
                       Specimen {
                         name
@@ -99,6 +102,12 @@ const OTUSelect = (props) => {
                             name
                             pbotID
                         }
+                    }
+                    partsPreserved {
+                        pbotID
+                    }
+                    notableFeatures {
+                        pbotID
                     }
                     references (orderBy: order_asc) {
                         Reference {
@@ -156,6 +165,9 @@ const OTUSelect = (props) => {
                 props.values.genus = child.props.dgenus || '';
                 props.values.species = child.props.dspecies || '';
                 props.values.additionalClades = child.props.dadditionalclades || '';
+                props.values.notes = child.props.dnotes ? child.props.dnotes : '';
+                props.values.partsPreserved = child.props.dpartspreserved ? JSON.parse(child.props.dpartspreserved) : [];
+                props.values.notableFeatures = child.props.dnotablefeatures ? JSON.parse(child.props.dnotablefeatures) : [];
                 props.values.identifiedSpecimens = child.props.didentifiedspecimens ? JSON.parse(child.props.didentifiedspecimens) : [];
                 props.values.typeSpecimens = child.props.dtypespecimens ? JSON.parse(child.props.dtypespecimens) : [];
                 props.values.holotypeSpecimen = child.props.dholotypespecimen;
@@ -181,6 +193,9 @@ const OTUSelect = (props) => {
                     dgenus={otu.genus}
                     dspecies={otu.species}
                     dadditionalclades={otu.additionalClades}
+                    dnotes={otu.notes}
+                    dpartspreserved={otu.partsPreserved ? JSON.stringify(otu.partsPreserved.map(organ => organ.pbotID)) : null}
+                    dnotablefeatures={otu.notableFeatures ? JSON.stringify(otu.notableFeatures.map(feature => feature.pbotID)) : null}
                     didentifiedspecimens={otu.identifiedSpecimens ? JSON.stringify(otu.identifiedSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
                     dtypespecimens={otu.typeSpecimens ? JSON.stringify(otu.typeSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
                     dholotypespecimen={otu.holotypeSpecimen.Specimen.pbotID}
@@ -342,6 +357,9 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 authority: '',
                 diagnosis: '',
                 qualityIndex: '',
+                partsPreserved: [],
+                notableFeatures: [],
+                notes: '',
                 references: [{
                     pbotID: '',
                     order:'',
@@ -405,6 +423,9 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 authority: Yup.string().required(),
                 diagnosis: Yup.string().required(),
                 qualityIndex: Yup.string().required("Quality index is required"),
+                partsPreserved: Yup.array().of(Yup.string()).min(1, "At least one part is required"),
+                notableFeatures: Yup.array().of(Yup.string()),
+                notes: Yup.string(),
                 references: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
@@ -476,6 +497,9 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         />
                         <br />
                
+                        <PartsPreservedSelect />
+                        <br />
+
                         <Field 
                             component={SensibleTextField}
                             name="diagnosis" 
@@ -581,6 +605,21 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                             label="Additional clades"
                             disabled={false}
                         />
+                        <br />
+
+                        <NotableFeaturesSelect />
+                        <br />
+                
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="notes"
+                            label="Notes"
+                            multiline={true}
+                            fullWidth 
+                            disabled={false}
+                        >
+                        </Field>
                         <br />
 
                     </AccordionDetails>

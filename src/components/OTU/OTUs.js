@@ -39,7 +39,7 @@ function OTUs(props) {
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : otus.map(({ pbotID, name, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, species, additionalClades, holotypeSpecimen, mergedDescription, synonyms, elementOf}) => {
+    ) : otus.map(({ pbotID, name, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, species, additionalClades, holotypeSpecimen, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures}) => {
        const directQParams = [];
         if (props.includeSynonyms) {
             directQParams.push("includeSynonyms");
@@ -101,7 +101,12 @@ function OTUs(props) {
                     <div style={indent}><b>genus:</b> {genus}</div>
                     <div style={indent}><b>species:</b> {species}</div>
                     <div style={indent}><b>additional clades:</b> {additionalClades}</div>
+                    <div style={indent}><b>notes:</b> {notes}</div>
                     
+                    <div style={header1}><Typography variant="h6">Preservation</Typography></div>
+                    <div style={indent}><b>parts preserved:</b> {partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
+                    <div style={indent}><b>notable features:</b> {notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}</div>
+
                     {synonyms && synonyms.length > 0 &&
                     <div>
                         <div style={indent}><b>synonyms:</b></div>
