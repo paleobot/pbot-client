@@ -14,7 +14,6 @@ const PersonMutateResults = ({queryParams}) => {
                 surname: queryParams.surname || null,
                 email: queryParams.email || null,
                 orcid: queryParams.orcid || null,
-                groups: queryParams.groups || null,
             }}
             entity="Person"
             mode={queryParams.mode}

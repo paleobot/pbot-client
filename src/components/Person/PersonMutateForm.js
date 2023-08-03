@@ -22,7 +22,6 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
         surname: '',
         email: '',
         orcid: '',
-        groups: [],
         mode: mode,
     };
     
@@ -48,7 +47,6 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 surname: Yup.string().required(),
                 email: Yup.string().email(),
                 orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{4}/, {message: "not a valid orcid"}),
-                groups: Yup.array().of(Yup.string()).required(),
             })}
             onSubmit={(values, {resetForm}) => {
                 values.mode = mode;
@@ -104,8 +102,6 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                         />
                         <br />
 
-                        <GroupSelect sx={{display:"none"}} />
-                        <br />
                     </AccordionDetails>
                 </Accordion>
 
