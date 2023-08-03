@@ -166,6 +166,8 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema, c
     const order = characterInstance ? 
         characterInstance.state.order : 
         suggestedOrder ? suggestedOrder : null;
+    const quantity = characterInstance ? 
+        characterInstance.state.value : null;
 
     const initValues = {
                 characterInstance: cI || '',
@@ -173,7 +175,7 @@ const CharacterInstanceMutateForm = ({handleSubmit, mode, description, schema, c
                 schema: schema || '',
                 character: character || '',
                 state: state || '', 
-                quantity: '',
+                quantity: quantity || '',
                 order: order || '1',
                 mode: mode,
     };
