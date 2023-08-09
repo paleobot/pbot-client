@@ -42,6 +42,7 @@ export const SensibleTextField = (props) => {
             value={innerValue}
             onChange={handleOnChange}
             onBlur={handleOnBlur}
+            onKeyDown={e => { e.key === 'Enter' && handleOnBlur(e)}}
         />
     );
 };
