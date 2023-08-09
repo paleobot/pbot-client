@@ -347,7 +347,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 identifiedSpecimens: [],
                 typeSpecimens: [],
                 holotypeSpecimen: '',
-                majorTaxonGroups: '',
+                majorTaxonGroup: '',
                 pbdbParentTaxon: '',
                 family: '', 
                 genus: '', 
