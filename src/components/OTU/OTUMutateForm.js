@@ -414,7 +414,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                             console.error("PBDB fetch error", error);
                             return context.createError({message: "Network error, unable to access PBDB"})
                         }
-                }),
+                }).required(),
                 family: Yup.string().max(30, 'Must be 30 characters or less'),
                 genus: Yup.string().max(30, 'Must be 30 characters or less'),
                 species: Yup.string().max(30, 'Must be 30 characters or less'),
