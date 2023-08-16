@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
-import { TextField } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,14 +11,25 @@ import DialogTitle from '@mui/material/DialogTitle';
 export const LinkDialog = (props) => {
     const [open, setOpen] = React.useState(false);
     const [link, setLink] = React.useState('');
+    const [errMsg, setErrMsg] = React.useState('');
     const {setFieldValue} = useFormikContext();
 
     const handleClickOpen = () => {
         setOpen(true);
     };
 
+    const handleSubmit = () => {
+        try {
+            const url = new URL(link);
+            setFieldValue("link", link);
+            handleClose();              
+        } catch (e) {
+            setErrMsg("Invalid URL");
+        }
+                
+    };
+
     const handleClose = () => {
-        setFieldValue("link", link);
         setOpen(false);
     };
 
@@ -32,6 +43,9 @@ export const LinkDialog = (props) => {
             <DialogContent>
             <DialogContentText>
                 Enter a URL to an image.
+                {errMsg &&
+                    <Typography color="red">{errMsg}</Typography> 
+                }
             </DialogContentText>
             <TextField
                 id="link"
@@ -43,7 +57,7 @@ export const LinkDialog = (props) => {
             </DialogContent>
             <DialogActions>
             <Button color="secondary" onClick={handleClose}>Cancel</Button>
-            <Button color="secondary" onClick={handleClose}>Enter</Button>
+            <Button color="secondary" onClick={handleSubmit}>Enter</Button>
             </DialogActions>
         </Dialog>
         </div>
