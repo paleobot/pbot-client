@@ -681,6 +681,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 collectingcomments: '',
                 sizeclasses: [],
                 pbdbid: '',
+                pbdbCheck: false,
                 references: [{
                     pbotID: '',
                     order:'',
@@ -716,6 +717,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             initialValues={initValues}
             validationSchema={Yup.object({
                 name: Yup.string().required(),
+                collectiontype: Yup.string().required(),
                 lithology: Yup.string().required(),
                 additionallithology: Yup.string(),
                 stratigraphicgroup: Yup.string(),
@@ -738,7 +740,11 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 geographicresolution: Yup.string(),
                 geographiccomments: Yup.string(),
                 protectedSite: Yup.boolean().required("Protection status is required"),
-                pbdbid: Yup.string(),
+                pbdbid: Yup.string().when('pbdbCheck', {
+                    is: false,
+                    then: Yup.string().required("While PBDB ID is not required, you must at least check")
+                }),
+                pbdbCheck: Yup.bool(),
                 country: Yup.string().required(),
                 directdate: Yup.number(),
                 directdateerror: Yup.number(),

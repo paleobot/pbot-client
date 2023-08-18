@@ -146,6 +146,7 @@ export default function PBDBSelect(props) {
     const [open, setOpen] = React.useState(false);
     
     const handleClose = () => {
+        formikProps.setFieldValue("pbdbCheck", true);
         setOpen(false);
     };
 
@@ -178,7 +179,7 @@ export default function PBDBSelect(props) {
 
             //formikProps.setFieldValue("doi", (reference.identifier && reference.identifier.type === "doi") ? reference.identifier.id : null);
         }
-        setOpen(false);
+        handleClose();
     };
 
 
