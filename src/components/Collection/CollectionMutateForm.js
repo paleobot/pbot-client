@@ -681,7 +681,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 collectingcomments: '',
                 sizeclasses: [],
                 pbdbid: '',
-                pbdbCheck: false,
+                pbdbCheck: "delete" === mode, //only force pbdb check if not deleting
                 references: [{
                     pbotID: '',
                     order:'',
