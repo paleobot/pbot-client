@@ -12,13 +12,13 @@ import { PersonSelect } from './PersonSelect.js';
 export const PersonManager = (props) => {
     console.log("PersonManager");
 
-    const maxOrder = !props.omitOrder ? props.values.authors.reduce((acc, author) => parseInt(author.order) > acc ? parseInt(author.order) : acc, 0) : 0;
-
     const name = props.name ? props.name : "authors";
     console.log(name)
     console.log(props.values)
     console.log(props.values[name])
-    
+
+    const maxOrder = !props.omitOrder ? props.values[name].reduce((acc, person) => parseInt(person.order) > acc ? parseInt(person.order) : acc, 0) : 0;
+
     const style = {marginTop: "1.5em"}
     return (
     <div style={style}>
