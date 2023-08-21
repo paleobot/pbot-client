@@ -8,6 +8,7 @@ import {
   gql
 } from "@apollo/client";
 import { PersonSelect } from './PersonSelect.js';
+import ClearIcon from '@mui/icons-material/Clear';
 
 export const PersonManager = (props) => {
     console.log("PersonManager");
@@ -34,7 +35,7 @@ export const PersonManager = (props) => {
                         //props.values.authors[index].order = index+1; 
                         return (
                             <Grid container spacing={2} direction="row" key={index}>
-                                <Grid item xs={0}>
+                                <Grid item xs={7}>
                                     {console.log(props.values[name].filter(person => person.pbotID !== person.pbotID))}
                                     <PersonSelect name={`${name}.${index}.pbotID`} exclude={props.values[name].filter(person => person.pbotID !== p.pbotID)} maxOrder={maxOrder}/>
                                 </Grid>
@@ -51,17 +52,17 @@ export const PersonManager = (props) => {
                                 </Grid>
                                 }
                                 {(index > 0 || props.optional) &&
-                                <Grid item xs={1}>
+                                <Grid item xs={2}>
                                     <Button
                                         type="button"
                                         variant="text" 
                                         color="secondary" 
                                         size="large"
                                         onClick={() => remove(index)}
-                                        sx={{width:"50px"}}
+                                        sx={{width:"100px"}}
                                         //disabled={props.values.authors[index].name === ''}
                                     >
-                                        X
+                                        <ClearIcon/>
                                     </Button>
                                 </Grid>
                                 }
