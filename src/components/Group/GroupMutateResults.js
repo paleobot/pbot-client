@@ -12,7 +12,6 @@ const GroupMutateResults = ({queryParams}) => {
                 pbotID: queryParams.group || null,
                 name: queryParams.name || null,
                 purpose: queryParams.purpose || null,
-                //members: queryParams.members || null 
                 members: queryParams.members ? 
                     queryParams.members.map(({pbotID}) => pbotID)  : null, 
             }}
