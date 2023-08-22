@@ -3,7 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
-import { alphabetize } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -11,6 +11,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
+import { PersonManager } from '../Person/PersonManager.js';
 
 const GroupSelect = (props) => {
     console.log("GroupSelect");
@@ -23,6 +24,7 @@ const GroupSelect = (props) => {
                 purpose
                 members {
                     pbotID
+                    surname
                 }
             }            
         }
@@ -60,89 +62,35 @@ const GroupSelect = (props) => {
                 props.handleChange(event);
             }}
         >
-            {groups.map((group) => (
+            {groups.map((group) => {
+                //sort members, then move current user to top
+                let members = sort([...group.members], "surname").filter(m => m.pbotID !== props.me);
+                members.unshift({pbotID: props.me});
+
+                return(
                 <MenuItem 
                     key={group.pbotID} 
                     value={group.pbotID}
                     dname={group.name}
                     dpurpose={group.purpose}
-                    dmembers={group.members ? JSON.stringify(group.members.map(member => member.pbotID)) : null}
+                    dmembers={group.members ? JSON.stringify(members) : null}
                 >{group.name}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
-const MemberSelect = (props) => {
-    console.log("MemberSelect");
-
-    const me = localStorage.getItem('PBOTMe');
-    console.log(me);
-    
-    const gQL = gql`
-            query {
-                Person (
-                    filter: {
-                        AND: [
-                            {password_regexp: ".*"},
-                            {email_not: "${me}"},
-                            {
-                                AND: [{given_not: "guest"}, {surname_not: "guest"}]
-                            }
-                        ]
-                }) {
-                    pbotID
-                    given
-                    surname
-                }            
-            }
-        `;
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                                 
-    console.log(data.Person);
-    
-    const members = alphabetize(
-        data.Person.map(person => {
-            const newPerson = {...person};
-            console.log(newPerson);
-
-            newPerson.name = person.given + " " + person.surname;
-            return newPerson;
-        }), 
-    "surname");
-    console.log(members)
-    
-    return (
-        <Field
-            component={TextField}
-            type="text"
-            name="members"
-            label="Members"
-            fullWidth 
-            select={true}
-            SelectProps={{
-                multiple: true,
-            }}
-            disabled={false}
-        >
-            {members.map(({ pbotID, name }) => (
-                <MenuItem key={pbotID} value={pbotID}>{name}</MenuItem>
-            ))}
+            )})}
         </Field>
     )
 }
 
 
 const GroupMutateForm = ({handleSubmit, mode}) => {
+    console.log("GroupMutateForm")
+    const me = localStorage.getItem('PBOTMe');
+    console.log(me)
+
     const initValues = {
                 group: '', 
                 name: '',
                 purpose: '',
-                members: [],
+                members: [{pbotID:me}],
                 mode: mode,
     };
 
@@ -165,7 +113,13 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 purpose: Yup.string().required(),
-                members: Yup.array().of(Yup.string())//.min(1, "at least one member required"),
+                members: Yup.array().of(Yup.object({pbotID: Yup.string()})).min(1, "at least one member required"),
+                members: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Member name is required'),
+                     })
+                ).min(1, "at least one member required"),                
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -187,7 +141,7 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "edit" || mode === "delete") &&
                     <div>
-                        <GroupSelect values={props.values} handleChange={props.handleChange}/>
+                        <GroupSelect values={props.values} me={me} handleChange={props.handleChange}/>
                         <br />
                     </div>
                 }
@@ -225,8 +179,7 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
                             />
                             <br />
 
-                            <MemberSelect />
-                            <br />
+                            <PersonManager label="Members" name="members" omitOrder values={props.values} handleChange={props.handleChange}/>
                         </AccordionDetails>
                     </Accordion>
 
