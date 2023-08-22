@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
 
+
 const GroupMutateResults = ({queryParams}) => {
     console.log("GroupMutateResults");
     console.log(queryParams);
