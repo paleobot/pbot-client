@@ -110,7 +110,7 @@ export const InnerPersonSelect = (props) => {
                     SelectProps={{
                         multiple: false,
                     }}
-                    disabled={false}
+                    disabled={props.disabled}
                     onChange={(e,c) => {
                         console.log("click")
                         props.handleSelect(JSON.parse(c.props.dperson))
@@ -207,14 +207,14 @@ export const PersonSelect = (props) => {
                 color="secondary" 
                 size="large"
                 onClick={()=>{setOpen(true)}}
-                disabled={false}
+                disabled={props.disabled}
             >
                 <SearchIcon/>
             </IconButton>
             {open &&
                 <PersonDialog open={open} handleClose={handleClose} handleSelect={handleSelect} exclude={props.exclude} />
             }
-            <InnerPersonSelect name={props.name} exclude={props.exclude} values={formikProps.values} handleSelect={handleSelect}/>
+            <InnerPersonSelect disabled={props.disabled} name={props.name} exclude={props.exclude} values={formikProps.values} handleSelect={handleSelect}/>
         </Stack>
     );
 }
