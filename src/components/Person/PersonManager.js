@@ -37,7 +37,7 @@ export const PersonManager = (props) => {
                             <Grid container spacing={2} direction="row" key={index}>
                                 <Grid item xs={7}>
                                     {console.log(props.values[name].filter(person => person.pbotID !== person.pbotID))}
-                                    <PersonSelect name={`${name}.${index}.pbotID`} exclude={props.values[name].filter(person => person.pbotID !== p.pbotID)} maxOrder={maxOrder}/>
+                                    <PersonSelect disabled={"members" === name && index === 0} name={`${name}.${index}.pbotID`} exclude={props.values[name].filter(person => person.pbotID !== p.pbotID)} maxOrder={maxOrder}/>
                                 </Grid>
                                 {!props.omitOrder &&
                                 <Grid item xs={1}>
