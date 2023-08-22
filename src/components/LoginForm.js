@@ -35,7 +35,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
         .then(data => {
             console.log(data);
             if (data.token) {
-                return { ok: true, token: data.token}
+                return { ok: true, token: data.token, pbotID: data.pbotID}
             } else if (data.msg) {
                 return { ok: false, message: data.msg}
             } else {
@@ -94,7 +94,8 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
         if (loginResult.ok) {
             localStorage.setItem('PBOTMutationToken', loginResult.token);
             setToken(loginResult.token);
-            localStorage.setItem('PBOTMe', values.userName);
+            //localStorage.setItem('PBOTMe', values.userName);
+            localStorage.setItem('PBOTMe', loginResult.pbotID);
             console.log("navigating to workbench")
             navigate("/mutate");
         } else {
