@@ -113,7 +113,6 @@ const GroupMutateForm = ({handleSubmit, mode}) => {
             validationSchema={Yup.object({
                 name: Yup.string().required(),
                 purpose: Yup.string().required(),
-                members: Yup.array().of(Yup.object({pbotID: Yup.string()})).min(1, "at least one member required"),
                 members: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
