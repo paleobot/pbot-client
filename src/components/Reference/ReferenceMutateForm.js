@@ -1,29 +1,15 @@
-import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+import { Button, Stack } from '@mui/material';
+import { Field, Form, Formik } from 'formik';
+import React from 'react';
 import * as Yup from 'yup';
-import { Button, Link, IconButton, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Tooltip, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
-import { alphabetize } from '../../util.js';
-import {GroupSelect} from '../Group/GroupSelect.js';
-import {AuthorManager} from '../Person/AuthorManager.js';
-import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
-import {PublicationTypeSelect} from './PublicationTypeSelect.js';
+import { ReferenceSelect } from '../Reference/ReferenceSelect.js';
+import { PublicationTypeSelect } from './PublicationTypeSelect.js';
 
-import {
-  useQuery,
-  gql
-} from "@apollo/client";
-import PBDBSelect from './PBDBSelect.js';
-import { PersonManager } from '../Person/PersonManager.js';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { SensibleTextField } from '../SensibleTextField.js';
-import { publicationTypes } from "../../Lists.js"
-import JournalFields from './ReferenceFieldComponents/JournalFields.js'
-import StandaloneBookFields from './ReferenceFieldComponents/StandaloneBookFields.js'
-import EditedCollectionFields from './ReferenceFieldComponents/EditedCollectionFields.js'
-import ContributedArticleFields from './ReferenceFieldComponents/ContributedArticleFields.js'
-import UnpublishedFields from './ReferenceFieldComponents/UnpublishedFields.js'
+import ContributedArticleFields from './ReferenceFieldComponents/ContributedArticleFields.js';
+import EditedCollectionFields from './ReferenceFieldComponents/EditedCollectionFields.js';
+import JournalFields from './ReferenceFieldComponents/JournalFields.js';
+import StandaloneBookFields from './ReferenceFieldComponents/StandaloneBookFields.js';
+import UnpublishedFields from './ReferenceFieldComponents/UnpublishedFields.js';
 
 const ReferenceMutateForm = ({handleSubmit, mode}) => {
     
@@ -46,6 +32,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 authors: [],
                 doi: '',
                 pbdbid: '',
+                pbdbCheck: "delete" === mode, //only force pbdb check if not deleting,
                 public: true,
                 groups: [],
                 mode: mode,
@@ -165,12 +152,20 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                 }),
                 public: Yup.boolean(),
                 doi: Yup.string(),
-                pbdbid: Yup.string(),
-                groups: Yup.array().of(Yup.string()).when('public', {
-                    is: false,
-                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
-                })
-            })}
+                pbdbid: Yup.string().when("publicationType", {
+                    is: (val) => (
+                        val === "journal article" || 
+                        val === "standalone book" || 
+                        val === "edited book of contributed articles" || 
+                        val === "contributed article in edited book"
+                    ),
+                    then: (schema) => schema.when('pbdbCheck', {
+                        is: false,
+                        then: Yup.string().required("While PBDB ID is not required, you must at least check")
+                    }),
+                    otherwise: (schema) => schema
+                }),
+             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
