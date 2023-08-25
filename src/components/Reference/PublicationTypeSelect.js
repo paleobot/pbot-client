@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
 import { MenuItem } from "@mui/material";
 import { Field, useFormikContext } from "formik";
-import { publicationTypes } from "../../Lists.js"
 import { TextField } from 'formik-mui';
+import React from 'react';
+import { publicationTypes } from "../../Lists.js";
 
 export const PublicationTypeSelect = (props) => {
 
@@ -21,6 +21,7 @@ export const PublicationTypeSelect = (props) => {
                 multiple: false,
             }}
             onChange={(event, child) => {
+                formikProps.setFieldValue("pbdbCheck", false);
                 if (child.props.dauthorsrequired === "true") {
                     formikProps.values.authors = [{
                         pbotID: '',
