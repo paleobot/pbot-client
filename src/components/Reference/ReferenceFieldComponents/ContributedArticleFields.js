@@ -1,8 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary, Stack } from '@mui/material';
 import { Field } from 'formik';
-import { CheckboxWithLabel } from 'formik-mui';
 import React from 'react';
-import { GroupSelect } from '../../Group/GroupSelect.js';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PersonManager } from '../../Person/PersonManager.js';
@@ -50,6 +48,18 @@ const ContributedArticleFields = (props) => {
                     />
                     <br />
 
+                    <Stack direction="row" spacing={0}>
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="pbdbid"
+                            label="PBDB ID"
+                            fullWidth 
+                            disabled={false}
+                        />
+                        <PBDBSelect />
+                    </Stack>
+                        
                     <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange}/>
 
                     <Field
@@ -115,18 +125,6 @@ const ContributedArticleFields = (props) => {
                 </AccordionSummary>
                 <AccordionDetails>
 
-                    <Stack direction="row" spacing={0}>
-                        <Field
-                            component={SensibleTextField}
-                            type="text"
-                            name="pbdbid"
-                            label="PBDB ID"
-                            fullWidth 
-                            disabled={false}
-                        />
-                        <PBDBSelect />
-                    </Stack>
-                        
                     <Field
                         component={SensibleTextField}
                         type="text"
