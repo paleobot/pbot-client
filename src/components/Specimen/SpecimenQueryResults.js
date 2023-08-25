@@ -3,7 +3,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { Link, Grid, Typography } from '@mui/material';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize } from '../../util.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
@@ -218,6 +218,21 @@ function Specimens(props) {
     const indent2 = {marginLeft:"4em"}
     const indent3 = {marginLeft:"6em"}
     const carousel = {width: "60%", marginLeft: "2em", borderStyle:"solid"}
+    if (props.select) {
+        console.log("Manager results")
+        return (
+            <List sx={{ pt: 0 }}>
+            {specimens.map((specimen) => (
+                <ListItem disableGutters key={specimen.pbotID}>
+                    <ListItemButton onClick={() => props.handleSelect(specimen)} >
+                        <ListItemText 
+                        primary={specimen.name} secondary={`pbot id: ${specimen.pbotID}`} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+        )
+    }
     return (specimens.length === 0) ? (
         <div style={style}>
             No {(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
@@ -389,7 +404,7 @@ function Specimens(props) {
 
 }
 
-const SpecimenQueryResults = ({queryParams}) => {
+const SpecimenQueryResults = ({queryParams, select, handleSelect, exclude}) => {
     console.log("SpecimenQueryResults");
     console.log(queryParams); 
     
@@ -416,6 +431,9 @@ const SpecimenQueryResults = ({queryParams}) => {
             includeDescriptions={queryParams.includeDescriptions} 
             includeOTUs={queryParams.includeOTUs} 
             standAlone={queryParams.standAlone} 
+            select={select}
+            handleSelect={handleSelect}
+            exclude={exclude}
         />
     );
 };
