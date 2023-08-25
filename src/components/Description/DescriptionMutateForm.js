@@ -14,6 +14,7 @@ import {
   gql
 } from "@apollo/client";
 import { SensibleTextField } from '../SensibleTextField.js';
+import { SpecimenManager } from '../Specimen/SpecimenManager.js';
 
 const DescriptionSelect = (props) => {
     console.log("DescriptionSelect");
@@ -219,7 +220,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                     pbotID: '',
                     order:'',
                 }],
-                specimens: [],
+                specimens: [{pbotID: ''}],
                 name: '',
                 notes: '',
                 public: true,
@@ -263,7 +264,13 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                 name: Yup.string().nullable().required(),
                 notes: Yup.string().nullable(),
                 public: Yup.boolean(),
-                specimens: Yup.array().of(Yup.string()).min(1, "At least one specimen required"),
+                //specimens: Yup.array().of(Yup.string()).min(1, "At least one specimen required"),
+                specimens: Yup.array().of(
+                    Yup.object().shape({
+                        pbotID: Yup.string()
+                            .required('Specimen is required'),
+                    })
+                ).min(1, "At least one specimen required"),
                 groups: Yup.array().of(Yup.string()).when('public', {
                     is: false,
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
@@ -317,7 +324,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                         <ReferenceManager values={props.values}/>
 
                         <div>
-                        <SpecimenSelect handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        <SpecimenManager values={props.values}/>
                         <br />
                         </div>
                                 
