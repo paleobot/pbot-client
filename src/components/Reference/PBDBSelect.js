@@ -1,15 +1,12 @@
-import React, { useState, useEffect }from 'react';
+import SearchIcon from '@mui/icons-material/Search';
+import { Checkbox, FormControlLabel, IconButton, Link, List, ListItem, ListItemButton, ListItemText, Tooltip, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Checkbox, FormControlLabel, Grid, IconButton, Link, List, ListItem, ListItemButton, ListItemText, Tooltip, Typography } from '@mui/material';
-import { Field, useFormikContext } from 'formik';
-import SearchIcon from '@mui/icons-material/Search';
-import { responsePathAsArray } from 'graphql';
+import { useFormikContext } from 'formik';
+import React, { useEffect, useState } from 'react';
 import { sort } from '../../util';
 
 
@@ -141,6 +138,7 @@ export default function PBDBSelect(props) {
     const [open, setOpen] = React.useState(false);
     
     const handleClose = () => {
+        formikProps.setFieldValue("pbdbCheck", true);
         setOpen(false);
     };
 
@@ -167,7 +165,7 @@ export default function PBDBSelect(props) {
             }
             formikProps.setFieldValue("doi", (reference.identifier && reference.identifier.type === "doi") ? reference.identifier.id : null);
         }
-        setOpen(false);
+        handleClose();
     };
 
 
