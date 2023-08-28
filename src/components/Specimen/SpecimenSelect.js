@@ -17,7 +17,8 @@ export const InnerSpecimenSelect = (props) => {
     console.log("InnerSpecimenSelect");
     console.log(props);
     
-    const gQL = "specimen" === props.name ? //This is a standalone SpecimenSelect for Specimen edit/delete
+    //const gQL = "specimen" === props.name ? //This is a standalone SpecimenSelect for Specimen edit/delete
+    const gQL = "full" === props.populateMode ? 
         gql`
             query {
                 Specimen {
@@ -109,7 +110,7 @@ export const InnerSpecimenSelect = (props) => {
                     }}
                     disabled={false}
                     onChange={(event,child) => {
-                        props.handleSelect(JSON.parse(child.props.dspecimen))
+                        props.handleSelect(JSON.parse(child.props.dspecimen), props.populateMode)
                     }}
                 >
                     {specimens.map((specimen) => (
@@ -133,7 +134,7 @@ export const InnerSpecimenSelect = (props) => {
                         multiple: false,
                     }}
                     onChange={(event, child) => {
-                        props.handleSelect(JSON.parse(child.props.dspecimen))
+                        props.handleSelect(JSON.parse(child.props.dspecimen), props.populateMode)
                     }}
                     disabled={false}
                 >
@@ -193,13 +194,14 @@ export const SpecimenSelect = (props) => {
         setOpen(false);
     };
 
-    const handleSelect = (specimen) => {
+    const handleSelect = (specimen, populateMode) => {
         console.log("handleSelect")
 
         formikProps.setFieldValue(props.name, specimen.pbotID);
         
-        if ("specimen" === props.name) { //Standalone SpecimenSelect
-            const groups = specimen.elementOf ? specimen.elementOf.map(group => {return group.pbotID}) : [];
+        //if ("specimen" === props.name) { //Standalone SpecimenSelect
+        if ("full" === populateMode) { 
+                const groups = specimen.elementOf ? specimen.elementOf.map(group => {return group.pbotID}) : [];
             console.log(groups)
 
             formikProps.setFieldValue("name", specimen.name || '');
