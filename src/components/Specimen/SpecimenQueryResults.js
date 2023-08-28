@@ -24,7 +24,7 @@ function Specimens(props) {
     
     console.log(filters)
 
-    const groups = props.standAlone ? '' : '$groups: [ID!], ';
+    const groups = props.standAlone ? '' : '$groups: [ID!] ';
     /*
     const filter = props.standAlone ? '' : `,  filter: {
         ${filters.collection ?
@@ -38,9 +38,9 @@ function Specimens(props) {
     if (!props.standAlone) {
         filter = ", filter: {"
         if (!filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema) {
-            filter += "elementOf_some: {pbotID_in: $groups}"
+            filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
         } else {
-            filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
+            filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}";
             if (filters.collection) {
                 filter += ", {collection: {pbotID: $collection}}"
             }
@@ -97,8 +97,29 @@ function Specimens(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $idigbiouuid: String, $gbifID: String, ${groups} ${filters.preservationModes ? ", $preservationModes: [ID]" : ""} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.identifiers ? ", $identifiers: [ID!]" : ""} ${filters.collection ? ", $collection: ID" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
-                Specimen (pbotID: $pbotID, name: $name idigbiouuid: $idigbiouuid gbifID: $gbifID ${filter}) {
+            query (
+                $pbotID: ID, 
+                $name: String, 
+                $idigbiouuid: String, 
+                $gbifID: String, 
+                ${groups} 
+                ${filters.preservationModes ? ", $preservationModes: [ID]" : ""} 
+                ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
+                ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} 
+                ${filters.identifiers ? ", $identifiers: [ID!]" : ""} 
+                ${filters.collection ? ", $collection: ID" : ""} 
+                ${filters.schema ? ", $schema: ID" : ""} 
+                ${filters.character ? ", $character: ID" : ""} 
+                ${filters.states ? ", $states: [ID!]" : ""}, 
+                $excludeList: [ID!]
+            ) {
+                Specimen (
+                    pbotID: $pbotID, 
+                    name: $name, 
+                    idigbiouuid: $idigbiouuid, 
+                    gbifID: $gbifID 
+                    ${filter}
+                ) {
                     pbotID
                     name
                 }
@@ -106,7 +127,15 @@ function Specimens(props) {
         `
     } else {
         gQL = gql`
-            query ($pbotID: ID, $name: String, ${groups} $includeImages: Boolean!, $includeDescriptions: Boolean!, $includeOTUs: Boolean! ${filters.collection ? ", $collection: ID" : ""}) {
+            query (
+                $pbotID: ID, 
+                $name: String, 
+                ${groups} 
+                $includeImages: Boolean!, 
+                $includeDescriptions: Boolean!, 
+                $includeOTUs: Boolean! 
+                ${filters.collection ? ", $collection: ID" : ""}
+            ) {
                 Specimen (pbotID: $pbotID, name: $name ${filter}) {
                     pbotID
                     name
@@ -198,12 +227,18 @@ function Specimens(props) {
         `;
     }
     
+    //For SpecimenManager applications, omit specimens that are already in the list
+    const excludeIDs = props.exclude ? props.exclude.map(specimen => specimen.pbotID) : [];
+    console.log(excludeIDs)
+    console.log(gQL)
+ 
     const { loading, error, data } = useQuery(gQL, {
         variables: {
             ...filters,
             includeImages: props.includeImages,
             includeDescriptions: props.includeDescriptions,
             includeOTUs: props.includeOTUs,
+            excludeList: excludeIDs
         },
         fetchPolicy: "cache-and-network"
     });
