@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import { alphabetize } from '../../util.js';
 import { GroupSelect } from '../Group/GroupSelect.js';
 import { ReferenceManager } from '../Reference/ReferenceManager.js';
+import { SpecimenManager } from '../Specimen/SpecimenManager.js';
 
 import {
     gql, useQuery
@@ -235,13 +236,13 @@ const SpecimenSelect = (props) => {
     } else if ("type" === props.type) {
         specimenGQL = gql`
             query {
-                Specimen (filter: {pbotID_in: ${JSON.stringify(props.values.identifiedSpecimens)}}) {
+                Specimen (filter: {pbotID_in: ${JSON.stringify(props.values.identifiedSpecimens.map(s => s.pbotID))}}) {
                     pbotID
                     name
                 }            
             }
         `;
-    } else /*"identified"*/ {
+    } /*else { //"identified"
         specimenGQL = gql`
             query {
                 Specimen {
@@ -250,7 +251,7 @@ const SpecimenSelect = (props) => {
                 }            
             }
         `;
-    }
+    }*/
     
     const { loading: specimenLoading, error: specimenError, data: specimenData } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
 
@@ -311,7 +312,7 @@ const SpecimenSelect = (props) => {
                 ))}
             </Field>
         )
-    } else {
+    } /*else {
         return (
             <Field
                 component={TextField}
@@ -337,11 +338,12 @@ const SpecimenSelect = (props) => {
                 ))}
             </Field>
         )
-    }
+    }*/
 }
 
 
 const OTUMutateForm = ({handleSubmit, mode}) => {
+
     const initValues = {
                 otu: '',
                 identifiedSpecimens: [],
@@ -457,7 +459,16 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 resetForm({values:initValues});
             }}
         >
-            {props => (
+            {props => {
+                const identifiedSpecimensChangeHandler = (event,child) => {
+                    if (props.values.typeSpecimens.includes(child.props.value)) {
+                        if (child.props.value === props.values.holotypeSpecimen) props.values.holotypeSpecimen = ''; //clear holotype if it is the specimen getting touched here
+                        props.values.typeSpecimens = props.values.typeSpecimens.filter(specimen => specimen != child.props.value); //remove specimen from typeSpecimens
+                    }
+                    props.handleChange(event);
+                }
+            
+            return (
             <Form>
                 {(mode === "edit" || mode === "delete") &&
                     <div>
@@ -535,7 +546,8 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         <ReferenceManager values={props.values}/>
                         <br />
                 
-                        <SpecimenSelect type="identified" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        {/*<SpecimenSelect type="identified" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>*/}
+                        <SpecimenManager name="identifiedSpecimens" values={props.values} changeHandler={identifiedSpecimensChangeHandler}/>
                         <br />
 
                         <SpecimenSelect type="type" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
@@ -656,7 +668,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 <br />
                 <br />
             </Form>
-            )}
+            )}}
         </Formik>
     
     );
