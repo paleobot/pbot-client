@@ -198,6 +198,10 @@ export const SpecimenSelect = (props) => {
         console.log("handleSelect")
 
         formikProps.setFieldValue(props.name, specimen.pbotID);
+
+        if (props.changeHandler) {
+            props.changeHandler(specimen)
+        }
         
         //if ("specimen" === props.name) { //Standalone SpecimenSelect
         if ("full" === populateMode) { 
