@@ -26,7 +26,7 @@ export const SpecimenManager = (props) => {
                             <Grid container spacing={2} direction="row" key={index}>
                                 <Grid item xs={7}>
                                     {console.log(props.values[name].filter(person => person.pbotID !== person.pbotID))}
-                                    <SpecimenSelect name={`${name}.${index}.pbotID`} exclude={props.values[name].filter(specimen => specimen.pbotID !== s.pbotID)} changeHandler={props.identifiedSpecimensChangeHandler}/>
+                                    <SpecimenSelect name={`${name}.${index}.pbotID`} exclude={props.values[name].filter(specimen => specimen.pbotID !== s.pbotID)} />
                                 </Grid>
                                 {(index > 0 || props.optional) &&
                                 <Grid item xs={2}>

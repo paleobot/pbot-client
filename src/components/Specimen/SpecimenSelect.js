@@ -199,11 +199,7 @@ export const SpecimenSelect = (props) => {
 
         formikProps.setFieldValue(props.name, specimen.pbotID);
 
-        if (props.changeHandler) {
-            props.changeHandler(specimen)
-        }
-        
-        //if ("specimen" === props.name) { //Standalone SpecimenSelect
+       //if ("specimen" === props.name) { //Standalone SpecimenSelect
         if ("full" === populateMode) { 
                 const groups = specimen.elementOf ? specimen.elementOf.map(group => {return group.pbotID}) : [];
             console.log(groups)
