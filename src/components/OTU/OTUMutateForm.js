@@ -1,6 +1,6 @@
 ﻿import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Button, MenuItem, Stack, Typography } from '@mui/material';
-import { Field, Form, Formik } from 'formik';
+import { Field, Form, Formik, useFormikContext } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React from 'react';
 import * as Yup from 'yup';
@@ -212,6 +212,9 @@ const OTUSelect = (props) => {
 
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
+    console.log(props.type)
+    console.log(props.type === "type" ? props.values.identifiedSpecimens : props.values.typeSpecimens)
+
     /*
     //TODO: Now that I'm filtering in the query, this isn't needed. Keeping it here for now in case I change my mind.
     const specimenGQL = gql`
@@ -242,17 +245,9 @@ const SpecimenSelect = (props) => {
                 }            
             }
         `;
-    } /*else { //"identified"
-        specimenGQL = gql`
-            query {
-                Specimen {
-                    pbotID
-                    name
-                }            
-            }
-        `;
-    }*/
-    
+    } 
+    console.log(specimenGQL)
+
     const { loading: specimenLoading, error: specimenError, data: specimenData } = useQuery(specimenGQL, {fetchPolicy: "cache-and-network"});
 
     if (specimenLoading) return <p>Loading...</p>;
@@ -279,9 +274,10 @@ const SpecimenSelect = (props) => {
                 }}
                 sx={{minWidth:"200px"}}
                 disabled={false}
-                onChange={(event,child) => {
-                    props.handleChange(event);
-                }}
+                //onChange={(event,child) => {
+                //    console.log("holotype onChange")
+                //    props.handleChange(event);
+                //}}
             >
                 <MenuItem key="0" value="">&nbsp;</MenuItem>
                 {specimens.map(({ pbotID, name }) => (
@@ -302,43 +298,22 @@ const SpecimenSelect = (props) => {
                     multiple: true,
                 }}
                 disabled={false}
+                /*
                 onChange={(event,child) => {
+                    console.log("type onChange")
+                    console.log(child.props.value)
+                    console.log(props.values.holotypeSpecimen)
                     if (child.props.value === props.values.holotypeSpecimen) props.values.holotypeSpecimen = ''; //clear holotype if it is the specimen getting touched here
                     props.handleChange(event);
                 }}
+                */
             >
                 {specimens.map(({ pbotID, name }) => (
                     <MenuItem key={pbotID} value={pbotID} dname={name}>{name}</MenuItem>
                 ))}
             </Field>
         )
-    } /*else {
-        return (
-            <Field
-                component={TextField}
-                type="text"
-                name="identifiedSpecimens"
-                label="Identified specimens"
-                sx={{minWidth:"200px"}}
-                select={true}
-                SelectProps={{
-                    multiple: true,
-                }}
-                disabled={false}
-                onChange={(event,child) => {
-                    if (props.values.typeSpecimens.includes(child.props.value)) {
-                        if (child.props.value === props.values.holotypeSpecimen) props.values.holotypeSpecimen = ''; //clear holotype if it is the specimen getting touched here
-                        props.values.typeSpecimens = props.values.typeSpecimens.filter(specimen => specimen != child.props.value); //remove specimen from typeSpecimens
-                    }
-                    props.handleChange(event);
-                }}
-            >
-                {specimens.map(({ pbotID, name }) => (
-                    <MenuItem key={pbotID} value={pbotID} dname={name}>{name}</MenuItem>
-                ))}
-            </Field>
-        )
-    }*/
+    } 
 }
 
 
@@ -380,7 +355,33 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
             formikRef.current.resetForm({values:initValues});
         }
     },[mode]);
+
     
+    const SpecimenObserver = () => {
+        const formik = useFormikContext();
+      
+        React.useEffect(() => {
+            formik.setFieldValue(
+                "typeSpecimens", 
+                formik.values.typeSpecimens.filter(s => formik.values.identifiedSpecimens.map(s => s.pbotID).includes(s))
+                //[]
+            ); 
+        }, [formik.values.identifiedSpecimens])
+
+        React.useEffect(() => {
+            formik.setFieldValue(
+                "holotypeSpecimen", 
+                formik.values.typeSpecimens.includes(formik.values.holotypeSpecimen) ?
+                    formik.values.holotypeSpecimen :
+                    ''
+                //''
+            ); 
+        }, [formik.values.typeSpecimens])
+
+        return null;
+      };    
+    
+       
     const [selectedTab, setSelectedTab] = React.useState('1');
     const handleChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -460,16 +461,10 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
             }}
         >
             {props => {
-                const identifiedSpecimensChangeHandler = (event,child) => {
-                    if (props.values.typeSpecimens.includes(child.props.value)) {
-                        if (child.props.value === props.values.holotypeSpecimen) props.values.holotypeSpecimen = ''; //clear holotype if it is the specimen getting touched here
-                        props.values.typeSpecimens = props.values.typeSpecimens.filter(specimen => specimen != child.props.value); //remove specimen from typeSpecimens
-                    }
-                    props.handleChange(event);
-                }
-            
+
             return (
             <Form>
+                <SpecimenObserver />
                 {(mode === "edit" || mode === "delete") &&
                     <div>
                         <OTUSelect values={props.values} handleChange={props.handleChange}/>
@@ -547,7 +542,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         <br />
                 
                         {/*<SpecimenSelect type="identified" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>*/}
-                        <SpecimenManager name="identifiedSpecimens" values={props.values} changeHandler={identifiedSpecimensChangeHandler}/>
+                        <SpecimenManager name="identifiedSpecimens" values={props.values} />
                         <br />
 
                         <SpecimenSelect type="type" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
