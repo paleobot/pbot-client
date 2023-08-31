@@ -13,7 +13,7 @@ const OTUMutateResults = ({queryParams}) => {
         <Mutator 
             params={{
                 pbotID: queryParams.otu || null,
-                identifiedSpecimens: queryParams.identifiedSpecimens || null,
+                identifiedSpecimens: queryParams.identifiedSpecimens.map(s => s.pbotID) || null,
                 partsPreservedIDs: queryParams.partsPreserved || null,
                 notableFeaturesIDs: queryParams.notableFeatures || null,
                 notes: queryParams.notes || null,
