@@ -324,7 +324,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                         <ReferenceManager values={props.values}/>
 
                         <div>
-                        <SpecimenManager values={props.values}/>
+                        <SpecimenManager groupLabel="Specimens" individualLabel="specimen" values={props.values}/>
                         <br />
                         </div>
                                 
