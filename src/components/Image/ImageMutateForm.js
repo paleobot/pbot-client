@@ -399,8 +399,8 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
                 <br />
             
                 {props.values.collection !== '' &&
-                    <div>
-                    <SpecimenSelect name="specimen" populateMode="specimenOnly" />                    
+                    <div style={{marginTop:"1em"}}>
+                    <SpecimenSelect name="specimen" populateMode="simple" />                    
                     <br />
                     </div>
                 }
