@@ -95,7 +95,8 @@ export const InnerSpecimenSelect = (props) => {
         console.log(specimens)
         
         const style = {minWidth: "12ch"}
-        return "specimen" === props.name ? //This is a standalone SpecimenSelect for Specimen edit/delete
+        //return "specimen" === props.name ? //This is a standalone SpecimenSelect for Specimen edit/delete
+        return ["full", "simple"].includes(props.populateMode) ? 
             (
                 <Field
                     style={style}
