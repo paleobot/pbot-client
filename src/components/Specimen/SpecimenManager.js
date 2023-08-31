@@ -14,7 +14,7 @@ export const SpecimenManager = (props) => {
     return (
     <div style={style}>
         <InputLabel>
-            {props.label ? props.label : name.charAt(0).toUpperCase() + name.slice(1)}  
+            {props.groupLabel ? props.groupLabel : name.charAt(0).toUpperCase() + name.slice(1)}  
         </InputLabel>
         <FieldArray name={name}>
             {({ insert, remove, push }) => (
@@ -54,7 +54,12 @@ export const SpecimenManager = (props) => {
                 onClick={() => push({ pbotID: '', order: '' })}
                 disabled={props.values[name] && props.values[name].length !== 0 && props.values[name][props.values[name].length-1].pbotID === ''}
             >
-                Add {name}
+                Add {props.individualLabel ? 
+                        props.individualLabel :
+                        props.groupLabel ? 
+                            props.groupLabel :
+                            name 
+                }
             </Button>
             </div>
             )}
