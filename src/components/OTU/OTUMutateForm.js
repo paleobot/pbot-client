@@ -542,7 +542,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         <br />
                 
                         {/*<SpecimenSelect type="identified" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>*/}
-                        <SpecimenManager name="identifiedSpecimens" values={props.values} />
+                        <SpecimenManager name="identifiedSpecimens" groupLabel="Identified specimens" individualLabel="identified specimen" values={props.values} />
                         <br />
 
                         <SpecimenSelect type="type" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
