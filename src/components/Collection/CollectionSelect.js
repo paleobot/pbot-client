@@ -20,19 +20,61 @@ export const InnerCollectionSelect = (props) => {
         gql`
             query {
                 Collection {
-                    pbotID
+                pbotID
+                name
+                collectionType
+                sizeClasses
+                lat
+                lon
+                gpsCoordinateUncertainty
+                geographicResolution
+                geographicComments
+                protectedSite
+                country
+                state
+                timescale
+                maxinterval
+                mininterval
+                lithology
+                additionalLithology
+                stratigraphicGroup
+                stratigraphicFormation
+                stratigraphicMember
+                stratigraphicBed
+                stratigraphicComments
+                environment
+                environmentComments
+                collectors
+                collectionMethods
+                collectingComments
+                pbdbid
+                directDate
+                directDateError
+                directDateType
+                numericAgeMin
+                numericAgeMinError
+                numericAgeMinType
+                numericAgeMax
+                numericAgeMaxError
+                numericAgeMaxType
+                ageComments
+                elementOf {
                     name
-                    preservationModes {
-                        name
-                    }
-                    references (orderBy: order_asc) {
-                        Reference {
-                            title
-                            year
-                        }
-                        order
-                    }
+                    pbotID
                 }
+                references (orderBy: order_asc) {
+                    Reference {
+                        pbotID
+                    }
+                    order
+                }
+                specimens {
+                    pbotID
+                }
+                preservationModes {
+                    pbotID
+                }
+            }            
             }
         ` : 
         gql`
@@ -177,8 +219,50 @@ export const CollectionSelect = (props) => {
             console.log(groups)
 
             formikProps.setFieldValue("name", collection.name || '');
-            formikProps.setFieldValue("preservationModes", collection.preservationModes || '');
-            formikProps.setFieldValue("references", collection.references || '');
+
+            formikProps.setFieldValue("collectiontype", collection.collectionType || '');
+            formikProps.setFieldValue("sizeclasses", collection.sizeClasses || []);
+            formikProps.setFieldValue("lat", collection.lat || '');
+            formikProps.setFieldValue("lon", collection.lon || '');
+            formikProps.setFieldValue("gpsuncertainty", collection.gpsCoordinateUncertainty || '');
+            formikProps.setFieldValue("geographicresolution", collection.geographicResolution || '');
+            formikProps.setFieldValue("geographiccomments", collection.geographicComments || '');
+            formikProps.setFieldValue("protectedSite", collection.protectedSite === "true");
+            formikProps.setFieldValue("country", collection.country || '');
+            formikProps.setFieldValue("state", collection.state || '');
+            formikProps.setFieldValue("timescale", collection.timescale || '');
+            formikProps.setFieldValue("maxinterval", collection.maxinterval || '');
+            formikProps.setFieldValue("mininterval", collection.mininterval || '');
+            formikProps.setFieldValue("lithology", collection.lithology || '');
+            formikProps.setFieldValue("additionallithology", collection.additionalLithology || '');
+            formikProps.setFieldValue("stratigraphicgroup", collection.stratigraphicGroup || '');
+            formikProps.setFieldValue("stratigraphicformation", collection.stratigraphicFormation || '');
+            formikProps.setFieldValue("stratigraphicmember", collection.stratigraphicMember || '');
+            formikProps.setFieldValue("stratigraphicbed", collection.stratigraphicBed || '');
+            formikProps.setFieldValue("stratigraphiccomments", collection.stratigraphicComments || '');
+            formikProps.setFieldValue("environment", collection.environment || '');
+            formikProps.setFieldValue("environmentcomments", collection.environmentComments || '');
+            formikProps.setFieldValue("collectors", collection.collectors || '');
+            formikProps.setFieldValue("collectionmethods", collection.collectionMethods || []);
+            formikProps.setFieldValue("collectingcomments", collection.collectingComments || '');
+            formikProps.setFieldValue("pbdbid", collection.pbdbid || '');
+            formikProps.setFieldValue("directdate", collection.directDate || '');
+            formikProps.setFieldValue("directdateerror", collection.directDateError || '');
+            formikProps.setFieldValue("directdatetype", collection.directDateType || '');
+            formikProps.setFieldValue("numericagemin", collection.numericAgeMin || '');
+            formikProps.setFieldValue("numericageminerror", collection.numericAgeMinError || '');
+            formikProps.setFieldValue("numericagemintype", collection.numericAgeMinType || '');
+            formikProps.setFieldValue("numericagemax", collection.numericAgeMax || '');
+            formikProps.setFieldValue("numericagemaxerror", collection.numericAgeMaxError || '');
+            formikProps.setFieldValue("numericagemaxtype", collection.numericAgeMaxType || '');
+            formikProps.setFieldValue("agecomments", collection.ageComments || '');
+            formikProps.setFieldValue("preservationmodes", collection.preservationModes.map(preservationMode => preservationMode.pbotID) || []);
+            formikProps.setFieldValue("public", collection.elementOf && collection.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false));
+            formikProps.setFieldValue("origPublic", formikProps.values.public);
+            formikProps.setFieldValue("groups", groups || []);
+            formikProps.setFieldValue("specimens", collection.specimens.map(specimen => specimen.pbotID) || []);
+            formikProps.setFieldValue("references", collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) || []);
+
         }
 
         setOpen(false);
