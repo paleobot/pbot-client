@@ -11,6 +11,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {collectionTypes, sizeClasses, geographicResolutionScale, collectionMethods} from "../../Lists.js"
 import { CountrySelect } from './CountrySelect.js'
 import { StateSelect } from './StateSelect.js'
+import {CollectionSelect} from '../Collection/CollectionSelect.js';
 
 //import IntervalSelect from './IntervalSelect.js';
 
@@ -408,6 +409,7 @@ const EnvironmentSelect = (props) => {
     )
 }
 
+/*
 const CollectionSelect = (props) => {
     //console.log("CollectionSelect");
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
@@ -598,6 +600,7 @@ const CollectionSelect = (props) => {
         </Field>
     )
 }
+*/
 
 const PreservationModeSelect = (props) => {
     console.log("PreservationModeSelect");
@@ -790,7 +793,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "edit" || mode === "delete") &&
                     <div>
+                        {/*}
                         <CollectionSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />*/}
+                        <CollectionSelect name="collection" label="Collection" populateMode="full"/>
                         <br />
                     </div>
                 }
