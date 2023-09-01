@@ -10,6 +10,7 @@ import {ImageManager} from '../Image/ImageManager.js';
 import {CollectionSelect} from '../Collection/CollectionSelect.js';
 import {PartsPreservedSelect} from '../Organ/PartsPreservedSelect.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { SpecimenSelect } from '../Specimen/SpecimenSelect.js';
 
 import {
   useQuery,
@@ -22,6 +23,7 @@ import { PreservationModeSelect } from './PreservationModeSelect.js';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import IDigBioSelect from './IDigBioSelect.js';
 
+/*
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
     //TODO: look into https://www.graphql-scalars.dev/docs/scalars/uuid for managing idigbiouuid
@@ -150,6 +152,7 @@ const SpecimenSelect = (props) => {
         </Field>
     )
 }
+*/
 
 const DescriptionSelect = (props) => {
     console.log("DescriptionSelect");
@@ -341,7 +344,9 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "edit" || mode === "delete") &&
                     <div>
-                        <SpecimenSelect values={props.values} handleChange={props.handleChange}/>
+                        {/*<SpecimenSelect values={props.values} handleChange={props.handleChange}/>
+                        <br />*/}
+                        <SpecimenSelect name="specimen" label="Specimen" populateMode="full" />
                         <br />
                     </div>
                 }
