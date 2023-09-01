@@ -3,7 +3,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { Link, Grid, Typography, Stack } from '@mui/material';
+import { Link, Grid, Typography, Stack, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { alphabetize, sort } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
@@ -131,6 +131,20 @@ function Collections(props) {
     const header2 = {marginLeft:"4em"}
     const indent = {marginLeft:"4em"}
     const indent2 = {marginLeft:"6em"}
+    if (props.select) {
+        return (
+            <List sx={{ pt: 0 }}>
+            {collections.map((collection) => (
+                <ListItem disableGutters key={collection.pbotID}>
+                    <ListItemButton onClick={() => props.handleSelect(collection)} >
+                        <ListItemText 
+                        primary={collection.name} secondary={`pbot id: ${collection.pbotID}`} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+        )
+    }
     return (collections.length === 0) ? (
         <div style={style}>
             No {(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0]) ? "public" : ""} results were found.
@@ -279,7 +293,7 @@ function Collections(props) {
 
 }
 
-const CollectionQueryResults = ({queryParams}) => {
+const CollectionQueryResults = ({queryParams, select, handleSelect}) => {
     console.log("CollectionQueryResults")
     console.log(queryParams);
 
@@ -297,6 +311,8 @@ const CollectionQueryResults = ({queryParams}) => {
             }}
             includeSpecimens={queryParams.includeSpecimens} 
             standAlone={queryParams.standAlone} 
+            select={select}
+            handleSelect={handleSelect}
         />
     );
 };
