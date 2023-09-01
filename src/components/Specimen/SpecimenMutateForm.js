@@ -370,7 +370,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                             </Field>
                             <br />
                         
-                            <CollectionSelect />
+                            <CollectionSelect name="collection" label="Collection"/>
                             <br />
 
                             <PartsPreservedSelect />
