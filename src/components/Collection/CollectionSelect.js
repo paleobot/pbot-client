@@ -1,53 +1,203 @@
-import React from 'react';
-import { Field } from 'formik';
-import { MenuItem } from '@mui/material';
+import React, { useContext, useState } from 'react';
+import { Field, useFormikContext } from 'formik';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack } from '@mui/material';
 import { TextField } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {
   useQuery,
   gql
 } from "@apollo/client";
+import { GlobalContext } from '../GlobalContext.js';
+import SearchIcon from '@mui/icons-material/Search';
+import CollectionQueryForm from './CollectionQueryForm.js';
+import CollectionQueryResults from './CollectionQueryResults.js';
+
+export const InnerCollectionSelect = (props) => {
+    console.log("InnerCollectionSelect");
+    console.log(props);
+    
+    const gQL = "full" === props.populateMode ? 
+        gql`
+            query {
+                Collection {
+                    pbotID
+                    name
+                    preservationModes {
+                        name
+                    }
+                    references (orderBy: order_asc) {
+                        Reference {
+                            title
+                            year
+                        }
+                        order
+                    }
+                }
+            }
+        ` : 
+        gql`
+            query  {
+                Collection {
+                    pbotID
+                    name
+                }            
+            }
+        `;
+
+ 
+        const { loading: loading, error: error, data: data } = useQuery(gQL, {        
+            variables: {
+            },
+            fetchPolicy: "cache-and-network"
+        });
+
+        if (loading) return <p>Loading...</p>;
+        if (error) return <p>Error :(</p>;
+                                    
+        console.log(data.Collection);
+        
+        const collections = alphabetize(
+            data.Collection.map((collection, x) => {
+                return {
+                    ...collection,
+                    index: x
+                }
+            }),  
+            "name"
+        );
+        console.log(collections)
+        
+        const style = {minWidth: "12ch"}
+        return ["full", "simple"].includes(props.populateMode) ? 
+            (
+                <Field
+                    style={style}
+                    component={TextField}
+                    type="text"
+                    name="collection"
+                    label="Collection"
+                    fullWidth 
+                    select={true}
+                    SelectProps={{
+                        multiple: false,
+                    }}
+                    disabled={false}
+                    onChange={(event,child) => {
+                        props.handleSelect(JSON.parse(child.props.dcollection), props.populateMode)
+                    }}
+                >
+                    {collections.map((collection) => (
+                        <MenuItem 
+                            key={collection.pbotID} 
+                            value={collection.pbotID}
+                            dcollection={JSON.stringify(collection)}
+                        >{collection.name}</MenuItem>
+                    ))}
+                </Field>
+            )            
+        : 
+            (
+                <Field
+                    component={TextField}
+                    type="text"
+                    name={props.name || "collection"}
+                    label={props.label}
+                    select={true}
+                    SelectProps={{
+                        multiple: false,
+                    }}
+                    onChange={(event, child) => {
+                        props.handleSelect(JSON.parse(child.props.dcollection), props.populateMode)
+                    }}
+                    disabled={false}
+                >
+                    {collections.map((collection) => (
+                        <MenuItem 
+                            key={collection.pbotID} 
+                            value={collection.pbotID}
+                            dcollection={JSON.stringify(collection)}
+                        >{collection.name}</MenuItem>
+                    ))}
+                </Field>
+            )
+}
+
+
+const CollectionDialog = (props) => {
+    const [showResult, setShowResult] = useState(false);
+    const [queryParams, setQueryParams] = useState([]);
+
+    const handleSubmit = (values) => {
+        console.log("handling submit")
+        setQueryParams(values);
+        setShowResult(true);
+    }
+
+    return (
+        <Dialog fullWidth={true} open={props.open}>
+        <DialogTitle>
+            Search for Collection             
+        </DialogTitle>
+        <DialogContent>
+            {!showResult &&
+            <CollectionQueryForm handleSubmit={handleSubmit}/>
+            }
+            {showResult &&
+            <CollectionQueryResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect}/>
+            }
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={props.handleClose} color="secondary">Cancel</Button>
+        </DialogActions>
+    </Dialog>
+    )    
+}
 
 export const CollectionSelect = (props) => {
     console.log("CollectionSelect");
-    //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
-    const gQL = gql`
-        query {
-            Collection {
-                pbotID
-                name
-            }            
-        }
-    `;
+    console.log(props.name)
+    console.log(props.values)
 
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+    const global = useContext(GlobalContext);
+    const formikProps = useFormikContext()
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                      
-    const collections = alphabetize([...data.Collection], "name");
+    const [open, setOpen] = React.useState(false);
     
-    const style = {minWidth: "12ch"}
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleSelect = (collection, populateMode) => {
+        console.log("handleSelect")
+
+        formikProps.setFieldValue(props.name, collection.pbotID);
+
+        if ("full" === populateMode) { 
+            const groups = collection.elementOf ? collection.elementOf.map(group => {return group.pbotID}) : [];
+            console.log(groups)
+
+            formikProps.setFieldValue("name", collection.name || '');
+            formikProps.setFieldValue("preservationModes", collection.preservationModes || '');
+            formikProps.setFieldValue("references", collection.references || '');
+        }
+
+        setOpen(false);
+    };
+
     return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="collection"
-            label="Collection"
-            style={{minWidth:"200px"}}
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {collections.map((collection) => (
-                <MenuItem 
-                    key={collection.pbotID} 
-                    value={collection.pbotID}
-                >{collection.name}</MenuItem>
-            ))}
-        </Field>
-    )
+        <Stack direction="row" key={props.name}>
+            <IconButton
+                color="secondary" 
+                size="large"
+                onClick={()=>{setOpen(true)}}
+                disabled={false}
+            >
+                <SearchIcon/>
+            </IconButton>
+            {open &&
+                <CollectionDialog open={open} handleClose={handleClose} handleSelect={handleSelect}  />
+            }
+            <InnerCollectionSelect name={props.name}  label={props.label} handleSelect={handleSelect} populateMode={props.populateMode}/>
+        </Stack>
+    );
 }
