@@ -24,39 +24,46 @@ export const InnerSpecimenSelect = (props) => {
                 Specimen {
                     pbotID
                     name
-                    collection {
-                        name
+                    preservationModes {
+                        pbotID
                     }
                     repository
                     otherRepositoryLink
                     notes
-                    identifiers {
-                        given
-                        surname
-                    } 
-                    preservationModes {
-                        name
-                    }
-                    idigbiouuid
                     gbifID
+                    idigbiouuid
+                    idigbioInstitutionCode
+                    idigbioCatalogNumber
+                    pbdbcid
                     pbdboccid
                     partsPreserved {
-                        type
+                        pbotID
                     }
                     notableFeatures {
-                        name
+                        pbotID
+                    }
+                    describedBy {
+                      	Description {
+                        	pbotID
+                      	}
                     }
                     elementOf {
                         name
+                        pbotID
+                    }
+                    collection {
+                        pbotID
                     }
                     references (orderBy: order_asc) {
                         Reference {
-                            title
-                            year
+                            pbotID
                         }
                         order
                     }
-                }
+                    identifiers {
+                        pbotID
+                    }
+                }            
             }
         ` : //This is one of possibly several SpecimenSelects in SpecimenManager
         gql`
@@ -205,20 +212,26 @@ export const SpecimenSelect = (props) => {
                 const groups = specimen.elementOf ? specimen.elementOf.map(group => {return group.pbotID}) : [];
             console.log(groups)
 
+
             formikProps.setFieldValue("name", specimen.name || '');
-            formikProps.setFieldValue("partsPreserved", specimen.partsPreserved || '');
-            formikProps.setFieldValue("notableFeatures", specimen.notableFeatures || '');
-            formikProps.setFieldValue("preservationModes", specimen.preservationModes || '');
-            formikProps.setFieldValue("describedBy", specimen.describedBy || '');
+            formikProps.setFieldValue("partsPreserved", specimen.partsPreserved.map(organ => organ.pbotID) || '');
+            formikProps.setFieldValue("notableFeatures", specimen.notableFeatures.map(feature => feature.pbotID) || '');
+            formikProps.setFieldValue("preservationModes", specimen.preservationModes.map(p => p.pbotID) || '');
+            formikProps.setFieldValue("describedBy", specimen.describedBy.map(d => d.Description.pbotID) || '');
             formikProps.setFieldValue("repository", specimen.repository || '');
             formikProps.setFieldValue("otherRepositoryLink", specimen.otherRepositoryLink || '');
             formikProps.setFieldValue("notes", specimen.notes || '');
-            formikProps.setFieldValue("identifiers", specimen.identifiers || '');
             formikProps.setFieldValue("idigbiouuid", specimen.idigbiouuid || '');
             formikProps.setFieldValue("idigbioInstitutionCode", specimen.idigbioInstitutionCode || '');
             formikProps.setFieldValue("idigbioCatalogNumber", specimen.idigbioCatalogNumber || '');
-            formikProps.setFieldValue("references", specimen.references || '');
-            formikProps.setFieldValue("collection", specimen.collection || '');
+            formikProps.setFieldValue("pbdbcid", specimen.pbdbcid || '');
+            formikProps.setFieldValue("pbdboccid", specimen.pbdboccid || '');
+            formikProps.setFieldValue("public", specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false));
+            formikProps.setFieldValue("origPublic", formikProps.values.public);
+            formikProps.setFieldValue("groups", groups || []);
+            formikProps.setFieldValue("references", specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) || null);
+            formikProps.setFieldValue("collection", specimen.collection.pbotID || '');
+            formikProps.setFieldValue("identifiers", specimen.identifiers || '');
         }
 
         setOpen(false);
