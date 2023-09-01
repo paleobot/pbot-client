@@ -9,7 +9,6 @@ import {SecureImage} from './SecureImage.js';
 import {LinkDialog} from "./LinkDialog.js";
 import { SensibleTextField } from '../SensibleTextField.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { SpecimenSelect } from '../Specimen/SpecimenSelect.js';
 
 import {
   useQuery,
@@ -143,6 +142,7 @@ const UploadImage = (props) => {
 }
 */
 
+
 const CollectionSelect = (props) => {
     console.log("CollectionSelect");
     //TODO: preservationMode, idigbiouuid, pbdbcid, pbdboccid
@@ -204,7 +204,8 @@ const CollectionSelect = (props) => {
     )
 }
 
-/*
+
+
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
 
@@ -246,7 +247,7 @@ const SpecimenSelect = (props) => {
         </Field>
     )
 }
-*/
+
 
 const ImageSelect = (props) => {
     console.log("ImageSelect");
@@ -400,7 +401,7 @@ const ImageMutateForm = ({handleSubmit, mode}) => {
             
                 {props.values.collection !== '' &&
                     <div style={{marginTop:"1em"}}>
-                    <SpecimenSelect name="specimen" populateMode="simple" />                    
+                    <SpecimenSelect values={props.values}/>                    
                     <br />
                     </div>
                 }
