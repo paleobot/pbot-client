@@ -75,7 +75,7 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                 />
                 <br />
                 
-                <CollectionSelect />
+                <CollectionSelect name="collection" label="Collection" populateMode="simple"/>
                 <br />
 
                 <PartsPreservedSelect/>
