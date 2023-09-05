@@ -1,7 +1,7 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { sort, alphabetize } from '../../util.js';
-import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 function Descriptions(props) {
     console.log("Descriptions");
@@ -11,6 +11,11 @@ function Descriptions(props) {
     const indent = {marginLeft:"2em"}
     const indent2 = {marginLeft:"4em"}
     if (props.select) {
+        if (descriptions.length === 0) {
+            return (
+                <Typography variant="p">No Descriptions found meeting search criteria</Typography>
+            )
+        }
         return (
             <List sx={{ pt: 0 }}>
             {descriptions.map((description) => (
