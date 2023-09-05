@@ -13,7 +13,7 @@ const DescriptionMutateResults = ({queryParams}) => {
         <Mutator 
             params={{
                 pbotID: queryParams.description || null,
-                specimenIDs: queryParams.specimens || null,
+                specimenIDs: queryParams.specimens.map(s => s.pbotID) || null,
                 schemaID: queryParams.schema || null,
                 references: queryParams.references || null,
                 name: queryParams.name || null,

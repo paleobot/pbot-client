@@ -8,6 +8,7 @@ import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import CharacterInstanceManager from '../CharacterInstance/CharacterInstanceManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {DescriptionSelect} from '../Description/DescriptionSelect.js';
 
 import {
   useQuery,
@@ -16,6 +17,7 @@ import {
 import { SensibleTextField } from '../SensibleTextField.js';
 import { SpecimenManager } from '../Specimen/SpecimenManager.js';
 
+/*
 const DescriptionSelect = (props) => {
     console.log("DescriptionSelect");
     console.log(props);
@@ -127,6 +129,7 @@ const DescriptionSelect = (props) => {
     )
         
 }
+*/
 
 const SchemaSelect = (props) => {
     console.log("SchemaSelect");
@@ -290,7 +293,8 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
             <Form>
                 {(mode === "edit" || mode === "delete") &&
                     <div>
-                        <DescriptionSelect values={props.values} handleChange={props.handleChange}/>
+                        {/*<DescriptionSelect values={props.values} handleChange={props.handleChange}/>*/}
+                        <DescriptionSelect name="description" label="Description" populateMode="full" select/>
                         <br />
                     </div>
                 }
