@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
+import { SpecimenSelect } from '../Specimen/SpecimenSelect.js';
 
 
 const DescriptionQueryForm = ({handleSubmit}) => {
@@ -16,20 +17,12 @@ const DescriptionQueryForm = ({handleSubmit}) => {
             initialValues={{
                 type: "all",
                 descriptionID: '', 
-                family: '', 
-                genus: '', 
-                species: '',
+                specimen: '',
                 groups: [],
-                includeComplex: false}}
+            }}
             validationSchema={Yup.object({
                 descriptionID: Yup.string()
                 .uuid('Must be a valid uuid'),
-                family: Yup.string()
-                .max(30, 'Must be 30 characters or less'),
-                genus: Yup.string()
-                .max(30, 'Must be 30 characters or less'),
-                species: Yup.string()
-                .max(30, 'Must be 30 characters or less'),
                 groups: Yup.array().of(Yup.string())
             })}
             onSubmit={values => {
@@ -42,39 +35,6 @@ const DescriptionQueryForm = ({handleSubmit}) => {
         >
             {props => (
             <Form>
-                <InputLabel htmlFor="type" style={{ marginTop: "10px" }}>Type</InputLabel>
-                <Field 
-                    component={RadioGroup} 
-                    name="type" 
-                    label="Type"
-                >
-                    <Grid container>
-                        <Grid item>
-                            <FormControlLabel
-                                value="OTU"
-                                control={<Radio />}
-                                label="OTU"
-                                disabled={false}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <FormControlLabel
-                                value="specimen"
-                                control={<Radio />}
-                                label="Specimen"
-                                disabled={false}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <FormControlLabel
-                                value="all"
-                                control={<Radio  />}
-                                label="All"
-                                disabled={false}
-                            />
-                        </Grid>
-                    </Grid>
-                </Field>
             
                 <Field 
                     component={TextField}
@@ -85,46 +45,11 @@ const DescriptionQueryForm = ({handleSubmit}) => {
                 />
                 <br />
                 
-                {props.values.type === 'OTU' &&    
-                <div>
-                <Field 
-                    component={TextField}
-                    name="family" 
-                    type="text" 
-                    label="Family"
-                    disabled={false}
-                />
-                <br />
-                
-                <Field 
-                    component={TextField}                
-                    name="genus" 
-                    type="text" 
-                    label="Genus"
-                    disabled={false}
-                />
-                <br />
-                <Field 
-                    component={TextField}
-                    name="species" 
-                    type="text" 
-                    label="Species"
-                    disabled={false}
-                />
-                <br />
-                </div>
-                }
+                <SpecimenSelect name="specimen" label="Specimen" populateMode="simple"/>
                 
                 <GroupSelect/>
                 <br />
 
-                <Field 
-                    component={CheckboxWithLabel}
-                    name="includeComplex" 
-                    type="checkbox" 
-                    Label={{ label: 'Include complex' }}
-                    disabled={false}
-                />
                 <br />
                 <br />
                 <br />

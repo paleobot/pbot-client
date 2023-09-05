@@ -1,6 +1,7 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { sort } from '../../util.js';
+import { sort, alphabetize } from '../../util.js';
+import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
 function Descriptions(props) {
     console.log("Descriptions");
@@ -9,11 +10,25 @@ function Descriptions(props) {
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
     const indent2 = {marginLeft:"4em"}
+    if (props.select) {
+        return (
+            <List sx={{ pt: 0 }}>
+            {descriptions.map((description) => (
+                <ListItem disableGutters key={description.pbotID}>
+                    <ListItemButton onClick={() => props.handleSelect(description, "full")} >
+                        <ListItemText 
+                        primary={description.name} secondary={`pbot id: ${description.pbotID}`} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+        )
+    }
     return (descriptions.length === 0) ? (
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : descriptions.map(({ pbotID, name, type, family, genus, species, characterInstances, references }) => (
+    ) : descriptions.map(({ pbotID, name, type, family, genus, species, characterInstances, references, notes }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
             <div style={indent}><b>pbotID:</b>{pbotID}</div>

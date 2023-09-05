@@ -17,60 +17,48 @@ function DescriptionList(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     
+    const filter = filters.specimen ?
+        ", filter: {AND: [{elementOf_some: {pbotID_in: $groups}}, {specimens_some: {Specimen: {pbotID: $specimen}}}]}" :
+        ", filter: {elementOf_some: {pbotID_in: $groups}}";
+        
+    
     let descriptionGQL;
-    if (!props.includeComplex) {
-        descriptionGQL = gql`
-            query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!]) {
-                Description (type: $type, pbotID: $pbotID, family: $family, genus: $genus, species: $species, filter:{elementOf_some: {pbotID_in: $groups}}) {
+    descriptionGQL = gql`
+        query (
+            $pbotID: ID, 
+            ${filters.specimen ? ", $specimen: ID" : ""} 
+            $groups: [ID!]
+        ) {
+            Description (
+                pbotID: $pbotID
+                ${filter}
+            ) {
+                pbotID
+                name
+                notes
+                schema {
                     pbotID
+                }
+                specimens {
+                    Specimen {
                     name
-                    family
-                    genus
-                    species
-                    references (orderBy: order_asc) {
-                        Reference {
-                            title
-                            year
-                        }
-                        order
-                    }
-                }            
-            }
-        `;
-    } else {
-        descriptionGQL = gql`
-            query ($type: String, $pbotID: ID, $family: String, $genus: String, $species: String, $groups: [ID!]) {
-                Description (type: $type, pbotID: $pbotID, family: $family, genus: $genus, species: $species, filter:{elementOf_some: {pbotID_in: $groups}}) {
                     pbotID
-                    type
-                    name
-                    family
-                    genus
-                    species
-                    references (orderBy: order_asc) {
-                        Reference {
-                            title
-                            year
-                        }
-                        order
-                    }
-                    characterInstances {
-                        pbotID
-                        character {
-                            name
-                        }
-                        state {
-                            State {
-                                name
-                            }
-                            value
-                            order
-                        }
                     }
                 }
-            }
-        `;
-    }
+                elementOf {
+                    name
+                    pbotID
+                }
+                references (orderBy: order_asc) {
+                    Reference {
+                        pbotID
+                    }
+                    order
+                }
+            }            
+        }
+        
+    `;
     
     const { loading, error, data } = useQuery(descriptionGQL, {
         variables: {
@@ -83,12 +71,12 @@ function DescriptionList(props) {
     if (error) return <p>Error :(</p>;
            
     return (
-        <Descriptions public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} descriptions={data.Description}/>
+        <Descriptions public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} descriptions={data.Description} select={props.select} handleSelect={props.handleSelect}/>
     );
 
 }
 
-const DescriptionQueryResults = ({queryParams}) => {
+const DescriptionQueryResults = ({queryParams, select, handleSelect}) => {
     console.log(queryParams);
 
     const global = useContext(GlobalContext);
@@ -96,14 +84,13 @@ const DescriptionQueryResults = ({queryParams}) => {
     return (
         <DescriptionList 
             filters={{
-                type: queryParams.type || null,
                 pbotID: queryParams.descriptionID || null,
-                family: queryParams.family || null, 
-                genus: queryParams.genus || null, 
-                species: queryParams.species || null, 
+                specimen: queryParams.specimen || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeComplex={queryParams.includeComplex} 
+            select={select}
+            handleSelect={handleSelect}
         />
     );
 };
