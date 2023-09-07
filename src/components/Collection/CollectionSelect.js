@@ -182,7 +182,7 @@ const CollectionDialog = (props) => {
         </DialogTitle>
         <DialogContent>
             {!showResult &&
-            <CollectionQueryForm handleSubmit={handleSubmit}/>
+            <CollectionQueryForm select={true} handleSubmit={handleSubmit}/>
             }
             {showResult &&
             <CollectionQueryResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect}/>

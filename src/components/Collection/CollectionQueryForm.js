@@ -33,7 +33,7 @@ const CollectionTypeSelect = (props) => {
     )
 }
 
-const CollectionQueryForm = ({handleSubmit}) => {
+const CollectionQueryForm = ({handleSubmit, select}) => {
     const initValues = {
         collectionID: '', 
         name: '', 
@@ -94,6 +94,8 @@ const CollectionQueryForm = ({handleSubmit}) => {
                 <GroupSelect/>
                 <br />
                 
+                {!select &&
+                <>
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeSpecimens" 
@@ -103,6 +105,9 @@ const CollectionQueryForm = ({handleSubmit}) => {
                     variant="standard"
                 />
                 <br />
+                </>
+                }
+
                 <br />
                 <br />
 

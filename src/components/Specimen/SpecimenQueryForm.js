@@ -14,7 +14,9 @@ import { StateSelect } from '../State/StateSelect.js';
 import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 import { PreservationModeSelect } from './PreservationModeSelect.js';
 
-const SpecimenQueryForm = ({handleSubmit}) => {
+const SpecimenQueryForm = ({handleSubmit, select}) => {
+    console.log("SpecimenQueryForm")
+    console.log(select)
     //const [values, setValues] = useState({});
     const initValues = {
         specimenID: '', 
@@ -126,7 +128,10 @@ const SpecimenQueryForm = ({handleSubmit}) => {
 
                 <GroupSelect/>
                 <br />
-                
+
+
+                {!select &&
+                <>
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeImages" 
@@ -153,6 +158,9 @@ const SpecimenQueryForm = ({handleSubmit}) => {
                     disabled={false}
                 />
                 <br />
+                </>
+                }
+
                 <br />
                 <br />
 

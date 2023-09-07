@@ -175,7 +175,7 @@ const SpecimenDialog = (props) => {
         </DialogTitle>
         <DialogContent>
             {!showResult &&
-            <SpecimenQueryForm handleSubmit={handleSubmit}/>
+            <SpecimenQueryForm select={true} handleSubmit={handleSubmit}/>
             }
             {showResult &&
             <SpecimenQueryResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect}/>
