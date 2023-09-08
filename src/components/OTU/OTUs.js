@@ -1,7 +1,7 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize } from '../../util.js';
-import { Link, Grid, Typography } from '@mui/material';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 
 //TODO: Might be worth moving this to its own file and using elsewhere
@@ -34,6 +34,20 @@ function OTUs(props) {
     const indent6 = {marginLeft:"12em"}
     const indent7 = {marginLeft:"14em"}
     
+    if (props.select) {
+        return (
+            <List sx={{ pt: 0 }}>
+            {otus.map((otu) => (
+                <ListItem disableGutters key={otu.pbotID}>
+                    <ListItemButton onClick={() => props.handleSelect(otu)} >
+                        <ListItemText 
+                        primary={otu.name} secondary={`pbot id: ${otu.pbotID}`} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+        )
+    }
     //TODO:Figure out a more modular way to handle nested comments query and presentation    
     return (otus.length === 0) ? (
         <div style={style}>
