@@ -250,7 +250,7 @@ export const SpecimenSelect = (props) => {
             {open &&
                 <SpecimenDialog open={open} handleClose={handleClose} handleSelect={handleSelect} exclude={props.exclude} />
             }
-            <InnerSpecimenSelect name={props.name} exclude={props.exclude} handleSelect={handleSelect} populateMode={props.populateMode}/>
+            <InnerSpecimenSelect name={props.name} label={props.label} exclude={props.exclude} handleSelect={handleSelect} populateMode={props.populateMode}/>
         </Stack>
     );
 }
