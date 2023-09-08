@@ -23,7 +23,7 @@ function OTUList(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures) {
+        if (!filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.synonym) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -35,6 +35,48 @@ function OTUList(props) {
             }
             if (filters.notableFeatures) {
                 filter += ", {notableFeatures_some: {pbotID_in: $notableFeatures}}"
+            }
+            if (filters.identifiedSpecimens) {
+                filter += `, {
+                    identifiedSpecimens_some: {
+                        Specimen: {
+                            pbotID_in: $identifiedSpecimens 
+                        } 
+                    }
+                }`
+            }
+            if (filters.typeSpecimens) {
+                filter += `, {
+                    typeSpecimens_some: {
+                        Specimen: {
+                            pbotID_in: $typeSpecimens 
+                        } 
+                    }
+                }`
+            }
+            if (filters.holotypeSpecimen) {
+                filter += `, {
+                    holotypeSpecimen: {
+                        Specimen: {
+                            pbotID: $holotypeSpecimen 
+                        } 
+                    }
+                }`
+            }
+            if (filters.synonym) {
+                filter += `, {
+                    AND: [
+                        {pbotID_not: $synonym},
+                        {synonyms_some: {
+                            otus_some: {
+                                AND: [
+                                    {pbotID: $synonym}, 
+                                    {pbotID_not: $pbotID}
+                                ]
+                            }
+                        }}
+                    ]
+                }`
             }
             if (filters.states) {
                 filter += `, {
@@ -88,8 +130,8 @@ function OTUList(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""}) {
-                OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species ${filter}) {
+            query ($pbotID: ID, $name: String, $family: String, $genus: String, $species: String, $authority: String, $diagnosis: String, $qualityIndex: String, $majorTaxonGroup: String, $pbdbParentTaxon: String, $additionalClades: String, ${groups} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""} ${filters.identifiedSpecimens ? ", $identifiedSpecimens: [ID!]" : ""} ${filters.typeSpecimens ? ", $typeSpecimens: [ID!]" : ""} ${filters.holotypeSpecimen ? ", $holotypeSpecimen: ID!" : ""} ${filters.synonym ? ", $synonym: ID!" : ""}) {
+                OTU (pbotID: $pbotID, name: $name, family: $family, genus: $genus, species: $species, authority: $authority, diagnosis: $diagnosis, qualityIndex: $qualityIndex, majorTaxonGroup: $majorTaxonGroup, pbdbParentTaxon: $pbdbParentTaxon, additionalClades: $additionalClades ${filter}) {
                     pbotID
                     name
                 }
@@ -97,8 +139,8 @@ function OTUList(props) {
         `
     } else {
         gQL = gql`
-            query ($pbotID: ID, $family: String, $genus: String, $species: String, ${groups} $includeSynonyms: Boolean!, $includeComments: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
-                OTU (pbotID: $pbotID, family: $family, genus: $genus, species: $species ${filter}) {
+            query ($pbotID: ID, $name: String, $family: String, $genus: String, $species: String, ${groups} $includeSynonyms: Boolean!, $includeComments: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
+                OTU (pbotID: $pbotID, name: $name, family: $family, genus: $genus, species: $species ${filter}) {
                     pbotID
                     name
                     authority
@@ -234,12 +276,12 @@ function OTUList(props) {
     console.log(data.OTU);
     
     return (
-        <OTUs public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} otus={data.OTU} standalone={props.standAlone} includeSynonyms={props.includeSynonyms} includeComments={props.includeComments} includeHolotypeDescription={props.includeHolotypeDescription} includeMergedDescription={props.includeMergedDescription}/>
+        <OTUs select={props.select} handleSelect={props.handleSelect} public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} otus={data.OTU} standalone={props.standAlone} includeSynonyms={props.includeSynonyms} includeComments={props.includeComments} includeHolotypeDescription={props.includeHolotypeDescription} includeMergedDescription={props.includeMergedDescription}/>
     );
 
 }
 
-const OTUQueryResults = ({queryParams}) => {
+const OTUQueryResults = ({queryParams, select, handleSelect}) => {
     console.log("OTUQueryResults");
     console.log("queryParams");
     console.log(queryParams);
@@ -250,9 +292,20 @@ const OTUQueryResults = ({queryParams}) => {
         <OTUList 
             filters={{
                 pbotID: queryParams.otuID || null,
+                name: queryParams.name || null,
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
                 species: queryParams.species || null, 
+                authority: queryParams.authority || null,
+                diagnosis: queryParams.diagnosis || null,
+                qualityIndex: queryParams.qualityIndex || null,
+                majorTaxonGroup: queryParams.majorTaxonGroup || null,
+                pbdbParentTaxon: queryParams.pbdbParentTaxon || null,
+                additionalClades: queryParams.additionalClades || null,
+                identifiedSpecimens: queryParams.identifiedSpecimens && queryParams.identifiedSpecimens.length > 0 ? queryParams.identifiedSpecimens.map(s => s.pbotID) : null,
+                typeSpecimens: queryParams.typeSpecimens && queryParams.typeSpecimens.length > 0 ? queryParams.typeSpecimens.map(s => s.pbotID) : null,
+                holotypeSpecimen: queryParams.holotypeSpecimen || null,
+                synonym: queryParams.synonym || null,
                 schema: queryParams.character ? null : queryParams.schema || null,
                 character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
@@ -265,6 +318,8 @@ const OTUQueryResults = ({queryParams}) => {
             includeHolotypeDescription={queryParams.includeHolotypeDescription} 
             includeMergedDescription={queryParams.includeMergedDescription} 
             standAlone={queryParams.standAlone} 
+            select={select}
+            handleSelect={handleSelect}
         />
     );
 };

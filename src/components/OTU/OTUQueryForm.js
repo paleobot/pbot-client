@@ -9,14 +9,30 @@ import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
 import { SchemaSelect } from '../Schema/SchemaSelect.js';
 import { NotableFeaturesSelect } from '../Specimen/NotableFeaturesSelect.js';
 import { StateSelect } from '../State/StateSelect.js';
+import { MajorTaxonGroupSelect, QualityIndexSelect } from './OTUHelper.js';
+import { SensibleTextField } from '../SensibleTextField.js';
+import { SpecimenManager } from '../Specimen/SpecimenManager.js';
+import { SpecimenSelect } from '../Specimen/SpecimenSelect.js';
+import { OTUSelect } from './OTUSelect.js';
 
-const OTUQueryForm = ({handleSubmit}) => {
+const OTUQueryForm = ({handleSubmit, select}) => {
     //const [values, setValues] = useState({});
     const initValues = {
                 otuID: '', 
+                name: '',
                 family: '', 
                 genus: '', 
                 species: '',
+                authority: '',
+                diagnosis: '',
+                qualityIndex: '',
+                majorTaxonGroup: '',
+                pbdbParentTaxon: '',
+                additionalClades: '',
+                identifiedSpecimens: [],
+                typeSpecimens: [],
+                holotypeSpecimen: '',
+                synonym: '',
                 schema: '',
                 character: '',
                 states: [],
@@ -57,7 +73,7 @@ const OTUQueryForm = ({handleSubmit}) => {
             <Form>
             
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
                     name="otuID" 
                     type="text"
                     label="OTU ID"
@@ -66,7 +82,56 @@ const OTUQueryForm = ({handleSubmit}) => {
                 <br />
                 
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
+                    name="name" 
+                    type="text"
+                    label="Name"
+                    disabled={false}
+                />
+                <br />
+                
+                <Field
+                    component={SensibleTextField}
+                    name="authority" 
+                    type="text" 
+                    label="Authority"
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={SensibleTextField}
+                    name="diagnosis" 
+                    type="text" 
+                    label="Diagnosis"
+                    disabled={false}
+                />
+                <br />
+
+                <QualityIndexSelect />
+                <br />
+        
+                <MajorTaxonGroupSelect />
+                <br />
+        
+                <Field 
+                    component={SensibleTextField}
+                    name="pbdbParentTaxon" 
+                    type="text" 
+                    label="PBDB parent taxon"
+                    disabled={false}
+                />
+
+                <Field 
+                    component={SensibleTextField}
+                    name="additionalClades" 
+                    type="text" 
+                    label="Additional clades"
+                    disabled={false}
+                />
+
+                <Field 
+                    component={SensibleTextField}
                     name="family" 
                     type="text" 
                     label="Family"
@@ -75,7 +140,7 @@ const OTUQueryForm = ({handleSubmit}) => {
                 <br />
                 
                 <Field 
-                    component={TextField}                
+                    component={SensibleTextField}                
                     name="genus" 
                     type="text" 
                     label="Genus"
@@ -83,7 +148,7 @@ const OTUQueryForm = ({handleSubmit}) => {
                 />
                 <br />
                 <Field 
-                    component={TextField}
+                    component={SensibleTextField}
                     name="species" 
                     type="text" 
                     label="Species"
@@ -106,7 +171,7 @@ const OTUQueryForm = ({handleSubmit}) => {
                         <StateSelect values={props.values} source="characterInstance" multi={true}/>
                         <br />
                     </div>
-                }
+                }     
 
                 <PartsPreservedSelect/>
                 <br />
@@ -114,9 +179,23 @@ const OTUQueryForm = ({handleSubmit}) => {
                 <NotableFeaturesSelect />
                 <br />
 
+                <SpecimenManager name="identifiedSpecimens" groupLabel="Identified specimens" individualLabel="identified specimen" values={props.values} />
+                <br />
+
+                <SpecimenManager name="typeSpecimens" groupLabel="Type specimens" individualLabel="type specimen" values={props.values} />
+                <br />
+
+                <SpecimenSelect name="holotypeSpecimen" label="Holotype specimen"/>
+                <br />
+
+                <OTUSelect name="synonym" label="Synonym"/>
+                <br />
+
                 <GroupSelect/>
                 <br />
 
+                {!select && 
+                <>
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeSynonyms" 
@@ -157,7 +236,8 @@ const OTUQueryForm = ({handleSubmit}) => {
                     disabled={false}
                 />
                 <br />
-                
+                </>
+                }
                 
                 <br />
                 <br />
