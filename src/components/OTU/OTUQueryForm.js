@@ -121,6 +121,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                     label="PBDB parent taxon"
                     disabled={false}
                 />
+                <br />
 
                 <Field 
                     component={SensibleTextField}
@@ -129,6 +130,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                     label="Additional clades"
                     disabled={false}
                 />
+                <br />
 
                 <Field 
                     component={SensibleTextField}
@@ -147,6 +149,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                     disabled={false}
                 />
                 <br />
+                
                 <Field 
                     component={SensibleTextField}
                     name="species" 
