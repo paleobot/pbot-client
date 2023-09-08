@@ -12,61 +12,13 @@ import { SpecimenManager } from '../Specimen/SpecimenManager.js';
 import {
     gql, useQuery
 } from "@apollo/client";
-import { confidenceQualitative, majorTaxonGroups } from '../../Lists.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
 import { NotableFeaturesSelect } from '../Specimen/NotableFeaturesSelect.js';
+import { MajorTaxonGroupSelect, QualityIndexSelect } from './OTUHelper.js';
+import { OTUSelect } from './OTUSelect.js';
 
-const MajorTaxonGroupSelect = (props) => {
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="majorTaxonGroup"
-            label="Major taxon group"
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {majorTaxonGroups.map((t) => (
-                <MenuItem 
-                    key={t} 
-                    value={t}
-                >{t}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
-const QualityIndexSelect = (props) => {
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="qualityIndex"
-            label="Quality index"
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {confidenceQualitative.map((cQ) => (
-                <MenuItem 
-                    key={cQ} 
-                    value={cQ}
-                >{cQ}</MenuItem>
-            ))}
-        </Field>
-    )
-}
-
+/*
 const OTUSelect = (props) => {
     console.log("OTUSelect");
     console.log(props);
@@ -197,7 +149,7 @@ const OTUSelect = (props) => {
                     dnotes={otu.notes}
                     dpartspreserved={otu.partsPreserved ? JSON.stringify(otu.partsPreserved.map(organ => organ.pbotID)) : null}
                     dnotablefeatures={otu.notableFeatures ? JSON.stringify(otu.notableFeatures.map(feature => feature.pbotID)) : null}
-                    didentifiedspecimens={otu.identifiedSpecimens ? JSON.stringify(otu.identifiedSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
+                    didentifiedspecimens={otu.identifiedSpecimens ? JSON.stringify(otu.identifiedSpecimens.map(specimen => {return {pbotID: specimen.Specimen.pbotID}})) : null}
                     dtypespecimens={otu.typeSpecimens ? JSON.stringify(otu.typeSpecimens.map(specimen => specimen.Specimen.pbotID)) : null}
                     dholotypespecimen={otu.holotypeSpecimen.Specimen.pbotID}
                     dreferences={otu.references ? JSON.stringify(otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}})) : null}
@@ -209,6 +161,7 @@ const OTUSelect = (props) => {
     )
         
 }
+*/
 
 const SpecimenSelect = (props) => {
     console.log("SpecimenSelect");
@@ -467,7 +420,8 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 <SpecimenObserver />
                 {(mode === "edit" || mode === "delete") &&
                     <div>
-                        <OTUSelect values={props.values} handleChange={props.handleChange}/>
+                        {/*<OTUSelect values={props.values} handleChange={props.handleChange}/>*/}
+                        <OTUSelect name="otu" label="Taxa (OTU)" populateMode="full"/>
                         <br />
                     </div>
                 }
@@ -516,10 +470,10 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         />
                         <br />
 
-                        <QualityIndexSelect />
+                        <QualityIndexSelect required/>
                         <br />
                
-                        <MajorTaxonGroupSelect />
+                        <MajorTaxonGroupSelect required/>
                         <br />
                
                         <Field 
