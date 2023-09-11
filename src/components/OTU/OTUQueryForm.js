@@ -196,7 +196,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 <OTUSelect name="synonym" label="Synonym"/>
                 <br />
 
-                <ReferenceManager values={props.values}/>
+                <ReferenceManager omitOrder values={props.values}/>
                 <br />
                 
                 <GroupSelect/>

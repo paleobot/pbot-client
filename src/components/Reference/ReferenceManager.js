@@ -14,7 +14,7 @@ export const ReferenceManager = (props) => {
     return (
     <div style={style}>
         <InputLabel>
-            References
+            {props.single ? "Reference" : "References"}
         </InputLabel>
         <FieldArray name="references">
             {({ insert, remove, push }) => (
@@ -28,7 +28,7 @@ export const ReferenceManager = (props) => {
                                     <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)} maxOrder={maxOrder} />
                                 </Grid>
 
-                                {!props.single &&
+                                {(!props.omitOrder && !props.single) &&
                                 <Grid item >
                                     <Field
                                         component={TextField}
