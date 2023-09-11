@@ -35,13 +35,50 @@ function Collections(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
     const groups = props.standAlone ? '' : ', $groups: [ID!] ';
-    const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
+    //const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
+    let filter = '';
+    if (!props.standAlone) {
+        filter = ", filter: {"
+        if (!filters.specimens && !filters.references && !filters.preservationModeIDs) {
+            filter += "elementOf_some: {pbotID_in: $groups}"
+        } else {
+            filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
+
+            if (filters.preservationModeIDs) {
+                console.log("adding preservationModeIDs")
+                filter += ", {preservationModes_some: {pbotID_in: $preservationModeIDs}}"
+            }
+
+            if (filters.specimens) {
+                filter += `, {
+                    specimens_some: {
+                        pbotID_in: $specimens 
+                    }
+                }`
+            }
+
+            if (filters.references) {
+                filter += `, {
+                    references_some: {
+                        Reference: {
+                            pbotID_in: $references 
+                        } 
+                    }
+                }`
+            }
+
+            filter +="]"
+        }
+        filter += "}"
+    }
+    console.log(filter)
+
     
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, ${groups}) {
-                Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType  ${filter}) {
+            query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, $lithology: String, $sizeClasses: [String], ${groups} ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} ${filters.specimens ? ", $specimens: [ID!]" : ""} ${filters.references ? ", $references: [ID!]" : ""}) {
+                Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType,  lithology: $lithology, sizeClasses: $sizeClasses  ${filter}) {
                     pbotID
                     name
                 }
@@ -307,6 +344,11 @@ const CollectionQueryResults = ({queryParams, select, handleSelect}) => {
                 country: queryParams.country || null,
                 state: queryParams.state || null,
                 collectionType: queryParams.collectiontype || null,
+                sizeClasses: queryParams.sizeclasses && queryParams.sizeclasses.length > 0 ? queryParams.sizeclasses : null,
+                lithology: queryParams.lithology || null,
+                preservationModeIDs: queryParams.preservationmodes && queryParams.preservationmodes.length > 0 ? queryParams.preservationmodes : null,
+                specimens: queryParams.specimens && queryParams.specimens.length > 0 ? queryParams.specimens.map(s => s.pbotID) : null,
+                references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSpecimens={queryParams.includeSpecimens} 

@@ -7,39 +7,23 @@ import {GroupSelect} from '../Group/GroupSelect.js';
 import {collectionTypes, countries} from "../../Lists.js"
 import { CountrySelect } from './CountrySelect.js'
 import { StateSelect } from './StateSelect.js'
-
-const CollectionTypeSelect = (props) => {
-    const style = {minWidth: "12ch"}
-    return (
-        <Field
-            style={style}
-            component={TextField}
-            type="text"
-            name="collectiontype"
-            label="Collection type"
-            select={true}
-            SelectProps={{
-                multiple: false,
-            }}
-            disabled={false}
-        >
-            {collectionTypes.map((ct) => (
-                <MenuItem 
-                    key={ct} 
-                    value={ct}
-                >{ct}</MenuItem>
-            ))}
-        </Field>
-    )
-}
+import { ReferenceManager } from '../Reference/ReferenceManager.js';
+import { SpecimenManager } from '../Specimen/SpecimenManager.js';
+import { CollectionTypeSelect, LithologySelect, PreservationModeSelect, SizeClassSelect } from './CollectionUtil.js';
 
 const CollectionQueryForm = ({handleSubmit, select}) => {
     const initValues = {
         collectionID: '', 
         name: '', 
+        collectiontype: '',
         country: '',
         state: '',
         collectiontype: '',
+        lithology: '',
+        preservationmodes: [],
+        sizeclasses: [],
+        specimens: [],
+        references: [],
         groups: [],
         includeSpecimens: false
     };
@@ -91,6 +75,19 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                 <StateSelect country={props.values.country} />
                 <br />
 
+                <LithologySelect />
+                <br />
+                
+                <PreservationModeSelect />
+                <br />
+
+                <SizeClassSelect />
+                <br />
+
+                <SpecimenManager name="specimens" groupLabel="Specimens" individualLabel="specimen" values={props.values} />
+
+                <ReferenceManager omitOrder values={props.values}/>
+                
                 <GroupSelect/>
                 <br />
                 
