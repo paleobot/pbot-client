@@ -14,6 +14,7 @@ import { SensibleTextField } from '../SensibleTextField.js';
 import { SpecimenManager } from '../Specimen/SpecimenManager.js';
 import { SpecimenSelect } from '../Specimen/SpecimenSelect.js';
 import { OTUSelect } from './OTUSelect.js';
+import { ReferenceManager } from '../Reference/ReferenceManager.js';
 
 const OTUQueryForm = ({handleSubmit, select}) => {
     //const [values, setValues] = useState({});
@@ -33,6 +34,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 typeSpecimens: [],
                 holotypeSpecimen: '',
                 synonym: '',
+                references: [],
                 schema: '',
                 character: '',
                 states: [],
@@ -194,6 +196,9 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 <OTUSelect name="synonym" label="Synonym"/>
                 <br />
 
+                <ReferenceManager values={props.values}/>
+                <br />
+                
                 <GroupSelect/>
                 <br />
 

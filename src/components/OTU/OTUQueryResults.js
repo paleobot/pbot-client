@@ -23,7 +23,7 @@ function OTUList(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.synonym) {
+        if (!filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -78,6 +78,15 @@ function OTUList(props) {
                     ]
                 }`
             }
+            if (filters.references) {
+                filter += `, {
+                    references_some: {
+                        Reference: {
+                            pbotID_in: $references 
+                        } 
+                    }
+                }`
+            }
             if (filters.states) {
                 filter += `, {
                     identifiedSpecimens_some: {
@@ -130,7 +139,7 @@ function OTUList(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $family: String, $genus: String, $species: String, $authority: String, $diagnosis: String, $qualityIndex: String, $majorTaxonGroup: String, $pbdbParentTaxon: String, $additionalClades: String, ${groups} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""} ${filters.identifiedSpecimens ? ", $identifiedSpecimens: [ID!]" : ""} ${filters.typeSpecimens ? ", $typeSpecimens: [ID!]" : ""} ${filters.holotypeSpecimen ? ", $holotypeSpecimen: ID!" : ""} ${filters.synonym ? ", $synonym: ID!" : ""}) {
+            query ($pbotID: ID, $name: String, $family: String, $genus: String, $species: String, $authority: String, $diagnosis: String, $qualityIndex: String, $majorTaxonGroup: String, $pbdbParentTaxon: String, $additionalClades: String, ${groups} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""} ${filters.identifiedSpecimens ? ", $identifiedSpecimens: [ID!]" : ""} ${filters.typeSpecimens ? ", $typeSpecimens: [ID!]" : ""} ${filters.holotypeSpecimen ? ", $holotypeSpecimen: ID!" : ""} ${filters.references ? ", $references: [ID!]" : ""} ${filters.synonym ? ", $synonym: ID!" : ""}) {
                 OTU (pbotID: $pbotID, name: $name, family: $family, genus: $genus, species: $species, authority: $authority, diagnosis: $diagnosis, qualityIndex: $qualityIndex, majorTaxonGroup: $majorTaxonGroup, pbdbParentTaxon: $pbdbParentTaxon, additionalClades: $additionalClades ${filter}) {
                     pbotID
                     name
@@ -306,6 +315,7 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
                 typeSpecimens: queryParams.typeSpecimens && queryParams.typeSpecimens.length > 0 ? queryParams.typeSpecimens.map(s => s.pbotID) : null,
                 holotypeSpecimen: queryParams.holotypeSpecimen || null,
                 synonym: queryParams.synonym || null,
+                references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
                 schema: queryParams.character ? null : queryParams.schema || null,
                 character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
