@@ -22,8 +22,6 @@ const ImageMutateResults = ({queryParams}) => {
                 citation: queryParams.citation || null,
                 caption: queryParams.caption || null,
                 //type: queryParams.type || null,
-                groups: queryParams.public ? 
-                    [global.publicGroupID] : queryParams.groups || null,
             }}
             entity="Image"
             mode={queryParams.mode}
