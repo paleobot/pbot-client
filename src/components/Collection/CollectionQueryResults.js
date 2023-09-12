@@ -77,8 +77,8 @@ function Collections(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, $lithology: String, $sizeClasses: [String], ${groups} ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} ${filters.specimens ? ", $specimens: [ID!]" : ""} ${filters.references ? ", $references: [ID!]" : ""}) {
-                Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType,  lithology: $lithology, sizeClasses: $sizeClasses  ${filter}) {
+            query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, $lithology: String, $sizeClasses: [String], $environment: String, $collectionMethods: [String], $pbdbid: String, $stratigraphicGroup: String, $stratigraphicFormation: String, $stratigraphicMember: String, $stratigraphicBed: String, $mininterval: String, $maxinterval: String ${groups} ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} ${filters.specimens ? ", $specimens: [ID!]" : ""} ${filters.references ? ", $references: [ID!]" : ""}) {
+                Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType,  lithology: $lithology, sizeClasses: $sizeClasses,  environment: $environment, collectionMethods: $collectionMethods, pbdbid: $pbdbid, stratigraphicGroup: $stratigraphicGroup, stratigraphicFormation: $stratigraphicFormation, stratigraphicMember: $stratigraphicMember, stratigraphicBed: $stratigraphicBed, mininterval: $mininterval, maxinterval: $maxinterval ${filter}) {
                     pbotID
                     name
                 }
@@ -346,6 +346,15 @@ const CollectionQueryResults = ({queryParams, select, handleSelect}) => {
                 collectionType: queryParams.collectiontype || null,
                 sizeClasses: queryParams.sizeclasses && queryParams.sizeclasses.length > 0 ? queryParams.sizeclasses : null,
                 lithology: queryParams.lithology || null,
+                environment: queryParams.environment || null,
+                pbdbid: queryParams.pbdbid || null,
+                stratigraphicGroup: queryParams.stratigraphicgroup || null,
+                stratigraphicFormation: queryParams.stratigraphicformation || null,
+                stratigraphicMember: queryParams.stratigraphicmember || null,
+                stratigraphicBed: queryParams.stratigraphicbed || null,
+                mininterval: queryParams.mininterval || queryParams.maxinterval,
+                maxinterval: queryParams.maxinterval || null,
+                collectionMethods: queryParams.collectionmethods && queryParams.collectionmethods.length > 0 ? queryParams.collectionmethods : null,
                 preservationModeIDs: queryParams.preservationmodes && queryParams.preservationmodes.length > 0 ? queryParams.preservationmodes : null,
                 specimens: queryParams.specimens && queryParams.specimens.length > 0 ? queryParams.specimens.map(s => s.pbotID) : null,
                 references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
