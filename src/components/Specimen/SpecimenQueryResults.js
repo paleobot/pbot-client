@@ -37,7 +37,7 @@ function Specimens(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema) {
+        if (!filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf) {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}";
@@ -57,6 +57,57 @@ function Specimens(props) {
             if (filters.identifiers) {
                 filter += ", {identifiers: {pbotID_in: $identifiers}}"
             }
+
+            if (filters.references) {
+                filter += `, {
+                    references_some: {
+                        Reference: {
+                            pbotID_in: $references 
+                        } 
+                    }
+                }`
+            }
+
+            if (filters.description) {
+                filter += `, {
+                    describedBy_some: {
+                        Description: {
+                            pbotID: $description 
+                        } 
+                    }
+                }`
+            }
+
+            if (filters.identifiedAs) {
+                filter += `, {
+                    identifiedAs_some: {
+                        OTU: {
+                            pbotID: $identifiedAs 
+                        } 
+                    }
+                }`
+            }
+
+            if (filters.typeOf) {
+                filter += `, {
+                    typeOf_some: {
+                        OTU: {
+                            pbotID: $typeOf 
+                        } 
+                    }
+                }`
+            }
+
+            if (filters.holotypeOf) {
+                filter += `, {
+                    holotypeOf_some: {
+                        OTU: {
+                            pbotID: $holotypeOf 
+                        } 
+                    }
+                }`
+            }
+
             if (filters.states) {
                 filter += `, {
                     describedBy: {
@@ -100,24 +151,33 @@ function Specimens(props) {
             query (
                 $pbotID: ID, 
                 $name: String, 
+                $idigbioInstitutionCode: String, 
+                $idigbioCatalogNumber: String, 
                 $idigbiouuid: String, 
-                $gbifID: String, 
+                $repository: String,
                 ${groups} 
                 ${filters.preservationModes ? ", $preservationModes: [ID]" : ""} 
                 ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
                 ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} 
                 ${filters.identifiers ? ", $identifiers: [ID!]" : ""} 
+                ${filters.references ? ", $references: [ID!]" : ""}
                 ${filters.collection ? ", $collection: ID" : ""} 
                 ${filters.schema ? ", $schema: ID" : ""} 
                 ${filters.character ? ", $character: ID" : ""} 
                 ${filters.states ? ", $states: [ID!]" : ""}, 
+                ${filters.description ? ", $description: ID" : ""},
+                ${filters.identifiedAs ? ", $identifiedAs: ID" : ""},
+                ${filters.typeOf ? ", $typeOf: ID" : ""},
+                ${filters.holotypeOf ? ", $holotypeOf: ID" : ""},
                 $excludeList: [ID!]
             ) {
                 Specimen (
                     pbotID: $pbotID, 
                     name: $name, 
+                    idigbioInstitutionCode: $idigbioInstitutionCode, 
+                    idigbioCatalogNumber: $idigbioCatalogNumber, 
                     idigbiouuid: $idigbiouuid, 
-                    gbifID: $gbifID 
+                    repository: $repository
                     ${filter}
                 ) {
                     pbotID
@@ -152,8 +212,9 @@ function Specimens(props) {
                     preservationModes {
                         name
                     }
+                    idigbioInstitutionCode
+                    idigbioCatalogNumber
                     idigbiouuid
-                    gbifID
                     pbdboccid
                     partsPreserved {
                         type
@@ -320,12 +381,11 @@ function Specimens(props) {
                 <div style={header1}><Typography variant="h6">Identity</Typography></div>
                 <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
                 <div style={indent}><b>collection:</b> {s.collection.name}</div>
-                <div style={indent}><b>idigbiouuid:</b> {s.idigbiouuid}</div>
-                <div style={indent}><b>gbifID:</b> {s.gbifID}</div>
+                <div style={indent}><b>idigbio InstitutionCode/CatalogNumber/uuid:</b> {`${s.idigbioInstitutionCode}/${s.idigbioCatalogNumber}/${s.idigbiouuid}`}</div>
                 <div style={indent}><b>references:</b></div>
                 {s.references && s.references.length > 0 &&
                     <div>
-                        -?{alphabetize([...s.references], "order").map((reference, idx) => (
+                        {alphabetize([...s.references], "order").map((reference, idx) => (
                             <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
                         ))}
                     </div>
@@ -450,6 +510,10 @@ const SpecimenQueryResults = ({queryParams, select, handleSelect, exclude}) => {
             filters={{
                 pbotID: queryParams.specimenID,
                 name: queryParams.name, 
+                description: queryParams.description || null,
+                identifiedAs: queryParams.identifiedAs || null,
+                typeOf: queryParams.typeOf || null,
+                holotypeOf: queryParams.holotypeOf || null,
                 schema: queryParams.character ? null : queryParams.schema || null,
                 character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
@@ -457,8 +521,11 @@ const SpecimenQueryResults = ({queryParams, select, handleSelect, exclude}) => {
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
                 preservationMode: queryParams.preservationMode || null,
+                idigbioInstitutionCode: queryParams.idigbioInstitutionCode || null,
+                idigbioCatalogNumber: queryParams.idigbioCatalogNumber || null,
                 idigbiouuid: queryParams.idigbiouuid || null,
-                gbifID: queryParams.gbifID || null,
+                repository: queryParams.repository || null,
+                references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
                 identifiers: queryParams.identifiers && queryParams.identifiers.length > 0 ?queryParams.identifiers.map(({pbotID}) => pbotID)  : null, 
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
