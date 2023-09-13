@@ -25,7 +25,7 @@ function Schemas(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.partsPreserved && !filters.notableFeatures) {
+        if (!filters.partsPreserved && !filters.notableFeatures && !filters.references && !filters.purpose && !filters.specimen) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -36,6 +36,33 @@ function Schemas(props) {
             if (filters.notableFeatures) {
                 filter += ", {notableFeatures_some: {pbotID_in: $notableFeatures}}"
             }
+
+            if (filters.purpose) {
+                filter += ", {purpose_contains: $purpose}"
+            }
+
+            if (filters.references) {
+                filter += `, {
+                    references_some: {
+                        Reference: {
+                            pbotID_in: $references 
+                        } 
+                    }
+                }`
+            }
+
+            if (filters.specimen) {
+                filter += `, {
+                    appliedBy_some: {
+                        specimens_some : {
+                            Specimen: {
+                                pbotID: $specimen
+                            }
+                        } 
+                    }
+                }`
+            }
+
             filter +="]"
         }
         filter += "}"
@@ -45,8 +72,23 @@ function Schemas(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String ${groups} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""}) {
-                Schema (pbotID: $pbotID, title: $title, year: $year ${filter}) {
+            query (
+                $pbotID: ID, 
+                $title: String, 
+                $year: String,
+                ${groups} 
+                ${filters.purpose ? ", $purpose: String" : ""} 
+                ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
+                ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""}
+                ${filters.references ? ", $references: [ID!]" : ""}
+                ${filters.specimen ? ", $specimen: ID" : ""}
+            ) {
+                Schema (
+                    pbotID: $pbotID, 
+                    title: $title, 
+                    year: $year
+                    ${filter}
+                ) {
                     pbotID
                     title
                 }
@@ -314,9 +356,14 @@ const SchemaQueryResults = ({queryParams}) => {
     return (
         <Schemas 
             filters={{
-                pbotID: queryParams.schemaID,
-                title: queryParams.title, 
-                year: queryParams.year, 
+                pbotID: queryParams.schemaID || null,
+                title: queryParams.title || null, 
+                year: queryParams.year || null, 
+                purpose: queryParams.purpose || null,
+                specimen: queryParams.specimen || null,
+                //some extra razzle-dazzle here use only non-empty pbotIDs
+                references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID).reduce(r => '' !== r) : null,
+                //reference: queryParams.reference || null,
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 

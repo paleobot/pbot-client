@@ -6,6 +6,10 @@ import { TextField, CheckboxWithLabel } from 'formik-mui';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
 import { NotableFeaturesSelect } from '../Specimen/NotableFeaturesSelect.js';
+import { SensibleTextField } from '../SensibleTextField.js';
+import { ReferenceManager } from '../Reference/ReferenceManager.js';
+import { ReferenceSelect } from '../Reference/ReferenceSelect.js';
+import { SpecimenSelect } from '../Specimen/SpecimenSelect.js';
 
 
 const SchemaQueryForm = ({handleSubmit}) => {
@@ -14,6 +18,12 @@ const SchemaQueryForm = ({handleSubmit}) => {
         schemaID: '', 
         title: '', 
         year: '', 
+        purpose: '',
+        references: [{
+            pbotID: '',
+        }],
+        //reference: '',
+        specimen: '',
         partsPreserved: [],
         notableFeatures: [],
         groups: [],
@@ -40,6 +50,7 @@ const SchemaQueryForm = ({handleSubmit}) => {
                 //setShowOTUs(true);
             }}
         >
+            {props => (
             <Form>
                 <Field 
                     component={TextField}
@@ -71,11 +82,28 @@ const SchemaQueryForm = ({handleSubmit}) => {
                 />
                 <br />
                 
+                <Field
+                    component={SensibleTextField}
+                    type="text"
+                    name="purpose"
+                    label="Purpose"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
+
                 <PartsPreservedSelect />
                 <br />
 
                 <NotableFeaturesSelect />
                 <br />
+
+                <SpecimenSelect name="specimen" label="Specimen"  />
+                
+                <ReferenceManager values={props.values} single/>
+                <br />
+                {/*<ReferenceSelect name="reference" label="Reference" simple/>
+                <br />*/}
 
                 <GroupSelect/>
                 <br />
@@ -99,6 +127,7 @@ const SchemaQueryForm = ({handleSubmit}) => {
                 <br />
                 <br />
             </Form>
+            )}
         </Formik>
     
     );
