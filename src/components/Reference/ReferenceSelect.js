@@ -17,7 +17,7 @@ export const InnerReferenceSelect = (props) => {
     console.log("InnerReferenceSelect");
     console.log(props);
     
-    const gQL = "reference" === props.name ? //This is a standalone ReferenceSelect for Reference edit/delete
+    const gQL = ("reference" === props.name && !props.simple) ? //This is a standalone ReferenceSelect for Reference edit/delete
         gql`
             query {
                 Reference {
@@ -197,10 +197,10 @@ export const ReferenceSelect = (props) => {
         console.log("handleSelect")
         console.log(reference);
         console.log(reference.pbotID)
-
+        
         formikProps.setFieldValue(props.name, reference.pbotID);
         
-        if ("reference" === props.name) { //Standalone ReferenceSelect
+        if (("reference" === props.name && !props.simple)) { //Standalone ReferenceSelect
             const authors = reference.authoredBy ? reference.authoredBy.map(author => {return {pbotID: author.Person.pbotID, order: author.order, searchName: author.Person.surname || ''}}) : [];
             
             const groups = reference.elementOf ? reference.elementOf.map(group => {return group.pbotID}) : [];
@@ -225,7 +225,7 @@ export const ReferenceSelect = (props) => {
             formikProps.setFieldValue("authors", authors);
             formikProps.setFieldValue("groups", groups);
             formikProps.setFieldValue("public", groups.includes(global.publicGroupID));
-        } else {
+        } else if (!props.simple) {
             formikProps.setFieldValue(props.name.replace(/\.pbotID$/, ".order"), (props.maxOrder+1).toString() )
         }
 
