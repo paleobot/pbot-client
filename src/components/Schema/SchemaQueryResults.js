@@ -25,7 +25,7 @@ function Schemas(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.partsPreserved && !filters.notableFeatures && !filters.references && !filters.purpose && !filters.specimen) {
+        if (!filters.partsPreserved && !filters.notableFeatures && !filters.reference && !filters.purpose && !filters.specimen) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -41,11 +41,11 @@ function Schemas(props) {
                 filter += ", {purpose_contains: $purpose}"
             }
 
-            if (filters.references) {
+            if (filters.reference) {
                 filter += `, {
                     references_some: {
                         Reference: {
-                            pbotID_in: $references 
+                            pbotID: $reference 
                         } 
                     }
                 }`
@@ -80,7 +80,7 @@ function Schemas(props) {
                 ${filters.purpose ? ", $purpose: String" : ""} 
                 ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
                 ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""}
-                ${filters.references ? ", $references: [ID!]" : ""}
+                ${filters.reference ? ", $reference: ID" : ""}
                 ${filters.specimen ? ", $specimen: ID" : ""}
             ) {
                 Schema (
@@ -362,8 +362,8 @@ const SchemaQueryResults = ({queryParams}) => {
                 purpose: queryParams.purpose || null,
                 specimen: queryParams.specimen || null,
                 //some extra razzle-dazzle here use only non-empty pbotIDs
-                references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID).reduce(r => '' !== r) : null,
-                //reference: queryParams.reference || null,
+                //references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID).reduce(r => '' !== r) : null,
+                reference: queryParams.reference || null,
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 

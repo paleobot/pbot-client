@@ -19,10 +19,10 @@ const SchemaQueryForm = ({handleSubmit}) => {
         title: '', 
         year: '', 
         purpose: '',
-        references: [{
-            pbotID: '',
-        }],
-        //reference: '',
+        //references: [{
+        //    pbotID: '',
+        //}],
+        reference: '',
         specimen: '',
         partsPreserved: [],
         notableFeatures: [],
@@ -98,13 +98,12 @@ const SchemaQueryForm = ({handleSubmit}) => {
                 <NotableFeaturesSelect />
                 <br />
 
+                {/*<ReferenceManager values={props.values} single/>
+                <br />*/}
+                <ReferenceSelect name="reference" label="Reference" simple/>
+
                 <SpecimenSelect name="specimen" label="Specimen"  />
                 
-                <ReferenceManager values={props.values} single/>
-                <br />
-                {/*<ReferenceSelect name="reference" label="Reference" simple/>
-                <br />*/}
-
                 <GroupSelect/>
                 <br />
                 
