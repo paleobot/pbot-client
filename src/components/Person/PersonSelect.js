@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Field, useFormikContext } from 'formik';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack, Tooltip } from '@mui/material';
 import { TextField } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {
@@ -203,18 +203,20 @@ export const PersonSelect = (props) => {
 
     return (
         <Stack direction="row" key={props.name}>
-            <IconButton
-                color="secondary" 
-                size="large"
-                onClick={()=>{setOpen(true)}}
-                disabled={props.disabled}
-            >
-                <SearchIcon/>
-            </IconButton>
+            <InnerPersonSelect disabled={props.disabled} name={props.name} exclude={props.exclude} values={formikProps.values} handleSelect={handleSelect}/>
+            <Tooltip title="Search using a query form"><span>
+                <IconButton
+                    color="secondary" 
+                    size="large"
+                    onClick={()=>{setOpen(true)}}
+                    disabled={props.disabled}
+                >
+                    <SearchIcon/>
+                </IconButton>
+            </span></Tooltip>
             {open &&
                 <PersonDialog open={open} handleClose={handleClose} handleSelect={handleSelect} exclude={props.exclude} />
             }
-            <InnerPersonSelect disabled={props.disabled} name={props.name} exclude={props.exclude} values={formikProps.values} handleSelect={handleSelect}/>
         </Stack>
     );
 }

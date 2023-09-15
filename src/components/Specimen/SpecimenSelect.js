@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Field, useFormikContext } from 'formik';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack, Tooltip } from '@mui/material';
 import { TextField } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {
@@ -239,18 +239,20 @@ export const SpecimenSelect = (props) => {
 
     return (
         <Stack direction="row" key={props.name}>
-            <IconButton
-                color="secondary" 
-                size="large"
-                onClick={()=>{setOpen(true)}}
-                disabled={false}
-            >
-                <SearchIcon/>
-            </IconButton>
+            <InnerSpecimenSelect name={props.name} label={props.label} exclude={props.exclude} handleSelect={handleSelect} populateMode={props.populateMode}/>
+            <Tooltip title="Search using a query form"><span>
+                <IconButton
+                    color="secondary" 
+                    size="large"
+                    onClick={()=>{setOpen(true)}}
+                    disabled={false}
+                >
+                    <SearchIcon/>
+                </IconButton>
+            </span></Tooltip>
             {open &&
                 <SpecimenDialog open={open} handleClose={handleClose} handleSelect={handleSelect} exclude={props.exclude} />
             }
-            <InnerSpecimenSelect name={props.name} label={props.label} exclude={props.exclude} handleSelect={handleSelect} populateMode={props.populateMode}/>
         </Stack>
     );
 }

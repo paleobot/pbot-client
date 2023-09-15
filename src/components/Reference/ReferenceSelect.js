@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Field, useFormikContext } from 'formik';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack, Tooltip } from '@mui/material';
 import { TextField } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {
@@ -234,18 +234,20 @@ export const ReferenceSelect = (props) => {
 
     return (
         <Stack direction="row" key={props.name}>
-            <IconButton
-                color="secondary" 
-                size="large"
-                onClick={()=>{setOpen(true)}}
-                disabled={false}
-            >
-                <SearchIcon/>
-            </IconButton>
+            <InnerReferenceSelect name={props.name} exclude={props.exclude} handleSelect={handleSelect}/>
+            <Tooltip title="Search using a query form"><span>
+                <IconButton
+                    color="secondary" 
+                    size="large"
+                    onClick={()=>{setOpen(true)}}
+                    disabled={false}
+                >
+                    <SearchIcon/>
+                </IconButton>
+                </span></Tooltip>
             {open &&
                 <ReferenceDialog open={open} handleClose={handleClose} handleSelect={handleSelect} exclude={props.exclude} />
             }
-            <InnerReferenceSelect name={props.name} exclude={props.exclude} handleSelect={handleSelect}/>
         </Stack>
     );
 }
