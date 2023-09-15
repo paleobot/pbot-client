@@ -9,6 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Checkbox, FormControlLabel, Grid, IconButton, Link, List, ListItem, ListItemButton, ListItemText, Tooltip, Typography } from '@mui/material';
 import { Field, useFormikContext } from 'formik';
 import SearchIcon from '@mui/icons-material/Search';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { responsePathAsArray } from 'graphql';
 import { alphabetize } from '../../util';
 import buffer from '@turf/buffer'; 
@@ -194,7 +195,7 @@ export default function PBDBSelect(props) {
                     disabled={!(formikProps.values.name || formikProps.values.pbdbid || (formikProps.values.lat && formikProps.values.lon))}
 
                 >
-                    <SearchIcon/>
+                    <ManageSearchIcon/>
                 </IconButton>
             </span></Tooltip>
             {open &&
