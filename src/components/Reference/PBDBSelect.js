@@ -1,4 +1,4 @@
-import SearchIcon from '@mui/icons-material/Search';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { Checkbox, FormControlLabel, IconButton, Link, List, ListItem, ListItemButton, ListItemText, Tooltip, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -180,7 +180,7 @@ export default function PBDBSelect(props) {
                     disabled={!(formikProps.values.publicationType || formikProps.values.title || formikProps.values.journal || formikProps.values.bookTitle ||formikProps.values.year || formikProps.values.doi || formikProps.values.pbdbid || formikProps.values.authors[0].searchName)}
 
                 >
-                    <SearchIcon/>
+                    <ManageSearchIcon/>
                 </IconButton>
             </span></Tooltip>
             {open &&
