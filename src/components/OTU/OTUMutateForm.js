@@ -396,7 +396,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                     is: false,
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
                 }),
-                holotypeSpecimen: Yup.string().required("Holotype specimen required"),
+                //holotypeSpecimen: Yup.string().required("Holotype specimen required"),
                 typeSpecimens: Yup.array().min(1, "At least one type specimen required"),
                 identifiedSpecimens: Yup.array().min(1, "At least one identified specimen required"),
             })}
@@ -493,17 +493,17 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         <br />
 
                         <ReferenceManager values={props.values}/>
-                        <br />
                 
-                        {/*<SpecimenSelect type="identified" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>*/}
                         <SpecimenManager name="identifiedSpecimens" groupLabel="Identified specimens" individualLabel="identified specimen" values={props.values} />
-                        <br />
 
                         <SpecimenSelect type="type" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
                         <br />
+                        <br />
                         
+                        {/*
                         <SpecimenSelect type="holotype" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
                         <br />
+                        */}
 
                         <Field 
                             component={CheckboxWithLabel}
@@ -532,6 +532,9 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         Optional fields
                     </AccordionSummary>
                     <AccordionDetails>
+                        <SpecimenSelect type="holotype" values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        <br />
+
                         <Field 
                             component={SensibleTextField}
                             name="family" 
