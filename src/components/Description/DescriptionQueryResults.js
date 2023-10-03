@@ -35,6 +35,7 @@ function DescriptionList(props) {
             ) {
                 pbotID
                 name
+                writtenDescription
                 notes
                 schema {
                     pbotID

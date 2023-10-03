@@ -33,7 +33,7 @@ function Descriptions(props) {
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : descriptions.map(({ pbotID, name, type, family, genus, species, characterInstances, references, notes }) => (
+    ) : descriptions.map(({ pbotID, name, type, family, genus, species, characterInstances, references, writtenDescription, notes }) => (
         <div key={pbotID} style={style}>
             <b>{name || "(name missing)"}</b>
             <div style={indent}><b>pbotID:</b>{pbotID}</div>
@@ -44,6 +44,7 @@ function Descriptions(props) {
                 <div style={indent}><b>species:</b>{species}</div>
             </div>
             }
+            <div style={indent}><b>written description:</b>{writtenDescription}</div>
             <div style={indent}><b>notes:</b>{notes}</div>
             {references && references.length > 0 &&
             <div>

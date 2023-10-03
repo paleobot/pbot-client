@@ -225,6 +225,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                 }],
                 specimens: [{pbotID: ''}],
                 name: '',
+                writtenDescription: '',
                 notes: '',
                 public: true,
                 groups: [],
@@ -359,6 +360,16 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                         Optional fields
                     </AccordionSummary>
                     <AccordionDetails >
+                        <Field 
+                            component={SensibleTextField}
+                            name="writtenDescription" 
+                            type="text" 
+                            label="Written description"
+                            fullWidth
+                            disabled={false}
+                        />
+                        <br />
+                        
                         <Field 
                             component={SensibleTextField}
                             name="notes" 
