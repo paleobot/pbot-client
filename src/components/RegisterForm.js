@@ -15,7 +15,7 @@ const RegisterForm = ({ setShowRegistration }) => {
     const navigate = useNavigate();
 
     const registerUser = async (credentials) => {
-        return fetch(origin + '/register', {
+        return fetch(origin + '/user/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

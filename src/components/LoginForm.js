@@ -19,7 +19,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
 
     const loginUser = async (credentials) => {
         console.log("loginUser")
-        return fetch(origin + '/login', {
+        return fetch(origin + '/user/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
