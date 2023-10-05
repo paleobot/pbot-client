@@ -6,7 +6,7 @@ import { TextField, CheckboxWithLabel } from 'formik-mui';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { SensibleTextField } from './SensibleTextField.js';
 
-const host = window.location.host;
+const origin = window.location.origin;
 
 const RegisterForm = ({ setShowRegistration }) => {
     //const [username, setUserName] = useState();
@@ -15,7 +15,7 @@ const RegisterForm = ({ setShowRegistration }) => {
     const navigate = useNavigate();
 
     const registerUser = async (credentials) => {
-        return fetch('http://' + host + '/register', {
+        return fetch(origin + '/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

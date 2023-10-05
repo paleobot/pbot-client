@@ -6,12 +6,11 @@ import { TextField } from 'formik-mui';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-const host = window.location.host;
+const origin = window.location.origin;
 
 const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     //const [username, setUserName] = useState();
     //const [password, setPassword] = useState();
-    console.log(host);
 
     const navigate = useNavigate();
     const [search] = useSearchParams();
@@ -20,7 +19,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
 
     const loginUser = async (credentials) => {
         console.log("loginUser")
-        return fetch('http://' + host + '/login', {
+        return fetch(origin + '/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -50,7 +49,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
 
     const [resetStatus, setResetStatus] = useState();
     const resetPassword = async (credentials) => {
-        return fetch('http://' + host + '/lreset', {
+        return fetch(origin + '/lreset', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
