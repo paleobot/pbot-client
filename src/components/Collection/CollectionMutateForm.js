@@ -423,7 +423,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     </TabPanel>                            
                                     <TabPanel value="4">
                                         <Field
-                                            component={TextField}
+                                            component={SensibleTextField}
                                             type="text"
                                             name="collectors"
                                             label="Collectors"
