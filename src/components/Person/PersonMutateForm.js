@@ -46,7 +46,8 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 middle: Yup.string(),
                 surname: Yup.string().required(),
                 email: Yup.string().email(),
-                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{4}/, {message: "not a valid orcid"}),
+                //TODO: Consider better validation on orcid that includes checksum digit verification
+                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{3}[\dXx]/, {message: "not a valid orcid"}),
             })}
             onSubmit={(values, {resetForm}) => {
                 values.mode = mode;
