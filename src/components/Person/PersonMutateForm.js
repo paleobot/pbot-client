@@ -33,6 +33,17 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
             formikRef.current.resetForm({values:initValues});
         }
     });
+
+    const generateOrcidChecksum = (baseDigits) => { 
+        let total = 0; 
+        for (let i = 0; i < baseDigits.length; i++) { 
+            const digit = parseInt(baseDigits[i]); 
+            total = (total + digit) * 2; 
+        } 
+        const remainder = total % 11; 
+        const result = (12 - remainder) % 11; 
+        return result == 10 ? "X" : result.toString(); 
+    };
             
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     const accstyle = {textAlign: "left", width: "70%"}
@@ -47,7 +58,16 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
                 surname: Yup.string().required(),
                 email: Yup.string().email(),
                 //TODO: Consider better validation on orcid that includes checksum digit verification
-                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{3}[\dXx]/, {message: "not a valid orcid"}),
+                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{3}[\dX]/, {message: "not a valid orcid"}).test(
+                    "checksumValid",
+                    "not a valid orcid",
+                    (value, context) => {
+                        const baseDigits = value.slice(18, 36).replaceAll('-', '');
+                        const checksum = value.slice(36);
+                        return generateOrcidChecksum(baseDigits) === checksum;
+                    }
+
+                ),
             })}
             onSubmit={(values, {resetForm}) => {
                 values.mode = mode;
