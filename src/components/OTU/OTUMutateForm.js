@@ -281,7 +281,9 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 pbdbParentTaxon: '',
                 family: '', 
                 genus: '', 
+                pfnGenusLink: '',
                 species: '',
+                pfnSpeciesLink: '',
                 additionalClades: '',
                 name: '',
                 authority: '',
@@ -373,7 +375,9 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 }).required(),
                 family: Yup.string().max(30, 'Must be 30 characters or less'),
                 genus: Yup.string().max(30, 'Must be 30 characters or less'),
+                pfnGenusLink: Yup.string().url(),
                 species: Yup.string().max(30, 'Must be 30 characters or less'),
+                pfnSpeciesLink: Yup.string().url(),
                 additionalClades: Yup.string(),
                 name: Yup.string().nullable().required(),
                 authority: Yup.string().required(),
@@ -544,13 +548,26 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         />
                         <br />
                         
-                        <Field 
+                        <Field
                             component={SensibleTextField}                
                             name="genus" 
                             type="text" 
                             label="Genus"
                             disabled={false}
                         />
+                        <Field 
+                            component={SensibleTextField}                
+                            name="pfnGenusLink" 
+                            type="text" 
+                            label="Plant Fossil Names genus link"
+                            disabled={false}
+                            sx={{marginLeft:"2em"}}
+                        />
+                        <div>
+                            <Typography sx={{marginLeft:"3em"}} variant="caption">
+                                (Available names can be found at <a target="_blank" href="https://www.plantfossilnames.org/">https://www.plantfossilnames.org/)</a>
+                            </Typography>
+                        </div>
                         <br />
                         
                         <Field 
@@ -560,6 +577,19 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                             label="Specific epithet"
                             disabled={false}
                         />
+                        <Field 
+                            component={SensibleTextField}                
+                            name="pfnSpeciesLink" 
+                            type="text" 
+                            label="Plant Fossil Names species link"
+                            disabled={false}
+                            sx={{marginLeft:"2em"}}
+                        />
+                        <div>
+                            <Typography sx={{marginLeft:"3em"}} variant="caption">
+                                (Available names can be found at <a target="_blank" href="https://www.plantfossilnames.org/">https://www.plantfossilnames.org/)</a>
+                            </Typography>
+                        </div>
                         <br />
 
                         <Field 
