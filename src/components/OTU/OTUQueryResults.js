@@ -160,7 +160,9 @@ function OTUList(props) {
                     additionalClades
                     family
                     genus
+                    pfnGenusLink
                     species
+                    pfnSpeciesLink
                     notes
                     partsPreserved {
                         type
@@ -304,7 +306,9 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
                 name: queryParams.name || null,
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
+                pfnGenusLink: queryParams.pfnGenusLink || null, 
                 species: queryParams.species || null, 
+                pfnSpeciesLink: queryParams.pfnSpeciesLink || null, 
                 authority: queryParams.authority || null,
                 diagnosis: queryParams.diagnosis || null,
                 qualityIndex: queryParams.qualityIndex || null,

@@ -53,7 +53,7 @@ function OTUs(props) {
         <div style={style}>
             No {(props.public) ? "public" : ""} results were found.
         </div>
-    ) : otus.map(({ pbotID, name, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, species, additionalClades, holotypeSpecimen, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures}) => {
+    ) : otus.map(({ pbotID, name, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures}) => {
        const directQParams = [];
         if (props.includeSynonyms) {
             directQParams.push("includeSynonyms");
@@ -113,7 +113,9 @@ function OTUs(props) {
                     <div style={indent}><b>pbdbParentTaxon:</b> {pbdbParentTaxon}</div>
                     <div style={indent}><b>family:</b> {family}</div>
                     <div style={indent}><b>genus:</b> {genus}</div>
+                    <div style={indent2}><b>PFN genus link:</b> {pfnGenusLink}</div>
                     <div style={indent}><b>species:</b> {species}</div>
+                    <div style={indent2}><b>PFN species link:</b> {pfnSpeciesLink}</div>
                     <div style={indent}><b>additional clades:</b> {additionalClades}</div>
                     <div style={indent}><b>notes:</b> {notes}</div>
                     
