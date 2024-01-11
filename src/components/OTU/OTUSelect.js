@@ -30,7 +30,9 @@ export const InnerOTUSelect = (props) => {
                     pbdbParentTaxon
                     family
                     genus
+                    pfnGenusLink
                     species
+                    pfnSpeciesLink
                     additionalClades
                     notes
                     identifiedSpecimens {
@@ -191,7 +193,9 @@ export const OTUSelect = (props) => {
             formikProps.setFieldValue("pbdbParentTaxon", otu.pbdbParentTaxon || '');
             formikProps.setFieldValue("family", otu.family || '');
             formikProps.setFieldValue("genus", otu.genus || '');
+            formikProps.setFieldValue("pfnGenusLink", otu.pfnGenusLink || '');
             formikProps.setFieldValue("species", otu.species || '');
+            formikProps.setFieldValue("pfnSpeciesLink", otu.pfnSpeciesLink || '');
             formikProps.setFieldValue("additionalClades", otu.additionalClades || '');
             formikProps.setFieldValue("notes", otu.notes || '');
             formikProps.setFieldValue("partsPreserved", 
