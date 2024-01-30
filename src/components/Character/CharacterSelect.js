@@ -128,11 +128,16 @@ export const CharacterSelect = (props) => {
     const name =  props.parent ? "parentCharacter" : "character";
     let level = 0;
     const style = {minWidth: "12ch"}
-    return data.Schema[0].characters && data.Schema[0].characters.length === 0 ? 
-        (
-            <Typography variant="subtitle1" color="red">Schema has no Characters</Typography>
-        ) : 
-        (
+    if (data.Schema[0].characters && data.Schema[0].characters.length === 0) {
+        if ("state" === props.source) {
+            return (
+                <Typography variant="subtitle1" color="red">Schema has no Characters</Typography>
+            ) 
+        } else {
+            return ('') //no message required
+        }
+    } else {
+        return (
         <>
         {props.source === "state" &&
             <Field
@@ -234,6 +239,6 @@ export const CharacterSelect = (props) => {
         }
 
         </>
-    );
-
+        );
+    }
 }
