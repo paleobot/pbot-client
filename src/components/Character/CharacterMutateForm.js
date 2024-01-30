@@ -372,14 +372,14 @@ const CharacterMutateForm = ({handleSubmit, mode}) => {
                 
                 {(mode === "edit" || mode === "delete") && props.values.schema !== '' &&
                     <>
-                    <CharacterSelect source="character" values={props.values} handleChange={props.handleChange}/>
+                    <CharacterSelect source="character" mode={mode} values={props.values} handleChange={props.handleChange}/>
                     <br />
                     </>
                 }
                 
                 {((mode === "create" && props.values.schema) || (mode === "edit" && props.values.character)) &&
                     <>
-                    <CharacterSelect source="character" values={props.values} parent handleChange={props.handleChange}/>
+                    <CharacterSelect source="character" mode={mode} values={props.values} parent handleChange={props.handleChange}/>
                     <br />
                     <Accordion style={accstyle} defaultExpanded={true}>
                         <AccordionSummary

@@ -129,7 +129,7 @@ export const CharacterSelect = (props) => {
     let level = 0;
     const style = {minWidth: "12ch"}
     if (data.Schema[0].characters && data.Schema[0].characters.length === 0) {
-        if ("state" === props.source) {
+        if ("state" === props.source || ("character" === props.source && "create" !== props.mode)) {
             return (
                 <Typography variant="subtitle1" color="red">Schema has no Characters</Typography>
             ) 
