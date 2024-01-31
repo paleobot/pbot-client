@@ -25,8 +25,8 @@ function References(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String, $publisher: String, $bookTitle: String, $publicationType: String, $firstPage: String, $lastPage: String, $journal: String, $publicationVolume: String, $publicationNumber: String, $bookType: String, $pbdbid: String, $doi: String, $groups: [ID!], $excludeList: [ID!]) {
-                Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher, bookTitle: $bookTitle, publicationType: $publicationType, firstPage: $firstPage, lastPage: $lastPage, journal: $journal, publicationVolume: $publicationVolume, publicationNumber: $publicationNumber, bookType: $bookType, pbdbid: $pbdbid, doi: $doi, filter:{AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]}) {
+            query ($pbotID: ID, $title: String, $authors: [ID!], $year: String, $publisher: String, $bookTitle: String, $publicationType: String, $firstPage: String, $lastPage: String, $journal: String, $publicationVolume: String, $publicationNumber: String, $bookType: String, $pbdbid: String, $doi: String, $groups: [ID!], $excludeList: [ID!]) {
+                Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher, bookTitle: $bookTitle, publicationType: $publicationType, firstPage: $firstPage, lastPage: $lastPage, journal: $journal, publicationVolume: $publicationVolume, publicationNumber: $publicationNumber, bookType: $bookType, pbdbid: $pbdbid, doi: $doi, filter:{AND: [{authoredBy_some: {Person: {pbotID_in: $authors}}}, {elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]}) {
                     pbotID
                     title
                     year
@@ -222,6 +222,7 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => 
                 pbotID: queryParams.referenceID || null,
                 title: queryParams.title || null, 
                 bookTitle: queryParams.bookTitle || null,
+                authors: queryParams.authors ? queryParams.authors.map(a => a.pbotID) : null,
                 publicationType: queryParams.publicationType || null,
                 firstPage: queryParams.firstPage || null,
                 lastPage: queryParams.lastPage || null,

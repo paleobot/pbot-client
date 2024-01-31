@@ -23,6 +23,7 @@ const ReferenceQueryForm = ({handleSubmit}) => {
         publicationVolume:  '',
         publicationNumber: '',
         bookTitle: '',
+        authors: [],
         publisher: '',
         bookType: '',
         editors:  '',
