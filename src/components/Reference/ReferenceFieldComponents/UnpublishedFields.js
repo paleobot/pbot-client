@@ -100,6 +100,8 @@ const UnpublishedFields = (props) => {
                     />
                     <br />
 
+                    <PersonManager label="Authors" name="authors" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
+
                     <Field
                         component={SensibleTextField}
                         type="text"
