@@ -62,17 +62,23 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                         val === "edited book of contributed articles" || 
                         val === "unpublished"
                     ),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Title is a required field"),
+                    otherwise: (schema) => schema
+                }).when("publicationType", {
+                    is: (val) => (
+                        val === "contributed article in edited book"
+                    ),
+                    then: (schema) => schema.required("Chapter title is a required field"),
                     otherwise: (schema) => schema
                 }),
-                publicationType: Yup.string().required(),
+                publicationType: Yup.string().required("Publication type is a required field"),
                 firstPage: Yup.number().integer().positive().when("publicationType", {
                     is: (val) => (
                         val === "standalone book" || 
                         val === "edited book of contributed articles" || 
                         val === "contributed article in edited book"
                     ),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("First page is a required field"),
                     otherwise: (schema) => schema
                 }),
                 lastPage: Yup.number().integer().positive().when("publicationType", {
@@ -81,24 +87,24 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                         val === "edited book of contributed articles" || 
                         val === "contributed article in edited book"
                     ),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Last page is a required field"),
                     otherwise: (schema) => schema
                 }),
                 journal: Yup.string().when("publicationType", {
                     is: (val) => (val === "journal article"),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Journal is a required field"),
                     otherwise: (schema) => schema
                 }),
                 publicationVolume: Yup.string().when("publicationType", {
                     is: (val) => (val === "journal article"),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Volume is a required field"),
                     otherwise: (schema) => schema
                 }),
                 bookTitle: Yup.string().when("publicationType", {
                     is: (val) => (
                         val === "contributed article in edited book"
                     ),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Book title is a required field"),
                     otherwise: (schema) => schema
                 }),
                 editors: Yup.string().when("publicationType", {
@@ -106,7 +112,7 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                        val === "edited book of contributed articles" || 
                         val === "contributed article in edited book"
                     ),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Editors is a required field"),
                     otherwise: (schema) => schema
                 }),
                 publisher: Yup.string().when("publicationType", {
@@ -115,21 +121,21 @@ const ReferenceMutateForm = ({handleSubmit, mode}) => {
                         val === "edited book of contributed articles" || 
                         val === "contributed article in edited book"
                     ),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Publisher is a required field"),
                     otherwise: (schema) => schema
                 }),
                 bookType: Yup.string().when("publicationType", {
                     is: (val) => (val === "standalone book"),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Book type is a required field"),
                     otherwise: (schema) => schema
                 }),
                 description: Yup.string().when("publicationType", {
                     is: (val) => (val === "unpublished"),
-                    then: (schema) => schema.required(),
+                    then: (schema) => schema.required("Description is a required field"),
                     otherwise: (schema) => schema
                 }),
                 notes: Yup.string(),
-                year: Yup.date().required(),
+                year: Yup.date().required("Year is a required field"),
                 authors: Yup.array().of(
                     Yup.object().shape({
                         pbotID: Yup.string()
