@@ -119,7 +119,7 @@ export default function NavBar() {
     return (
         <>
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" sx={{marginBottom: "20px"}}>
+            <AppBar position="static" color={"Explore" === location ? "primary":"secondary"} sx={{marginBottom: "20px"}}>
                 <Toolbar>
                     <IconButton
                         size="large"
