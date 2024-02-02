@@ -23,7 +23,7 @@ export const SensibleTextField = (props) => {
     //call formik's blur handler to make sure field is validated.  
     const handleOnBlur = async (event) => {
         //console.log("handleOnBlur")
-        if (props.prefix && !event.target.value.startsWith(props.prefix)) {
+        if (event.target.value && props.prefix && !event.target.value.startsWith(props.prefix)) {
             event.target.value = props.prefix + event.target.value;
         }
         //console.log(event.target.value)
