@@ -53,15 +53,16 @@ const PersonMutateForm = ({handleSubmit, mode}) => {
           innerRef={formikRef}
           initialValues={initValues}
             validationSchema={Yup.object({
-                given: Yup.string().required(),
+                given: Yup.string().required("Given is a required field"),
                 middle: Yup.string(),
-                surname: Yup.string().required(),
+                surname: Yup.string().required("Surname is a required field"),
                 email: Yup.string().email(),
                 //TODO: Consider better validation on orcid that includes checksum digit verification
-                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{3}[\dX]/, {message: "not a valid orcid"}).test(
+                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{3}[\dX]/, {message: "Not a valid orcid"}).test(
                     "checksumValid",
                     "not a valid orcid",
                     (value, context) => {
+                        if (!value) return true;
                         const baseDigits = value.slice(18, 36).replaceAll('-', '');
                         const checksum = value.slice(36);
                         return generateOrcidChecksum(baseDigits) === checksum;
