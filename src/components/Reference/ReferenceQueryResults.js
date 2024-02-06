@@ -25,37 +25,37 @@ function References(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $title: String, $authors: [ID!], $year: String, $publisher: String, $bookTitle: String, $publicationType: String, $firstPage: String, $lastPage: String, $journal: String, $publicationVolume: String, $publicationNumber: String, $bookType: String, $pbdbid: String, $doi: String, $groups: [ID!], $excludeList: [ID!]) {
-                Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher, bookTitle: $bookTitle, publicationType: $publicationType, firstPage: $firstPage, lastPage: $lastPage, journal: $journal, publicationVolume: $publicationVolume, publicationNumber: $publicationNumber, bookType: $bookType, pbdbid: $pbdbid, doi: $doi, filter:{AND: [{authoredBy_some: {Person: {pbotID_in: $authors}}}, {elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]}) {
-                    pbotID
-                    title
-                    year
-                    publisher
-                    bookTitle  
-                    publicationType 
-                    firstPage
-                    lastPage 
-                    journal 
-                    publicationVolume 
-                    publicationNumber
-                    bookType 
-                    pbdbid 
-                    doi                    
-                    authoredBy {
-                        Person {
-                            pbotID
-                            given
-                            surname
-                        }
-                        order
+        query ($pbotID: ID, $title: String, ${filters.authors && filters.authors.length > 0 ? `$authors: [ID!],` : ''} $year: String, $publisher: String, $bookTitle: String, $publicationType: String, $firstPage: String, $lastPage: String, $journal: String, $publicationVolume: String, $publicationNumber: String, $bookType: String, $pbdbid: String, $doi: String, $groups: [ID!], $excludeList: [ID!]) {
+            Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher, bookTitle: $bookTitle, publicationType: $publicationType, firstPage: $firstPage, lastPage: $lastPage, journal: $journal, publicationVolume: $publicationVolume, publicationNumber: $publicationNumber, bookType: $bookType, pbdbid: $pbdbid, doi: $doi, filter:{AND: [${filters.authors && filters.authors.length > 0 ? `{authoredBy_some: {Person: {pbotID_in: $authors}}},` : ''}{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]}) {
+                pbotID
+                title
+                year
+                publisher
+                bookTitle  
+                publicationType 
+                firstPage
+                lastPage 
+                journal 
+                publicationVolume 
+                publicationNumber
+                bookType 
+                pbdbid 
+                doi                    
+                authoredBy {
+                    Person {
+                        pbotID
+                        given
+                        surname
                     }
-                    elementOf {
-                        name
-                    }
+                    order
+                }
+                elementOf {
+                    name
                 }
             }
-        `;
-    } else {
+        }
+    `;
+} else {
         gQL = gql`
             query ($pbotID: ID, ${groups}) {
                 Reference (pbotID: $pbotID, ${filter}) {
