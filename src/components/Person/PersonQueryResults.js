@@ -21,6 +21,7 @@ function Persons(props) {
                 Person (pbotID: $pbotID, given: $given, surname: $surname, email: $email, orcid: $orcid, filter:{AND: [{memberOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]}) {
                     pbotID
                     given
+                    middle
                     surname
                     email
                     orcid
@@ -54,7 +55,7 @@ function Persons(props) {
                 <ListItem disableGutters key={person.pbotID}>
                     <ListItemButton onClick={() => props.handleSelect(person)} >
                         <ListItemText 
-                        primary={person.given + " " + person.surname} secondary={`pbot id: ${person.pbotID}`} />
+                        primary={`${person.given} ${person.middle ? `${person.middle} ` : ''}${person.surname}`} secondary={`pbot id: ${person.pbotID}`} />
                     </ListItemButton>
                 </ListItem>
             ))}
@@ -67,7 +68,7 @@ function Persons(props) {
         </div>
     ) : people.map((person) => (
         <div key={person.pbotID} style={style}>
-            <b>{person.given} {person.surname}</b>
+            <b>{person.given} {person.middle ? `${person.middle} ` : ''}{person.surname}</b>
             <div style={indent}><b>pbotID:</b> {person.pbotID}</div>
             <div style={indent}><b>email:</b> {person.email}</div> 
             <div style={indent}><b>orcid:</b> {person.orcid} </div>
