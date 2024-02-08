@@ -15,7 +15,7 @@ import {
 } from "react-router-dom";
 import PBOTInterface from './components/PBOTInterface';
 import Action from './components/Action';
-import About from './components/About';
+import About from './components/About/About';
 import HowToUsePbot from './components/HowToUsePbot';
 import Resources from './components/Resources';
 import GoToEducationOutreachHub from './components/GoToEducationOutreachHub';
