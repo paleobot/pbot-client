@@ -1,20 +1,7 @@
 import React from 'react';
-import HowToCite from './HowToCite';
-import Overview from './Overview';
-import Contact from './Contact';
-import OurTeam from './OurTeam';
 import { useNavigate, Link } from "react-router-dom";
 import { Tabs, Tab, Box } from '@mui/material';
-
-/*
-const About = () => (
-    <>
-    <Link to={"overview"}>Overview</Link>
-    <br />
-    <Link to={"howtocite"}>How to Cite</Link>
-    </>
-);
-*/
+import MDElement from '../MDElement';
 
 const About = () => {
     const [selectedTab, setSelectedTab] = React.useState(0);
@@ -40,16 +27,16 @@ const About = () => {
 
             <div style={{margin: "10px"}}>
                 <div hidden={selectedTab !== 0}>
-                    <Overview />
+                    <MDElement path="About/Overview/Overview.md" />
                 </div>
                 <div hidden={selectedTab !== 1}>
-                    <OurTeam />
+                    <MDElement path="About/OurTeam/OurTeam.md" />
                 </div>
                 <div hidden={selectedTab !== 2}>
-                    <HowToCite />
+                    <MDElement path="About/HowToCite/HowToCite.md" />
                 </div>
                 <div hidden={selectedTab !== 3}>
-                    <Contact />
+                    <MDElement path="About/Contact/Contact.md" />
                 </div>
             </div>
         </div>
