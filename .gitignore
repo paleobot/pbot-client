@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+#static content is its own repo
+/public/pbot-static
+
 # dependencies
 /node_modules
 /.pnp
