@@ -185,7 +185,7 @@ const CollectionDialog = (props) => {
             <CollectionQueryForm select={true} handleSubmit={handleSubmit}/>
             }
             {showResult &&
-            <CollectionQueryResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect}/>
+            <CollectionQueryResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect} populateMode={props.populateMode} />
             }
         </DialogContent>
         <DialogActions>
@@ -256,12 +256,12 @@ export const CollectionSelect = (props) => {
             formikProps.setFieldValue("numericagemaxerror", collection.numericAgeMaxError || '');
             formikProps.setFieldValue("numericagemaxtype", collection.numericAgeMaxType || '');
             formikProps.setFieldValue("agecomments", collection.ageComments || '');
-            formikProps.setFieldValue("preservationmodes", collection.preservationModes.map(preservationMode => preservationMode.pbotID) || []);
+            formikProps.setFieldValue("preservationmodes", collection.preservationModes ? collection.preservationModes.map(preservationMode => preservationMode.pbotID) : []);
             formikProps.setFieldValue("public", collection.elementOf && collection.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false));
             formikProps.setFieldValue("origPublic", formikProps.values.public);
             formikProps.setFieldValue("groups", groups || []);
-            formikProps.setFieldValue("specimens", collection.specimens.map(specimen => specimen.pbotID) || []);
-            formikProps.setFieldValue("references", collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) || []);
+            formikProps.setFieldValue("specimens", collection.specimens ? collection.specimens.map(specimen => specimen.pbotID) : []);
+            formikProps.setFieldValue("references", collection.references ? collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) : []);
 
         }
 
@@ -282,7 +282,7 @@ export const CollectionSelect = (props) => {
                 </IconButton>
             </span></Tooltip>
             {open &&
-                <CollectionDialog open={open} handleClose={handleClose} handleSelect={handleSelect}  />
+                <CollectionDialog open={open} handleClose={handleClose} handleSelect={handleSelect} populateMode={props.populateMode} />
             }
         </Stack>
     );

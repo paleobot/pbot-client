@@ -180,7 +180,7 @@ function Collections(props) {
             <List sx={{ pt: 0 }}>
             {collections.map((collection) => (
                 <ListItem disableGutters key={collection.pbotID}>
-                    <ListItemButton onClick={() => props.handleSelect(collection)} >
+                    <ListItemButton onClick={() => props.handleSelect(collection, props.populateMode)} >
                         <ListItemText 
                         primary={collection.name} secondary={`pbot id: ${collection.pbotID}`} />
                     </ListItemButton>
@@ -334,7 +334,7 @@ function Collections(props) {
 
 }
 
-const CollectionQueryResults = ({queryParams, select, handleSelect}) => {
+const CollectionQueryResults = ({queryParams, select, handleSelect, populateMode}) => {
     console.log("CollectionQueryResults")
     console.log(queryParams);
 
@@ -368,6 +368,7 @@ const CollectionQueryResults = ({queryParams, select, handleSelect}) => {
             standAlone={queryParams.standAlone} 
             select={select}
             handleSelect={handleSelect}
+            populateMode={populateMode}
         />
     );
 };
