@@ -75,7 +75,7 @@ function Collections(props) {
 
     
     let gQL;
-    if (!props.standAlone) {
+    if (!props.standAlone && !("full" === props.populateMode)) {
         gQL = gql`
             query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, $lithology: String, $sizeClasses: [String], $environment: String, $collectionMethods: [String], $pbdbid: String, $stratigraphicGroup: String, $stratigraphicFormation: String, $stratigraphicMember: String, $stratigraphicBed: String, $mininterval: String, $maxinterval: String ${groups} ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} ${filters.specimens ? ", $specimens: [ID!]" : ""} ${filters.references ? ", $references: [ID!]" : ""}) {
                 Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType,  lithology: $lithology, sizeClasses: $sizeClasses,  environment: $environment, collectionMethods: $collectionMethods, pbdbid: $pbdbid, stratigraphicGroup: $stratigraphicGroup, stratigraphicFormation: $stratigraphicFormation, stratigraphicMember: $stratigraphicMember, stratigraphicBed: $stratigraphicBed, mininterval: $mininterval, maxinterval: $maxinterval ${filter}) {
