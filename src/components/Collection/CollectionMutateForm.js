@@ -358,6 +358,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                             component={SensibleTextField}
                                             name="additionallithology"
                                             type="text"
+                                            multiline
                                             label="Additional description of lithology"
                                         />
                                         <br />
