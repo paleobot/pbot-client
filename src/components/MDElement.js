@@ -7,8 +7,14 @@ const MDElement = (props) => {
     useEffect(() => {
         if (props.path) {
             fetch("/pbot-static/" + props.path)
-            .then((res) => res.text())
-            .then((text) => setContent(text));
+            .then((res) => {
+                if (res.ok) {
+                    return res.text()
+                } else {
+                    return "Not yet implemented"
+                }
+            })
+            .then((text) => setContent(text))
         }
     }, []);
 
