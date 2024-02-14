@@ -31,7 +31,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
         states: [],
         partsPreserved: [],
         notableFeatures: [],
-        preservationMode: '',
+        preservationModes: [],
         idigbioInstitutionCode: '',
         idigbioCatalogNumber: '',
         idigbiouuid: '',
@@ -131,7 +131,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                 <br />
                 <OTUSelect name="holotypeOf" label="Holotype of" populateMode="simple"/>
 
-                <PersonManager label= "Identified by" xname="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
+                <PersonManager label= "Identified by" name="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
 
                 <Field
                     component={SensibleTextField}
