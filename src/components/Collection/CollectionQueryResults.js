@@ -73,14 +73,134 @@ function Collections(props) {
     }
     console.log(filter)
 
+    const fields = 
+        props.standAlone ?
+        `
+            pbotID
+            name
+            collectionType
+            sizeClasses
+            lat
+            lon
+            gpsCoordinateUncertainty
+            geographicResolution
+            geographicComments
+            protectedSite
+            country
+            state
+            timescale
+            maxinterval
+            mininterval
+            lithology
+            additionalLithology
+            stratigraphicGroup
+            stratigraphicFormation
+            stratigraphicMember
+            stratigraphicBed
+            stratigraphicComments
+            environment
+            environmentComments
+            collectors
+            collectionMethods
+            collectingComments
+            pbdbid
+            directDate
+            directDateError
+            directDateType
+            numericAgeMin
+            numericAgeMinError
+            numericAgeMinType
+            numericAgeMax
+            numericAgeMaxError
+            numericAgeMaxType
+            ageComments
+            preservationModes {
+                name
+            }
+            elementOf {
+                name
+            }
+            references (orderBy: order_asc) {
+                Reference {
+                    title
+                    year
+                }
+                order
+            }
+            specimens @include(if: $includeSpecimens) {
+                    pbotID
+                    name
+            }
+        `
+        : props.handleSelect ?
+        `
+            pbotID
+            name
+            collectionType
+            sizeClasses
+            lat
+            lon
+            gpsCoordinateUncertainty
+            geographicResolution
+            geographicComments
+            protectedSite
+            country
+            state
+            timescale
+            maxinterval
+            mininterval
+            lithology
+            additionalLithology
+            stratigraphicGroup
+            stratigraphicFormation
+            stratigraphicMember
+            stratigraphicBed
+            stratigraphicComments
+            environment
+            environmentComments
+            collectors
+            collectionMethods
+            collectingComments
+            pbdbid
+            directDate
+            directDateError
+            directDateType
+            numericAgeMin
+            numericAgeMinError
+            numericAgeMinType
+            numericAgeMax
+            numericAgeMaxError
+            numericAgeMaxType
+            ageComments
+            preservationModes {
+                name
+                pbotID
+            }
+            elementOf {
+                name
+                pbotID
+            }
+            references (orderBy: order_asc) {
+                Reference {
+                    title
+                    year
+                    pbotID
+                }
+                order
+            }
+        `
+        :
+        `
+            pbotID
+            name
+        `;
     
     let gQL;
-    if (!props.standAlone && !("full" === props.populateMode)) {
+    if (!props.standAlone) {
         gQL = gql`
             query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, $lithology: String, $sizeClasses: [String], $environment: String, $collectionMethods: [String], $pbdbid: String, $stratigraphicGroup: String, $stratigraphicFormation: String, $stratigraphicMember: String, $stratigraphicBed: String, $mininterval: String, $maxinterval: String ${groups} ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} ${filters.specimens ? ", $specimens: [ID!]" : ""} ${filters.references ? ", $references: [ID!]" : ""}) {
                 Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType,  lithology: $lithology, sizeClasses: $sizeClasses,  environment: $environment, collectionMethods: $collectionMethods, pbdbid: $pbdbid, stratigraphicGroup: $stratigraphicGroup, stratigraphicFormation: $stratigraphicFormation, stratigraphicMember: $stratigraphicMember, stratigraphicBed: $stratigraphicBed, mininterval: $mininterval, maxinterval: $maxinterval ${filter}) {
-                    pbotID
-                    name
+                    ${fields}
                 }
             }
         `
@@ -88,62 +208,7 @@ function Collections(props) {
         gQL = gql`
             query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, ${groups} $includeSpecimens: Boolean! ${filters.collection ? ", $collection: ID" : ""}) {
                 Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType ${filter}) {
-                    pbotID
-                    name
-                    collectionType
-                    sizeClasses
-                    lat
-                    lon
-                    gpsCoordinateUncertainty
-                    geographicResolution
-                    geographicComments
-                    protectedSite
-                    country
-                    state
-                    timescale
-                    maxinterval
-                    mininterval
-                    lithology
-                    additionalLithology
-                    stratigraphicGroup
-                    stratigraphicFormation
-                    stratigraphicMember
-                    stratigraphicBed
-                    stratigraphicComments
-                    environment
-                    environmentComments
-                    collectors
-                    collectionMethods
-                    collectingComments
-                    pbdbid
-                    directDate
-                    directDateError
-                    directDateType
-                    numericAgeMin
-                    numericAgeMinError
-                    numericAgeMinType
-                    numericAgeMax
-                    numericAgeMaxError
-                    numericAgeMaxType
-                    ageComments
-                    preservationModes {
-                        pbotID
-                        name
-                    }
-                    elementOf {
-                        name
-                    }
-                    references (orderBy: order_asc) {
-                        Reference {
-                            title
-                            year
-                        }
-                        order
-                    }
-                    specimens @include(if: $includeSpecimens) {
-                            pbotID
-                            name
-                    }
+                    ${fields}
                 }            
             }
         `;
@@ -175,12 +240,12 @@ function Collections(props) {
             </div>
         )
     }
-    if (props.select) {
+    if (props.handleSelect) {
         return (
             <List sx={{ pt: 0 }}>
             {collections.map((collection) => (
                 <ListItem disableGutters key={collection.pbotID}>
-                    <ListItemButton onClick={() => props.handleSelect(collection, props.populateMode)} >
+                    <ListItemButton onClick={() => props.handleSelect(collection)} >
                         <ListItemText 
                         primary={collection.name} secondary={`pbot id: ${collection.pbotID}`} />
                     </ListItemButton>
@@ -334,7 +399,7 @@ function Collections(props) {
 
 }
 
-const CollectionQueryResults = ({queryParams, select, handleSelect, populateMode}) => {
+const CollectionQueryResults = ({queryParams, handleSelect}) => {
     console.log("CollectionQueryResults")
     console.log(queryParams);
 
@@ -366,9 +431,7 @@ const CollectionQueryResults = ({queryParams, select, handleSelect, populateMode
             }}
             includeSpecimens={queryParams.includeSpecimens} 
             standAlone={queryParams.standAlone} 
-            select={select}
             handleSelect={handleSelect}
-            populateMode={populateMode}
         />
     );
 };
