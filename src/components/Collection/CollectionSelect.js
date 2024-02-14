@@ -185,7 +185,7 @@ const CollectionDialog = (props) => {
             <CollectionQueryForm select={true} handleSubmit={handleSubmit}/>
             }
             {showResult &&
-            <CollectionQueryResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect} populateMode={props.populateMode} />
+            <CollectionQueryResults queryParams={queryParams} exclude={props.exclude} handleSelect={props.handleSelect}/>
             }
         </DialogContent>
         <DialogActions>
@@ -209,12 +209,12 @@ export const CollectionSelect = (props) => {
         setOpen(false);
     };
 
-    const handleSelect = (collection, populateMode) => {
+    const handleSelect = (collection) => {
         console.log("handleSelect")
 
         formikProps.setFieldValue(props.name, collection.pbotID);
 
-        if ("full" === populateMode) { 
+        if ("full" === props.populateMode) { 
             const groups = collection.elementOf ? collection.elementOf.map(group => {return group.pbotID}) : [];
             console.log(groups)
 
@@ -282,7 +282,7 @@ export const CollectionSelect = (props) => {
                 </IconButton>
             </span></Tooltip>
             {open &&
-                <CollectionDialog open={open} handleClose={handleClose} handleSelect={handleSelect} populateMode={props.populateMode} />
+                <CollectionDialog open={open} handleClose={handleClose} handleSelect={handleSelect} />
             }
         </Stack>
     );
