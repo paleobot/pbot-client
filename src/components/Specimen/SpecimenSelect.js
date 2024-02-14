@@ -178,7 +178,7 @@ const SpecimenDialog = (props) => {
             <SpecimenQueryForm select={true} handleSubmit={handleSubmit}/>
             }
             {showResult &&
-            <SpecimenQueryResults queryParams={queryParams} exclude={props.exclude} select={true} handleSelect={props.handleSelect}/>
+            <SpecimenQueryResults queryParams={queryParams} exclude={props.exclude} handleSelect={props.handleSelect} />
             }
         </DialogContent>
         <DialogActions>
@@ -202,22 +202,22 @@ export const SpecimenSelect = (props) => {
         setOpen(false);
     };
 
-    const handleSelect = (specimen, populateMode) => {
-        console.log("handleSelect")
+    const handleSelect = (specimen) => {
+        console.log("handleSelect specimen")
 
         formikProps.setFieldValue(props.name, specimen.pbotID);
 
        //if ("specimen" === props.name) { //Standalone SpecimenSelect
-        if ("full" === populateMode) { 
-                const groups = specimen.elementOf ? specimen.elementOf.map(group => {return group.pbotID}) : [];
+        if ("full" === props.populateMode) { 
+            const groups = specimen.elementOf ? specimen.elementOf.map(group => {return group.pbotID}) : [];
             console.log(groups)
 
 
             formikProps.setFieldValue("name", specimen.name || '');
-            formikProps.setFieldValue("partsPreserved", specimen.partsPreserved.map(organ => organ.pbotID) || '');
-            formikProps.setFieldValue("notableFeatures", specimen.notableFeatures.map(feature => feature.pbotID) || '');
-            formikProps.setFieldValue("preservationModes", specimen.preservationModes.map(p => p.pbotID) || '');
-            formikProps.setFieldValue("describedBy", specimen.describedBy.map(d => d.Description.pbotID) || '');
+            formikProps.setFieldValue("partsPreserved", specimen.partsPreserved ? specimen.partsPreserved.map(organ => organ.pbotID) : '');
+            formikProps.setFieldValue("notableFeatures", specimen.notableFeatures ? specimen.notableFeatures.map(feature => feature.pbotID) : '');
+            formikProps.setFieldValue("preservationModes", specimen.preservationModes ? specimen.preservationModes.map(p => p.pbotID) : '');
+            formikProps.setFieldValue("describedBy", specimen.describedBy ? specimen.describedBy.map(d => d.Description.pbotID) : '');
             formikProps.setFieldValue("repository", specimen.repository || '');
             formikProps.setFieldValue("otherRepositoryLink", specimen.otherRepositoryLink || '');
             formikProps.setFieldValue("notes", specimen.notes || '');
@@ -229,7 +229,7 @@ export const SpecimenSelect = (props) => {
             formikProps.setFieldValue("public", specimen.elementOf && specimen.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false));
             formikProps.setFieldValue("origPublic", formikProps.values.public);
             formikProps.setFieldValue("groups", groups || []);
-            formikProps.setFieldValue("references", specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) || null);
+            formikProps.setFieldValue("references", specimen.references ? specimen.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) : null);
             formikProps.setFieldValue("collection", specimen.collection.pbotID || '');
             formikProps.setFieldValue("identifiers", specimen.identifiers || '');
         }
