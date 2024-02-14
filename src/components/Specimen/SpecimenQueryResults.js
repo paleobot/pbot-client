@@ -145,6 +145,148 @@ function Specimens(props) {
     }
     console.log(filter)
 
+    const fields = 
+        props.standAlone ?
+        `
+            pbotID
+            name
+            collection {
+                name
+            }
+            repository
+            otherRepositoryLink
+            notes
+            identifiers {
+                given
+                surname
+            } 
+            preservationModes {
+                name
+            }
+            idigbioInstitutionCode
+            idigbioCatalogNumber
+            idigbiouuid
+            pbdboccid
+            partsPreserved {
+                type
+            }
+            notableFeatures {
+                name
+            }
+            elementOf {
+                name
+            }
+            references (orderBy: order_asc) {
+                Reference {
+                    title
+                    year
+                }
+                order
+            }
+            images @include(if: $includeImages) {
+                pbotID
+                link
+                caption
+            }
+            describedBy @include(if: $includeDescriptions) {
+                Description {
+                    pbotID
+                    name
+                    writtenDescription
+                    notes
+                    schema {
+                        title
+                    }
+                    characterInstances {
+                        pbotID
+                        character {
+                            name
+                        }
+                        state {
+                            State {
+                                name
+                            }
+                            value
+                        }
+                    }
+                }
+            }
+            identifiedAs @include(if: $includeOTUs){
+                OTU {
+                    name
+                    family
+                    genus
+                    species
+                }
+            }
+            typeOf @include(if: $includeOTUs){
+                OTU {
+                    name
+                    family
+                    genus
+                    species
+                }
+            }
+            holotypeOf @include(if: $includeOTUs){
+                OTU {
+                    name
+                    family
+                    genus
+                    species
+                }
+            }
+        `
+        : props.handleSelect ?
+        `
+            pbotID
+            name
+            collection {
+                name
+                pbotID
+            }
+            repository
+            otherRepositoryLink
+            notes
+            identifiers {
+                given
+                surname
+                pbotID
+            } 
+            preservationModes {
+                name
+                pbotID
+            }
+            idigbioInstitutionCode
+            idigbioCatalogNumber
+            idigbiouuid
+            pbdboccid
+            partsPreserved {
+                type
+                pbotID
+            }
+            notableFeatures {
+                name
+                pbotID
+            }
+            elementOf {
+                name
+                pbotID
+            }
+            references (orderBy: order_asc) {
+                Reference {
+                    title
+                    year
+                    pbotID
+                }
+                order
+            }
+        `
+        :
+        `
+            pbotID
+            name
+        `;
+
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
@@ -156,7 +298,7 @@ function Specimens(props) {
                 $idigbiouuid: String, 
                 $repository: String,
                 ${groups} 
-                ${filters.preservationModes ? ", $preservationModes: [ID]" : ""} 
+                ${filters.preservationModes ? ", $preservationModes: [ID!]" : ""} 
                 ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
                 ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} 
                 ${filters.identifiers ? ", $identifiers: [ID!]" : ""} 
@@ -180,8 +322,7 @@ function Specimens(props) {
                     repository: $repository
                     ${filter}
                 ) {
-                    pbotID
-                    name
+                    ${fields}
                 }
             }
         `
@@ -197,93 +338,7 @@ function Specimens(props) {
                 ${filters.collection ? ", $collection: ID" : ""}
             ) {
                 Specimen (pbotID: $pbotID, name: $name ${filter}) {
-                    pbotID
-                    name
-                    collection {
-                        name
-                    }
-                    repository
-                    otherRepositoryLink
-                    notes
-                    identifiers {
-                        given
-                        surname
-                    } 
-                    preservationModes {
-                        name
-                    }
-                    idigbioInstitutionCode
-                    idigbioCatalogNumber
-                    idigbiouuid
-                    pbdboccid
-                    partsPreserved {
-                        type
-                    }
-                    notableFeatures {
-                        name
-                    }
-                    elementOf {
-                        name
-                    }
-                    references (orderBy: order_asc) {
-                        Reference {
-                            title
-                            year
-                        }
-                        order
-                    }
-                    images @include(if: $includeImages) {
-                            pbotID
-                            link
-                            caption
-                    }
-                    describedBy @include(if: $includeDescriptions) {
-                        Description {
-                            pbotID
-                            name
-                            writtenDescription
-                            notes
-                            schema {
-                                title
-                            }
-                            characterInstances {
-                                pbotID
-                                character {
-                                    name
-                                }
-                                state {
-                                    State {
-                                        name
-                                    }
-                                    value
-                                }
-                            }
-                        }
-                    }
-                    identifiedAs @include(if: $includeOTUs){
-                        OTU {
-                            name
-                            family
-                            genus
-                            species
-                        }
-                    }
-                    typeOf @include(if: $includeOTUs){
-                        OTU {
-                            name
-                            family
-                            genus
-                            species
-                        }
-                    }
-                    holotypeOf @include(if: $includeOTUs){
-                        OTU {
-                            name
-                            family
-                            genus
-                            species
-                        }
-                    }
+                    ${fields}
                 }            
             }
         `;
@@ -322,7 +377,7 @@ function Specimens(props) {
             </div>
         )
     }
-    if (props.select) {
+    if (props.handleSelect) {
         console.log("Manager results")
         return (
             <List sx={{ pt: 0 }}>
@@ -506,7 +561,7 @@ function Specimens(props) {
 
 }
 
-const SpecimenQueryResults = ({queryParams, select, handleSelect, exclude}) => {
+const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
     console.log("SpecimenQueryResults");
     console.log(queryParams); 
     
@@ -527,7 +582,7 @@ const SpecimenQueryResults = ({queryParams, select, handleSelect, exclude}) => {
                 collection: queryParams.collection || null, 
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
-                preservationMode: queryParams.preservationMode || null,
+                preservationModes: queryParams.preservationModes && queryParams.preservationModes.length > 0 ? queryParams.preservationModes : null,
                 idigbioInstitutionCode: queryParams.idigbioInstitutionCode || null,
                 idigbioCatalogNumber: queryParams.idigbioCatalogNumber || null,
                 idigbiouuid: queryParams.idigbiouuid || null,
@@ -540,7 +595,6 @@ const SpecimenQueryResults = ({queryParams, select, handleSelect, exclude}) => {
             includeDescriptions={queryParams.includeDescriptions} 
             includeOTUs={queryParams.includeOTUs} 
             standAlone={queryParams.standAlone} 
-            select={select}
             handleSelect={handleSelect}
             exclude={exclude}
         />
