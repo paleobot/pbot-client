@@ -52,6 +52,7 @@ const SchemaQueryForm = ({handleSubmit}) => {
         >
             {props => (
             <Form>
+                {/*
                 <Field 
                     component={TextField}
                     name="schemaID" 
@@ -61,7 +62,8 @@ const SchemaQueryForm = ({handleSubmit}) => {
                     variant="standard"
                 />
                 <br />
-                
+                */}
+
                 <Field 
                     component={TextField}
                     name="title" 
@@ -70,6 +72,12 @@ const SchemaQueryForm = ({handleSubmit}) => {
                     disabled={false}
                     variant="standard"
                 />
+                <br />
+
+                <PartsPreservedSelect />
+                <br />
+
+                <NotableFeaturesSelect />
                 <br />
                 
                 <Field 
@@ -82,6 +90,7 @@ const SchemaQueryForm = ({handleSubmit}) => {
                 />
                 <br />
                 
+                {/*
                 <Field
                     component={SensibleTextField}
                     type="text"
@@ -91,22 +100,18 @@ const SchemaQueryForm = ({handleSubmit}) => {
                     disabled={false}
                 />
                 <br />
-
-                <PartsPreservedSelect />
-                <br />
-
-                <NotableFeaturesSelect />
-                <br />
+                */}
 
                 {/*<ReferenceManager values={props.values} single/>
                 <br />*/}
                 <ReferenceSelect name="reference" label="Reference" simple/>
 
-                <SpecimenSelect name="specimen" label="Specimen"  />
+                {/*<SpecimenSelect name="specimen" label="Specimen"  />*/}
                 
                 <GroupSelect/>
                 <br />
                 
+                {/*
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeCharacters" 
@@ -116,6 +121,8 @@ const SchemaQueryForm = ({handleSubmit}) => {
                     variant="standard"
                 />
                 <br />
+                */}
+                
                 <br />
                 <br />
 

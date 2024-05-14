@@ -255,9 +255,10 @@ function Schemas(props) {
     ) : schemas.map((schema) => {
 
         const directURL = new URL(window.location.origin + "/query/schema/" + schema.pbotID);
-        if (props.includeCharacters) {
+        //if (props.includeCharacters) {
+        //always include for now (pbot-dev#282)
             directURL.searchParams.append("includeCharacters", "true");
-        }
+        //}
             
         return (
             <div key={schema.pbotID} style={style}>
