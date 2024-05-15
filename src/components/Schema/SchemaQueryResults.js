@@ -25,10 +25,14 @@ function Schemas(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.partsPreserved && !filters.notableFeatures && !filters.reference && !filters.purpose && !filters.specimen) {
+        if (!filters.title && !filters.partsPreserved && !filters.notableFeatures && !filters.reference && !filters.purpose && !filters.specimen) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
+            if (filters.title) {
+                console.log("adding title")
+                filter += ", {title_regexp: $title}"
+            }
             if (filters.partsPreserved) {
                 console.log("adding partsPreserved")
                 filter += ", {partsPreserved_some: {pbotID_in: $partsPreserved}}"
@@ -74,9 +78,9 @@ function Schemas(props) {
         gQL = gql`
             query (
                 $pbotID: ID, 
-                $title: String, 
                 $year: String,
                 ${groups} 
+                ${filters.title ? ", $title: String" : ""} 
                 ${filters.purpose ? ", $purpose: String" : ""} 
                 ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
                 ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""}
@@ -85,7 +89,6 @@ function Schemas(props) {
             ) {
                 Schema (
                     pbotID: $pbotID, 
-                    title: $title, 
                     year: $year
                     ${filter}
                 ) {
@@ -358,7 +361,7 @@ const SchemaQueryResults = ({queryParams}) => {
         <Schemas 
             filters={{
                 pbotID: queryParams.schemaID || null,
-                title: queryParams.title || null, 
+                title: queryParams.title ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null, 
                 year: queryParams.year || null, 
                 purpose: queryParams.purpose || null,
                 specimen: queryParams.specimen || null,
