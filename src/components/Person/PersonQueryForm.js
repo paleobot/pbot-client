@@ -44,10 +44,10 @@ const PersonQueryForm = ({handleSubmit}) => {
         >
             <Form>
                 <Field 
-                    component={TextField}
-                    name="personID" 
-                    type="text"
-                    label="Person ID"
+                    component={TextField}                
+                    name="surname" 
+                    type="text" 
+                    label="Surname"
                     disabled={false}
                     variant="standard"
                 />
@@ -58,16 +58,6 @@ const PersonQueryForm = ({handleSubmit}) => {
                     name="given" 
                     type="text" 
                     label="Given name"
-                    disabled={false}
-                    variant="standard"
-                />
-                <br />
-                
-                <Field 
-                    component={TextField}                
-                    name="surname" 
-                    type="text" 
-                    label="Surname"
                     disabled={false}
                     variant="standard"
                 />
@@ -88,6 +78,16 @@ const PersonQueryForm = ({handleSubmit}) => {
                     name="orcid" 
                     type="text" 
                     label="ORCID"
+                    disabled={false}
+                    variant="standard"
+                />
+                <br />
+                
+                <Field 
+                    component={TextField}
+                    name="personID" 
+                    type="text"
+                    label="PBot ID"
                     disabled={false}
                     variant="standard"
                 />
