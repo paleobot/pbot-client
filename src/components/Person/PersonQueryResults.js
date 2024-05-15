@@ -18,7 +18,12 @@ function Persons(props) {
 
     const gQL = gql`
             query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String, $groups: [ID!], $excludeList: [ID!]) {
-                Person (pbotID: $pbotID, given: $given, surname: $surname, email: $email, orcid: $orcid, filter:{AND: [{memberOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]}) {
+                Person (pbotID: $pbotID, email: $email, orcid: $orcid, filter:{AND: [
+                    {surname_regexp: $surname},
+                    {given_regexp: $given},
+                    {memberOf_some: {pbotID_in: $groups}}, 
+                    {pbotID_not_in: $excludeList}
+                ]}) {
                     pbotID
                     given
                     middle
@@ -26,6 +31,7 @@ function Persons(props) {
                     email
                     orcid
                     bio
+                    registered
                 }
             }
         `;
@@ -73,6 +79,7 @@ function Persons(props) {
             <div style={indent}><b>email:</b> {person.email}</div> 
             <div style={indent}><b>orcid:</b> {person.orcid} </div>
             <div style={indent}><b>bio:</b> {person.bio} </div>
+            <div style={indent}><b>registered:</b> {person.registered ? "yes" : "no"} </div>
             <br />
         </div>
     ));
@@ -88,8 +95,8 @@ const PersonQueryResults = ({queryParams, select, handleSelect, exclude}) => {
         <Persons 
             filters={{
                 pbotID: queryParams.personID || null,
-                given: queryParams.given || null, 
-                surname: queryParams.surname || null, 
+                given: queryParams.given ? `(?i).*${queryParams.given.replace(/\s+/, '.*')}.*` : null, 
+                surname: queryParams.surname ? `(?i).*${queryParams.surname.replace(/\s+/, '.*')}.*` : null, 
                 email: queryParams.email || null, 
                 orcid: queryParams.orcid || null, 
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
