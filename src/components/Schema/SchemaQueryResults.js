@@ -99,8 +99,17 @@ function Schemas(props) {
         `
     } else if (!props.includeCharacters) {
         gQL = gql`
-            query ($pbotID: ID, $title: String, $year: String ${groups}) {
-                Schema (pbotID: $pbotID, title: $title, year: $year ${filter}) {
+            query (
+                $pbotID: ID, 
+                $year: String 
+                ${groups}
+                ${filters.title ? ", $title: String" : ""} 
+            ) {
+                Schema (
+                    pbotID: $pbotID, 
+                    year: $year 
+                    ${filter}
+                ) {
                     pbotID
                     title
                     year
@@ -195,8 +204,17 @@ function Schemas(props) {
                 }
             }
 
-            query ($pbotID: ID, $title: String, $year: String ${groups}) {
-                Schema (pbotID: $pbotID, title: $title, year: $year ${filter}) {
+            query (
+                $pbotID: ID, 
+                $year: String 
+                ${groups}
+                ${filters.title ? ", $title: String" : ""} 
+            ) {
+                Schema (
+                    pbotID: $pbotID, 
+                    year: $year 
+                    ${filter}
+                ) {
                     pbotID
                     title
                     year
