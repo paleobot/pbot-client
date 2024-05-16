@@ -52,18 +52,6 @@ const SchemaQueryForm = ({handleSubmit}) => {
         >
             {props => (
             <Form>
-                {/*
-                <Field 
-                    component={TextField}
-                    name="schemaID" 
-                    type="text"
-                    label="Schema ID"
-                    disabled={false}
-                    variant="standard"
-                />
-                <br />
-                */}
-
                 <Field 
                     component={TextField}
                     name="title" 
@@ -108,6 +96,17 @@ const SchemaQueryForm = ({handleSubmit}) => {
 
                 {/*<SpecimenSelect name="specimen" label="Specimen"  />*/}
                 
+                <Field 
+                    component={TextField}
+                    name="schemaID" 
+                    type="text"
+                    label="PBot ID"
+                    disabled={false}
+                    variant="standard"
+                />
+                <br />
+                
+
                 <GroupSelect/>
                 <br />
                 
