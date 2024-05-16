@@ -25,8 +25,34 @@ function References(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-        query ($pbotID: ID, $title: String, ${filters.authors && filters.authors.length > 0 ? `$authors: [ID!],` : ''} $year: String, $publisher: String, $bookTitle: String, $publicationType: String, $firstPage: String, $lastPage: String, $journal: String, $publicationVolume: String, $publicationNumber: String, $bookType: String, $pbdbid: String, $doi: String, $groups: [ID!], $excludeList: [ID!]) {
-            Reference (pbotID: $pbotID, title: $title, year: $year, publisher: $publisher, bookTitle: $bookTitle, publicationType: $publicationType, firstPage: $firstPage, lastPage: $lastPage, journal: $journal, publicationVolume: $publicationVolume, publicationNumber: $publicationNumber, bookType: $bookType, pbdbid: $pbdbid, doi: $doi, filter:{AND: [${filters.authors && filters.authors.length > 0 ? `{authoredBy_some: {Person: {pbotID_in: $authors}}},` : ''}{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]}) {
+        query (
+            $pbotID: ID, 
+            ${filters.title ? `$title: String,` : ''}
+            ${filters.authors && filters.authors.length > 0 ? `$authors: [ID!],` : ''} 
+            $year: String, 
+            ${filters.bookTitle ? `$bookTitle: String,` : ''} 
+            $publicationType: String, 
+            $pbdbid: String, 
+            $doi: String, 
+            $groups: [ID!], 
+            $excludeList: [ID!]
+        ) {
+            Reference (
+                pbotID: $pbotID, 
+                year: $year, 
+                publicationType: $publicationType, 
+                pbdbid: $pbdbid, 
+                doi: $doi, 
+                filter:{AND: [
+                    ${filters.authors && filters.authors.length > 0 ? `{authoredBy_some: {Person: {pbotID_in: $authors}}},` : ''}
+                    ${filters.title || filters.bookTitle ?
+                        `{OR: [
+                            ${filters.title ? `{title_regexp: $title},` : ''}
+                            ${filters.bookTitle ? `{bookTitle_regexp: $bookTitle},` : ''}
+                        ]},` : ''}
+                    {elementOf_some: {pbotID_in: $groups}}, 
+                    {pbotID_not_in: $excludeList}]}
+            ) {
                 pbotID
                 title
                 year
@@ -220,17 +246,17 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => 
         <References 
             filters={{
                 pbotID: queryParams.referenceID || null,
-                title: queryParams.title || null, 
-                bookTitle: queryParams.bookTitle || null,
+                title: queryParams.title ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null, 
+                bookTitle: queryParams.title ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null,
                 authors: queryParams.authors ? queryParams.authors.map(a => a.pbotID) : null,
-                publicationType: queryParams.publicationType || null,
-                firstPage: queryParams.firstPage || null,
-                lastPage: queryParams.lastPage || null,
-                journal:   queryParams.journal || null,
-                publicationVolume: queryParams.publicationVolume || null,
-                publicationNumber: queryParams.publicationNumber || null,
-                publisher: queryParams.publisher || null,
-                bookType:  queryParams.bookType || null,
+                publicationType: queryParams.published ? null : "unpublished",
+                //firstPage: queryParams.firstPage || null,
+                //lastPage: queryParams.lastPage || null,
+                //journal:   queryParams.journal || null,
+                //publicationVolume: queryParams.publicationVolume || null,
+                //publicationNumber: queryParams.publicationNumber || null,
+                //publisher: queryParams.publisher || null,
+                //bookType:  queryParams.bookType || null,
                 year: queryParams.year || null,
                 pbdbid: queryParams.pbdbid || null,
                 doi: queryParams.doi || null,

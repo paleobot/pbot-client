@@ -10,28 +10,31 @@ import StandaloneBookFields from './ReferenceFieldComponents/StandaloneBookField
 import EditedCollectionFields from './ReferenceFieldComponents/EditedCollectionFields.js'
 import ContributedArticleFields from './ReferenceFieldComponents/ContributedArticleFields.js'
 import UnpublishedFields from './ReferenceFieldComponents/UnpublishedFields.js'
+import { SensibleTextField } from '../SensibleTextField.js';
+import { PersonManager } from '../Person/PersonManager.js';
 
 const ReferenceQueryForm = ({handleSubmit}) => {
     //const [values, setValues] = useState({});
     const initValues = {
         referenceID: '', 
         title: '', 
-        publicationType:  '',
-        firstPage:  '',
-        lastPage:  '',
-        journal:  '',
-        publicationVolume:  '',
-        publicationNumber: '',
-        bookTitle: '',
+        //publicationType:  '',
+        //firstPage:  '',
+        //lastPage:  '',
+        //journal:  '',
+        //publicationVolume:  '',
+        //publicationNumber: '',
+        //bookTitle: '',
         authors: [],
-        publisher: '',
-        bookType: '',
-        editors:  '',
+        //publisher: '',
+        //bookType: '',
+        //editors:  '',
         year: '', 
         doi: '',
         pbdbid: '',
-        groups: [],
-        public: false,
+        published: true,
+        //groups: [],
+        //public: false,
     };
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -59,6 +62,7 @@ const ReferenceQueryForm = ({handleSubmit}) => {
         >
             {props => (
             <Form>
+                {/*
                 <PublicationTypeSelect />
 
                 {props.values.publicationType === "journal article" &&
@@ -79,7 +83,71 @@ const ReferenceQueryForm = ({handleSubmit}) => {
 
                 {props.values.publicationType === "unpublished" &&
                     <UnpublishedFields values={props.values} query/>
-                }       
+                }      
+                */} 
+
+                <Field
+                    component={SensibleTextField}
+                    type="text"
+                    name="title"
+                    label="Title"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
+
+                <Field
+                    component={SensibleTextField}
+                    type="text"
+                    name="year"
+                    label="Year"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
+
+                <PersonManager label="Authors" name="authors" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
+
+                <Field
+                    component={SensibleTextField}
+                    type="text"
+                    name="doi"
+                    label="DOI"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
+
+                <Field
+                    component={SensibleTextField}
+                    type="text"
+                    name="referenceID"
+                    label="PBot ID"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br />
+
+                <Field
+                    component={SensibleTextField}
+                    type="text"
+                    name="pbdbid"
+                    label="PBDB ID"
+                    fullWidth 
+                    disabled={false}
+                />
+                <br /> 
+
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="published" 
+                    type="checkbox" 
+                    Label={{ label: 'Published' }}
+                    disabled={false}
+                    variant="standard"
+                />
+                <br />
+
 
                 <br />
                 <br />
