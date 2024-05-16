@@ -129,7 +129,7 @@ function References(props) {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
            
-    const references = alphabetize([...data.Reference], "title");
+    const references = sort([...data.Reference], "year", "title");
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -148,7 +148,7 @@ function References(props) {
                 <ListItem disableGutters key={reference.pbotID}>
                     <ListItemButton onClick={() => props.handleSelect(reference)} >
                         <ListItemText 
-                        primary={reference.title} secondary={`pbot id: ${reference.pbotID}`} />
+                        primary={`${reference.year}, ${reference.title}`} secondary={`pbot id: ${reference.pbotID}`} />
                     </ListItemButton>
                 </ListItem>
             ))}
@@ -200,32 +200,32 @@ function References(props) {
                     <div style={header1}><Typography variant="h6">Identity</Typography></div>
                     <div style={indent}><b>pbotID:</b> {reference.pbotID}</div>
                     <div style={indent}><b>title:</b> {reference.title}</div>
-                    {reference.publicationType && <div style={indent}><b>publicationType</b> {reference.publicationType} </div>}
                     {reference.doi && <div style={indent}><b>doi:</b> {reference.doi} </div>}
                     {reference.pbdbid && <div style={indent}><b>pbdb id:</b> {reference.pbdbid} </div>}
 
 
                     <div style={header1}><Typography variant="h6">Publication details</Typography></div>
+                    <div style={indent}><b>authors:</b></div>
+                        {sort([...reference.authoredBy], "#order").map(author => (
+                            <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
+                        ))}
+                    {reference.year && <div style={indent}><b>year:</b> {reference.year} </div>}
+                    {reference.publicationType && <div style={indent}><b>publicationType</b> {reference.publicationType} </div>}
                     {reference.journal && <div style={indent}><b>journal</b> {reference.journal} </div> }
                     {reference.publicationVolume && <div style={indent}><b>publicationVolume</b> {reference.publicationVolume} </div>}
                     {reference.publicationNumber && <div style={indent}><b>publicationNumber</b> {reference.publicationNumber} </div>}
                     {reference.bookTitle && <div style={indent}><b>bookTitle</b> {reference.bookTitle} </div>}  
                     {reference.bookType && <div style={indent}><b>bookType</b> {reference.bookType} </div> }
                     {reference.publisher && <div style={indent}><b>publisher:</b> {reference.publisher}</div>} 
-                    {reference.year && <div style={indent}><b>year:</b> {reference.year} </div>}
                     {reference.firstPage && <div style={indent}><b>firstPage</b> {reference.firstPage} </div>}
                     {reference.lastPage && <div style={indent}><b>lastPage</b> {reference.lastPage} </div>} 
-                    <div style={indent}><b>authors:</b></div>
-                        {sort([...reference.authoredBy], "#order").map(author => (
-                            <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
-                        ))}
                     
                     <br />
                     </>
                 }
 
                 {!props.standAlone &&
-                <Link style={listIndent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{reference.title || "(title missing)"}</b></Link>
+                <Link style={listIndent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{`${reference.year}, ${reference.title}`}</b></Link>
                 }
 
             </div>
