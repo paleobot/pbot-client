@@ -1,4 +1,5 @@
-import { Button, Stack } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Stack } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React from 'react';
@@ -49,6 +50,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     
     const indent01 = {marginLeft: "2em"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -76,22 +78,224 @@ const OTUQueryForm = ({handleSubmit, select}) => {
             
                 <Field 
                     component={SensibleTextField}
-                    name="otuID" 
-                    type="text"
-                    label="OTU ID"
-                    disabled={false}
-                />
-                <br />
-                
-                <Field 
-                    component={SensibleTextField}
                     name="name" 
                     type="text"
                     label="Name"
                     disabled={false}
                 />
                 <br />
+                <br />
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Search by taxonomy
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                        <MajorTaxonGroupSelect />
+                        <br />
                 
+                        <Field 
+                            component={SensibleTextField}
+                            name="pbdbParentTaxon" 
+                            type="text" 
+                            label="PBDB parent taxon"
+                            disabled={false}
+                        />
+                        <br />
+
+                        {/*
+                        <Field 
+                            component={SensibleTextField}
+                            name="additionalClades" 
+                            type="text" 
+                            label="Additional clades"
+                            disabled={false}
+                        />
+                        <br />
+                        */}
+
+                        <Field 
+                            component={SensibleTextField}
+                            name="family" 
+                            type="text" 
+                            label="Family"
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <Field 
+                            component={SensibleTextField}                
+                            name="genus" 
+                            type="text" 
+                            label="Genus"
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        {/*
+                        <Field 
+                            component={SensibleTextField}
+                            name="species" 
+                            type="text" 
+                            label="Species"
+                            disabled={false}
+                        />
+                        <br />
+                        */}
+
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Search by fossil characteristics
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                        <PartsPreservedSelect/>
+                        <br />
+                        
+                        <NotableFeaturesSelect />
+                        <br />
+
+                        <QualityIndexSelect />
+                        <br />
+        
+                    </AccordionDetails>
+                </Accordion>
+                
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Search by description
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                        <SchemaSelect />
+                        <br />
+
+                        {props.values.schema !== '' &&
+                            <div>
+                                <CharacterSelect values={props.values} source="characterInstance"/>
+                                <br />
+                            </div>
+                        }
+                        
+                        {props.values.character !== "" &&
+                            <div>
+                                <StateSelect values={props.values} source="characterInstance" multi={true}/>
+                                <br />
+                            </div>
+                        }     
+
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Search by time
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        Not yet implemented
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Search by location
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        Not yet implemented
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Search by stratigraphy
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        Not yet implemented
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Search by specimen
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                        <SpecimenManager name="identifiedSpecimens" groupLabel="Identified specimens" individualLabel="identified specimen" values={props.values} />
+                        <br />
+
+                        <SpecimenManager name="typeSpecimens" groupLabel="Type specimens" individualLabel="type specimen" values={props.values} />
+                        <br />
+
+                        <SpecimenSelect name="holotypeSpecimen" label="Holotype specimen"/>
+                        <br />
+
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Search by metadata
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                        <Field 
+                            component={SensibleTextField}
+                            name="otuID" 
+                            type="text"
+                            label="PBot ID"
+                            disabled={false}
+                        />
+                        <br />
+                
+                        <OTUSelect name="synonym" label="Synonym"/>
+                        <br />
+
+                        <ReferenceManager omitOrder values={props.values}/>
+                        <br />
+                        
+                        <GroupSelect/>
+                        <br />
+
+                    </AccordionDetails>
+                </Accordion>
+
+                {/*
                 <Field
                     component={SensibleTextField}
                     name="authority" 
@@ -109,99 +313,8 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                     disabled={false}
                 />
                 <br />
-
-                <QualityIndexSelect />
-                <br />
-        
-                <MajorTaxonGroupSelect />
-                <br />
-        
-                <Field 
-                    component={SensibleTextField}
-                    name="pbdbParentTaxon" 
-                    type="text" 
-                    label="PBDB parent taxon"
-                    disabled={false}
-                />
-                <br />
-
-                <Field 
-                    component={SensibleTextField}
-                    name="additionalClades" 
-                    type="text" 
-                    label="Additional clades"
-                    disabled={false}
-                />
-                <br />
-
-                <Field 
-                    component={SensibleTextField}
-                    name="family" 
-                    type="text" 
-                    label="Family"
-                    disabled={false}
-                />
-                <br />
+                */}
                 
-                <Field 
-                    component={SensibleTextField}                
-                    name="genus" 
-                    type="text" 
-                    label="Genus"
-                    disabled={false}
-                />
-                <br />
-                
-                <Field 
-                    component={SensibleTextField}
-                    name="species" 
-                    type="text" 
-                    label="Species"
-                    disabled={false}
-                />
-                <br />
-                
-                <SchemaSelect />
-                <br />
-
-                {props.values.schema !== '' &&
-                    <div>
-                        <CharacterSelect values={props.values} source="characterInstance"/>
-                        <br />
-                    </div>
-                }
-                
-                {props.values.character !== "" &&
-                    <div>
-                        <StateSelect values={props.values} source="characterInstance" multi={true}/>
-                        <br />
-                    </div>
-                }     
-
-                <PartsPreservedSelect/>
-                <br />
-                
-                <NotableFeaturesSelect />
-                <br />
-
-                <SpecimenManager name="identifiedSpecimens" groupLabel="Identified specimens" individualLabel="identified specimen" values={props.values} />
-                <br />
-
-                <SpecimenManager name="typeSpecimens" groupLabel="Type specimens" individualLabel="type specimen" values={props.values} />
-                <br />
-
-                <SpecimenSelect name="holotypeSpecimen" label="Holotype specimen"/>
-                <br />
-
-                <OTUSelect name="synonym" label="Synonym"/>
-                <br />
-
-                <ReferenceManager omitOrder values={props.values}/>
-                <br />
-                
-                <GroupSelect/>
-                <br />
-
                 {!select && 
                 <>
                 <Field 

@@ -23,12 +23,16 @@ function OTUList(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym) {
+        if (!filters.name && !filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
             //TODO: the graphql path below will change from exampleSpecimens to whatever we call
             //the set of all specimens
+            if (filters.name) {
+                console.log("adding name")
+                filter += ", {name_regexp: $name}"
+            }
             if (filters.partsPreserved) {
                 console.log("adding partsPreserved")
                 filter += ", {partsPreserved_some: {pbotID_in: $partsPreserved}}"
@@ -139,8 +143,43 @@ function OTUList(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $family: String, $genus: String, $species: String, $authority: String, $diagnosis: String, $qualityIndex: String, $majorTaxonGroup: String, $pbdbParentTaxon: String, $additionalClades: String, ${groups} ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} ${filters.schema ? ", $schema: ID" : ""} ${filters.character ? ", $character: ID" : ""} ${filters.states ? ", $states: [ID!]" : ""} ${filters.identifiedSpecimens ? ", $identifiedSpecimens: [ID!]" : ""} ${filters.typeSpecimens ? ", $typeSpecimens: [ID!]" : ""} ${filters.holotypeSpecimen ? ", $holotypeSpecimen: ID!" : ""} ${filters.references ? ", $references: [ID!]" : ""} ${filters.synonym ? ", $synonym: ID!" : ""}) {
-                OTU (pbotID: $pbotID, name: $name, family: $family, genus: $genus, species: $species, authority: $authority, diagnosis: $diagnosis, qualityIndex: $qualityIndex, majorTaxonGroup: $majorTaxonGroup, pbdbParentTaxon: $pbdbParentTaxon, additionalClades: $additionalClades ${filter}) {
+            query (
+                $pbotID: ID, 
+                ${filters.name ? ", $name: String" : ""}
+                $family: String, 
+                $genus: String, 
+                $species: String, 
+                $authority: String, 
+                $diagnosis: String, 
+                $qualityIndex: String, 
+                $majorTaxonGroup: String, 
+                $pbdbParentTaxon: String, 
+                $additionalClades: String, 
+                ${groups} 
+                ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
+                ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} 
+                ${filters.schema ? ", $schema: ID" : ""} 
+                ${filters.character ? ", $character: ID" : ""} 
+                ${filters.states ? ", $states: [ID!]" : ""} 
+                ${filters.identifiedSpecimens ? ", $identifiedSpecimens: [ID!]" : ""} 
+                ${filters.typeSpecimens ? ", $typeSpecimens: [ID!]" : ""} 
+                ${filters.holotypeSpecimen ? ", $holotypeSpecimen: ID!" : ""} 
+                ${filters.references ? ", $references: [ID!]" : ""} 
+                ${filters.synonym ? ", $synonym: ID!" : ""}
+            ) {
+                OTU (
+                    pbotID: $pbotID, 
+                    family: $family, 
+                    genus: $genus, 
+                    species: $species, 
+                    authority: $authority, 
+                    diagnosis: $diagnosis, 
+                    qualityIndex: $qualityIndex, 
+                    majorTaxonGroup: $majorTaxonGroup, 
+                    pbdbParentTaxon: $pbdbParentTaxon, 
+                    additionalClades: $additionalClades 
+                    ${filter}
+                ) {
                     pbotID
                     name
                 }
@@ -148,8 +187,26 @@ function OTUList(props) {
         `
     } else {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $family: String, $genus: String, $species: String, ${groups} $includeSynonyms: Boolean!, $includeComments: Boolean!, $includeHolotypeDescription: Boolean!, $includeMergedDescription: Boolean!) {
-                OTU (pbotID: $pbotID, name: $name, family: $family, genus: $genus, species: $species ${filter}) {
+            query (
+                $pbotID: ID, 
+                $name: String, 
+                $family: String, 
+                $genus: String, 
+                $species: String, 
+                ${groups} 
+                $includeSynonyms: Boolean!, 
+                $includeComments: Boolean!, 
+                $includeHolotypeDescription: Boolean!, 
+                $includeMergedDescription: Boolean!
+            ) {
+                OTU (
+                    pbotID: $pbotID, 
+                    name: $name,
+                    family: $family, 
+                    genus: $genus, 
+                    species: $species 
+                    ${filter}
+                ) {
                     pbotID
                     name
                     authority
@@ -303,7 +360,7 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
         <OTUList 
             filters={{
                 pbotID: queryParams.otuID || null,
-                name: queryParams.name || null,
+                name: queryParams.name ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
                 pfnGenusLink: queryParams.pfnGenusLink || null, 
