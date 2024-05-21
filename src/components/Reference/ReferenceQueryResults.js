@@ -4,10 +4,21 @@ import {
   gql
 } from "@apollo/client";
 import { alphabetize, sort } from '../../util.js';
-import { Link, Grid, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { Link, Grid, List, ListItem, ListItemButton, ListItemText, Typography, TableContainer, Table, TableCell, TableBody, TableRow, styled, Paper } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+  
 
 function References(props) {
     console.log("References")
@@ -141,20 +152,23 @@ function References(props) {
             </div>
         )
     }
+
     if (props.select) {
         return (
             <List sx={{ pt: 0 }}>
             {references.map((reference) => (
-                <ListItem disableGutters key={reference.pbotID}>
+                <ListItem  key={reference.pbotID}>
                     <ListItemButton onClick={() => props.handleSelect(reference)} >
                         <ListItemText 
                         primary={`${reference.year}, ${reference.title}`} secondary={`pbot id: ${reference.pbotID}`} />
                     </ListItemButton>
                 </ListItem>
             ))}
-        </List>
+            </List>
         )
     }
+    
+    if (props.standAlone) {
     return ( 
         references.map((reference) => {
             console.log("*********************************")
@@ -167,8 +181,6 @@ function References(props) {
             const header1 = {marginLeft:"2em", marginTop:"10px"}
             return (
             <div key={reference.pbotID} style={style}>
-                { props.standAlone &&     
-                    <>
                     <Grid container sx={{
                         width: "100%",
                         minHeight: "50px",
@@ -221,18 +233,38 @@ function References(props) {
                     {reference.lastPage && <div style={indent}><b>lastPage</b> {reference.lastPage} </div>} 
                     
                     <br />
-                    </>
-                }
-
-                {!props.standAlone &&
-                <Link style={listIndent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{`${reference.year}, ${reference.title}`}</b></Link>
-                }
-
             </div>
-            );
+            )
         })
-    );
+    )}
 
+    if (!props.standAlone) {
+        /*
+        return (
+            <Link style={listIndent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{`${reference.year}, ${reference.title}`}</b></Link>
+        )
+        */
+        return (
+           <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 700 }} aria-label="references table">
+                    <TableBody>
+                    {references.map((reference) => {
+                        const directURL = new URL(window.location.origin + "/query/reference/" + reference.pbotID);
+
+                        return (
+                        <StyledTableRow key={reference.pbotID}>
+                            <TableCell align="left">{reference.year}</TableCell>
+                            <TableCell component="th" scope="row">
+                                <Link  color="success.main" underline="hover" href={directURL}  target="_blank"><b>{reference.title}</b></Link>
+                            </TableCell>
+                        </StyledTableRow>
+                        )
+                    })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        )        
+    }
 }
 
 
