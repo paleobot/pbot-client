@@ -39,11 +39,15 @@ function Collections(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.specimens && !filters.references && !filters.preservationModeIDs) {
+        if (!filters.name && !filters.specimens && !filters.references && !filters.preservationModeIDs) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
 
+            if (filters.name) {
+                console.log("adding name")
+                filter += ", {name_regexp: $name}"
+            }
             if (filters.preservationModeIDs) {
                 console.log("adding preservationModeIDs")
                 filter += ", {preservationModes_some: {pbotID_in: $preservationModeIDs}}"
@@ -198,8 +202,45 @@ function Collections(props) {
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, $lithology: String, $sizeClasses: [String], $environment: String, $collectionMethods: [String], $pbdbid: String, $stratigraphicGroup: String, $stratigraphicFormation: String, $stratigraphicMember: String, $stratigraphicBed: String, $mininterval: String, $maxinterval: String ${groups} ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} ${filters.specimens ? ", $specimens: [ID!]" : ""} ${filters.references ? ", $references: [ID!]" : ""}) {
-                Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType,  lithology: $lithology, sizeClasses: $sizeClasses,  environment: $environment, collectionMethods: $collectionMethods, pbdbid: $pbdbid, stratigraphicGroup: $stratigraphicGroup, stratigraphicFormation: $stratigraphicFormation, stratigraphicMember: $stratigraphicMember, stratigraphicBed: $stratigraphicBed, mininterval: $mininterval, maxinterval: $maxinterval ${filter}) {
+            query (
+                $pbotID: ID, 
+                ${filters.name ? ", $name: String" : ""}
+                $country: String, 
+                $state: String, 
+                $collectionType: String, 
+                $lithology: String, 
+                $sizeClasses: [String], 
+                $environment: String, 
+                $collectionMethods: [String], 
+                $pbdbid: String, 
+                $stratigraphicGroup: String, 
+                $stratigraphicFormation: String, 
+                $stratigraphicMember: String, 
+                $stratigraphicBed: String, 
+                $mininterval: String, 
+                $maxinterval: String ${groups} 
+                ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} 
+                ${filters.specimens ? ", $specimens: [ID!]" : ""} 
+                ${filters.references ? ", $references: [ID!]" : ""}
+            ) {
+                Collection (
+                    pbotID: $pbotID, 
+                    country: $country, 
+                    state: $state, 
+                    collectionType: $collectionType,  
+                    lithology: $lithology, 
+                    sizeClasses: $sizeClasses,  
+                    environment: $environment, 
+                    collectionMethods: $collectionMethods, 
+                    pbdbid: $pbdbid, 
+                    stratigraphicGroup: $stratigraphicGroup, 
+                    stratigraphicFormation: $stratigraphicFormation, 
+                    stratigraphicMember: $stratigraphicMember, 
+                    stratigraphicBed: $stratigraphicBed, 
+                    mininterval: $mininterval, 
+                    maxinterval: $maxinterval 
+                    ${filter}
+                ) {
                     ${fields}
                 }
             }
@@ -409,7 +450,7 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
         <Collections 
             filters={{
                 pbotID: queryParams.collectionID || null,
-                name: queryParams.name || null, 
+                name: queryParams.name ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
                 country: queryParams.country || null,
                 state: queryParams.state || null,
                 collectionType: queryParams.collectiontype || null,

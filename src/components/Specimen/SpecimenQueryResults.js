@@ -37,10 +37,14 @@ function Specimens(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf) {
+        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf) {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}";
+            if (filters.name) {
+                console.log("adding name")
+                filter += ", {name_regexp: $name}"
+            }
             if (filters.collection) {
                 filter += ", {collection: {pbotID: $collection}}"
             }
@@ -292,7 +296,7 @@ function Specimens(props) {
         gQL = gql`
             query (
                 $pbotID: ID, 
-                $name: String, 
+                ${filters.name ? ", $name: String" : ""}
                 $idigbioInstitutionCode: String, 
                 $idigbioCatalogNumber: String, 
                 $idigbiouuid: String, 
@@ -315,7 +319,6 @@ function Specimens(props) {
             ) {
                 Specimen (
                     pbotID: $pbotID, 
-                    name: $name, 
                     idigbioInstitutionCode: $idigbioInstitutionCode, 
                     idigbioCatalogNumber: $idigbioCatalogNumber, 
                     idigbiouuid: $idigbiouuid, 
@@ -571,7 +574,7 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
         <Specimens 
             filters={{
                 pbotID: queryParams.specimenID,
-                name: queryParams.name, 
+                name: queryParams.name ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
                 description: queryParams.description || null,
                 identifiedAs: queryParams.identifiedAs || null,
                 typeOf: queryParams.typeOf || null,
