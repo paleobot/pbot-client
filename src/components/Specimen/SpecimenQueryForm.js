@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Stack, Typography } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
 import React from 'react';
@@ -17,6 +17,7 @@ import { StateSelect } from '../State/StateSelect.js';
 import IDigBioSelect from './IDigBioSelect.js';
 import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 import { PreservationModeSelect } from './PreservationModeSelect.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const SpecimenQueryForm = ({handleSubmit, select}) => {
     console.log("SpecimenQueryForm")
@@ -49,6 +50,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
     };
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
+    const accstyle = {textAlign: "left", width: "70%"}
     return (
        
         <Formik
@@ -72,14 +74,6 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
         >
             {props => (
             <Form>
-                <Field 
-                    component={SensibleTextField}
-                    name="specimenID" 
-                    type="text"
-                    label="Specimen ID"
-                    disabled={false}
-                />
-                <br />
                 
                 <Field 
                     component={SensibleTextField}
@@ -89,106 +83,208 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                     disabled={false}
                 />
                 <br />
-                
-                <CollectionSelect name="collection" label="Collection" populateMode="simple"/>
-                <br />
-
-                <DescriptionSelect name="description" label="Description" populateMode="simple" select/>
-                <br />
- 
-                <PartsPreservedSelect/>
                 <br />
                 
-                <NotableFeaturesSelect />
-                <br />
-
-                <PreservationModeSelect />
-                <br />
-
-                <SchemaSelect />
-                <br />
-
-                {props.values.schema !== '' &&
-                    <>
-                        <CharacterSelect values={props.values} source="characterInstance"/>
-                        <br />
-                    </>
-                }
-                
-                {props.values.character !== "" &&
-                    <>
-                        <StateSelect values={props.values} source="characterInstance" multi={true}/>
-                        <br />
-                    </>
-                }
-
-                <br />
-                <OTUSelect name="identifiedAs" label="Identified as" populateMode="simple"/>
-
-                <br />
-                <OTUSelect name="typeOf" label="Type of" populateMode="simple"/>
-
-                <br />
-                <OTUSelect name="holotypeOf" label="Holotype of" populateMode="simple"/>
-
-                <PersonManager label= "Identified by" name="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
-
-                <Field
-                    component={SensibleTextField}
-                    type="text"
-                    name="repository"
-                    label="Repository"
-                    fullWidth 
-                    disabled={false}
-                >
-                </Field>
-                <br />
-
-                <br />
-                <Typography variant="h7" >iDigBio</Typography>
-                                        
-                <div style={{marginLeft:"2em"}}>
-                    <Field
-                        component={SensibleTextField}
-                        type="text"
-                        name="idigbioInstitutionCode"
-                        label="Institution code"
-                        fullWidth 
-                        disabled={false}
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
                     >
-                    </Field>
-                    <br />
+                        Taxonomy
+                    </AccordionSummary>
+                    <AccordionDetails>
 
-                    <Field
-                        component={SensibleTextField}
-                        type="text"
-                        name="idigbioCatalogNumber"
-                        label="Catalog number"
-                        fullWidth 
-                        disabled={false}
+                        <OTUSelect name="identifiedAs" label="Identified as" populateMode="simple"/>
+
+                        <br />
+                        <OTUSelect name="typeOf" label="Type of" populateMode="simple"/>
+
+                        <br />
+                        <OTUSelect name="holotypeOf" label="Holotype of" populateMode="simple"/>
+
+                        <br />(other otu fields not yet implemented)
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
                     >
-                    </Field>
-                    <br />
+                        Fossil characteristics
+                    </AccordionSummary>
+                    <AccordionDetails>
 
-                    <Stack direction="row" spacing={0}>
+                        <PartsPreservedSelect/>
+                        <br />
+                        
+                        <NotableFeaturesSelect />
+                        <br />
+
+                        <PreservationModeSelect />
+                        <br />
+
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Time
+                    </AccordionSummary>
+                    <AccordionDetails>
+                    Not yet implemented
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Location
+                    </AccordionSummary>
+                    <AccordionDetails>
+                    Not yet implemented
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Stratigraphy
+                    </AccordionSummary>
+                    <AccordionDetails>
+                    Not yet implemented
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Schema
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                        <SchemaSelect />
+                        <br />
+
+                        {props.values.schema !== '' &&
+                            <>
+                                <CharacterSelect values={props.values} source="characterInstance"/>
+                                <br />
+                            </>
+                        }
+                        
+                        {props.values.character !== "" &&
+                            <>
+                                <StateSelect values={props.values} source="characterInstance" multi={true}/>
+                                <br />
+                            </>
+                        }
+
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="required-content"
+                        id="required-header"                        
+                    >
+                        Metadata
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                        <Field 
+                            component={SensibleTextField}
+                            name="specimenID" 
+                            type="text"
+                            label="PBot ID"
+                            disabled={false}
+                        />
+                        <br />
+
+                        <br />
+                        <Typography variant="h7" >iDigBio</Typography>
+                        
+                        <div style={{marginLeft:"2em"}}>
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="idigbioInstitutionCode"
+                                label="Institution code"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+        
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="idigbioCatalogNumber"
+                                label="Catalog number"
+                                fullWidth 
+                                disabled={false}
+                            >
+                            </Field>
+                            <br />
+        
+                            <Stack direction="row" spacing={0}>
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="idigbiouuid"
+                                    label="UUID"
+                                    fullWidth 
+                                    disabled={false}
+                                />
+                                <IDigBioSelect />
+                            </Stack>
+                        </div>
+                        <br />
+
+                        <CollectionSelect name="collection" label="Collection" populateMode="simple"/>
+                        <br />
+
+                        <ReferenceManager omitOrder values={props.values}/>
+
+                        <PersonManager label= "Identified by" name="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
+
                         <Field
                             component={SensibleTextField}
                             type="text"
-                            name="idigbiouuid"
-                            label="UUID"
+                            name="repository"
+                            label="Repository"
                             fullWidth 
                             disabled={false}
-                        />
-                        <IDigBioSelect />
-                    </Stack>
-                </div>
-                <br />
+                        >
+                        </Field>
+                        <br />
 
-                <ReferenceManager omitOrder values={props.values}/>
-                
-                <GroupSelect/>
-                <br />
+                        <GroupSelect/>
+                        <br />
 
+                    </AccordionDetails>
+                </Accordion>
+
+                {/*
+                <DescriptionSelect name="description" label="Description" populateMode="simple" select/>
+                <br />
+                */}
 
                 {!select &&
                 <>
