@@ -256,7 +256,7 @@ function OTUs(props) {
                                         {o.partsPreserved.map((p, i) => {
                                             return (
                                                 <>
-                                                {i > 0 ? ', ' : ''}{o.type}
+                                                {i > 0 ? ', ' : ''}{p.type}
                                                 </>
                                             )
                                         })}
@@ -266,7 +266,7 @@ function OTUs(props) {
                                             if ("CREATE" === p.type) {
                                                 return (
                                                     <>
-                                                    {p.Person.given} {p.Person.surname}
+                                                    {`${p.Person.given}${p.Person.middle ? ` ${p.Person.middle}` : ''} ${p.Person.surname}`}
                                                     </>
                                                 )
                                             } else {

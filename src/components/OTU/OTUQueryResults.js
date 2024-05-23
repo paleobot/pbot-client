@@ -189,6 +189,7 @@ function OTUList(props) {
                         type
                         Person {
                             given
+                            middle
                             surname
                         }
                     }
