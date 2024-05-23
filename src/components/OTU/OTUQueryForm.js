@@ -92,7 +92,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Search by taxonomy
+                        Taxonomy
                     </AccordionSummary>
                     <AccordionDetails>
 
@@ -157,7 +157,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Search by fossil characteristics
+                        Fossil characteristics
                     </AccordionSummary>
                     <AccordionDetails>
 
@@ -179,7 +179,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Search by description
+                        Description
                     </AccordionSummary>
                     <AccordionDetails>
 
@@ -209,7 +209,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Search by time
+                        Time
                     </AccordionSummary>
                     <AccordionDetails>
                         Not yet implemented
@@ -222,7 +222,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Search by location
+                        Location
                     </AccordionSummary>
                     <AccordionDetails>
                         Not yet implemented
@@ -235,7 +235,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Search by stratigraphy
+                        Stratigraphy
                     </AccordionSummary>
                     <AccordionDetails>
                         Not yet implemented
@@ -248,7 +248,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Search by specimen
+                        Specimen
                     </AccordionSummary>
                     <AccordionDetails>
 
@@ -270,7 +270,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Search by metadata
+                        Metadata
                     </AccordionSummary>
                     <AccordionDetails>
 
