@@ -1,3 +1,5 @@
+import { styled, TableRow } from "@mui/material";
+
 export const alphabetize = (list, sortField) => {
     return list.sort((a,b) => {
         const nameA = a[sortField] ? a[sortField].toUpperCase() : "z"; //"z" forces null names to end of list
@@ -53,3 +55,13 @@ export const sort = (list, sortField1, sortField2) => {
         }
     });
 }
+
+export const AlternatingTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
