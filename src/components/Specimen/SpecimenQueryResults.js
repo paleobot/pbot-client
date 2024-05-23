@@ -3,9 +3,9 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow } from '@mui/material';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { alphabetize } from '../../util.js';
+import { alphabetize, AlternatingTableRow } from '../../util.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import {Carousel} from 'react-responsive-carousel'
 import {SecureImage} from '../Image/SecureImage.js';
@@ -289,6 +289,21 @@ function Specimens(props) {
         `
             pbotID
             name
+            partsPreserved {
+                type
+            }
+            collection {
+                country
+                mininterval
+                maxinterval
+            }
+            enteredBy {
+                type
+                Person {
+                    given
+                    surname
+                }
+            }
         `;
 
     let gQL;
@@ -395,172 +410,230 @@ function Specimens(props) {
         </List>
         )
     }
-    return (
-        specimens.map((s) => {
-            const directURL = new URL(window.location.origin + "/query/specimen/" + s.pbotID);
-            if (props.includeImages) {
-                directURL.searchParams.append("includeImages", "true");
-            }
-            if (props.includeDescriptions) {
-                directURL.searchParams.append("includeDescriptions", "true");
-            }
-            if (props.includeOTUs) {
-                directURL.searchParams.append("includeOTUs", "true");
-            }
-                
-            const header1 = {marginLeft:"2em", marginTop:"10px"}
-            return (
-            <div key={s.pbotID} style={style}>
-                { props.standAlone &&     
-                    <>
-                    <Grid container sx={{
-                        width: "100%",
-                        minHeight: "50px",
-                        backgroundColor: 'primary.main',
-                    }}>
-                        <Grid container item xs={4} sx={{ display: "flex", alignItems: "center" }}>
-                            <Grid item sx={{ display: "flex", alignItems: "center" }}>
-                                <img src={logo} style={{ height: "45px" }} />
+    if (props.standAlone) {
+        return (
+            specimens.map((s) => {
+                const directURL = new URL(window.location.origin + "/query/specimen/" + s.pbotID);
+                if (props.includeImages) {
+                    directURL.searchParams.append("includeImages", "true");
+                }
+                if (props.includeDescriptions) {
+                    directURL.searchParams.append("includeDescriptions", "true");
+                }
+                if (props.includeOTUs) {
+                    directURL.searchParams.append("includeOTUs", "true");
+                }
+                    
+                const header1 = {marginLeft:"2em", marginTop:"10px"}
+                return (
+                <div key={s.pbotID} style={style}>
+                    { props.standAlone &&     
+                        <>
+                        <Grid container sx={{
+                            width: "100%",
+                            minHeight: "50px",
+                            backgroundColor: 'primary.main',
+                        }}>
+                            <Grid container item xs={4} sx={{ display: "flex", alignItems: "center" }}>
+                                <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                                    <img src={logo} style={{ height: "45px" }} />
+                                </Grid>
+                                <Grid item sx={{ display: "flex", alignItems: "center" }} >                  
+                                    <Typography variant="h5">
+                                        Pbot
+                                    </Typography>
+                                </Grid>                 
                             </Grid>
-                            <Grid item sx={{ display: "flex", alignItems: "center" }} >                  
+                            <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                                 <Typography variant="h5">
-                                    Pbot
+                                    Specimen: {s.name}
                                 </Typography>
-                            </Grid>                 
+                            </Grid>
+                            <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
+                                <Typography variant="h5" sx={{marginRight: "10px"}}>
+                                    Workspace: {s.elementOf[0].name}
+                                </Typography>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
-                            <Typography variant="h5">
-                                Specimen: {s.name}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
-                            <Typography variant="h5" sx={{marginRight: "10px"}}>
-                                Workspace: {s.elementOf[0].name}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
+                        <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
-                    <div style={header1}><Typography variant="h6">Identity</Typography></div>
-                    <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
-                    <div style={indent}><b>collection:</b> {s.collection.name}</div>
-                    <div style={indent}><b>idigbio InstitutionCode/CatalogNumber/uuid:</b> {`${s.idigbioInstitutionCode}/${s.idigbioCatalogNumber}/${s.idigbiouuid}`}</div>
-                    <div style={indent}><b>references:</b></div>
-                    {s.references && s.references.length > 0 &&
-                        <div>
-                            {alphabetize([...s.references], "order").map((reference, idx) => (
-                                <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
-                            ))}
-                        </div>
-                    }
+                        <div style={header1}><Typography variant="h6">Identity</Typography></div>
+                        <div style={indent}><b>pbotID:</b> {s.pbotID}</div>
+                        <div style={indent}><b>collection:</b> {s.collection.name}</div>
+                        <div style={indent}><b>idigbio InstitutionCode/CatalogNumber/uuid:</b> {`${s.idigbioInstitutionCode}/${s.idigbioCatalogNumber}/${s.idigbiouuid}`}</div>
+                        <div style={indent}><b>references:</b></div>
+                        {s.references && s.references.length > 0 &&
+                            <div>
+                                {alphabetize([...s.references], "order").map((reference, idx) => (
+                                    <div key={idx} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
+                                ))}
+                            </div>
+                        }
 
-                    <div style={header1}><Typography variant="h6">Preservation</Typography></div>
-                    <div style={indent}><b>parts preserved:</b> {s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
-                        <div style={indent}><b>notable features:</b> {s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}</div>
+                        <div style={header1}><Typography variant="h6">Preservation</Typography></div>
+                        <div style={indent}><b>parts preserved:</b> {s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}</div>
+                            <div style={indent}><b>notable features:</b> {s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}</div>
 
-                    <div style={indent}><b>preservation modes:</b> {s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}</div>
+                        <div style={indent}><b>preservation modes:</b> {s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}</div>
 
-                    <div style={header1}><Typography variant="h6">Repository</Typography></div>
-                    <div style={indent}><b>repository:</b> {s.repository}</div>
-                    <div style={indent}><b>other repository link:</b> {s.otherRepositoryLink}</div>
+                        <div style={header1}><Typography variant="h6">Repository</Typography></div>
+                        <div style={indent}><b>repository:</b> {s.repository}</div>
+                        <div style={indent}><b>other repository link:</b> {s.otherRepositoryLink}</div>
 
-                    <div style={header1}><Typography variant="h6">Identification</Typography></div>
-                    <div style={indent}><b>identified by:</b></div>
-                    {s.identifiers && s.identifiers.length > 0 &&
-                        <div>
-                            {s.identifiers.map((i, idx) => (
-                                <div key={idx} style={indent2}>{i.given + " " + i.surname}</div>
-                            ))}
-                        </div>
-                    }
-                    {s.identifiedAs && s.identifiedAs.length > 0 &&
-                        <div>
-                            <div style={indent}><b>identified as:</b></div>
-                            {s.identifiedAs.map((h, idx) => (
-                                <div key={idx}>
-                                    <div style={indent2}><b>name: {h.OTU.name}</b></div>
-                                    <div style={indent2}><b>family: {h.OTU.family}</b></div>
-                                    <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
-                                    <div style={indent2}><b>species: {h.OTU.species}</b></div>
-                                </div>
-                            ))}
-                        </div>
-                    }
-                    {s.holotypeOf && s.holotypeOf.length > 0 &&
-                        <div>
-                            <div style={indent}><b>holotype of:</b></div>
-                            {s.holotypeOf.map((h, idx) => (
-                                <div key={idx}>
-                                    <div style={indent2}><b>name: {h.OTU.name}</b></div>
-                                    <div style={indent2}><b>family: {h.OTU.family}</b></div>
-                                    <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
-                                    <div style={indent2}><b>species: {h.OTU.species}</b></div>
-                                </div>
-                            ))}
-                        </div>
-                    }
-                    {s.typeOf && s.typeOf.length > 0 &&
-                        <div>
-                            <div style={indent}><b>type of:</b></div>
-                            {s.typeOf.map((h, idx) => (
-                                <div key={idx}>
-                                    <div style={indent2}><b>name: {h.OTU.name}</b></div>
-                                    <div style={indent2}><b>family: {h.OTU.family}</b></div>
-                                    <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
-                                    <div style={indent2}><b>species: {h.OTU.species}</b></div>
-                                </div>
-                            ))}
-                        </div>
-                    }
-
-                    <div style={indent}><b>notes:</b> {s.notes}</div>
-
-                    {s.images && s.images.length > 0 &&
-                    <>
-                    <div style={header1}><Typography variant="h6">Images</Typography></div>
-                        <div style={carousel}>
-                        {/*can't use thumbs because SecureImage does not immediately make image available*/}
-                        <Carousel showThumbs={false}>  
-                            {s.images.map((image) => (
-                                <div key={image.pbotID} >
-                                    {/*<img src={image.link} alt={image.caption}/>*/}
-                                    <SecureImage src={image.link}/>
-                                </div>
-                            ))}
-                        </Carousel>
-                        </div>
-                    </>
-                    }
-                    {s.describedBy && s.describedBy.length > 0 &&
-                        <div>
-                            <div style={indent}><b>descriptions:</b></div>
-                            {s.describedBy.map((d,idx) => (
-                                <div key={idx}>
-                                    <div style={indent2}><b>from schema "{d.Description.schema.title}"</b></div>
-                                    <div style={indent3}><b>written description:</b> {d.Description.writtenDescription}</div>
-                                    <div style={indent3}><b>notes:</b> {d.Description.notes}</div>
-                                    {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
-                                    <div>
-                                        <CharacterInstances style={indent3}  characterInstances={d.Description.characterInstances} />
+                        <div style={header1}><Typography variant="h6">Identification</Typography></div>
+                        <div style={indent}><b>identified by:</b></div>
+                        {s.identifiers && s.identifiers.length > 0 &&
+                            <div>
+                                {s.identifiers.map((i, idx) => (
+                                    <div key={idx} style={indent2}>{i.given + " " + i.surname}</div>
+                                ))}
+                            </div>
+                        }
+                        {s.identifiedAs && s.identifiedAs.length > 0 &&
+                            <div>
+                                <div style={indent}><b>identified as:</b></div>
+                                {s.identifiedAs.map((h, idx) => (
+                                    <div key={idx}>
+                                        <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                                        <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                                        <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                                        <div style={indent2}><b>species: {h.OTU.species}</b></div>
                                     </div>
-                                    }
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        }
+                        {s.holotypeOf && s.holotypeOf.length > 0 &&
+                            <div>
+                                <div style={indent}><b>holotype of:</b></div>
+                                {s.holotypeOf.map((h, idx) => (
+                                    <div key={idx}>
+                                        <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                                        <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                                        <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                                        <div style={indent2}><b>species: {h.OTU.species}</b></div>
+                                    </div>
+                                ))}
+                            </div>
+                        }
+                        {s.typeOf && s.typeOf.length > 0 &&
+                            <div>
+                                <div style={indent}><b>type of:</b></div>
+                                {s.typeOf.map((h, idx) => (
+                                    <div key={idx}>
+                                        <div style={indent2}><b>name: {h.OTU.name}</b></div>
+                                        <div style={indent2}><b>family: {h.OTU.family}</b></div>
+                                        <div style={indent2}><b>genus: {h.OTU.genus}</b></div>
+                                        <div style={indent2}><b>species: {h.OTU.species}</b></div>
+                                    </div>
+                                ))}
+                            </div>
+                        }
+
+                        <div style={indent}><b>notes:</b> {s.notes}</div>
+
+                        {s.images && s.images.length > 0 &&
+                        <>
+                        <div style={header1}><Typography variant="h6">Images</Typography></div>
+                            <div style={carousel}>
+                            {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                            <Carousel showThumbs={false}>  
+                                {s.images.map((image) => (
+                                    <div key={image.pbotID} >
+                                        {/*<img src={image.link} alt={image.caption}/>*/}
+                                        <SecureImage src={image.link}/>
+                                    </div>
+                                ))}
+                            </Carousel>
+                            </div>
+                        </>
+                        }
+                        {s.describedBy && s.describedBy.length > 0 &&
+                            <div>
+                                <div style={indent}><b>descriptions:</b></div>
+                                {s.describedBy.map((d,idx) => (
+                                    <div key={idx}>
+                                        <div style={indent2}><b>from schema "{d.Description.schema.title}"</b></div>
+                                        <div style={indent3}><b>written description:</b> {d.Description.writtenDescription}</div>
+                                        <div style={indent3}><b>notes:</b> {d.Description.notes}</div>
+                                        {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
+                                        <div>
+                                            <CharacterInstances style={indent3}  characterInstances={d.Description.characterInstances} />
+                                        </div>
+                                        }
+                                    </div>
+                                ))}
+                            </div>
+                        }
+                    
+                        <br />
+                        </>
                     }
-                
-                    <br />
-                    </>
-                }
 
-                {!props.standAlone &&
-                <Link style={indent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{s.name || "(name missing)"}</b></Link>
-                }
-
-            </div>
-            )
-        })
-    );
+                </div>
+                )
+            })
+        );
+    } else {
+        return (
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 700 }} aria-label="specimens table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Parts preserved</TableCell>
+                            <TableCell>Min age</TableCell>
+                            <TableCell>Max age</TableCell>
+                            <TableCell>Country</TableCell>
+                            <TableCell>Entered by</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {specimens.map((s) => {
+                            const directURL = new URL(window.location.origin + "/query/specimen/" + s.pbotID);
+                            return (
+                                <AlternatingTableRow key={s.pbotID}>
+                                    <TableCell align="left">
+                                        <Link color="success.main" underline="hover" href={directURL}  target="_blank"><b>{s.name || "(name missing)"}</b></Link>
+                                    </TableCell>
+                                    <TableCell>
+                                        {s.partsPreserved.map((p, i) => {
+                                            return (
+                                                <>
+                                                {i > 0 ? ', ' : ''}{p.type}
+                                                </>
+                                            )
+                                        })}
+                                    </TableCell>
+                                    <TableCell>
+                                        {s.collection.mininterval}
+                                    </TableCell>
+                                    <TableCell>
+                                        {s.collection.maxinterval}
+                                    </TableCell>
+                                    <TableCell>
+                                        {s.collection.country}
+                                    </TableCell>
+                                    <TableCell>
+                                        {s.enteredBy.map((p) => {
+                                            if ("CREATE" === p.type) {
+                                                return (
+                                                    <>
+                                                    {p.Person.given} {p.Person.surname}
+                                                    </>
+                                                )
+                                            } else {
+                                                return ('')
+                                            }
+                                        })}
+                                    </TableCell>
+                                </AlternatingTableRow>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        )
+    }
 
 }
 

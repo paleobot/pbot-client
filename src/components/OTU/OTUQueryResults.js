@@ -182,6 +182,16 @@ function OTUList(props) {
                 ) {
                     pbotID
                     name
+                    partsPreserved {
+                        type
+                    }
+                    enteredBy {
+                        type
+                        Person {
+                            given
+                            surname
+                        }
+                    }
                 }
             }
         `

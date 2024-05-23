@@ -3,22 +3,11 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { alphabetize, sort } from '../../util.js';
+import { alphabetize, sort, AlternatingTableRow } from '../../util.js';
 import { Link, Grid, List, ListItem, ListItemButton, ListItemText, Typography, TableContainer, Table, TableCell, TableBody, TableRow, styled, Paper } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
-  
 
 function References(props) {
     console.log("References")
@@ -252,12 +241,12 @@ function References(props) {
                         const directURL = new URL(window.location.origin + "/query/reference/" + reference.pbotID);
 
                         return (
-                        <StyledTableRow key={reference.pbotID}>
+                        <AlternatingTableRow key={reference.pbotID}>
                             <TableCell align="left">{reference.year}</TableCell>
                             <TableCell component="th" scope="row">
                                 <Link  color="success.main" underline="hover" href={directURL}  target="_blank"><b>{reference.title}</b></Link>
                             </TableCell>
-                        </StyledTableRow>
+                        </AlternatingTableRow>
                         )
                     })}
                     </TableBody>
