@@ -618,7 +618,7 @@ function Specimens(props) {
                                             if ("CREATE" === p.type) {
                                                 return (
                                                     <>
-                                                    {p.Person.given} {p.Person.surname}
+                                                    {`${p.Person.given}${p.Person.middle ? ` ${p.Person.middle}` : ''} ${p.Person.surname}`}
                                                     </>
                                                 )
                                             } else {
