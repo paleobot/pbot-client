@@ -27,6 +27,11 @@ import RegisterForm from './components/RegisterForm';
 import Home from './components/Home';
 import ReferenceDirectQueryResults from './components/Reference/ReferenceDirectQueryResults';
 
+//import '@fontsource/roboto/300.css';
+//import '@fontsource/roboto/400.css';
+//import '@fontsource/roboto/500.css';
+//import '@fontsource/roboto/700.css';
+
 /*
 //This approach is from https://stackoverflow.com/a/74411049
 let consoleDisabled = true; //TODO: figure out how to allow other components to change this
@@ -269,6 +274,15 @@ const theme = createTheme({
             
         }
       },
+      MuiTableCell: {
+        styleOverrides: {
+          head: {
+            backgroundColor: "#66bb6a", //For some reason, I can't use "secondary" here
+            fontWeight: "bold"
+          },
+        },
+      },
+
     }
 });
 
