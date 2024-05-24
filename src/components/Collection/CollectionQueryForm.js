@@ -13,6 +13,7 @@ import { CollectionMethodSelect, CollectionTypeSelect, EnvironmentSelect, Interv
 import PBDBSelect from './PBDBSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { OTUSelect } from '../OTU/OTUSelect.js';
 
 const CollectionQueryForm = ({handleSubmit, select}) => {
     const initValues = {
@@ -81,7 +82,7 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                         Taxonomy
                     </AccordionSummary>
                     <AccordionDetails>
-                    Not yet implemented
+                        <OTUSelect name="otu" label="OTU name" populateMode="simple"/>
                     </AccordionDetails>
                 </Accordion>
 

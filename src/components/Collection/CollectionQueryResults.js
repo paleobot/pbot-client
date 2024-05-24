@@ -39,7 +39,7 @@ function Collections(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.specimens && !filters.references && !filters.preservationModeIDs) {
+        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.preservationModeIDs) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -67,6 +67,18 @@ function Collections(props) {
                         Reference: {
                             pbotID_in: $references 
                         } 
+                    }
+                }`
+            }
+
+            if (filters.otu) {
+                filter += `, {
+                    specimens_some: {
+                        identifiedAs_some: {
+                            OTU: {
+                                pbotID: $otu
+                            }
+                        }
                     }
                 }`
             }
@@ -225,6 +237,7 @@ function Collections(props) {
                 ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} 
                 ${filters.specimens ? ", $specimens: [ID!]" : ""} 
                 ${filters.references ? ", $references: [ID!]" : ""}
+                ${filters.otu ? ", $otu: ID" : ""}
             ) {
                 Collection (
                     pbotID: $pbotID, 
@@ -509,6 +522,7 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 preservationModeIDs: queryParams.preservationmodes && queryParams.preservationmodes.length > 0 ? queryParams.preservationmodes : null,
                 specimens: queryParams.specimens && queryParams.specimens.length > 0 ? queryParams.specimens.map(s => s.pbotID) : null,
                 references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
+                otu: queryParams.otu || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSpecimens={queryParams.includeSpecimens} 
