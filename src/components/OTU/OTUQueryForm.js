@@ -137,16 +137,14 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         />
                         <br />
                         
-                        {/*
                         <Field 
                             component={SensibleTextField}
                             name="species" 
                             type="text" 
-                            label="Species"
+                            label="Specific epithet"
                             disabled={false}
                         />
                         <br />
-                        */}
 
                     </AccordionDetails>
                 </Accordion>
