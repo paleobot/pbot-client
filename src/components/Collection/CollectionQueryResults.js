@@ -39,7 +39,7 @@ function Collections(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.preservationModeIDs) {
+        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.preservationModeIDs) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -77,6 +77,66 @@ function Collections(props) {
                         identifiedAs_some: {
                             OTU: {
                                 pbotID: $otu
+                            }
+                        }
+                    }
+                }`
+            }
+
+            if (filters.majorTaxonGroup) {
+                filter += `, {
+                    specimens_some: {
+                        identifiedAs_some: {
+                            OTU: {
+                                majorTaxonGroup: $majorTaxonGroup
+                            }
+                        }
+                    }
+                }`
+            }
+
+            if (filters.pbdbParentTaxon) {
+                filter += `, {
+                    specimens_some: {
+                        identifiedAs_some: {
+                            OTU: {
+                                pbdbParentTaxon: $pbdbParentTaxon
+                            }
+                        }
+                    }
+                }`
+            }
+
+            if (filters.family) {
+                filter += `, {
+                    specimens_some: {
+                        identifiedAs_some: {
+                            OTU: {
+                                family: $family
+                            }
+                        }
+                    }
+                }`
+            }
+
+            if (filters.genus) {
+                filter += `, {
+                    specimens_some: {
+                        identifiedAs_some: {
+                            OTU: {
+                                genus: $genus
+                            }
+                        }
+                    }
+                }`
+            }
+
+            if (filters.species) {
+                filter += `, {
+                    specimens_some: {
+                        identifiedAs_some: {
+                            OTU: {
+                                species: $species
                             }
                         }
                     }
@@ -238,6 +298,11 @@ function Collections(props) {
                 ${filters.specimens ? ", $specimens: [ID!]" : ""} 
                 ${filters.references ? ", $references: [ID!]" : ""}
                 ${filters.otu ? ", $otu: ID" : ""}
+                ${filters.majorTaxonGroup ? ", $majorTaxonGroup: String" : ""}
+                ${filters.pbdbParentTaxon ? ", $pbdbParentTaxon: String" : ""}
+                ${filters.family ? ", $family: String" : ""}
+                ${filters.genus ? ", $genus: String" : ""}
+                ${filters.species ? ", $species: String" : ""}
             ) {
                 Collection (
                     pbotID: $pbotID, 
@@ -523,6 +588,11 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 specimens: queryParams.specimens && queryParams.specimens.length > 0 ? queryParams.specimens.map(s => s.pbotID) : null,
                 references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
                 otu: queryParams.otu || null,
+                majorTaxonGroup: queryParams.majorTaxonGroup || null,
+                pbdbParentTaxon: queryParams.pbdbParentTaxon || null,
+                family: queryParams.family || null,
+                genus: queryParams.genus || null,
+                species: queryParams.species || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSpecimens={queryParams.includeSpecimens} 
