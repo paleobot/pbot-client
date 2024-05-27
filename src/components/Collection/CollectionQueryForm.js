@@ -21,6 +21,8 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
         collectionID: '', 
         name: '', 
         collectiontype: '',
+        lat: '',
+        lon: '',
         country: '',
         state: '',
         collectiontype: '',
@@ -54,13 +56,23 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
        
         <Formik
             initialValues={initValues}
-            validationSchema={Yup.object({
+            validationSchema={Yup.object().shape({
                 collectionID: Yup.string()
                 .uuid('Must be a valid uuid'),
                 name: Yup.string()
                 .max(100, 'Must be 100 characters or less'),
+                //lat: Yup.number().min(-90).max(90),
+                //lon: Yup.number().min(-180).max(180),
+                lat: Yup.number().when('lon', {
+                    is: lon => lon,
+                    then: Yup.number().required("Latitude/Longitude must be entered together"),
+                }).min(-90).max(90),
+                lon: Yup.number().when('lat', {
+                    is: lat => lat,
+                    then: Yup.number().required("Latitude/Longitude must be entered together"),
+                }).min(-180).max(180),
                 groups: Yup.array().of(Yup.string())
-            })}
+            }, [["lat", "lon"]])}
             onSubmit={(values, {resetForm}) => {
                 handleSubmit(values)
             }}
@@ -180,6 +192,25 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                         Location
                     </AccordionSummary>
                     <AccordionDetails>
+
+                    <Stack direction="row" spacing={4}>
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="lat"
+                            label="Latitude"
+                            style={{minWidth: "12ch", width:"35%"}}
+                            disabled={false}
+                        />
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="lon"
+                            label="Longitude"
+                            style={{minWidth: "12ch", width:"35%"}}
+                            disabled={false}
+                        />
+                    </Stack>
 
                         <CountrySelect />
                         <br />

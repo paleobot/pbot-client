@@ -39,7 +39,7 @@ function Collections(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.preservationModeIDs) {
+        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.preservationModeIDs && !filters.lat && !filters.lon) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -58,6 +58,18 @@ function Collections(props) {
                     specimens_some: {
                         pbotID_in: $specimens 
                     }
+                }`
+            }
+
+            if (filters.lat && filters.lon) {
+                filter += `, {
+                    location_distance_lt: {
+                        point: {
+                          latitude: $lat
+                          longitude: $lon
+                        }
+                        distance:1500
+                      }
                 }`
             }
 
@@ -156,8 +168,10 @@ function Collections(props) {
             name
             collectionType
             sizeClasses
-            lat
-            lon
+            location {
+                latitude
+                longitude
+            }
             gpsCoordinateUncertainty
             geographicResolution
             geographicComments
@@ -214,8 +228,10 @@ function Collections(props) {
             name
             collectionType
             sizeClasses
-            lat
-            lon
+            location {
+                latitude
+                longitude
+            }
             gpsCoordinateUncertainty
             geographicResolution
             geographicComments
@@ -303,6 +319,8 @@ function Collections(props) {
                 ${filters.family ? ", $family: String" : ""}
                 ${filters.genus ? ", $genus: String" : ""}
                 ${filters.species ? ", $species: String" : ""}
+                ${filters.lat ? ", $lat: Float" : ""}
+                ${filters.lon ? ", $lon: Float" : ""}
             ) {
                 Collection (
                     pbotID: $pbotID, 
@@ -421,8 +439,8 @@ function Collections(props) {
                             <div style={header1}><Typography variant="h6">Identity</Typography></div>
                             <div style={indent}><b>pbotID:</b> {collection.pbotID}</div>
                             <div style={indent}><b>pbdb id:</b> {collection.pbdbid}</div>
-                            <div style={indent}><b>latitude:</b> {collection.lat}</div>
-                            <div style={indent}><b>longitude:</b> {collection.lon}</div>
+                            <div style={indent}><b>latitude:</b> {collection.location.latitude}</div>
+                            <div style={indent}><b>longitude:</b> {collection.location.longitude}</div>
                             <div style={indent}><b>GPS coordinate uncertainty:</b> {collection.gpsCoordinateUncertainty}</div>
                             {collection.references && collection.references.length > 0 &&
                                 <div>
@@ -570,6 +588,8 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
             filters={{
                 pbotID: queryParams.collectionID || null,
                 name: queryParams.name ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
+                lat: parseFloat(queryParams.lat) || null, 
+                lon: parseFloat(queryParams.lon) || null,
                 country: queryParams.country || null,
                 state: queryParams.state || null,
                 collectionType: queryParams.collectiontype || null,
