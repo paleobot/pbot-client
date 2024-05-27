@@ -33,8 +33,10 @@ const CollectionMutateResults = ({queryParams}) => {
                 collectors: queryParams.collectors || null,
                 collectionMethods: queryParams.collectionmethods || null,
                 collectingComments: queryParams.collectingcomments || null,
-                lat: parseFloat(queryParams.lat) || null,
-                lon: parseFloat(queryParams.lon) || null,
+               location: { 
+                    latitude: parseFloat(queryParams.lat) || null, 
+                    longitude: parseFloat(queryParams.lon) || null
+                },
                 gpsCoordinateUncertainty: parseFloat(queryParams.gpsuncertainty) || null,
                 geographicResolution: queryParams.geographicresolution || null,
                 geographicComments: queryParams.geographiccomments || null,

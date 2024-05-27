@@ -24,8 +24,10 @@ export const InnerCollectionSelect = (props) => {
                 name
                 collectionType
                 sizeClasses
-                lat
-                lon
+                location {
+                    latitude
+                    longitude
+                }
                 gpsCoordinateUncertainty
                 geographicResolution
                 geographicComments
@@ -222,8 +224,8 @@ export const CollectionSelect = (props) => {
 
             formikProps.setFieldValue("collectiontype", collection.collectionType || '');
             formikProps.setFieldValue("sizeclasses", collection.sizeClasses || []);
-            formikProps.setFieldValue("lat", collection.lat || '');
-            formikProps.setFieldValue("lon", collection.lon || '');
+            formikProps.setFieldValue("lat", collection.location.latitude || '');
+            formikProps.setFieldValue("lon", collection.location.longitude || '');
             formikProps.setFieldValue("gpsuncertainty", collection.gpsCoordinateUncertainty || '');
             formikProps.setFieldValue("geographicresolution", collection.geographicResolution || '');
             formikProps.setFieldValue("geographiccomments", collection.geographicComments || '');
