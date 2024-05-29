@@ -68,7 +68,7 @@ function Collections(props) {
                           latitude: $lat
                           longitude: $lon
                         }
-                        distance:1500
+                        distance:10000
                       }
                 }`
             }
