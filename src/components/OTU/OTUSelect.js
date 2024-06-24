@@ -203,7 +203,11 @@ export const OTUSelect = (props) => {
                 otu.partsPreserved.map(p => p.pbotID) :
                 []
             );
-            formikProps.setFieldValue("notableFeatures", otu.notableFeatures || []);
+            formikProps.setFieldValue("notableFeatures", 
+                otu.notableFeatures && otu.notableFeatures.length > 0 ?
+                otu.notableFeatures.map(n => n.pbotID) :
+                []
+            );
             
             formikProps.setFieldValue("identifiedSpecimens", 
                 otu.identifiedSpecimens && otu.identifiedSpecimens.length > 0 ?
