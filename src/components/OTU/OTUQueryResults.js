@@ -140,6 +140,191 @@ function OTUList(props) {
     }
     console.log(filter)
 
+    const fields = 
+        props.standAlone ?
+        `
+            pbotID
+            name
+            authority
+            diagnosis
+            qualityIndex
+            majorTaxonGroup
+            pbdbParentTaxon
+            additionalClades
+            family
+            genus
+            pfnGenusLink
+            species
+            pfnSpeciesLink
+            notes
+            partsPreserved {
+                type
+            }
+            notableFeatures {
+                name
+            }
+            elementOf {
+                name
+            }
+            synonyms @include(if: $includeSynonyms) {
+                otus {
+                    name
+                    pbotID
+                    family
+                    genus
+                    species
+                }
+                comments  @include(if: $includeComments) {
+                    enteredBy {
+                        Person {
+                            given
+                            surname
+                        }
+                    }
+                    content
+                    comments {
+                        enteredBy {
+                            Person {
+                                given
+                                surname
+                            }
+                        }
+                        content
+                        comments {
+                            enteredBy {
+                                Person {
+                                    given
+                                    surname
+                                }
+                            }
+                            content
+                            comments {
+                                enteredBy {
+                                    Person {
+                                        given
+                                        surname
+                                    }
+                                }
+                                content
+                                comments {
+                                    enteredBy {
+                                        Person {
+                                            given
+                                            surname
+                                        }
+                                    }
+                                    content
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            mergedDescription @include(if: $includeMergedDescription) {
+                schema
+                characterName
+                stateName
+                stateValue
+                stateOrder
+            }
+            holotypeSpecimen @include(if: $includeHolotypeDescription) {
+                Specimen {
+                    name
+                    pbotID
+                    describedBy {
+                        Description {
+                            name
+                            notes
+                            schema {
+                                pbotID
+                                title
+                            }
+                            characterInstances {
+                                pbotID
+                                character {
+                                    name
+                                }
+                                state {
+                                    State {
+                                        name
+                                    }
+                                    order
+                                    value
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `
+        : props.handleSelect ?
+        `
+            pbotID
+            name
+            authority
+            diagnosis
+            qualityIndex
+            majorTaxonGroup
+            pbdbParentTaxon
+            family
+            genus
+            pfnGenusLink
+            species
+            pfnSpeciesLink
+            additionalClades
+            notes
+            identifiedSpecimens {
+            Specimen {
+                name
+                pbotID
+            }
+            }
+            typeSpecimens {
+            Specimen {
+                name
+                pbotID
+            }
+            }
+            holotypeSpecimen {
+                Specimen {
+                    name
+                    pbotID
+                }
+            }
+            partsPreserved {
+                pbotID
+            }
+            notableFeatures {
+                pbotID
+            }
+            references (orderBy: order_asc) {
+                Reference {
+                    pbotID
+                }
+                order
+            }
+            elementOf {
+                name
+                pbotID
+            }
+        `
+        :
+        `
+            pbotID
+            name
+            partsPreserved {
+                type
+            }
+            enteredBy {
+                type
+                Person {
+                    given
+                    middle
+                    surname
+                }
+            }
+        `
+
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
@@ -180,19 +365,7 @@ function OTUList(props) {
                     additionalClades: $additionalClades 
                     ${filter}
                 ) {
-                    pbotID
-                    name
-                    partsPreserved {
-                        type
-                    }
-                    enteredBy {
-                        type
-                        Person {
-                            given
-                            middle
-                            surname
-                        }
-                    }
+                    ${fields}
                 }
             }
         `
@@ -218,119 +391,7 @@ function OTUList(props) {
                     species: $species 
                     ${filter}
                 ) {
-                    pbotID
-                    name
-                    authority
-                    diagnosis
-                    qualityIndex
-                    majorTaxonGroup
-                    pbdbParentTaxon
-                    additionalClades
-                    family
-                    genus
-                    pfnGenusLink
-                    species
-                    pfnSpeciesLink
-                    notes
-                    partsPreserved {
-                        type
-                    }
-                    notableFeatures {
-                        name
-                    }
-                    elementOf {
-                        name
-                    }
-                    synonyms @include(if: $includeSynonyms) {
-                        otus {
-                            name
-                            pbotID
-                            family
-                            genus
-                            species
-                        }
-                        comments  @include(if: $includeComments) {
-                            enteredBy {
-                                Person {
-                                    given
-                                    surname
-                                }
-                            }
-                            content
-                            comments {
-                                enteredBy {
-                                    Person {
-                                        given
-                                        surname
-                                    }
-                                }
-                                content
-                                comments {
-                                    enteredBy {
-                                        Person {
-                                            given
-                                            surname
-                                        }
-                                    }
-                                    content
-                                    comments {
-                                        enteredBy {
-                                            Person {
-                                                given
-                                                surname
-                                            }
-                                        }
-                                        content
-                                        comments {
-                                            enteredBy {
-                                                Person {
-                                                    given
-                                                    surname
-                                                }
-                                            }
-                                            content
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    mergedDescription @include(if: $includeMergedDescription) {
-                        schema
-                        characterName
-                        stateName
-                        stateValue
-                        stateOrder
-                    }
-                    holotypeSpecimen @include(if: $includeHolotypeDescription) {
-                        Specimen {
-                            name
-                            pbotID
-                            describedBy {
-                                Description {
-                                    name
-                                    notes
-                                    schema {
-                                        pbotID
-                                        title
-                                    }
-                                    characterInstances {
-                                        pbotID
-                                        character {
-                                            name
-                                        }
-                                        state {
-                                            State {
-                                                name
-                                            }
-                                            order
-                                            value
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    ${fields}
                 }
             }
         `;
