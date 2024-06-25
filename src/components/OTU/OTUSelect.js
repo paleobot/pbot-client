@@ -179,6 +179,8 @@ export const OTUSelect = (props) => {
         console.log("OTU handleSelect")
         console.log(otu)
 
+        populateMode = populateMode ?? props.populateMode;
+
         formikProps.setFieldValue(props.name, otu.pbotID);
 
         if ("full" === populateMode) { 
