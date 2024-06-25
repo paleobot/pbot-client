@@ -15,6 +15,8 @@ import { SensibleTextField } from '../SensibleTextField.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { OTUSelect } from '../OTU/OTUSelect.js';
 import { MajorTaxonGroupSelect } from '../OTU/OTUHelper.js';
+import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
+import { NotableFeaturesSelect } from '../Specimen/NotableFeaturesSelect.js';
 
 const CollectionQueryForm = ({handleSubmit, select}) => {
     const initValues = {
@@ -27,6 +29,8 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
         state: '',
         collectiontype: '',
         lithology: '',
+        partsPreserved: [],
+        notableFeatures: [],
         preservationmodes: [],
         sizeclasses: [],
         environment: '',
@@ -156,6 +160,12 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                         Fossil characteristics
                     </AccordionSummary>
                     <AccordionDetails>
+
+                        <PartsPreservedSelect/>
+                        <br />
+                        
+                        <NotableFeaturesSelect />
+                        <br />
 
                         <PreservationModeSelect />
                         <br />

@@ -39,7 +39,7 @@ function Collections(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.preservationModeIDs && !filters.lat && !filters.lon) {
+        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.partsPreserved && !filters.notableFeatures && !filters.preservationModeIDs && !filters.lat && !filters.lon) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -51,6 +51,26 @@ function Collections(props) {
             if (filters.preservationModeIDs) {
                 console.log("adding preservationModeIDs")
                 filter += ", {preservationModes_some: {pbotID_in: $preservationModeIDs}}"
+            }
+
+            if (filters.partsPreserved) {
+                filter += `, {
+                    specimens_some: {
+                        partsPreserved_some: {
+                            pbotID_in: $partsPreserved
+                        }
+                    }
+                }`
+            }
+
+            if (filters.notableFeatures) {
+                filter += `, {
+                    specimens_some: {
+                        notableFeatures_some: {
+                            pbotID_in: $notableFeatures
+                        }
+                    }
+                }`
             }
 
             if (filters.specimens) {
@@ -311,6 +331,8 @@ function Collections(props) {
                 $mininterval: String, 
                 $maxinterval: String ${groups} 
                 ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""} 
+                ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
+                ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} 
                 ${filters.specimens ? ", $specimens: [ID!]" : ""} 
                 ${filters.references ? ", $references: [ID!]" : ""}
                 ${filters.otu ? ", $otu: ID" : ""}
@@ -605,6 +627,8 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 maxinterval: queryParams.maxinterval || null,
                 collectionMethods: queryParams.collectionmethods && queryParams.collectionmethods.length > 0 ? queryParams.collectionmethods : null,
                 preservationModeIDs: queryParams.preservationmodes && queryParams.preservationmodes.length > 0 ? queryParams.preservationmodes : null,
+                partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
+                notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
                 specimens: queryParams.specimens && queryParams.specimens.length > 0 ? queryParams.specimens.map(s => s.pbotID) : null,
                 references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
                 otu: queryParams.otu || null,
