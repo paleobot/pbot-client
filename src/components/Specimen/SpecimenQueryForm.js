@@ -18,6 +18,7 @@ import IDigBioSelect from './IDigBioSelect.js';
 import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 import { PreservationModeSelect } from './PreservationModeSelect.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { MajorTaxonGroupSelect } from '../OTU/OTUHelper.js';
 
 const SpecimenQueryForm = ({handleSubmit, select}) => {
     console.log("SpecimenQueryForm")
@@ -43,6 +44,11 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
         holotypeOf: '',
         references: [],
         identifiers: [],
+        majorTaxonGroup: '',
+        pbdbParentTaxon: '',
+        family: '',
+        genus: '',
+        species: '',
         groups: [],
         includeImages: false,
         includeDescriptions: false,
@@ -103,7 +109,45 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                         <br />
                         <OTUSelect name="holotypeOf" label="Holotype of" populateMode="simple"/>
 
-                        <br />(other otu fields not yet implemented)
+                        <br />
+                        <MajorTaxonGroupSelect/>
+                        <br />
+
+                        <Field 
+                            component={SensibleTextField}
+                            name="pbdbParentTaxon" 
+                            type="text" 
+                            label="PBDB parent taxon"
+                            disabled={false}
+                        />
+                        <br />
+
+                        <Field 
+                            component={SensibleTextField}
+                            name="family" 
+                            type="text" 
+                            label="Family"
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <Field 
+                            component={SensibleTextField}                
+                            name="genus" 
+                            type="text" 
+                            label="Genus"
+                            disabled={false}
+                        />
+                        <br />
+                        
+                        <Field 
+                            component={SensibleTextField}
+                            name="species" 
+                            type="text" 
+                            label="Specific epithet"
+                            disabled={false}
+                        />
+                        <br />
                     </AccordionDetails>
                 </Accordion>
 

@@ -37,7 +37,7 @@ function Specimens(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf) {
+        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species) {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}";
@@ -60,6 +60,56 @@ function Specimens(props) {
             }
             if (filters.identifiers) {
                 filter += ", {identifiers: {pbotID_in: $identifiers}}"
+            }
+
+            if (filters.majorTaxonGroup) {
+                filter += `, {
+                    identifiedAs_some: {
+                        OTU: {
+                            majorTaxonGroup: $majorTaxonGroup
+                        }
+                    }
+                }`
+            }
+
+            if (filters.pbdbParentTaxon) {
+                filter += `, {
+                    identifiedAs_some: {
+                        OTU: {
+                            pbdbParentTaxon: $pbdbParentTaxon
+                        }
+                    }
+                }`
+            }
+
+            if (filters.family) {
+                filter += `, {
+                    identifiedAs_some: {
+                        OTU: {
+                            family: $family
+                        }
+                    }
+                }`
+            }
+
+            if (filters.genus) {
+                filter += `, {
+                    identifiedAs_some: {
+                        OTU: {
+                            genus: $genus
+                        }
+                    }
+                }`
+            }
+
+            if (filters.species) {
+                filter += `, {
+                    identifiedAs_some: {
+                        OTU: {
+                            species: $species
+                        }
+                    }
+                }`
             }
 
             if (filters.references) {
@@ -330,6 +380,11 @@ function Specimens(props) {
                 ${filters.identifiedAs ? ", $identifiedAs: ID" : ""},
                 ${filters.typeOf ? ", $typeOf: ID" : ""},
                 ${filters.holotypeOf ? ", $holotypeOf: ID" : ""},
+                ${filters.majorTaxonGroup ? ", $majorTaxonGroup: String" : ""}
+                ${filters.pbdbParentTaxon ? ", $pbdbParentTaxon: String" : ""}
+                ${filters.family ? ", $family: String" : ""}
+                ${filters.genus ? ", $genus: String" : ""}
+                ${filters.species ? ", $species: String" : ""}
                 $excludeList: [ID!]
             ) {
                 Specimen (
@@ -590,6 +645,15 @@ function Specimens(props) {
                     <TableBody>
                         {specimens.map((s) => {
                             const directURL = new URL(window.location.origin + "/query/specimen/" + s.pbotID);
+                            if (props.includeImages) {
+                                directURL.searchParams.append("includeImages", "true");
+                            }
+                            if (props.includeDescriptions) {
+                                directURL.searchParams.append("includeDescriptions", "true");
+                            }
+                            if (props.includeOTUs) {
+                                directURL.searchParams.append("includeOTUs", "true");
+                            }
                             return (
                                 <AlternatingTableRow key={s.pbotID}>
                                     <TableCell align="left">
@@ -665,6 +729,11 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 repository: queryParams.repository || null,
                 references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
                 identifiers: queryParams.identifiers && queryParams.identifiers.length > 0 ?queryParams.identifiers.map(({pbotID}) => pbotID)  : null, 
+                majorTaxonGroup: queryParams.majorTaxonGroup || null,
+                pbdbParentTaxon: queryParams.pbdbParentTaxon || null,
+                family: queryParams.family || null,
+                genus: queryParams.genus || null,
+                species: queryParams.species || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeImages={queryParams.includeImages}
