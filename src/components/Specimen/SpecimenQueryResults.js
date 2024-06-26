@@ -37,7 +37,7 @@ function Specimens(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species) {
+        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.mininterval && !filters.maxinterval) {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}";
@@ -108,6 +108,22 @@ function Specimens(props) {
                         OTU: {
                             species: $species
                         }
+                    }
+                }`
+            }
+
+            if (filters.mininterval) {
+                filter += `, {
+                    collection: {
+                        mininterval: $mininterval
+                    }
+                }`
+            }
+
+            if (filters.maxinterval) {
+                filter += `, {
+                    collection: {
+                        maxinterval: $maxinterval
                     }
                 }`
             }
@@ -385,6 +401,8 @@ function Specimens(props) {
                 ${filters.family ? ", $family: String" : ""}
                 ${filters.genus ? ", $genus: String" : ""}
                 ${filters.species ? ", $species: String" : ""}
+                ${filters.mininterval ? ", $mininterval: String" : ""}
+                ${filters.maxinterval ? ", $maxinterval: String" : ""}
                 $excludeList: [ID!]
             ) {
                 Specimen (
@@ -734,6 +752,8 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 family: queryParams.family || null,
                 genus: queryParams.genus || null,
                 species: queryParams.species || null,
+                mininterval: queryParams.mininterval || queryParams.maxinterval,
+                maxinterval: queryParams.maxinterval || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeImages={queryParams.includeImages}

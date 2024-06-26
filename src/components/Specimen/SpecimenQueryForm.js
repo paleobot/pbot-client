@@ -19,6 +19,7 @@ import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 import { PreservationModeSelect } from './PreservationModeSelect.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { MajorTaxonGroupSelect } from '../OTU/OTUHelper.js';
+import { IntervalSelect, TimescaleSelect } from '../Collection/CollectionUtil.js';
 
 const SpecimenQueryForm = ({handleSubmit, select}) => {
     console.log("SpecimenQueryForm")
@@ -182,7 +183,14 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                         Time
                     </AccordionSummary>
                     <AccordionDetails>
-                    Not yet implemented
+
+                        <TimescaleSelect values={props.values} setFieldValue={props.setFieldValue}/>
+                            
+                        <Stack direction="row" spacing={4}>
+                            <IntervalSelect name="maxinterval" values={props.values} setFieldValue={props.setFieldValue}/>
+                            <IntervalSelect name="mininterval" values={props.values} setFieldValue={props.setFieldValue}/>
+                        </Stack>
+            
                     </AccordionDetails>
                 </Accordion>
 
