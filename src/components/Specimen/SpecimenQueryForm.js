@@ -58,6 +58,10 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
         lon: '',
         country: '',
         state: '',
+        stratigraphicgroup: '',
+        stratigraphicformation: '',
+        stratigraphicmember: '',
+        stratigraphicbed: '',
         groups: [],
         includeImages: false,
         includeDescriptions: false,
@@ -257,7 +261,43 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                         Stratigraphy
                     </AccordionSummary>
                     <AccordionDetails>
-                    Not yet implemented
+                                       
+                        <Field
+                            component={SensibleTextField}
+                            name="stratigraphicgroup"
+                            type="text"
+                            label="Group"
+                            disabled={false}
+                        />
+                        <br />
+    
+                        <Field
+                            component={SensibleTextField}
+                            name="stratigraphicformation"
+                            type="text"
+                            label="Formation"
+                            disabled={false}
+                        />
+                        <br />
+    
+                        <Field
+                            component={SensibleTextField}
+                            name="stratigraphicmember"
+                            type="text"
+                            label="Member"
+                            disabled={false}
+                        />
+                        <br />
+    
+                        <Field
+                            component={SensibleTextField}
+                            name="stratigraphicbed"
+                            type="text"
+                            label="Bed"
+                            disabled={false}
+                        />
+                        <br />
+                    
                     </AccordionDetails>
                 </Accordion>
 

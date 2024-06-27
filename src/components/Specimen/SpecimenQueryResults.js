@@ -230,6 +230,10 @@ function Specimens(props) {
                 ${filters.lon ? ", $lon: Float" : ""}
                 ${filters.country ? ", $country: String" : ""}
                 ${filters.state ? ", $state: String" : ""}
+                ${filters.stratigraphicGroup ? ", $stratigraphicGroup: String" : ""}
+                ${filters.stratigraphicFormation ? ", $stratigraphicFormation: String" : ""}
+                ${filters.stratigraphicMember ? ", $stratigraphicMember: String" : ""}
+                ${filters.stratigraphicBed ? ", $stratigraphicBed: String" : ""}
                 $excludeList: [ID!]
             ) {
                 Specimen (
@@ -585,6 +589,10 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 lon: parseFloat(queryParams.lon) || null,
                 country: queryParams.country || null,
                 state: queryParams.state || null,
+                stratigraphicGroup: queryParams.stratigraphicgroup || null,
+                stratigraphicFormation: queryParams.stratigraphicformation || null,
+                stratigraphicMember: queryParams.stratigraphicmember || null,
+                stratigraphicBed: queryParams.stratigraphicbed || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeImages={queryParams.includeImages}

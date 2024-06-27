@@ -7,7 +7,7 @@ export const SpecimenFilterHelper = (filters, props) => {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state) {
+        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed) {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}";
@@ -123,6 +123,35 @@ export const SpecimenFilterHelper = (filters, props) => {
                             }
                             distance:10000
                         }
+                    }
+                }`
+            }
+
+            if (filters.stratigraphicGroup) {
+                filter += `, {
+                    collection: {
+                        stratigraphicGroup: $stratigraphicGroup
+                    }
+                }`
+            }
+            if (filters.stratigraphicFormation) {
+                filter += `, {
+                    collection: {
+                        stratigraphicFormation: $stratigraphicFormation
+                    }
+                }`
+            }
+            if (filters.stratigraphicMember) {
+                filter += `, {
+                    collection: {
+                        stratigraphicMember: $stratigraphicMember
+                    }
+                }`
+            }
+            if (filters.stratigraphicBed) {
+                filter += `, {
+                    collection: {
+                        stratigraphicBed: $stratigraphicBed
                     }
                 }`
             }
