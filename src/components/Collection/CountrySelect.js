@@ -51,6 +51,9 @@ export const CountrySelect = (props) => {
             }}
             disabled={false}
         >
+            {props.includeNone &&
+            <MenuItem value=""><i>None</i></MenuItem>
+            }
             {countries.map((country) => (
                 <MenuItem 
                     key={country.code} 
