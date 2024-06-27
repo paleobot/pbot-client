@@ -511,9 +511,9 @@ function Specimens(props) {
                                     <TableCell>
                                         {s.partsPreserved.map((p, i) => {
                                             return (
-                                                <>
+                                                <span key={p.type}>
                                                 {i > 0 ? ', ' : ''}{p.type}
-                                                </>
+                                                </span>
                                             )
                                         })}
                                     </TableCell>
@@ -530,9 +530,9 @@ function Specimens(props) {
                                         {s.enteredBy.map((p) => {
                                             if ("CREATE" === p.type) {
                                                 return (
-                                                    <>
+                                                    <span key={p.Person.given+p.Person.middle+p.Person.surname}>
                                                     {`${p.Person.given}${p.Person.middle ? ` ${p.Person.middle}` : ''} ${p.Person.surname}`}
-                                                    </>
+                                                    </span>
                                                 )
                                             } else {
                                                 return ('')
