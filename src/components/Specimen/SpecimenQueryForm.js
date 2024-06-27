@@ -13,13 +13,14 @@ import { PersonManager } from '../Person/PersonManager.js';
 import { ReferenceManager } from '../Reference/ReferenceManager.js';
 import { SchemaSelect } from '../Schema/SchemaSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
-import { StateSelect } from '../State/StateSelect.js';
+import { StateSelect } from '../Collection/StateSelect.js';
 import IDigBioSelect from './IDigBioSelect.js';
 import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 import { PreservationModeSelect } from './PreservationModeSelect.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { MajorTaxonGroupSelect } from '../OTU/OTUHelper.js';
 import { IntervalSelect, TimescaleSelect } from '../Collection/CollectionUtil.js';
+import { CountrySelect } from '../Collection/CountrySelect.js';
 
 const SpecimenQueryForm = ({handleSubmit, select}) => {
     console.log("SpecimenQueryForm")
@@ -50,6 +51,13 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
         family: '',
         genus: '',
         species: '',
+        timescale: '',
+        maxinterval: '',
+        mininterval: '',
+        lat: '',
+        lon: '',
+        country: '',
+        state: '',
         groups: [],
         includeImages: false,
         includeDescriptions: false,
@@ -62,16 +70,24 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
        
         <Formik
             initialValues={initValues}
-            validationSchema={Yup.object({
+            validationSchema={Yup.object().shape({
                 specimenID: Yup.string()
                 .uuid('Must be a valid uuid'),
                 name: Yup.string()
                 .max(30, 'Must be 30 characters or less'),
                 collection: Yup.string(),
+                lat: Yup.number().when('lon', {
+                    is: lon => lon,
+                    then: Yup.number().required("Latitude/Longitude must be entered together"),
+                }).min(-90).max(90),
+                lon: Yup.number().when('lat', {
+                    is: lat => lat,
+                    then: Yup.number().required("Latitude/Longitude must be entered together"),
+                }).min(-180).max(180),
                 idigbiouuid: Yup.string()
                 .uuid('Must be a valid uuid'),
                 groups: Yup.array().of(Yup.string())
-            })}
+            }, [["lat", "lon"]])}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
@@ -203,7 +219,32 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                         Location
                     </AccordionSummary>
                     <AccordionDetails>
-                    Not yet implemented
+
+                        <Stack direction="row" spacing={4}>
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="lat"
+                                label="Latitude"
+                                style={{minWidth: "12ch", width:"35%"}}
+                                disabled={false}
+                            />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="lon"
+                                label="Longitude"
+                                style={{minWidth: "12ch", width:"35%"}}
+                                disabled={false}
+                            />
+                        </Stack>
+
+                        <CountrySelect />
+                        <br />
+                    
+                        <StateSelect country={props.values.country} />
+                        <br />
+
                     </AccordionDetails>
                 </Accordion>
 
