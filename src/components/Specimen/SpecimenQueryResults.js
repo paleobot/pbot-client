@@ -210,6 +210,7 @@ function Specimens(props) {
                 ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
                 ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} 
                 ${filters.identifiers ? ", $identifiers: [ID!]" : ""} 
+                ${filters.enterers ? ", $enterers: [ID!]" : ""} 
                 ${filters.references ? ", $references: [ID!]" : ""}
                 ${filters.collection ? ", $collection: ID" : ""} 
                 ${filters.schema ? ", $schema: ID" : ""} 
@@ -578,6 +579,7 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 repository: queryParams.repository || null,
                 references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
                 identifiers: queryParams.identifiers && queryParams.identifiers.length > 0 ?queryParams.identifiers.map(({pbotID}) => pbotID)  : null, 
+                enterers: queryParams.enterers && queryParams.enterers.length > 0 ?queryParams.enterers.map(({pbotID}) => pbotID)  : null, 
                 majorTaxonGroup: queryParams.majorTaxonGroup || null,
                 pbdbParentTaxon: queryParams.pbdbParentTaxon || null,
                 family: queryParams.family || null,

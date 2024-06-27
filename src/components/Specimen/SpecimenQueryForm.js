@@ -46,6 +46,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
         holotypeOf: '',
         references: [],
         identifiers: [],
+        enterers: [],
         majorTaxonGroup: '',
         pbdbParentTaxon: '',
         family: '',
@@ -397,7 +398,9 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
 
                         <PersonManager label= "Identified by" name="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
 
-                        <Field
+                        <PersonManager label= "Entered by" name="enterers" omitOrder={true} values={props.values} />
+
+                       <Field
                             component={SensibleTextField}
                             type="text"
                             name="repository"
