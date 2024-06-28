@@ -1,5 +1,5 @@
 /*
-Handling filter string generation in this seperate file was necessary because, apparently, having too much logic in the same file that uses the useQuery hook triggers some faulty logic in whatever lint-ish thing parses the react code, causing a conditional use of hook error (see paleobot/pbot-client#37). 
+Handling filter string generation in this separate  file was necessary because, apparently, having too much logic in the same file that uses the useQuery hook triggers some faulty logic in whatever lint-ish thing parses the react code, causing a conditional use of hook error (see paleobot/pbot-client#37). 
 
 Simply moving that logic here got rid of the error. No idea, and don't have time or inclination to pursue further.
 */
