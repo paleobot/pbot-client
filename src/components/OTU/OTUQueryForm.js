@@ -17,6 +17,8 @@ import { SpecimenSelect } from '../Specimen/SpecimenSelect.js';
 import { OTUSelect } from './OTUSelect.js';
 import { ReferenceManager } from '../Reference/ReferenceManager.js';
 import { IntervalSelect, TimescaleSelect } from '../Collection/CollectionUtil.js';
+import { CountrySelect } from '../Collection/CountrySelect.js';
+import { StateSelect as GeoStateSelect } from '../Collection/StateSelect.js';
 
 const OTUQueryForm = ({handleSubmit, select}) => {
     //const [values, setValues] = useState({});
@@ -45,6 +47,14 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 timescale: '',
                 maxinterval: '',
                 mininterval: '',
+                lat: '',
+                lon: '',
+                country: '',
+                state: '',
+                stratigraphicgroup: '',
+                stratigraphicformation: '',
+                stratigraphicmember: '',
+                stratigraphicbed: '',
                 groups: [],
                 includeHolotypeDescription: false,
                 includeMergedDescription: false,
@@ -59,7 +69,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
        
         <Formik
             initialValues={initValues}
-            validationSchema={Yup.object({
+            validationSchema={Yup.object().shape({
                 otuID: Yup.string()
                 .uuid('Must be a valid uuid'),
                 family: Yup.string()
@@ -68,8 +78,16 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 .max(30, 'Must be 30 characters or less'),
                 species: Yup.string()
                 .max(30, 'Must be 30 characters or less'),
+                lat: Yup.number().when('lon', {
+                    is: lon => lon,
+                    then: Yup.number().required("Latitude/Longitude must be entered together"),
+                }).min(-90).max(90),
+                lon: Yup.number().when('lat', {
+                    is: lat => lat,
+                    then: Yup.number().required("Latitude/Longitude must be entered together"),
+                }).min(-180).max(180),
                 groups: Yup.array().of(Yup.string())
-            })}
+            }, [["lat", "lon"]])}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
@@ -234,7 +252,33 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         Location
                     </AccordionSummary>
                     <AccordionDetails>
-                        Not yet implemented
+
+                        <Stack direction="row" spacing={4}>
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="lat"
+                                label="Latitude"
+                                style={{minWidth: "12ch", width:"35%"}}
+                                disabled={false}
+                            />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="lon"
+                                label="Longitude"
+                                style={{minWidth: "12ch", width:"35%"}}
+                                disabled={false}
+                            />
+                        </Stack>
+
+
+                        <CountrySelect />
+                        <br />
+                    
+                        <GeoStateSelect country={props.values.country} />
+                        <br />
+
                     </AccordionDetails>
                 </Accordion>
 
@@ -247,7 +291,43 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         Stratigraphy
                     </AccordionSummary>
                     <AccordionDetails>
-                        Not yet implemented
+                                       
+                        <Field
+                            component={SensibleTextField}
+                            name="stratigraphicgroup"
+                            type="text"
+                            label="Group"
+                            disabled={false}
+                        />
+                        <br />
+    
+                        <Field
+                            component={SensibleTextField}
+                            name="stratigraphicformation"
+                            type="text"
+                            label="Formation"
+                            disabled={false}
+                        />
+                        <br />
+    
+                        <Field
+                            component={SensibleTextField}
+                            name="stratigraphicmember"
+                            type="text"
+                            label="Member"
+                            disabled={false}
+                        />
+                        <br />
+    
+                        <Field
+                            component={SensibleTextField}
+                            name="stratigraphicbed"
+                            type="text"
+                            label="Bed"
+                            disabled={false}
+                        />
+                        <br />
+                    
                     </AccordionDetails>
                 </Accordion>
 
