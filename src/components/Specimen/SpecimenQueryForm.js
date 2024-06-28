@@ -13,7 +13,7 @@ import { PersonManager } from '../Person/PersonManager.js';
 import { ReferenceManager } from '../Reference/ReferenceManager.js';
 import { SchemaSelect } from '../Schema/SchemaSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
-import { StateSelect } from '../Collection/StateSelect.js';
+import { StateSelect } from '../State/StateSelect.js';
 import IDigBioSelect from './IDigBioSelect.js';
 import { NotableFeaturesSelect } from './NotableFeaturesSelect.js';
 import { PreservationModeSelect } from './PreservationModeSelect.js';
@@ -21,6 +21,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { MajorTaxonGroupSelect } from '../OTU/OTUHelper.js';
 import { IntervalSelect, TimescaleSelect } from '../Collection/CollectionUtil.js';
 import { CountrySelect } from '../Collection/CountrySelect.js';
+import { StateSelect as GeoStateSelect } from '../Collection/StateSelect.js';
 
 const SpecimenQueryForm = ({handleSubmit, select}) => {
     console.log("SpecimenQueryForm")
@@ -247,7 +248,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                         <CountrySelect />
                         <br />
                     
-                        <StateSelect country={props.values.country} />
+                        <GeoStateSelect country={props.values.country} />
                         <br />
 
                     </AccordionDetails>
