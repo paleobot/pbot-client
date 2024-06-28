@@ -23,7 +23,7 @@ function OTUList(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym) {
+        if (!filters.name && !filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym && !filters.mininterval && !filters.maxinterval) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -82,6 +82,32 @@ function OTUList(props) {
                     ]
                 }`
             }
+
+            if (filters.mininterval) {
+                filter += `, {
+                    identifiedSpecimens_some: {
+                        Specimen: {
+                            collection: {
+                                mininterval: $mininterval
+                            }
+                        }
+                    }
+                }`
+            }
+
+            if (filters.maxinterval) {
+                filter += `, {
+                    identifiedSpecimens_some: {
+                        Specimen: {
+                            collection: {
+                                maxinterval: $maxinterval
+                            }
+                        }
+                    }
+                }`
+            }
+
+
             if (filters.references) {
                 filter += `, {
                     references_some: {
@@ -351,6 +377,8 @@ function OTUList(props) {
                 ${filters.holotypeSpecimen ? ", $holotypeSpecimen: ID!" : ""} 
                 ${filters.references ? ", $references: [ID!]" : ""} 
                 ${filters.synonym ? ", $synonym: ID!" : ""}
+                ${filters.mininterval ? ", $mininterval: String" : ""}
+                ${filters.maxinterval ? ", $maxinterval: String" : ""}
             ) {
                 OTU (
                     pbotID: $pbotID, 
@@ -454,6 +482,8 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
+                mininterval: queryParams.mininterval || queryParams.maxinterval,
+                maxinterval: queryParams.maxinterval || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSynonyms={queryParams.includeSynonyms} 

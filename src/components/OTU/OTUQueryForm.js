@@ -16,6 +16,7 @@ import { SpecimenManager } from '../Specimen/SpecimenManager.js';
 import { SpecimenSelect } from '../Specimen/SpecimenSelect.js';
 import { OTUSelect } from './OTUSelect.js';
 import { ReferenceManager } from '../Reference/ReferenceManager.js';
+import { IntervalSelect, TimescaleSelect } from '../Collection/CollectionUtil.js';
 
 const OTUQueryForm = ({handleSubmit, select}) => {
     //const [values, setValues] = useState({});
@@ -41,6 +42,9 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 states: [],
                 partsPreserved: [],
                 notableFeatures: [],
+                timescale: '',
+                maxinterval: '',
+                mininterval: '',
                 groups: [],
                 includeHolotypeDescription: false,
                 includeMergedDescription: false,
@@ -210,7 +214,14 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         Time
                     </AccordionSummary>
                     <AccordionDetails>
-                        Not yet implemented
+
+                        <TimescaleSelect values={props.values} setFieldValue={props.setFieldValue}/>
+                            
+                        <Stack direction="row" spacing={4}>
+                            <IntervalSelect name="maxinterval" values={props.values} setFieldValue={props.setFieldValue}/>
+                            <IntervalSelect name="mininterval" values={props.values} setFieldValue={props.setFieldValue}/>
+                        </Stack>
+            
                     </AccordionDetails>
                 </Accordion>
 
