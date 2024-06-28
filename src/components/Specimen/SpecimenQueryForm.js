@@ -308,7 +308,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                         aria-controls="required-content"
                         id="required-header"                        
                     >
-                        Schema
+                        Description
                     </AccordionSummary>
                     <AccordionDetails>
 
