@@ -19,6 +19,8 @@ import { ReferenceManager } from '../Reference/ReferenceManager.js';
 import { IntervalSelect, TimescaleSelect } from '../Collection/CollectionUtil.js';
 import { CountrySelect } from '../Collection/CountrySelect.js';
 import { StateSelect as GeoStateSelect } from '../Collection/StateSelect.js';
+import { CollectionSelect } from '../Collection/CollectionSelect.js';
+import { PersonManager } from '../Person/PersonManager.js';
 
 const OTUQueryForm = ({handleSubmit, select}) => {
     //const [values, setValues] = useState({});
@@ -60,6 +62,8 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 includeMergedDescription: false,
                 includeSynonyms: false,
                 includeComments: false,
+                collection: '',
+                enterers: [],
             };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     
@@ -374,6 +378,11 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 
                         <OTUSelect name="synonym" label="Synonym"/>
                         <br />
+
+                        <CollectionSelect name="collection" label="Collection" populateMode="simple"/>
+                        <br />
+
+                        <PersonManager label= "Entered by" name="enterers" omitOrder={true} values={props.values} />
 
                         <ReferenceManager omitOrder values={props.values}/>
                         <br />

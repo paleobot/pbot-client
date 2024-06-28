@@ -6,6 +6,7 @@ import {
 import OTUs from "./OTUs.js";
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
+import { OTUFilterHelper } from './OTUFilterHelper.js';
 
 function OTUList(props) {
     console.log("OTUList");
@@ -20,236 +21,7 @@ function OTUList(props) {
     const groups = props.standAlone ? '' : '$groups: [ID!], ';
     //const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
 
-    let filter = '';
-    if (!props.standAlone) {
-        filter = ", filter: {"
-        if (!filters.name && !filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed) {
-            filter += "elementOf_some: {pbotID_in: $groups}"
-        } else {
-            filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
-            //TODO: the graphql path below will change from exampleSpecimens to whatever we call
-            //the set of all specimens
-            if (filters.name) {
-                console.log("adding name")
-                filter += ", {name_regexp: $name}"
-            }
-            if (filters.partsPreserved) {
-                console.log("adding partsPreserved")
-                filter += ", {partsPreserved_some: {pbotID_in: $partsPreserved}}"
-            }
-            if (filters.notableFeatures) {
-                filter += ", {notableFeatures_some: {pbotID_in: $notableFeatures}}"
-            }
-            if (filters.identifiedSpecimens) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            pbotID_in: $identifiedSpecimens 
-                        } 
-                    }
-                }`
-            }
-            if (filters.typeSpecimens) {
-                filter += `, {
-                    typeSpecimens_some: {
-                        Specimen: {
-                            pbotID_in: $typeSpecimens 
-                        } 
-                    }
-                }`
-            }
-            if (filters.holotypeSpecimen) {
-                filter += `, {
-                    holotypeSpecimen: {
-                        Specimen: {
-                            pbotID: $holotypeSpecimen 
-                        } 
-                    }
-                }`
-            }
-            if (filters.synonym) {
-                filter += `, {
-                    AND: [
-                        {pbotID_not: $synonym},
-                        {synonyms_some: {
-                            otus_some: {
-                                AND: [
-                                    {pbotID: $synonym}, 
-                                    {pbotID_not: $pbotID}
-                                ]
-                            }
-                        }}
-                    ]
-                }`
-            }
-
-            if (filters.mininterval) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                mininterval: $mininterval
-                            }
-                        }
-                    }
-                }`
-            }
-
-            if (filters.maxinterval) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                maxinterval: $maxinterval
-                            }
-                        }
-                    }
-                }`
-            }
-
-            if (filters.country) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                country: $country
-                            }
-                        }
-                    }
-                }`
-            }
-
-            if (filters.state) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                state: $state
-                            }
-                        }
-                    }
-                }`
-            } 
-
-            if (filters.lat && filters.lon) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                location_distance_lt: {
-                                    point: {
-                                        latitude: $lat
-                                        longitude: $lon
-                                    }
-                                    distance:10000
-                                }
-                            }
-                        }
-                    }
-                }`
-            }
-
-            if (filters.stratigraphicGroup) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                stratigraphicGroup: $stratigraphicGroup
-                            }
-                        }
-                    }
-                }`
-            }
-            if (filters.stratigraphicFormation) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                stratigraphicFormation: $stratigraphicFormation
-                            }
-                        }
-                    }
-                }`
-            }
-            if (filters.stratigraphicMember) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                stratigraphicMember: $stratigraphicMember
-                            }
-                        }
-                    }
-                }`
-            }
-            if (filters.stratigraphicBed) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            collection: {
-                                stratigraphicBed: $stratigraphicBed
-                            }
-                        }
-                    }
-                }`
-            }
-
-            if (filters.references) {
-                filter += `, {
-                    references_some: {
-                        Reference: {
-                            pbotID_in: $references 
-                        } 
-                    }
-                }`
-            }
-            if (filters.states) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            describedBy: {
-                                Description: { 
-                                    characterInstances_some: {
-                                        state: {
-                                            State: {pbotID_in: $states}
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }`
-            } else if (filters.character) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            describedBy: {
-                                Description: { 
-                                    characterInstances_some: {
-                                        character: {pbotID: $character}
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }`
-            } else if (filters.schema) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            describedBy: {
-                                Description: { 
-                                    schema: {pbotID: $schema}
-                                }
-                            }
-                        }
-                    }
-                }`
-            }
-            filter +="]"
-        }
-        filter += "}"
-    }
+    const filter = OTUFilterHelper(filters, props);
     console.log(filter)
 
     const fields = 
@@ -473,6 +245,8 @@ function OTUList(props) {
                 ${filters.stratigraphicFormation ? ", $stratigraphicFormation: String" : ""}
                 ${filters.stratigraphicMember ? ", $stratigraphicMember: String" : ""}
                 ${filters.stratigraphicBed ? ", $stratigraphicBed: String" : ""}
+                ${filters.collection ? ", $collection: ID" : ""} 
+                ${filters.enterers ? ", $enterers: [ID!]" : ""} 
             ) {
                 OTU (
                     pbotID: $pbotID, 
@@ -586,6 +360,8 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
                 stratigraphicFormation: queryParams.stratigraphicformation || null,
                 stratigraphicMember: queryParams.stratigraphicmember || null,
                 stratigraphicBed: queryParams.stratigraphicbed || null,
+                collection: queryParams.collection || null, 
+                enterers: queryParams.enterers && queryParams.enterers.length > 0 ?queryParams.enterers.map(({pbotID}) => pbotID)  : null, 
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSynonyms={queryParams.includeSynonyms} 
