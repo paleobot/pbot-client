@@ -16,7 +16,7 @@ import {
 import PBOTInterface from './components/PBOTInterface';
 import Action from './components/Action';
 import About from './components/About/About';
-import HowToUsePbot from './components/HowToUsePbot';
+import HowToUsePbot from './components/HowToUsePbot/HowToUsePbot';
 import Resources from './components/Resources';
 import GoToEducationOutreachHub from './components/GoToEducationOutreachHub';
 import Profile from './components/Profile';
