@@ -382,9 +382,9 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                         <CollectionSelect name="collection" label="Collection" populateMode="simple"/>
                         <br />
 
-                        <PersonManager label= "Entered by" name="enterers" omitOrder={true} values={props.values} />
+                        <PersonManager label= "Entered by" name="enterers" optional={true} omitOrder={true} values={props.values} />
 
-                        <ReferenceManager omitOrder values={props.values}/>
+                        <ReferenceManager optional={true} omitOrder values={props.values}/>
                         <br />
                         
                         <GroupSelect/>

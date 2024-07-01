@@ -395,11 +395,11 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                         <CollectionSelect name="collection" label="Collection" populateMode="simple"/>
                         <br />
 
-                        <ReferenceManager omitOrder values={props.values}/>
+                        <ReferenceManager optional={true} omitOrder values={props.values}/>
 
-                        <PersonManager label= "Identified by" name="identifiers" omitOrder={true} values={props.values} handleChange={props.handleChange}/>
+                        <PersonManager label= "Identified by" name="identifiers" optional={true} omitOrder={true} values={props.values} handleChange={props.handleChange}/>
 
-                        <PersonManager label= "Entered by" name="enterers" omitOrder={true} values={props.values} />
+                        <PersonManager label= "Entered by" name="enterers" optional={true} omitOrder={true} values={props.values} />
 
                        <Field
                             component={SensibleTextField}
