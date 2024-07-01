@@ -3,6 +3,7 @@ import { Field, FieldArray } from 'formik';
 import { Button, Grid, InputLabel } from '@mui/material';
 import { TextField } from 'formik-mui';
 import {ReferenceSelect} from '../Reference/ReferenceSelect.js';
+import ClearIcon from '@mui/icons-material/Clear';
 
 export const ReferenceManager = (props) => {
     //console.log("ReferenceManager")
@@ -50,7 +51,7 @@ export const ReferenceManager = (props) => {
                                         onClick={() => remove(index)}
                                         sx={{width:"50px"}}
                                     >
-                                        X
+                                        <ClearIcon/>
                                     </Button>
                                 </Grid>
                                 }
