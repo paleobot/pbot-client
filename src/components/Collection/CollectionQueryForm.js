@@ -17,6 +17,7 @@ import { OTUSelect } from '../OTU/OTUSelect.js';
 import { MajorTaxonGroupSelect } from '../OTU/OTUHelper.js';
 import { PartsPreservedSelect } from '../Organ/PartsPreservedSelect.js';
 import { NotableFeaturesSelect } from '../Specimen/NotableFeaturesSelect.js';
+import { PersonManager } from '../Person/PersonManager.js';
 
 const CollectionQueryForm = ({handleSubmit, select}) => {
     const initValues = {
@@ -51,6 +52,7 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
         family: '',
         genus: '',
         species: '',
+        enterers: [],
         groups: [],
         includeSpecimens: false
     };
@@ -325,7 +327,9 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                         />
                         <br />
 
-                        <ReferenceManager omitOrder values={props.values}/>
+                        <PersonManager label= "Entered by" name="enterers" optional={true}omitOrder={true} values={props.values} />
+
+                        <ReferenceManager optional={true} omitOrder values={props.values}/>
                 
                         <GroupSelect/>
                         <br />

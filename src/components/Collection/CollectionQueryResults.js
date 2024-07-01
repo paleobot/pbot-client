@@ -39,7 +39,7 @@ function Collections(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.partsPreserved && !filters.notableFeatures && !filters.preservationModeIDs && !filters.lat && !filters.lon) {
+        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.partsPreserved && !filters.notableFeatures && !filters.preservationModeIDs && !filters.lat && !filters.lon && !filters.enterers) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -90,6 +90,17 @@ function Collections(props) {
                         }
                         distance:10000
                       }
+                }`
+            }
+
+            if (filters.enterers) {
+               filter += `, {
+                    enteredBy_some: {
+                        Person: {
+                            pbotID_in: $enterers, 
+                        }
+                        type: "CREATE"
+                    }
                 }`
             }
 
@@ -334,6 +345,7 @@ function Collections(props) {
                 ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
                 ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} 
                 ${filters.specimens ? ", $specimens: [ID!]" : ""} 
+                ${filters.enterers ? ", $enterers: [ID!]" : ""} 
                 ${filters.references ? ", $references: [ID!]" : ""}
                 ${filters.otu ? ", $otu: ID" : ""}
                 ${filters.majorTaxonGroup ? ", $majorTaxonGroup: String" : ""}
@@ -630,6 +642,7 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
                 specimens: queryParams.specimens && queryParams.specimens.length > 0 ? queryParams.specimens.map(s => s.pbotID) : null,
+                enterers: queryParams.enterers && queryParams.enterers.length > 0 ?queryParams.enterers.map(({pbotID}) => pbotID)  : null, 
                 references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
                 otu: queryParams.otu || null,
                 majorTaxonGroup: queryParams.majorTaxonGroup || null,
