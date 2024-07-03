@@ -12,6 +12,7 @@ import {
   createBrowserRouter,
   RouterProvider,
   Route,
+  Navigate,
 } from "react-router-dom";
 import PBOTInterface from './components/PBOTInterface';
 import Action from './components/Action';
@@ -26,6 +27,7 @@ import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import Home from './components/Home';
 import ReferenceDirectQueryResults from './components/Reference/ReferenceDirectQueryResults';
+import MDElement from './components/MDElement';
 
 //import '@fontsource/roboto/300.css';
 //import '@fontsource/roboto/400.css';
@@ -223,6 +225,107 @@ const router = createBrowserRouter([
         path: "/query/collection/:collectionid",
         //path: "/Collection/:collectionid"",
         element: <CollectionDirectQueryResults/>
+    },
+
+    /* 
+        The following are paths specified in pbot-static code. Each has a redirect to 
+        make the urls consistent.
+    */
+    {
+        path: "Register.md",
+        element: <Navigate to="/howto/register" replace/>
+    },
+    {
+        path: "/howto/register",
+        element: <MDElement path="HowTo/Register.md"/>
+    },
+    {
+        path: "Person.md",
+        element: <Navigate to="/howto/person" replace/>
+    },
+    {
+        path: "/howto/person",
+        element: <MDElement path="HowTo/Person.md"/>
+    },
+    {
+        path: "Group.md",
+        element: <Navigate to="/howto/group" replace/>
+    },
+    {
+        path: "/howto/group",
+        element: <MDElement path="HowTo/Group.md"/>
+    },
+    {
+        path: "Reference.md",
+        element: <Navigate to="/howto/reference" replace/>
+    },
+    {
+        path: "/howto/reference",
+        element: <MDElement path="HowTo/Reference.md"/>
+    },
+    {
+        path: "Collection.md",
+        element: <Navigate to="/howto/collection" replace/>
+    },
+    {
+        path: "/howto/collection",
+        element: <MDElement path="HowTo/Collection.md"/>
+    },
+    {
+        path: "Specimen.md",
+        element: <Navigate to="/howto/specimen" replace/>
+    },
+    {
+        path: "/howto/specimen",
+        element: <MDElement path="HowTo/Specimen.md"/>
+    },
+    {
+        path: "Image.md",
+        element: <Navigate to="/howto/image" replace/>
+    },
+    {
+        path: "/howto/image",
+        element: <MDElement path="HowTo/Image.md"/>
+    },
+    {
+        path: "Description.md",
+        element: <Navigate to="/howto/description" replace/>
+    },
+    {
+        path: "/howto/description",
+        element: <MDElement path="HowTo/Description.md"/>
+    },
+    {
+        path: "OTU.md",
+        element: <Navigate to="/howto/otu" replace/>
+    },
+    {
+        path: "/howto/otu",
+        element: <MDElement path="HowTo/OTU.md"/>
+    },
+    {
+        path: "Schema.md",
+        element: <Navigate to="/howto/schema" replace/>
+    },
+    {
+        path: "/howto/schema",
+        element: <MDElement path="HowTo/Schema.md"/>
+    },
+    {
+        path: "Character.md",
+        element: <Navigate to="/howto/character" replace/>
+    },
+    {
+        path: "/howto/character",
+        element: <MDElement path="HowTo/Character.md"/>
+    },
+    {
+        path: "State.md",
+        element: <Navigate to="/howto/state" replace/>
+    },
+    {
+        path: "/howto/state",
+        element: <MDElement path="HowTo/State.md"/>
     },
     
 ]);
