@@ -3,7 +3,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow } from '@mui/material';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Card, Box, Stack } from '@mui/material';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize, AlternatingTableRow } from '../../util.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
@@ -45,12 +45,22 @@ function Specimens(props) {
             name
             collection {
                 name
+                country
+                state
+                stratigraphicGroup
+                stratigraphicFormation
+                stratigraphicMember
+                stratigraphicBed
+                maxinterval
+                mininterval
+            
             }
             repository
             otherRepositoryLink
             notes
             identifiers {
                 given
+                middle
                 surname
             } 
             preservationModes {
@@ -110,6 +120,8 @@ function Specimens(props) {
                     family
                     genus
                     species
+                    majorTaxonGroup
+                    pbdbParentTaxon
                 }
             }
             typeOf @include(if: $includeOTUs){
@@ -330,6 +342,7 @@ function Specimens(props) {
                 }
                     
                 const header1 = {marginLeft:"2em", marginTop:"10px"}
+                const boxedDisplay = {wordWrap: "break-word", border: 1, margin:"4px", paddingLeft:"2px"};
                 return (
                 <div key={s.pbotID} style={style}>
                     { props.standAlone &&     
@@ -360,6 +373,221 @@ function Specimens(props) {
                                 </Typography>
                             </Grid>
                         </Grid>
+
+                        <Grid 
+                            container 
+                            spacing={{ xs: 2, md: 3 }} 
+                            //columns={{ xs: 1, sm: 1, md: 2 }}
+                        >
+                                <Grid
+                                    item
+                                    spacing={{xs:2}}
+                                    xs={12}
+                                    md={4}
+                                >
+                                    <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                                <b>{s.name}</b>
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{s.pbotID}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Direct link</Typography><br /><Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link>
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Repository</Typography><br />{s.repository}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Other repository link</Typography><br />{s.otherRepositoryLink}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">iDigBio InstitutionCode, CatalogNumber, uuid</Typography><br />{`${s.idigbioInstitutionCode}, ${s.idigbioCatalogNumber}, ${s.idigbiouuid}`}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Parts preserved</Typography><br />{s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Notable features preserved</Typography><br />{s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}
+                                            </Box>        
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Preservation modes</Typography><br />{s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}
+                                            </Box>    
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Data access groups</Typography><br />{s.elementOf.map((e, index, arr) => e.name + (index+1 === arr.length ? '' : ", "))} 
+                                            </Box>    
+                                        </div>
+                                    </Paper>
+                                </Grid>
+                                <Grid
+                                    item
+                                    spacing={{xs:2}}
+                                    xs={12}
+                                    md={8}
+                                >
+                                    <Stack
+                                        spacing={{xs:2}}
+                                   >
+                                        <Paper elevation={0} sx={{padding:"5px", paddingTop:"15px", margin:"10px"}}>
+                                            <div><Typography variant="body1" sx={{ml:"5px"}}><i>Location and geologic info</i></Typography></div>
+                                            {/*}
+                                            <Stack 
+                                                spacing={{xs:2}}
+                                                direction="row"
+                                            >
+                                                <Box sx={{border: 1, margin:"4px"}}><b>collection:</b> asdkgj aslkdgj asaf</Box>
+                                                <Box sx={{border: 1, margin:"4px"}}><b>country:</b> asdfdsaf</Box>
+                                                <Box sx={{border: 1, margin:"4px"}}><b>state/province:</b> asdfdfda</Box>
+                                            </Stack>
+                                            */}
+                                            <Grid 
+                                                container
+                                                spacing={{xs:0}}
+                                            >
+                                                <Grid
+                                                    item
+                                                    xs={6}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Collection</Typography><br />{s.collection.name}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={3}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Country</Typography><br />{s.collection.country}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={3}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">State/province</Typography><br />{s.collection.state}</Box>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid 
+                                                container
+                                                spacing={{xs:0}}
+                                            >
+                                                <Grid
+                                                    item
+                                                    xs={3}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Geologic group</Typography><br />{s.collection.stratigraphicGroup}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={3}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Geologic formation</Typography><br />{s.collection.stratigraphicFormation}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={3}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Geologic member</Typography><br />{s.collection.stratigraphicMember}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={3}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Geologic bed</Typography><br />{s.collection.stratigraphicBed}</Box>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid 
+                                                container
+                                                spacing={{xs:0}}
+                                            >
+                                                <Grid
+                                                    item
+                                                    xs={6}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Maximum time interval</Typography><br />{s.collection.maxinterval}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={6}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Minimum time interval</Typography><br />{s.collection.mininterval}</Box>
+                                                </Grid>
+                                            </Grid>
+                                        </Paper>
+                                        <Paper elevation={0} sx={{padding:"15px", margin:"10px"}}>
+                                            <div><Typography variant="body1"  sx={{ml:"5px"}}><i>Taxonomic data</i></Typography></div>
+                                            <Grid 
+                                                container
+                                                spacing={{xs:0}}
+                                            >
+                                                <Grid
+                                                    item
+                                                    xs={8}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Example of taxon/OTU</Typography><br />{s.identifiedAs && s.identifiedAs.length > 0 ? s.identifiedAs[0].OTU.name : ''}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={4}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Identified by</Typography><br />{s.identifiers.map((i, index, arr) => i.given + " " + i.middle + " " + i.surname + (index+1 === arr.length ? '' : ", "))}</Box>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid 
+                                                container
+                                                spacing={{xs:0}}
+                                            >
+                                                <Grid
+                                                    item
+                                                    xs={6}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Major Taxon group</Typography><br />{s.identifiedAs && s.identifiedAs.length > 0 ? s.identifiedAs[0].OTU.majorTaxonGroup : ''}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={6}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />{s.identifiedAs && s.identifiedAs.length > 0 ? s.identifiedAs[0].OTU.pbdbParentTaxon : ''}</Box>
+                                                </Grid>
+                                                <Grid
+                                                    item
+                                                    xs={6}
+                                                >
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Exemplar specimen type</Typography><br />{s.holotypeOf ? 'holotype' : s.typeOf ? 'other' : ''}</Box>
+                                                </Grid>
+                                            </Grid>
+                                        </Paper>
+                                    </Stack>
+
+                                </Grid>
+                        </Grid>
+
+
+
+
+<br />
+<br />
+<br />
+<br />
+<br />
+
+
+
                         <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
                         <div style={header1}><Typography variant="h6">Identity</Typography></div>
