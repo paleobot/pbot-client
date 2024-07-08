@@ -3,7 +3,7 @@ import logo from './PBOT-logo-transparent.png';
 import './App.css';
 import PBOTInterface from './components/PBOTInterface';
 import Footer from "./components/Footer";
-import { Button, Stack } from '@mui/material';
+import { Button, Grid, Stack } from '@mui/material';
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 //import { FormControlUnstyledContext } from '@mui/base';
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -43,12 +43,24 @@ function App(props) {
                 <NavBar />
                 <Outlet />
                 <br />
-                <Stack direction="row" spacing={5} justifyContent="center" sx={{marginTop: "30px"}}>
-                    <Button color="secondary" variant="contained" onClick={() => {navigate(`/about`);}}>About</Button>
-                    <Button color="secondary" variant="contained" onClick={() => {navigate(`/howto`);}}>How to use Pbot</Button>
-                    <Button color="secondary" variant="contained" onClick={() => {navigate(`/resources`);}}>Resources</Button>
-                    <Button color="secondary" variant="contained" onClick={() => {navigate(`/education`);}}>Go to Education & Outreach Hub</Button>
-                </Stack>
+                <Grid
+                    container
+                    spacing={2}
+                    justifyContent="center"
+                >
+                    <Grid item>
+                        <Button color="secondary" variant="contained" onClick={() => {navigate(`/about`);}}>About</Button>
+                    </Grid>
+                    <Grid item>
+                        <Button color="secondary" variant="contained" onClick={() => {navigate(`/howto`);}}>How to use Pbot</Button>
+                    </Grid>
+                    <Grid item>
+                        <Button color="secondary" variant="contained" onClick={() => {navigate(`/resources`);}}>Resources</Button>
+                    </Grid>
+                    <Grid item>
+                        <Button color="secondary" variant="contained" onClick={() => {navigate(`/education`);}}>Go to Education & Outreach Hub</Button>
+                    </Grid>
+                </Grid>
                 <br />
                 <br />
             <Footer />
