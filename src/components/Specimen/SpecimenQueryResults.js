@@ -3,9 +3,9 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Card, Box, Stack } from '@mui/material';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Card, Box, Stack, Accordion, AccordionDetails, AccordionSummary, OutlinedInput } from '@mui/material';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { alphabetize, AlternatingTableRow } from '../../util.js';
+import { alphabetize, sort, AlternatingTableRow } from '../../util.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import {Carousel} from 'react-responsive-carousel'
 import {SecureImage} from '../Image/SecureImage.js';
@@ -13,6 +13,7 @@ import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext';
 import { SpecimenFilterHelper } from './SpecimenFilterHelper';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
@@ -86,6 +87,17 @@ function Specimens(props) {
                 }
                 order
             }
+            enteredBy {
+                timestamp {
+                    formatted
+                }
+                type
+                Person {
+                    given
+                    middle
+                    surname
+                }
+            }
             images @include(if: $includeImages) {
                 pbotID
                 link
@@ -116,6 +128,7 @@ function Specimens(props) {
             }
             identifiedAs @include(if: $includeOTUs){
                 OTU {
+                    pbotID
                     name
                     family
                     genus
@@ -126,6 +139,7 @@ function Specimens(props) {
             }
             typeOf @include(if: $includeOTUs){
                 OTU {
+                    pbotID
                     name
                     family
                     genus
@@ -134,6 +148,7 @@ function Specimens(props) {
             }
             holotypeOf @include(if: $includeOTUs){
                 OTU {
+                    pbotID
                     name
                     family
                     genus
@@ -269,7 +284,7 @@ function Specimens(props) {
                 ${groups} 
                 $includeImages: Boolean!, 
                 $includeDescriptions: Boolean!, 
-                $includeOTUs: Boolean! 
+                $includeOTUs: Boolean!
                 ${filters.collection ? ", $collection: ID" : ""}
             ) {
                 Specimen (pbotID: $pbotID, name: $name ${filter}) {
@@ -290,7 +305,7 @@ function Specimens(props) {
             includeImages: props.includeImages,
             includeDescriptions: props.includeDescriptions,
             includeOTUs: props.includeOTUs,
-            excludeList: excludeIDs
+            excludeList: excludeIDs,
         },
         fetchPolicy: "cache-and-network"
     });
@@ -341,8 +356,19 @@ function Specimens(props) {
                     directURL.searchParams.append("includeOTUs", "true");
                 }
                     
+                const history = sort(s.enteredBy.map(e => { 
+                    return {
+                        timestamp: e.timestamp.formatted,
+                        type: e.type,
+                        person: `${e.Person.given}${e.Person.middle ? ` ${e.Person.middle}` : ``} ${e.Person.surname}`
+                    }}), "timestamp");
+                console.log("history")
+                console.log(history)
+
                 const header1 = {marginLeft:"2em", marginTop:"10px"}
                 const boxedDisplay = {wordWrap: "break-word", border: 1, margin:"4px", paddingLeft:"2px"};
+                const accstyle = {textAlign: "left", width: "95%",  marginLeft:"8px"}
+
                 return (
                 <div key={s.pbotID} style={style}>
                     { props.standAlone &&     
@@ -364,7 +390,7 @@ function Specimens(props) {
                             </Grid>
                             <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                                 <Typography variant="h5">
-                                    Specimen: {s.name}
+                                    Specimen
                                 </Typography>
                             </Grid>
                             <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
@@ -373,6 +399,349 @@ function Specimens(props) {
                                 </Typography>
                             </Grid>
                         </Grid>
+
+                        <Grid container spacing={1} sx={{ml:"10px"}}>
+                            <Grid item><b>direct link:</b></Grid>
+                            <Grid item><Link color="success.main" underline="hover" href={directURL} target="_blank">{directURL.toString()}</Link></Grid>
+                        </Grid>
+
+                        <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                                <b>{s.name}</b>
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{s.pbotID}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Repository</Typography><br />{s.repository}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Other repository link</Typography><br />{s.otherRepositoryLink}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">iDigBio InstitutionCode, CatalogNumber, uuid</Typography><br />{`${s.idigbioInstitutionCode}, ${s.idigbioCatalogNumber}, ${s.idigbiouuid}`}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Parts preserved</Typography><br />{s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}
+                                            </Box>
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Notable features preserved</Typography><br />{s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}
+                                            </Box>        
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Preservation modes</Typography><br />{s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}
+                                            </Box>    
+                                        </div>
+                                        <div>
+                                            <Box sx={boxedDisplay}>
+                                            <Typography variant="caption">Data access groups</Typography><br />{s.elementOf.map((e, index, arr) => e.name + (index+1 === arr.length ? '' : ", "))} 
+                                            </Box>    
+                                        </div>
+                                    </Paper>
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Location and geologic info
+                            </AccordionSummary>
+                            <AccordionDetails>
+
+                                {/*}
+                                <Stack 
+                                    spacing={{xs:2}}
+                                    direction="row"
+                                >
+                                    <Box sx={{border: 1, margin:"4px"}}><b>collection:</b> asdkgj aslkdgj asaf</Box>
+                                    <Box sx={{border: 1, margin:"4px"}}><b>country:</b> asdfdsaf</Box>
+                                    <Box sx={{border: 1, margin:"4px"}}><b>state/province:</b> asdfdfda</Box>
+                                </Stack>
+                                */}
+                                <Grid 
+                                    container
+                                    spacing={{xs:0}}
+                                >
+                                    <Grid
+                                        item
+                                        xs={6}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">Collection</Typography><br />{s.collection.name}</Box>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={3}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">Country</Typography><br />{s.collection.country}</Box>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={3}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">State/province</Typography><br />{s.collection.state}</Box>
+                                    </Grid>
+                                </Grid>
+                                <Grid 
+                                    container
+                                    spacing={{xs:0}}
+                                >
+                                    <Grid
+                                        item
+                                        xs={3}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">Geologic group</Typography><br />{s.collection.stratigraphicGroup}</Box>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={3}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">Geologic formation</Typography><br />{s.collection.stratigraphicFormation}</Box>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={3}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">Geologic member</Typography><br />{s.collection.stratigraphicMember}</Box>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={3}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">Geologic bed</Typography><br />{s.collection.stratigraphicBed}</Box>
+                                    </Grid>
+                                </Grid>
+                                <Grid 
+                                    container
+                                    spacing={{xs:0}}
+                                >
+                                    <Grid
+                                        item
+                                        xs={6}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">Maximum time interval</Typography><br />{s.collection.maxinterval}</Box>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={6}
+                                    >
+                                        <Box sx={boxedDisplay}><Typography variant="caption">Minimum time interval</Typography><br />{s.collection.mininterval}</Box>
+                                    </Grid>
+                                </Grid>
+
+                            </AccordionDetails>
+                        </Accordion>
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Taxonomic data
+                            </AccordionSummary>
+                            <AccordionDetails>
+
+                                {s.identifiedAs.map((otu, index, arr) => {
+                                    return (
+                                        <>
+                                        <Grid 
+                                            container
+                                            spacing={{xs:0}}
+                                        >
+                                            <Grid
+                                                item
+                                                xs={8}
+                                            >
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Example of taxon/OTU</Typography><br />
+                                                <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/otu/" + otu.OTU.pbotID).toString()}  target="_blank">{otu.OTU.name}</Link>
+                                                </Box>
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={4}
+                                            >
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Identified by</Typography><br />{s.identifiers.map((i, index, arr) => i.given + " " + i.middle + " " + i.surname + (index+1 === arr.length ? '' : ", "))}</Box>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid 
+                                            container
+                                            spacing={{xs:0}}
+                                        >
+                                            <Grid
+                                                item
+                                                xs={6}
+                                            >
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Major Taxon group</Typography><br />{otu.OTU.majorTaxonGroup}</Box>
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={6}
+                                            >
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />{otu.OTU.pbdbParentTaxon}</Box>
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={6}
+                                            >
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Exemplar specimen type</Typography><br />{
+                                                    s.holotypeOf && s.holotypeOf.length > 0 && s.holotypeOf.map(h => h.OTU.pbotID).includes(otu.OTU.pbotID) ? 'holotype' : 
+                                                        s.typeOf && s.typeOf.length > 0 && s.typeOf.map(t => t.OTU.pbotID).includes(otu.OTU.pbotID) ? 'other' : 
+                                                            ''}</Box>
+                                            </Grid>
+                                        </Grid>
+                                        <br />
+                                        </>
+                                    )
+                                })}
+
+                            </AccordionDetails>
+                        </Accordion>
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Descriptions
+                            </AccordionSummary>
+                            <AccordionDetails>
+
+                                {s.describedBy && s.describedBy.length > 0 &&
+                                <div>
+                                    {s.describedBy.map((d,idx) => (
+                                        <div key={idx}>
+                                            <div style={indent}><b>from schema "{d.Description.schema.title}"</b></div>
+                                            <div style={indent2}><b>written description:</b> {d.Description.writtenDescription}</div>
+                                            <div style={indent2}><b>notes:</b> {d.Description.notes}</div>
+                                            {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
+                                            <div>
+                                                <CharacterInstances style={indent2}  characterInstances={d.Description.characterInstances} />
+                                            </div>
+                                            }
+                                        </div>
+                                    ))}
+                                </div>
+                                }
+
+                            </AccordionDetails>
+                        </Accordion>
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Images
+                            </AccordionSummary>
+                            <AccordionDetails>
+
+                                <div style={carousel}>
+                                {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                                <Carousel showThumbs={false}>  
+                                    {s.images.map((image) => (
+                                        <div key={image.pbotID} >
+                                            {/*<img src={image.link} alt={image.caption}/>*/}
+                                            <SecureImage src={image.link}/>
+                                        </div>
+                                    ))}
+                                </Carousel>
+                                </div>
+
+                            </AccordionDetails>
+                        </Accordion>
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                History
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                         <TableContainer component={Paper}>
+                                            <Table sx={{width:"70%"}} aria-label="history table">
+                                                <TableBody>
+                                                    {history.map(eb => {
+                                                    return (
+                                                        <>
+
+                                                            <AlternatingTableRow key={eb.timestamp}>
+                                                                <TableCell align="left">
+                                                                    {eb.timestamp}
+                                                                </TableCell>
+                                                                <TableCell align="left">
+                                                                    {eb.type}
+                                                                </TableCell>
+                                                                <TableCell align="left">
+                                                                    {eb.person}
+                                                                </TableCell>
+                                                            </AlternatingTableRow>
+                                                        </>
+                                                    )
+                                                    })}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                        
+                            </AccordionDetails>
+                        </Accordion>
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Notes
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {s.notes}
+                            </AccordionDetails>
+                        </Accordion>
+
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Comments
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                Comments have not been implemented for Specimens. This is a placeholder.
+                            </AccordionDetails>
+                        </Accordion>
+
+{/*
+
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
 
                         <Grid 
                             container 
@@ -458,7 +827,7 @@ function Specimens(props) {
                                                 <Box sx={{border: 1, margin:"4px"}}><b>country:</b> asdfdsaf</Box>
                                                 <Box sx={{border: 1, margin:"4px"}}><b>state/province:</b> asdfdfda</Box>
                                             </Stack>
-                                            */}
+                                            /}
                                             <Grid 
                                                 container
                                                 spacing={{xs:0}}
@@ -529,7 +898,7 @@ function Specimens(props) {
                                                 </Grid>
                                             </Grid>
                                         </Paper>
-                                        <Paper elevation={0} sx={{padding:"15px", margin:"10px"}}>
+                                        <Paper elevation={0} sx={{padding:"5px", margin:"10px"}}>
                                             <div><Typography variant="body1"  sx={{ml:"5px"}}><i>Taxonomic data</i></Typography></div>
                                             <Grid 
                                                 container
@@ -586,7 +955,9 @@ function Specimens(props) {
 <br />
 <br />
 
+*/}
 
+{/*
 
                         <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
@@ -668,11 +1039,11 @@ function Specimens(props) {
                         <>
                         <div style={header1}><Typography variant="h6">Images</Typography></div>
                             <div style={carousel}>
-                            {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                            {/*can't use thumbs because SecureImage does not immediately make image available/}
                             <Carousel showThumbs={false}>  
                                 {s.images.map((image) => (
                                     <div key={image.pbotID} >
-                                        {/*<img src={image.link} alt={image.caption}/>*/}
+                                        {/*<img src={image.link} alt={image.caption}/>/}
                                         <SecureImage src={image.link}/>
                                     </div>
                                 ))}
@@ -697,7 +1068,7 @@ function Specimens(props) {
                                 ))}
                             </div>
                         }
-                    
+*/}
                         <br />
                         </>
                     }
