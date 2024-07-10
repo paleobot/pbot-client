@@ -453,6 +453,32 @@ function Specimens(props) {
                                         </div>
                                     </Paper>
 
+
+                        <Accordion style={accstyle} defaultExpanded={true}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Images
+                            </AccordionSummary>
+                            <AccordionDetails>
+
+                                <div style={carousel}>
+                                {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                                <Carousel showThumbs={false}>  
+                                    {s.images.map((image) => (
+                                        <div key={image.pbotID} >
+                                            {/*<img src={image.link} alt={image.caption}/>*/}
+                                            <SecureImage src={image.link}/>
+                                        </div>
+                                    ))}
+                                </Carousel>
+                                </div>
+
+                            </AccordionDetails>
+                        </Accordion>
+
                         <Accordion style={accstyle} defaultExpanded={false}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
@@ -622,7 +648,7 @@ function Specimens(props) {
                             </AccordionSummary>
                             <AccordionDetails>
 
-                                {s.describedBy && s.describedBy.length > 0 &&
+                                {s.describedBy && s.describedBy.length > 0 && s.describedBy[0].Description &&
                                 <div>
                                     {s.describedBy.map((d,idx) => (
                                         <div key={idx}>
@@ -642,30 +668,6 @@ function Specimens(props) {
                             </AccordionDetails>
                         </Accordion>
 
-                        <Accordion style={accstyle} defaultExpanded={false}>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="required-content"
-                                id="required-header"                        
-                            >
-                                Images
-                            </AccordionSummary>
-                            <AccordionDetails>
-
-                                <div style={carousel}>
-                                {/*can't use thumbs because SecureImage does not immediately make image available*/}
-                                <Carousel showThumbs={false}>  
-                                    {s.images.map((image) => (
-                                        <div key={image.pbotID} >
-                                            {/*<img src={image.link} alt={image.caption}/>*/}
-                                            <SecureImage src={image.link}/>
-                                        </div>
-                                    ))}
-                                </Carousel>
-                                </div>
-
-                            </AccordionDetails>
-                        </Accordion>
 
                         <Accordion style={accstyle} defaultExpanded={false}>
                             <AccordionSummary
