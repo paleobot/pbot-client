@@ -366,8 +366,9 @@ function Specimens(props) {
                 console.log(history)
 
                 const header1 = {marginLeft:"2em", marginTop:"10px"}
-                const boxedDisplay = {wordWrap: "break-word", border: 1, margin:"4px", paddingLeft:"2px"};
-                const accstyle = {textAlign: "left", width: "95%",  marginLeft:"8px"}
+                const borderBoxedDisplay = {wordWrap: "break-word", border: 1, margin:"4px", paddingLeft:"2px"};
+                const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
+                const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
 
                 return (
                 <div key={s.pbotID} style={style}>
@@ -406,55 +407,40 @@ function Specimens(props) {
                         </Grid>
 
                         <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                                <b>{s.name}</b>
-                                            </Box>
-                                        </div>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                            <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{s.pbotID}
-                                            </Box>
-                                        </div>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                            <Typography variant="caption">Repository</Typography><br />{s.repository}
-                                            </Box>
-                                        </div>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                            <Typography variant="caption">Other repository link</Typography><br />{s.otherRepositoryLink}
-                                            </Box>
-                                        </div>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                            <Typography variant="caption">iDigBio InstitutionCode, CatalogNumber, uuid</Typography><br />{`${s.idigbioInstitutionCode}, ${s.idigbioCatalogNumber}, ${s.idigbiouuid}`}
-                                            </Box>
-                                        </div>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                            <Typography variant="caption">Parts preserved</Typography><br />{s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}
-                                            </Box>
-                                        </div>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                            <Typography variant="caption">Notable features preserved</Typography><br />{s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}
-                                            </Box>        
-                                        </div>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                            <Typography variant="caption">Preservation modes</Typography><br />{s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}
-                                            </Box>    
-                                        </div>
-                                        <div>
-                                            <Box sx={boxedDisplay}>
-                                            <Typography variant="caption">Data access groups</Typography><br />{s.elementOf.map((e, index, arr) => e.name + (index+1 === arr.length ? '' : ", "))} 
-                                            </Box>    
-                                        </div>
+                                        <Box sx={boxedDisplay}>
+                                            <b>{s.name}</b>
+                                        </Box>
+                                        <Box sx={boxedDisplay}>
+                                        <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{s.pbotID}
+                                        </Box>
+                                        <br />
+                                        <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Repository</Typography><br />{s.repository}
+                                        </Box>
+                                        <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Other repository link</Typography><br />{s.otherRepositoryLink}
+                                        </Box>
+                                        <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">iDigBio InstitutionCode, CatalogNumber, uuid</Typography><br />{`${s.idigbioInstitutionCode}, ${s.idigbioCatalogNumber}, ${s.idigbiouuid}`}
+                                        </Box>
+                                        <br />
+                                        <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Parts preserved</Typography><br />{s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}
+                                        </Box>
+                                        <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Notable features preserved</Typography><br />{s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}
+                                        </Box>        
+                                        <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Preservation modes</Typography><br />{s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}
+                                        </Box>    
+                                        <br />
+                                        <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Data access groups</Typography><br />{s.elementOf.map((e, index, arr) => e.name + (index+1 === arr.length ? '' : ", "))} 
+                                        </Box>    
                                     </Paper>
 
 
-                        <Accordion style={accstyle} defaultExpanded={true}>
+                        <Accordion style={accstyle} defaultExpanded={s.images && s.images.length > 0}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="required-content"
@@ -464,6 +450,7 @@ function Specimens(props) {
                             </AccordionSummary>
                             <AccordionDetails>
 
+                                {s.images && s.images.length > 0 &&
                                 <div style={carousel}>
                                 {/*can't use thumbs because SecureImage does not immediately make image available*/}
                                 <Carousel showThumbs={false}>  
@@ -475,6 +462,11 @@ function Specimens(props) {
                                     ))}
                                 </Carousel>
                                 </div>
+                                }
+
+                                {(!s.images || s.images.length === 0) &&
+                                <div style={indent}>No images available</div>
+                                }
 
                             </AccordionDetails>
                         </Accordion>
@@ -489,6 +481,19 @@ function Specimens(props) {
                             </AccordionSummary>
                             <AccordionDetails>
 
+                                <Box sx={boxedDisplay}><Typography variant="caption">Collection</Typography><br />{s.collection.name}</Box>
+                                <br />
+                                <Box sx={boxedDisplay}><Typography variant="caption">Country</Typography><br />{s.collection.country}</Box>
+                                <Box sx={boxedDisplay}><Typography variant="caption">State/province</Typography><br />{s.collection.state}</Box>
+                                <br />
+                                <Box sx={boxedDisplay}><Typography variant="caption">Geologic group</Typography><br />{s.collection.stratigraphicGroup}</Box>
+                                <Box sx={boxedDisplay}><Typography variant="caption">Geologic formation</Typography><br />{s.collection.stratigraphicFormation}</Box>
+                                <Box sx={boxedDisplay}><Typography variant="caption">Geologic member</Typography><br />{s.collection.stratigraphicMember}</Box>
+                                <Box sx={boxedDisplay}><Typography variant="caption">Geologic bed</Typography><br />{s.collection.stratigraphicBed}</Box>
+                                <br />
+                                <Box sx={boxedDisplay}><Typography variant="caption">Maximum time interval</Typography><br />{s.collection.maxinterval}</Box>
+                                <Box sx={boxedDisplay}><Typography variant="caption">Minimum time interval</Typography><br />{s.collection.mininterval}</Box>
+ 
                                 {/*}
                                 <Stack 
                                     spacing={{xs:2}}
@@ -499,6 +504,7 @@ function Specimens(props) {
                                     <Box sx={{border: 1, margin:"4px"}}><b>state/province:</b> asdfdfda</Box>
                                 </Stack>
                                 */}
+                                {/*
                                 <Grid 
                                     container
                                     spacing={{xs:0}}
@@ -568,6 +574,7 @@ function Specimens(props) {
                                         <Box sx={boxedDisplay}><Typography variant="caption">Minimum time interval</Typography><br />{s.collection.mininterval}</Box>
                                     </Grid>
                                 </Grid>
+                            */}
 
                             </AccordionDetails>
                         </Accordion>
@@ -582,58 +589,94 @@ function Specimens(props) {
                             </AccordionSummary>
                             <AccordionDetails>
 
-                                {s.identifiedAs.map((otu, index, arr) => {
-                                    return (
-                                        <>
-                                        <Grid 
-                                            container
-                                            spacing={{xs:0}}
-                                        >
-                                            <Grid
-                                                item
-                                                xs={8}
-                                            >
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Example of taxon/OTU</Typography><br />
-                                                <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/otu/" + otu.OTU.pbotID).toString()}  target="_blank">{otu.OTU.name}</Link>
-                                                </Box>
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={4}
-                                            >
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Identified by</Typography><br />{s.identifiers.map((i, index, arr) => i.given + " " + i.middle + " " + i.surname + (index+1 === arr.length ? '' : ", "))}</Box>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid 
-                                            container
-                                            spacing={{xs:0}}
-                                        >
-                                            <Grid
-                                                item
-                                                xs={6}
-                                            >
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Major Taxon group</Typography><br />{otu.OTU.majorTaxonGroup}</Box>
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={6}
-                                            >
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />{otu.OTU.pbdbParentTaxon}</Box>
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={6}
-                                            >
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Exemplar specimen type</Typography><br />{
-                                                    s.holotypeOf && s.holotypeOf.length > 0 && s.holotypeOf.map(h => h.OTU.pbotID).includes(otu.OTU.pbotID) ? 'holotype' : 
-                                                        s.typeOf && s.typeOf.length > 0 && s.typeOf.map(t => t.OTU.pbotID).includes(otu.OTU.pbotID) ? 'other' : 
-                                                            ''}</Box>
-                                            </Grid>
-                                        </Grid>
-                                        <br />
-                                        </>
-                                    )
-                                })}
+                                {s.identifiedAs && s.identifiedAs.length > 0 &&
+                                <TableContainer component={Paper}>
+                                        <Table sx={{width:"100%", mr:"10px"}} aria-label="taxonomy table">
+                                            <TableBody>
+                                                {s.identifiedAs.map((otu, index, arr) => {
+                                                    return (
+                                                        <>
+                                                        <AlternatingTableRow key={otu.pbotID}>
+                                                            <TableCell align="left" sx={{fontSize: "1rem"}}>
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Example of taxon/OTU</Typography><br />
+                                                                    <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/otu/" + otu.OTU.pbotID).toString()}  target="_blank">{otu.OTU.name}</Link>
+                                                                </Box>
+
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Exemplar specimen type</Typography><br />{
+                                                                            s.holotypeOf && s.holotypeOf.length > 0 && s.holotypeOf.map(h => h.OTU.pbotID).includes(otu.OTU.pbotID) ? 'holotype' : 
+                                                                                s.typeOf && s.typeOf.length > 0 && s.typeOf.map(t => t.OTU.pbotID).includes(otu.OTU.pbotID) ? 'other' : 
+                                                                                    ''}</Box>
+
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Major Taxon group</Typography><br />{otu.OTU.majorTaxonGroup}</Box>
+
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />{otu.OTU.pbdbParentTaxon}</Box>
+
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Identified by</Typography><br />{s.identifiers.map((i, index, arr) => i.given + " " + i.middle + " " + i.surname + (index+1 === arr.length ? '' : ", "))}</Box>
+                                                            </TableCell>
+                                                        </AlternatingTableRow>
+
+
+                                                        {/*
+                                                        <Grid 
+                                                            container
+                                                            spacing={{xs:0}}
+                                                        >
+                                                            <Grid
+                                                                item
+                                                                xs={8}
+                                                            >
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Example of taxon/OTU</Typography><br />
+                                                                <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/otu/" + otu.OTU.pbotID).toString()}  target="_blank">{otu.OTU.name}</Link>
+                                                                </Box>
+                                                            </Grid>
+                                                            <Grid
+                                                                item
+                                                                xs={4}
+                                                            >
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Identified by</Typography><br />{s.identifiers.map((i, index, arr) => i.given + " " + i.middle + " " + i.surname + (index+1 === arr.length ? '' : ", "))}</Box>
+                                                            </Grid>
+                                                        </Grid>
+                                                        <Grid 
+                                                            container
+                                                            spacing={{xs:0}}
+                                                        >
+                                                            <Grid
+                                                                item
+                                                                xs={6}
+                                                            >
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Major Taxon group</Typography><br />{otu.OTU.majorTaxonGroup}</Box>
+                                                            </Grid>
+                                                            <Grid
+                                                                item
+                                                                xs={6}
+                                                            >
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />{otu.OTU.pbdbParentTaxon}</Box>
+                                                            </Grid>
+                                                            <Grid
+                                                                item
+                                                                xs={6}
+                                                            >
+                                                                <Box sx={boxedDisplay}><Typography variant="caption">Exemplar specimen type</Typography><br />{
+                                                                    s.holotypeOf && s.holotypeOf.length > 0 && s.holotypeOf.map(h => h.OTU.pbotID).includes(otu.OTU.pbotID) ? 'holotype' : 
+                                                                        s.typeOf && s.typeOf.length > 0 && s.typeOf.map(t => t.OTU.pbotID).includes(otu.OTU.pbotID) ? 'other' : 
+                                                                            ''}</Box>
+                                                            </Grid>
+                                                        </Grid>
+                                                        <br />
+                                                        */}
+
+                                                        </>
+                                                    )
+                                                })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                }
+
+                                {(!s.identifiedAs || s.identifiedAs.length === 0) &&
+                                <div style={indent}>No taxonomic available</div>
+                                }
+
 
                             </AccordionDetails>
                         </Accordion>
@@ -649,6 +692,43 @@ function Specimens(props) {
                             <AccordionDetails>
 
                                 {s.describedBy && s.describedBy.length > 0 && s.describedBy[0].Description &&
+                                    <TableContainer component={Paper}>
+                                    <Table sx={{width:"100%", mr:"10px"}} aria-label="description table">
+                                        <TableBody>
+                                            {s.describedBy.map((d, idx) => {
+                                                return (
+                                                    <>
+                                                    <AlternatingTableRow key={d.pbotID}>
+                                                        <TableCell align="left" sx={{fontSize: "1rem"}}>
+                                                            <div><b>From schema "{d.Description.schema.title}"</b></div>
+                                                            {d.Description.writtenDescription &&
+                                                                <div style={indent}><b>written description:</b> {d.Description.writtenDescription}</div>
+                                                            }
+                                                            {d.Description.notes &&
+                                                                <div style={indent}><b>notes:</b> {d.Description.notes}</div>
+                                                            }
+                                                            {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&
+                                                            <div>
+                                                                <div style={indent}><b>character states:</b></div>
+                                                                <CharacterInstances style={indent2}  characterInstances={d.Description.characterInstances} />
+                                                            </div>
+                                                            }
+                                                        </TableCell>
+                                                    </AlternatingTableRow>
+                                                    </>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                    </TableContainer>
+                                }
+
+                                {(!s.describedBy || s.describedBy.length === 0 || !s.describedBy[0].Description) &&
+                                <div style={indent}>No descriptions available</div>
+                                }
+
+
+                                {/*
                                 <div>
                                     {s.describedBy.map((d,idx) => (
                                         <div key={idx}>
@@ -663,8 +743,8 @@ function Specimens(props) {
                                         </div>
                                     ))}
                                 </div>
-                                }
-
+                                */}
+                            
                             </AccordionDetails>
                         </Accordion>
 
@@ -679,7 +759,7 @@ function Specimens(props) {
                             </AccordionSummary>
                             <AccordionDetails>
                                          <TableContainer component={Paper}>
-                                            <Table sx={{width:"70%"}} aria-label="history table">
+                                            <Table sx={{width:"100%", mr:"10px"}} aria-label="history table">
                                                 <TableBody>
                                                     {history.map(eb => {
                                                     return (
