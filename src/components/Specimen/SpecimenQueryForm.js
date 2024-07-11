@@ -65,9 +65,9 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
         stratigraphicmember: '',
         stratigraphicbed: '',
         groups: [],
-        includeImages: false,
-        includeDescriptions: false,
-        includeOTUs: false
+        includeImages: true,
+        includeDescriptions: true,
+        includeOTUs: true
     };
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
@@ -425,6 +425,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
 
                 {!select &&
                 <>
+                {/*
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeImages" 
@@ -451,6 +452,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                     disabled={false}
                 />
                 <br />
+                */}
                 </>
                 }
 
