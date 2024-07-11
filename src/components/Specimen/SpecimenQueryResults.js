@@ -14,6 +14,7 @@ import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext';
 import { SpecimenFilterHelper } from './SpecimenFilterHelper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Country, State }  from 'country-state-city';
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
@@ -483,8 +484,12 @@ function Specimens(props) {
 
                                 <Box sx={boxedDisplay}><Typography variant="caption">Collection</Typography><br />{s.collection.name}</Box>
                                 <br />
-                                <Box sx={boxedDisplay}><Typography variant="caption">Country</Typography><br />{s.collection.country}</Box>
-                                <Box sx={boxedDisplay}><Typography variant="caption">State/province</Typography><br />{s.collection.state}</Box>
+                                <Box sx={boxedDisplay}><Typography variant="caption">Country</Typography><br />{s.collection.country ? 
+                                                    `${Country.getCountryByCode(s.collection.country).name} (${s.collection.country})` :
+                                                    ''}</Box>
+                                <Box sx={boxedDisplay}><Typography variant="caption">State/province</Typography><br />{s.collection.country && 
+                                                            s.collection.state ?
+                                                                `${State.getStateByCodeAndCountry(s.collection.state, s.collection.country).name} (${s.collection.state})` : ''}</Box>
                                 <br />
                                 <Box sx={boxedDisplay}><Typography variant="caption">Geologic group</Typography><br />{s.collection.stratigraphicGroup}</Box>
                                 <Box sx={boxedDisplay}><Typography variant="caption">Geologic formation</Typography><br />{s.collection.stratigraphicFormation}</Box>
