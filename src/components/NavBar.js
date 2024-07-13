@@ -13,7 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { Link, useNavigate } from "react-router-dom";
 import logo from '../PBOT-logo-transparent.png';
-import { Button } from '@mui/material';
+import { Button, Grid, Stack } from '@mui/material';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
@@ -27,6 +27,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import { useAuth } from './AuthContext';
 import { useLocation } from 'react-router-dom';
+import { NodeTally } from '../NodeTally';
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -120,6 +121,7 @@ export default function NavBar() {
         <>
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" color={"Workbench" === location ? "secondary":"primary"} sx={{marginBottom: "20px"}}>
+                <Stack direction="column">
                 <Toolbar>
                     <IconButton
                         size="large"
@@ -176,6 +178,34 @@ export default function NavBar() {
                         </div>
                     )}
                 </Toolbar>
+                {"" === location &&
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Grid item container justifyContent="center" spacing={0} sx={{m:"0px", width:"70%"}} >
+                        {/*TODO: implement the Boxes below as a component that poles the db for a 
+                        count based on a passed parameter (reference, taxa, etc.)*/}
+                        <Grid item xs={3} md={2}>
+                            <NodeTally nodeType="References" />
+                        </Grid>
+                        <Grid item xs={3} md={2}>
+                            <NodeTally nodeType="Taxa" />
+                        </Grid>
+                        <Grid item xs={3} md={2}>
+                            <NodeTally nodeType="Collections" />
+                        </Grid>
+                        <Grid item xs={3} md={2}>
+                            <NodeTally nodeType="Specimens" />
+                        </Grid>
+                        <Grid item xs={3} md={2}>
+                            <NodeTally nodeType="Contributors" />
+                        </Grid>
+                    </Grid>
+                </Box>
+                }
+                </Stack>
             </AppBar>
         </Box>
         <Drawer
