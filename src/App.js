@@ -3,7 +3,7 @@ import logo from './PBOT-logo-transparent.png';
 import './App.css';
 import PBOTInterface from './components/PBOTInterface';
 import Footer from "./components/Footer";
-import { Button, Grid, Stack } from '@mui/material';
+import { Button, Grid, Stack, Box } from '@mui/material';
 import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
 //import { FormControlUnstyledContext } from '@mui/base';
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -43,6 +43,8 @@ function App(props) {
                 <NavBar />
                 <Outlet />
                 <br />
+
+                <Box sx={{mt:"30px"}}>
                 <Grid
                     container
                     spacing={2}
@@ -61,6 +63,7 @@ function App(props) {
                         <Button color="secondary" variant="contained" onClick={() => {navigate(`/education`);}}>Go to Education & Outreach Hub</Button>
                     </Grid>
                 </Grid>
+                </Box>
                 <br />
                 <br />
             <Footer />
