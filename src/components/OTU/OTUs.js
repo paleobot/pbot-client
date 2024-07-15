@@ -1,12 +1,14 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { alphabetize, AlternatingTableRow } from '../../util.js';
-import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { alphabetize, sort, AlternatingTableRow } from '../../util.js';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 //TODO: Might be worth moving this to its own file and using elsewhere
 const DirectQueryLink = (props) => {
     console.log("DirectQueryLink")
+    console.log(props.children)
     const url = new URL(`${window.location.origin}/query/${props.type}/${props.pbotID}`);
     console.log(props.params)
     //props.params.forEach(p => console.log(p))
@@ -15,7 +17,13 @@ const DirectQueryLink = (props) => {
         url.searchParams.append(p, "true");
     })
     return (
-        <Link style={props.style} color="success.main" underline="hover" href={url}  target="_blank"><b>{props.text || url.toString()}</b></Link>
+        <Link style={props.style} color="success.main" underline="hover" href={url}  target="_blank">
+            {props.children && props.children.length > 0 &&
+                <b>{props.children}</b>
+            } 
+            {(!props.children || props.children.length === 0) &&
+                <b>{props.text || url.toString()}</b>
+            }</Link>
     )
 }
 
@@ -71,9 +79,21 @@ function OTUs(props) {
     }
 
     if (props.standalone) {
-    //TODO:Figure out a more modular way to handle nested comments query and presentation    
+    //TODO:Figure out a more modular way to handle nested comments query and presentation  
+
+        const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
+        const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
+
         return (
-            otus.map(({ pbotID, name, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures}) => {
+            otus.map(({ pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy}) => {
+             
+                const history = sort(enteredBy.map(e => { 
+                    return {
+                        timestamp: e.timestamp.formatted,
+                        type: e.type,
+                        person: `${e.Person.given}${e.Person.middle ? ` ${e.Person.middle}` : ``} ${e.Person.surname}`
+                    }}), "timestamp");
+        
                 const header1 = {marginLeft:"2em", marginTop:"10px"}
                 return (
                     <div key={pbotID} style={style}>
@@ -96,7 +116,7 @@ function OTUs(props) {
                                 </Grid>
                                 <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                                     <Typography variant="h5">
-                                        OTU: {name || "(name missing)"}
+                                        OTU
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
@@ -106,6 +126,387 @@ function OTUs(props) {
                                 </Grid>
                             </Grid>
 
+                            <Grid container spacing={1} sx={{ml:"10px"}}>
+                                <Grid item><b>direct link:</b></Grid>
+                                <Grid item><DirectQueryLink type="otu" pbotID={pbotID} params={directQParams} /></Grid>
+                            </Grid>
+
+                            <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
+                                <Box sx={boxedDisplay}>
+                                    <b>{name}</b>
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{pbotID}
+                                </Box>
+                                <br />
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Authority</Typography><br />{authority}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Quality index</Typography><br />{qualityIndex}
+                                </Box>
+                                <br />
+
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption">Parts preserved</Typography><br />{partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption">Notable features preserved</Typography><br />{notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}
+                                </Box>        
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption">Data access groups</Typography><br />{elementOf.map((e, index, arr) => e.name + (index+1 === arr.length ? '' : ", "))} 
+                                </Box>    
+                            </Paper>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Taxonomy
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Major Taxon group</Typography><br />{majorTaxonGroup}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br />{family}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br />{genus}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br />{species}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />{pbdbParentTaxon}</Box>
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Diagnosis
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {diagnosis}
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Holotype descriptions
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {holotypeSpecimen && 
+                                        holotypeSpecimen.Specimen.describedBy && 
+                                        holotypeSpecimen.Specimen.describedBy[0] &&
+                                        holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 &&            
+                                        <> 
+                                        <TableContainer component={Paper}>
+                                        <Table sx={{width:"100%", mr:"10px"}} aria-label="description table">
+                                            <TableBody>
+                                                    {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => (
+                                                        <AlternatingTableRow key={d.pbotID}>
+                                                            <TableCell align="left" sx={{fontSize: "1rem"}}>
+                                                                <div ><b>From schema "{d.Description.schema.title}":</b></div>
+                                                                <div style={indent}><b>notes:</b> {d.Description.notes}</div>
+                                                                <div style={indent}><b>character states:</b></div>
+                                                                <CharacterInstances style={indent2} characterInstances={d.Description.characterInstances} />
+                                                                </TableCell>
+                                                        </AlternatingTableRow>    
+                                                    ))}
+                                            </TableBody>
+                                        </Table>
+                                        </TableContainer>
+                                        </>
+                                    }
+
+                                    {(!holotypeSpecimen || 
+                                        !holotypeSpecimen.Specimen.describedBy || 
+                                        !holotypeSpecimen.Specimen.describedBy[0] ||
+                                        !holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances || 
+                                        !holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0) &&
+                                        <div style={indent}>No holotype descriptions available</div>
+                                    }
+
+
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Merged exemplar descriptions 
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {mergedDescription && mergedDescription.length > 0 &&
+                                        <>
+                                        <TableContainer component={Paper}>
+                                        <Table sx={{width:"100%", mr:"10px"}} aria-label="description table">
+                                            <TableBody>
+                                                {alphabetize([...mergedDescription], "schema").reduce((acc, ci) => acc.includes(ci.schema) ? acc : acc.concat(ci.schema),[]).map((s,i) => {
+                                                    return (
+                                                        <>
+                                                        <AlternatingTableRow key={s.pbotID}>
+                                                            <TableCell align="left" sx={{fontSize: "1rem"}}>
+                                                                    <div><b>From schema "{s}":</b></div>
+                                                                    <div style={indent}><b>character states:</b></div>
+                                                                    {alphabetize(mergedDescription.filter(ci => ci.schema === s), "characterName").map ((ci, i) =>  (
+                                                                        <div style={indent2} key={i}>{ci.characterName}:{"quantity" === ci.stateName ? ci.stateValue : ci.stateName}{ci.stateOrder  ? ', order:' + ci.stateOrder : ''}</div>
+                                                                    ))}
+                                                            </TableCell>
+                                                        </AlternatingTableRow>
+                                                        </>
+                                                    )
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                        </TableContainer>
+
+                                        {(!mergedDescription || !mergedDescription.length > 0) &&
+                                            <div style={indent}>No merged descriptions available</div>
+                                        }
+
+                                        </>
+                                    } 
+
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Exemplar specimens 
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {holotypeSpecimen && (
+                                        <>
+                                            <div style={indent}><b>Holotype specimen</b></div>
+                                            <DirectQueryLink type="specimen" pbotID={holotypeSpecimen.Specimen.pbotID} params={directQParams} style={indent2}>
+                                                {holotypeSpecimen.Specimen.name}
+                                            </DirectQueryLink>
+                                        </>
+                                    )}
+                                    {typeSpecimens && typeSpecimens.length > 0 &&
+                                        <>
+                                            <div style={indent}><b>Other type specimens</b></div>
+                                            {typeSpecimens.map(s => (
+                                                <>
+                                                    {s.Specimen && s.Specimen.name &&
+                                                        <>
+                                                        <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={directQParams} style={indent2}>
+                                                            {s.Specimen.name}
+                                                        </DirectQueryLink><br />
+                                                        </>
+                                                    }
+                                                </>
+                                            ))
+                                            }
+                                        </>
+                                    }
+
+                                    {(!holotypeSpecimen && (!typeSpecimens || typeSpecimens.length === 0)) &&
+                                        <div style={indent}>No type specimens available</div>
+                                    }
+
+                                </AccordionDetails>
+                            </Accordion>
+
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Additional specimens 
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {identifiedSpecimens && identifiedSpecimens.length > 0 &&
+                                        <>
+                                            {identifiedSpecimens.map(s => (
+                                                <>
+                                                    {s.Specimen && s.Specimen.name &&
+                                                        <>
+                                                        <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={directQParams} style={indent2}>
+                                                            {s.Specimen.name}
+                                                        </DirectQueryLink><br />
+                                                        </>
+                                                    }
+                                                </>
+                                            ))
+                                            }
+                                        </>
+                                    }
+                                    {(!identifiedSpecimens || identifiedSpecimens.length === 0) &&
+                                        <div style={indent}>No identified specimens available</div>
+                                    }
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Location and geologic info 
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    Not yet implemented
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                History
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                         <TableContainer component={Paper}>
+                                            <Table sx={{width:"100%", mr:"10px"}} aria-label="history table">
+                                                <TableBody>
+                                                    {history.map(eb => {
+                                                    return (
+                                                        <>
+
+                                                            <AlternatingTableRow key={eb.timestamp}>
+                                                                <TableCell align="left">
+                                                                    {eb.timestamp}
+                                                                </TableCell>
+                                                                <TableCell align="left">
+                                                                    {eb.type}
+                                                                </TableCell>
+                                                                <TableCell align="left">
+                                                                    {eb.person}
+                                                                </TableCell>
+                                                            </AlternatingTableRow>
+                                                        </>
+                                                    )
+                                                    })}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                        
+                            </AccordionDetails>
+                        </Accordion>
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Notes
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {notes}
+                            </AccordionDetails>
+                        </Accordion>
+
+
+                        <Accordion style={accstyle} defaultExpanded={false}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="required-content"
+                                id="required-header"                        
+                            >
+                                Synonyms
+                            </AccordionSummary>
+                            <AccordionDetails>
+                            {synonyms && synonyms.length > 0 &&
+                            <div>
+                                {synonyms.map((synonym, i) => {
+                                    const synOTU=synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
+                                    return (
+                                        <div key={i}>
+                                            <div style={indent}> 
+                                                <DirectQueryLink type="otu" pbotID={synOTU.pbotID} params={directQParams} >
+                                                    {synOTU.name}
+                                                </DirectQueryLink>
+                                            </div>
+                                            <div style={indent2}><b>family:</b> {synOTU.family}</div>
+                                            <div style={indent2}><b>genus:</b> {synOTU.genus}</div>
+                                            <div style={indent2}><b>species:</b> {synOTU.species}</div>
+                                            {synonym.comments && synonym.comments.length > 0 &&
+                                            <div>
+                                                <div style={indent2}><b>comments:</b></div>
+                                                {synonym.comments.map((comment, i) => (
+                                                    <div key={i}>
+                                                        <div style={indent3}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                        <div style={indent4}>{comment.content}</div>
+                                                        {comment.comments && comment.comments.length > 0 &&
+                                                        <div>
+                                                            {comment.comments.map((comment, i) => (
+                                                                <div key={i}>
+                                                                    <div style={indent4}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                    <div style={indent5}>{comment.content}</div>
+                                                                    {comment.comments && comment.comments.length > 0 &&
+                                                                    <div>
+                                                                        {comment.comments.map((comment, i) => (
+                                                                            <div key={i}>
+                                                                                <div style={indent5}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                                <div style={indent5}>{comment.content}</div>
+                                                                                {comment.comments && comment.comments.length > 0 &&
+                                                                                <div>
+                                                                                    {comment.comments.map((comment, i) => (
+                                                                                        <div key={i}>
+                                                                                            <div style={indent6}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                                            <div style={indent6}>{comment.content}</div>
+                                                                                            {comment.comments && comment.comments.length > 0 &&
+                                                                                            <div>
+                                                                                                {comment.comments.map((comment, i) => (
+                                                                                                    <div key={i}>
+                                                                                                        <div style={indent7}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
+                                                                                                        <div style={indent7}>{comment.content}</div>
+                                                                                                    </div>
+                                                                                                ))}
+                                                                                            </div>
+                                                                                            }
+                                                                                        </div>
+                                                                                    ))}
+                                                                                </div>
+                                                                                }
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                    }
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            }
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            }
+                            {(!synonyms || !synonyms.length > 0) &&
+                                <div style={indent}>No proposed synonyms</div>
+                            }
+
+                            </AccordionDetails>
+                        </Accordion>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
                             <div style={indent}><b>direct link:</b> <DirectQueryLink type="otu" pbotID={pbotID} params={directQParams} /></div>
 
                             <div style={header1}><Typography variant="h6">Identity</Typography></div>

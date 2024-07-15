@@ -50,6 +50,17 @@ function OTUList(props) {
             elementOf {
                 name
             }
+            enteredBy {
+                timestamp {
+                    formatted
+                }
+                type
+                Person {
+                    given
+                    middle
+                    surname
+                }
+            }
             synonyms @include(if: $includeSynonyms) {
                 otus {
                     name
@@ -115,7 +126,23 @@ function OTUList(props) {
                 Specimen {
                     name
                     pbotID
-                    describedBy {
+                    images {
+                        link
+                        caption
+                    }
+                    collection {
+                        mininterval
+                        maxinterval
+                        stratigraphicGroup
+                        stratigraphicFormation
+                        stratigraphicMember
+                        stratigraphicBed
+                        lat
+                        lon
+                        country
+                        state     
+                    }
+                     describedBy {
                         Description {
                             name
                             notes
@@ -137,6 +164,50 @@ function OTUList(props) {
                                 }
                             }
                         }
+                    }
+                }
+            }
+            typeSpecimens {
+                Specimen {
+                    name
+                    pbotID
+                    images {
+                        link
+                        caption
+                    }
+                    collection {
+                        mininterval
+                        maxinterval
+                        stratigraphicGroup
+                        stratigraphicFormation
+                        stratigraphicMember
+                        stratigraphicBed
+                        lat
+                        lon
+                        country
+                        state                   
+                    }
+                }
+            }
+            identifiedSpecimens {
+                Specimen {
+                    name
+                    pbotID
+                    images {
+                        link
+                        caption
+                    }
+                    collection {
+                        mininterval
+                        maxinterval
+                        stratigraphicGroup
+                        stratigraphicFormation
+                        stratigraphicMember
+                        stratigraphicBed
+                        lat
+                        lon
+                        country
+                        state                    
                     }
                 }
             }
