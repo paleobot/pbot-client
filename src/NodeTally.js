@@ -12,12 +12,13 @@ export const NodeTally = (props) => {
         "Taxa" === props.nodeType ? "OTU" : 
         "Collections" === props.nodeType ? "Collection" : 
         "Specimens" === props.nodeType ? "Specimen" : 
-        "Contributors" === props.nodeType ? "Person" : 
+        "Contributors" === props.nodeType ? "Contributor" : 
         "";
 
+    const [tally, setTally] = useState(0);
 
 
-/*
+    /*
     const gQL = gql`
             query ($nodeType: String!) {
                 GetNodeCount (nodeType: $nodeType) 
@@ -34,13 +35,12 @@ export const NodeTally = (props) => {
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-*/
-const [tally, setTally] = useState(0);
+    */
 
-/* Note: I'm going at the graphql server via fetch here because Apollo client is not available yet.
-*/
-const [loading, setLoading] = useState(false);
-const [error, setError] = useState(null);
+    /* Note: I'm going at the graphql server via fetch here because as currently architected, this component is used outside of ApolloProvider. I've left the apollo code ghosted above.
+    */
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const gQL = `
         query  {
