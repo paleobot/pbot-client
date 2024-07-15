@@ -1283,9 +1283,9 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 stratigraphicBed: queryParams.stratigraphicbed || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
-            includeImages={queryParams.includeImages}
-            includeDescriptions={queryParams.includeDescriptions} 
-            includeOTUs={queryParams.includeOTUs} 
+            includeImages={true}
+            includeDescriptions={true} 
+            includeOTUs={true} 
             standAlone={queryParams.standAlone} 
             handleSelect={handleSelect}
             exclude={exclude}
