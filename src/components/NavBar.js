@@ -185,8 +185,6 @@ export default function NavBar() {
                     alignItems="center"
                 >
                     <Grid item container justifyContent="center" spacing={0} sx={{m:"0px", width:"70%"}} >
-                        {/*TODO: implement the Boxes below as a component that poles the db for a 
-                        count based on a passed parameter (reference, taxa, etc.)*/}
                         <Grid item xs={3} md={2}>
                             <NodeTally nodeType="References" />
                         </Grid>
