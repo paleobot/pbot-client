@@ -7,6 +7,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Carousel } from 'react-responsive-carousel';
 import { SecureImage } from '../Image/SecureImage';
+import { array } from 'yup';
+import { Country, State }  from 'country-state-city';
 
 //TODO: Might be worth moving this to its own file and using elsewhere
 const DirectQueryLink = (props) => {
@@ -30,10 +32,11 @@ const DirectQueryLink = (props) => {
     )
 }
 
-const ImageTabs = ({holotypeImages, typeImages}) => {
+const ImageTabs = ({holotypeImages, typeImages, identifiedImages}) => {
     const [value, setValue] = React.useState(
         holotypeImages && holotypeImages.length > 0 ? '1' :
-        typeImages && typeImages.length > 0 ? '2' : '1');
+        typeImages && typeImages.length > 0 ? '2' : 
+        identifiedImages && identifiedImages.length > 0 ? '3' : '1');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -48,6 +51,7 @@ const ImageTabs = ({holotypeImages, typeImages}) => {
                 <TabList onChange={handleChange} aria-label="type images" textColor="secondary" indicatorColor="secondary">
                     <Tab label="Holotype images" value="1" />
                     <Tab label="Other type images" value="2" />
+                    <Tab label="Identified specimen images" value="3" />
                 </TabList>
             </Box>
             <TabPanel value="1">
@@ -88,6 +92,26 @@ const ImageTabs = ({holotypeImages, typeImages}) => {
 
                 {(!typeImages || typeImages.length === 0) &&
                     <div>No type images available</div>
+                }
+            </TabPanel>
+            <TabPanel value="3">
+            {identifiedImages && identifiedImages.length > 0 &&
+                <div style={carousel}>
+                {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                <Carousel showThumbs={false}>  
+                    {identifiedImages.map((image) => (
+                        <div key={image.pbotID} >
+                            {/*<img src={image.link} alt={image.caption}/>*/}
+                            <SecureImage src={image.link}/>
+                            <p className="legend">{image.caption}</p>
+                        </div>
+                    ))}
+                </Carousel>
+                </div>
+                }
+
+                {(!identifiedImages || identifiedImages.length === 0) &&
+                    <div>No indentified specimen images available</div>
                 }
             </TabPanel>
         </TabContext>
@@ -184,7 +208,82 @@ function OTUs(props) {
                         }, [])
                     )
                 });
-        
+
+                let identifiedImages = [];
+                const typeIDSet = new Set(typeSpecimens.map(tS => tS.Specimen.pbotID));
+                console.log("XXXXXXXXXX")
+                console.log(identifiedSpecimens)
+                console.log(typeSpecimens)
+                identifiedSpecimens.filter(tS => !typeIDSet.has(tS.Specimen.pbotID)).forEach(tS => {
+                    if (tS.Specimen && tS.Specimen.images) identifiedImages = identifiedImages.concat(
+                        tS.Specimen.images.reduce((acc, i) => {
+                            acc.push({
+                                caption: `${tS.Specimen.name} - ${i.caption}`,
+                                link: i.link 
+                            })     
+                            return acc                       
+                        }, [])
+                    )
+                });
+                console.log(identifiedImages)
+
+                const minIntervals = new Set();
+                const maxIntervals = new Set();
+                const stratigraphicGroups = new Set();
+                const stratigraphicFormations = new Set();
+                const stratigraphicMembers = new Set();
+                const stratigraphicBeds = new Set();
+                let minLat
+                let maxLat
+                let minLon
+                let maxLon
+                const countries = new Set();
+                const states = new Set();
+                typeSpecimens.forEach(tS => {
+                    minIntervals.add(tS.Specimen.collection.mininterval);
+                    maxIntervals.add(tS.Specimen.collection.maxinterval);
+                    stratigraphicGroups.add(tS.Specimen.collection.stratigraphicGroup);
+                    stratigraphicFormations.add(tS.Specimen.collection.stratigraphicFormation);
+                    stratigraphicMembers.add(tS.Specimen.collection.stratigraphicMember);
+                    stratigraphicBeds.add(tS.Specimen.collection.stratigraphicBed);
+                    minLat = minLat ? 
+                        tS.Specimen.collection.lat < minLat ? 
+                            tS.Specimen.collection.lat : 
+                            minLat :
+                            tS.Specimen.collection.lat;
+                    maxLat = maxLat ? 
+                        tS.Specimen.collection.lat > maxLat ? 
+                            tS.Specimen.collection.lat : 
+                            maxLat :
+                            tS.Specimen.collection.lat;
+                    minLon = minLon ? 
+                        tS.Specimen.collection.lon < minLon ? 
+                            tS.Specimen.collection.lon : 
+                            minLon :
+                            tS.Specimen.collection.lon;
+                    maxLon = maxLon ?
+                        tS.Specimen.collection.lon > maxLon ? 
+                            tS.Specimen.collection.lon : 
+                            maxLon :
+                            tS.Specimen.collection.lon;
+                    if (tS.Specimen.collection.country) {
+                        countries.add(tS.Specimen.collection.country);
+                        if (tS.Specimen.collection.state) {
+                            states.add({
+                                country: tS.Specimen.collection.country,
+                                state: tS.Specimen.collection.state
+                            })
+                        }
+                    }
+                })
+                console.log("loc and geo")
+                console.log(minLat);
+                console.log(maxLat)
+                console.log(states)
+                console.log(Array.from(states))
+                Array.from(states).forEach(g =>
+                    console.log(g))
+
                 const header1 = {marginLeft:"2em", marginTop:"10px"}
                 return (
                     <div key={pbotID} style={style}>
@@ -259,7 +358,7 @@ function OTUs(props) {
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <ImageTabs holotypeImages={holotypeImages} typeImages={typeImages} />
+                                    <ImageTabs holotypeImages={holotypeImages} typeImages={typeImages} identifiedImages={identifiedImages}/>
 
                                 </AccordionDetails>
                             </Accordion>
@@ -408,7 +507,7 @@ function OTUs(props) {
                                                         <>
                                                         <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={directQParams} style={indent2}>
                                                             {s.Specimen.name}
-                                                        </DirectQueryLink>
+                                                        </DirectQueryLink><br />
                                                         </>
                                                     }
                                                 </>
@@ -465,7 +564,34 @@ function OTUs(props) {
                                     Location and geologic info 
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    Not yet implemented
+
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Minimum latitude</Typography><br />{minLat}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Maximum latitude</Typography><br />{maxLat}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Minimum longitude</Typography><br />{minLon}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Maximum longitude</Typography><br />{maxLon}</Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Countries/States</Typography><br />
+                                        {Array.from(countries).map(country => {
+                                            return (
+                                                <>
+                                                <div>{Country.getCountryByCode(country).name}</div>
+                                                    {Array.from(states).filter(s => s.country === country).map(state => (
+                                                        <div style={indent}>{State.getStateByCodeAndCountry(state.state, state.country).name}</div>
+                                                    ))}
+                                                </>
+                                            )
+                                        })} 
+                                    </Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Geologic groups</Typography><br />{Array.from(stratigraphicGroups).map(g => (<div>{g}</div>))}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Geologic formations</Typography><br />{Array.from(stratigraphicFormations).map(g => (<div>{g}</div>))}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Geologic members</Typography><br />{Array.from(stratigraphicMembers).map(g => (<div>{g}</div>))}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Geologic beds</Typography><br />{Array.from(stratigraphicBeds).map(g => (<div>{g}</div>))}</Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Maximum time intervals</Typography><br />{Array.from(maxIntervals).map(g => (<div>{g}</div>))}</Box>
+                                    <Box sx={boxedDisplay}><Typography variant="caption">Minimum time intervals</Typography><br />{Array.from(minIntervals).map(g => (<div>{g}</div>))}</Box>
+ 
                                 </AccordionDetails>
                             </Accordion>
 
