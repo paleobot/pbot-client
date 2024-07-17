@@ -435,10 +435,10 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
                 enterers: queryParams.enterers && queryParams.enterers.length > 0 ?queryParams.enterers.map(({pbotID}) => pbotID)  : null, 
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
-            includeSynonyms={queryParams.includeSynonyms} 
-            includeComments={queryParams.includeComments} 
-            includeHolotypeDescription={queryParams.includeHolotypeDescription} 
-            includeMergedDescription={queryParams.includeMergedDescription} 
+            includeSynonyms={true} 
+            includeComments={true} 
+            includeHolotypeDescription={true} 
+            includeMergedDescription={true} 
             standAlone={queryParams.standAlone} 
             select={select}
             handleSelect={handleSelect}
