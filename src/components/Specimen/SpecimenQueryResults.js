@@ -459,6 +459,7 @@ function Specimens(props) {
                                         <div key={image.pbotID} >
                                             {/*<img src={image.link} alt={image.caption}/>*/}
                                             <SecureImage src={image.link}/>
+                                            <p className="legend">{image.caption}</p>
                                         </div>
                                     ))}
                                 </Carousel>
