@@ -58,10 +58,10 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 stratigraphicmember: '',
                 stratigraphicbed: '',
                 groups: [],
-                includeHolotypeDescription: false,
-                includeMergedDescription: false,
-                includeSynonyms: false,
-                includeComments: false,
+                includeHolotypeDescription: true,
+                includeMergedDescription: true,
+                includeSynonyms: true,
+                includeComments: true,
                 collection: '',
                 enterers: [],
             };
@@ -413,7 +413,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 <br />
                 */}
                 
-                {!select && 
+                {/*!select && 
                 <>
                 <Field 
                     component={CheckboxWithLabel}
@@ -456,7 +456,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 />
                 <br />
                 </>
-                }
+                */}
                 
                 <br />
                 <br />
