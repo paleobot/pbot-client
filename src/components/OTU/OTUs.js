@@ -1,9 +1,12 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize, sort, AlternatingTableRow } from '../../util.js';
-import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Accordion, AccordionSummary, AccordionDetails, Tabs, Tab } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { Carousel } from 'react-responsive-carousel';
+import { SecureImage } from '../Image/SecureImage';
 
 //TODO: Might be worth moving this to its own file and using elsewhere
 const DirectQueryLink = (props) => {
@@ -26,6 +29,71 @@ const DirectQueryLink = (props) => {
             }</Link>
     )
 }
+
+const ImageTabs = ({holotypeImages, typeImages}) => {
+    const [value, setValue] = React.useState(
+        holotypeImages && holotypeImages.length > 0 ? '1' :
+        typeImages && typeImages.length > 0 ? '2' : '1');
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    const carousel = {width: "60%", marginLeft: "2em", borderStyle:"solid"}
+  
+    return (
+        <Box sx={{ width: '100%', typography: 'body1' }}>
+            <TabContext value={value}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList onChange={handleChange} aria-label="type images" textColor="secondary" indicatorColor="secondary">
+                    <Tab label="Holotype images" value="1" />
+                    <Tab label="Other type images" value="2" />
+                </TabList>
+            </Box>
+            <TabPanel value="1">
+                {holotypeImages && holotypeImages.length > 0 &&
+                <div style={carousel}>
+                {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                <Carousel showThumbs={false}>  
+                    {holotypeImages.map((image) => (
+                        <div key={image.pbotID} >
+                            {/*<img src={image.link} alt={image.caption}/>*/}
+                            <SecureImage src={image.link}/>
+                            <p className="legend">{image.caption}</p>
+                        </div>
+                    ))}
+                </Carousel>
+                </div>
+                }
+
+                {(!holotypeImages || holotypeImages.length === 0) &&
+                    <div>No holotype images available</div>
+                }
+            </TabPanel>
+            <TabPanel value="2">
+            {typeImages && typeImages.length > 0 &&
+                <div style={carousel}>
+                {/*can't use thumbs because SecureImage does not immediately make image available*/}
+                <Carousel showThumbs={false}>  
+                    {typeImages.map((image) => (
+                        <div key={image.pbotID} >
+                            {/*<img src={image.link} alt={image.caption}/>*/}
+                            <SecureImage src={image.link}/>
+                            <p className="legend">{image.caption}</p>
+                        </div>
+                    ))}
+                </Carousel>
+                </div>
+                }
+
+                {(!typeImages || typeImages.length === 0) &&
+                    <div>No type images available</div>
+                }
+            </TabPanel>
+        </TabContext>
+      </Box>
+    );
+  }
 
 function OTUs(props) {
     console.log("OTUs");
@@ -92,7 +160,30 @@ function OTUs(props) {
                         timestamp: e.timestamp.formatted,
                         type: e.type,
                         person: `${e.Person.given}${e.Person.middle ? ` ${e.Person.middle}` : ``} ${e.Person.surname}`
-                    }}), "timestamp");
+                    }
+                }), "timestamp");
+
+                const holotypeImages = (holotypeSpecimen && holotypeSpecimen.Specimen && holotypeSpecimen.Specimen.images && holotypeSpecimen.Specimen.images.length > 0) ?
+                    holotypeSpecimen.Specimen.images.reduce((acc, i) => {
+                        acc.push({
+                            caption: `${holotypeSpecimen.Specimen.name} - ${i.caption}`,
+                            link: i.link 
+                        })
+                        return acc
+                    }, []) : []; 
+
+                let typeImages = [];
+                typeSpecimens.filter(tS => holotypeSpecimen ? tS.pbotID !== holotypeSpecimen.pbotID : true).forEach(tS => {
+                    if (tS.Specimen && tS.Specimen.images) typeImages = typeImages.concat(
+                        tS.Specimen.images.reduce((acc, i) => {
+                            acc.push({
+                                caption: `${tS.Specimen.name} - ${i.caption}`,
+                                link: i.link 
+                            })     
+                            return acc                       
+                        }, [])
+                    )
+                });
         
                 const header1 = {marginLeft:"2em", marginTop:"10px"}
                 return (
@@ -157,6 +248,21 @@ function OTUs(props) {
                                     <Typography variant="caption">Data access groups</Typography><br />{elementOf.map((e, index, arr) => e.name + (index+1 === arr.length ? '' : ", "))} 
                                 </Box>    
                             </Paper>
+
+                            <Accordion style={accstyle} defaultExpanded={holotypeImages.length > 0 || typeImages.length > 0}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Images
+                                </AccordionSummary>
+                                <AccordionDetails>
+
+                                    <ImageTabs holotypeImages={holotypeImages} typeImages={typeImages} />
+
+                                </AccordionDetails>
+                            </Accordion>
 
                             <Accordion style={accstyle} defaultExpanded={false}>
                                 <AccordionSummary
@@ -290,7 +396,7 @@ function OTUs(props) {
                                             <div style={indent}><b>Holotype specimen</b></div>
                                             <DirectQueryLink type="specimen" pbotID={holotypeSpecimen.Specimen.pbotID} params={directQParams} style={indent2}>
                                                 {holotypeSpecimen.Specimen.name}
-                                            </DirectQueryLink>
+                                            </DirectQueryLink><div>&nbsp;</div>
                                         </>
                                     )}
                                     {typeSpecimens && typeSpecimens.length > 0 &&
@@ -302,7 +408,7 @@ function OTUs(props) {
                                                         <>
                                                         <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={directQParams} style={indent2}>
                                                             {s.Specimen.name}
-                                                        </DirectQueryLink><br />
+                                                        </DirectQueryLink>
                                                         </>
                                                     }
                                                 </>
