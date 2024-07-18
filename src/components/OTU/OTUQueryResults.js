@@ -127,6 +127,7 @@ function OTUList(props) {
                     name
                     pbotID
                     images {
+                        pbotID
                         link
                         caption
                     }
@@ -144,6 +145,7 @@ function OTUList(props) {
                     }
                      describedBy {
                         Description {
+                            pbotID
                             name
                             notes
                             schema {
@@ -172,6 +174,7 @@ function OTUList(props) {
                     name
                     pbotID
                     images {
+                        pbotID
                         link
                         caption
                     }
@@ -194,6 +197,7 @@ function OTUList(props) {
                     name
                     pbotID
                     images {
+                        pbotID
                         link
                         caption
                     }
