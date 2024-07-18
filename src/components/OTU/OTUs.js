@@ -454,7 +454,6 @@ function OTUs(props) {
                                             <TableBody>
                                                 {alphabetize([...mergedDescription], "schema").reduce((acc, ci) => acc.includes(ci.schema) ? acc : acc.concat(ci.schema),[]).map((s,i) => {
                                                     return (
-                                                        <>
                                                         <AlternatingTableRow key={`${s.schema}${i}`}>
                                                             <TableCell align="left" sx={{fontSize: "1rem"}}>
                                                                     <div><b>From schema "{s}":</b></div>
@@ -464,7 +463,6 @@ function OTUs(props) {
                                                                     ))}
                                                             </TableCell>
                                                         </AlternatingTableRow>
-                                                        </>
                                                     )
                                                 })}
                                             </TableBody>
@@ -502,7 +500,7 @@ function OTUs(props) {
                                         <>
                                             <div style={indent}><b>Other type specimens</b></div>
                                             {typeSpecimens.map(s => (
-                                                <>
+                                                <div key={s.Specimen.pbotID}>
                                                     {s.Specimen && s.Specimen.name &&
                                                         <>
                                                         <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={directQParams} style={indent2}>
@@ -510,7 +508,7 @@ function OTUs(props) {
                                                         </DirectQueryLink><br />
                                                         </>
                                                     }
-                                                </>
+                                                </div>
                                             ))
                                             }
                                         </>
@@ -522,7 +520,6 @@ function OTUs(props) {
 
                                 </AccordionDetails>
                             </Accordion>
-
 
                             <Accordion style={accstyle} defaultExpanded={false}>
                                 <AccordionSummary
@@ -536,7 +533,7 @@ function OTUs(props) {
                                     {identifiedSpecimens && identifiedSpecimens.length > 0 &&
                                         <>
                                             {identifiedSpecimens.map(s => (
-                                                <>
+                                                <div key={s.Specimen.pbotID}>
                                                     {s.Specimen && s.Specimen.name &&
                                                         <>
                                                         <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={directQParams} style={indent2}>
@@ -544,7 +541,7 @@ function OTUs(props) {
                                                         </DirectQueryLink><br />
                                                         </>
                                                     }
-                                                </>
+                                                </div>
                                             ))
                                             }
                                         </>
@@ -574,12 +571,11 @@ function OTUs(props) {
                                         <Typography variant="caption">Countries/States</Typography><br />
                                         {Array.from(countries).map(country => {
                                             return (
-                                                <>
-                                                <div key={country}>{Country.getCountryByCode(country).name}</div>
+                                                <div key={country}>{Country.getCountryByCode(country).name}
                                                     {Array.from(states).filter(s => s.country === country).map(state => (
                                                         <div style={indent} key={`${country}${state}`}>{State.getStateByCodeAndCountry(state.state, state.country).name}</div>
                                                     ))}
-                                                </>
+                                                </div>
                                             )
                                         })} 
                                     </Box>
@@ -609,21 +605,18 @@ function OTUs(props) {
                                                 <TableBody>
                                                     {history.map(eb => {
                                                     return (
-                                                        <>
-
-                                                            <AlternatingTableRow key={eb.timestamp}>
-                                                                <TableCell align="left">
-                                                                    {eb.timestamp}
-                                                                </TableCell>
-                                                                <TableCell align="left">
-                                                                    {eb.type}
-                                                                </TableCell>
-                                                                <TableCell align="left">
-                                                                    {eb.person}
-                                                                </TableCell>
-                                                            </AlternatingTableRow>
-                                                        </>
-                                                    )
+                                                        <AlternatingTableRow key={eb.timestamp}>
+                                                            <TableCell align="left">
+                                                                {eb.timestamp}
+                                                            </TableCell>
+                                                            <TableCell align="left">
+                                                                {eb.type}
+                                                            </TableCell>
+                                                            <TableCell align="left">
+                                                                {eb.person}
+                                                            </TableCell>
+                                                        </AlternatingTableRow>
+                                                   )
                                                     })}
                                                 </TableBody>
                                             </Table>
@@ -730,7 +723,7 @@ function OTUs(props) {
 
                                 </AccordionDetails>
                             </Accordion>
-                            
+                            <br />
                             </>
                         }
 
