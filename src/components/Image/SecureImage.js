@@ -68,7 +68,9 @@ export class SecureImage extends React.Component {
         }
 
         //To rerender popup as images load, per https://github.com/mui/material-ui/issues/10595
-        window.dispatchEvent(new CustomEvent('resize'));
+        //Ghosted for now. Was causing "Cannot update during an existing state transition". 
+        //Not sure how important this is, but it works without it.
+        //window.dispatchEvent(new CustomEvent('resize'));
         
         return <img src={this.state.imageSrc} alt={this.props.alt} width={this.props.width} />;
     }
