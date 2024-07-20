@@ -54,7 +54,7 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
         species: '',
         enterers: [],
         groups: [],
-        includeSpecimens: false
+        includeSpecimens: true
     };
     
     const accstyle = {textAlign: "left", width: "70%"}
@@ -356,6 +356,7 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                
                 {!select &&
                 <>
+                {/*
                 <Field 
                     component={CheckboxWithLabel}
                     name="includeSpecimens" 
@@ -365,6 +366,7 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                     variant="standard"
                 />
                 <br />
+                */}
                 </>
                 }
 
