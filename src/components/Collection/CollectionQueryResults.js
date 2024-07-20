@@ -3,11 +3,12 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { Link, Grid, Typography, Stack, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow } from '@mui/material';
+import { Link, Grid, Typography, Stack, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { alphabetize, AlternatingTableRow, sort } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function Specimens(props) { //TODO: move this to standalone file in Specimens folder?
     console.log("Specimens");
@@ -19,7 +20,9 @@ function Specimens(props) { //TODO: move this to standalone file in Specimens fo
     return specimens.map(({pbotID, name}) => {
         const directURL = new URL(window.location.origin + "/query/specimen/" + pbotID);
         return (
-            <Link key={pbotID} style={style} color="success.main" underline="hover" href={directURL}  target="_blank">{name}</Link>
+            <>
+            <Link key={pbotID}  color="success.main" underline="hover" href={directURL}  target="_blank">{name}</Link><br />
+            </>
         )
     });
 }
@@ -243,6 +246,7 @@ function Collections(props) {
             }
             references (orderBy: order_asc) {
                 Reference {
+                    pbotID
                     title
                     year
                 }
@@ -431,6 +435,9 @@ function Collections(props) {
 
     if (props.standAlone) {
 
+        const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
+        const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
+
         return (
             collections.map((collection) => {
                 const directURL = new URL(window.location.origin + "/query/collection/" + collection.pbotID);
@@ -459,7 +466,7 @@ function Collections(props) {
                                 </Grid>
                                 <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                                     <Typography variant="h5">
-                                        Collection: {collection.name}
+                                        Collection
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
@@ -468,100 +475,273 @@ function Collections(props) {
                                     </Typography>
                                 </Grid>
                             </Grid>
-                            <div style={{marginLeft:"2em"}}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
-                            <div style={header1}><Typography variant="h6">Identity</Typography></div>
-                            <div style={indent}><b>pbotID:</b> {collection.pbotID}</div>
-                            <div style={indent}><b>pbdb id:</b> {collection.pbdbid}</div>
-                            <div style={indent}><b>latitude:</b> {collection.location.latitude}</div>
-                            <div style={indent}><b>longitude:</b> {collection.location.longitude}</div>
-                            <div style={indent}><b>GPS coordinate uncertainty:</b> {collection.gpsCoordinateUncertainty}</div>
-                            {collection.references && collection.references.length > 0 &&
-                                <div>
-                                    <div style={indent}><b>references:</b></div>
-                                    {sort([...collection.references], "#order").map(reference => (
-                                        <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
-                                    ))}
-                                </div>
-                            }
+                            <Grid container spacing={1} sx={{ml:"10px"}}>
+                                <Grid item><b>direct link:</b></Grid>
+                                <Grid item><Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></Grid>
+                            </Grid>
 
-                            <div style={header1}><Typography variant="h6">Geographic</Typography></div>
-                            <div style={indent}><b>country:</b> {collection.country}</div>
-                            <div style={indent}><b>state:</b> {collection.state}</div>
-                            <div style={indent}><b>protected site:</b> {collection.protectedSite}</div>
-                            <div style={indent}><b>scale of geographic resolution:</b> {collection.geographicResolution}</div>
-                            <div style={indent}><b>notes on geographic information:</b> {collection.geographicComments}</div>
-                            
-                            <div style={header1}><Typography variant="h6">Age</Typography></div>
-                            <div style={indent}><b>timescale:</b> {collection.timescale}</div>
-                            <div style={indent}><b>max interval:</b> {collection.maxinterval}</div>
-                            <div style={indent}><b>min interval:</b> {collection.mininterval}</div>
-                            <div style={indent}>
-                                <Stack direction="row" spacing={2}>
-                                    <b>direct date:</b> {collection.directDate}
-                                    <b>direct date error:</b> {collection.directDateError}
-                                    <b>direct date type:</b> {collection.directDateType}
-                                </Stack>
-                            </div>
-                            <div style={indent}>
-                                <Stack direction="row" spacing={2}>
-                                    <b>numeric maximum age:</b> {collection.numericAgeMax}
-                                    <b>numeric maximum age error:</b> {collection.numericAgeMaxError}
-                                    <b>numeric maximum age type:</b> {collection.numericAgeMaxType}
-                                </Stack>
-                            </div>
-                            <div style={indent}>
-                                <Stack direction="row" spacing={2}>
-                                    <b>numeric minimum age:</b> {collection.numericAgeMin}
-                                    <b>numeric minimum age error:</b> {collection.numericAgeMinError}
-                                    <b>numeric minimum age type:</b> {collection.numericAgeMinType}
-                                </Stack>
-                            </div>
-                            <div style={indent}><b>notes on age information:</b> {collection.ageComments}</div>
+                            <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
+                                <Box sx={boxedDisplay}>
+                                    <b>{collection.name}</b>
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{collection.pbotID}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>PBDB ID</Typography><br />{collection.pbdbid}
+                                </Box>
+                            </Paper>
 
-                            <div style={header1}><Typography variant="h6">Geologic</Typography></div>
-                            <div style={indent}><b>lithology:</b> {collection.lithology}</div>
-                            <div style={indent}><b>additional lithology information:</b> {collection.additionalLithology}</div>
-                            <div style={header2}><Typography variant="h7">Stratigraphic</Typography></div>
-                            <div style={indent2}><b>group:</b> {collection.stratigraphicGroup}</div>
-                            <div style={indent2}><b>formation:</b> {collection.stratigraphicFormation}</div>
-                            <div style={indent2}><b>member:</b> {collection.stratigraphicMember}</div>
-                            <div style={indent2}><b>bed:</b> {collection.stratigraphicBed}</div>
-                            <div style={indent2}><b>notes on stratigraphy:</b> {collection.stratigraphicComments}</div>
-                            <div style={indent}><b>environment:</b> {collection.environment}</div>
-                            <div style={indent}><b>notes on environment:</b> {collection.environmentComments}</div>
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Location
+                                </AccordionSummary>
+                                <AccordionDetails>
 
-                            <div style={header1}><Typography variant="h6">Collecting</Typography></div>
-                            <div style={indent}><b>collection type:</b> {collection.collectionType}</div>
-                            {collection.preservationModes && collection.preservationModes.length > 0 &&
-                                <div>
-                                    <div style={indent}><b>preservation modes:</b></div>
-                                    {collection.preservationModes.map(pm => (
-                                        <div key={pm.pbotID} style={indent2}>{pm.name}</div>
-                                    ))}
-                                </div>
-                            }
-                            {collection.sizeClasses && collection.sizeClasses.length > 0 &&
-                                <div>
-                                    <div style={indent}><b>size classes:</b></div>
-                                    {collection.sizeClasses.map(sc => (
-                                        <div key={sc} style={indent2}>{sc}</div>
-                                    ))}
-                                </div>
-                            }
-                            <div style={indent}><b>collection methods:</b> {collection.collectionMethods}</div>
-                            <div style={indent}><b>collectors:</b> {collection.collectors}</div>
-                            <div style={indent}><b>notes about collecting methods:</b> {collection.collectionComments}</div>
-
-
-                            {collection.specimens && collection.specimens.length > 0 &&
-                                <>
-                                    <div style={header1}><Typography variant="h6">Specimens</Typography></div>
-                                    <Specimens specimens={collection.specimens} top="true"/>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Latitude</Typography><br />
+                                        {collection.location.latitude}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Longitude</Typography><br />
+                                        {collection.location.longitude}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">GPS coordinate uncertainty</Typography><br />
+                                        {collection.gpsCoordinateUncertainty}
+                                    </Box>
                                     <br />
-                                </>
-                            }
-                            <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Country</Typography><br />
+                                        {collection.country}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">State</Typography><br />
+                                        {collection.state}
+                                    </Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Protected site</Typography><br />
+                                        {collection.protectedSite ? 'Yes' : 'No'}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Scale of geographic resolution</Typography><br />
+                                        {collection.geographicResolution}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Notes on geographic information</Typography><br />
+                                        {collection.geographicComments}
+                                    </Box>
+
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Age
+                                </AccordionSummary>
+                                <AccordionDetails>
+
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Timescale</Typography><br />
+                                        {collection.timescale}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Max interval</Typography><br />
+                                        {collection.maxinterval}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Min interval</Typography><br />
+                                        {collection.mininterval}
+                                    </Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Direct date</Typography><br />
+                                        {collection.directDate}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Direct date error</Typography><br />
+                                        {collection.directDateError}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Direct date type</Typography><br />
+                                        {collection.directDateType}
+                                    </Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Numeric maximum age</Typography><br />
+                                        {collection.numericAgeMax}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Numeric maximum age error</Typography><br />
+                                        {collection.numericAgeMaxError}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Numeric maximum age type</Typography><br />
+                                        {collection.numericAgeMaxType}
+                                    </Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Numeric minimum age</Typography><br />
+                                        {collection.numericAgeMin}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Numeric minimum age error</Typography><br />
+                                        {collection.numericAgeMinError}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Numeric minimum age type</Typography><br />
+                                        {collection.numericAgeMinType}
+                                    </Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Notes on age information</Typography><br />
+                                        {collection.ageComments}
+                                    </Box>
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Geologic
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Lithology</Typography><br />
+                                        {collection.lithology}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Additional lithology information</Typography><br />
+                                        {collection.additionalLithology}
+                                    </Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Stratigraphic group</Typography><br />
+                                        {collection.stratigraphicGroup}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Stratigraphic formation</Typography><br />
+                                        {collection.stratigraphicFormation}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Stratigraphic member</Typography><br />
+                                        {collection.stratigraphicMember}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Stratigraphic bed</Typography><br />
+                                        {collection.stratigraphicBed}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Notes on stratigraphy</Typography><br />
+                                        {collection.stratigraphicComments}
+                                    </Box>
+                                    <br />
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Environment</Typography><br />
+                                        {collection.environment}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Notes on environment</Typography><br />
+                                        {collection.environmentComments}
+                                    </Box>
+                                    
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Collecting
+                                </AccordionSummary>
+                                <AccordionDetails>
+
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Collection type</Typography><br />
+                                        {collection.collectionType}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Preservation modes</Typography><br />
+                                            {collection.preservationModes.map(pm => (
+                                                <div key={pm.pbotID} >{pm.name}</div>
+                                            ))}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Size classes</Typography><br />
+                                            {collection.sizeClasses.map(sc => (
+                                                <div key={sc} >{sc}</div>
+                                            ))}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Collection methods</Typography><br />
+                                        {collection.collectionMethods}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Collectors</Typography><br />
+                                        {collection.collectors}
+                                    </Box>
+                                    <Box sx={boxedDisplay}>
+                                        <Typography variant="caption">Notes on collection methods</Typography><br />
+                                        {collection.collectionComments}
+                                    </Box>
+
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    References
+                                </AccordionSummary>
+                                <AccordionDetails>
+
+                                    {sort([...collection.references], "#order").map(reference => {
+                                        const directURL = new URL(window.location.origin + "/query/reference/" + reference.Reference.pbotID);
+                                        return (
+                                            <Link key={reference.Reference.pbotID}  color="success.main" underline="hover" href={directURL}  target="_blank">{reference.Reference.title}, {reference.Reference.year}</Link>
+                                        )
+                                    })}
+
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Specimens
+                                </AccordionSummary>
+                                <AccordionDetails>
+
+                                    {collection.specimens && collection.specimens.length > 0 &&
+                                    <>
+                                        <Specimens specimens={collection.specimens} top="true"/>
+                                    </>
+                                    }
+
+                                </AccordionDetails>
+                            </Accordion>
+
                             </>
                         }
                     </div>
@@ -652,7 +832,7 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 species: queryParams.species || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
-            includeSpecimens={queryParams.includeSpecimens} 
+            includeSpecimens={true} 
             standAlone={queryParams.standAlone} 
             handleSelect={handleSelect}
         />
