@@ -9,6 +9,7 @@ import { Carousel } from 'react-responsive-carousel';
 import { SecureImage } from '../Image/SecureImage';
 import { array } from 'yup';
 import { Country, State }  from 'country-state-city';
+import { Comments } from '../Comment/Comments';
 
 //TODO: Might be worth moving this to its own file and using elsewhere
 const DirectQueryLink = (props) => {
@@ -664,52 +665,7 @@ function OTUs(props) {
                                                 {synonym.comments && synonym.comments.length > 0 &&
                                                 <div>
                                                     <div style={indent2}><b>comments:</b></div>
-                                                    {synonym.comments.map((comment, i) => (
-                                                        <div key={i}>
-                                                            <div style={indent3}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                            <div style={indent4}>{comment.content}</div>
-                                                            {comment.comments && comment.comments.length > 0 &&
-                                                            <div>
-                                                                {comment.comments.map((comment, i) => (
-                                                                    <div key={i}>
-                                                                        <div style={indent4}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                                        <div style={indent5}>{comment.content}</div>
-                                                                        {comment.comments && comment.comments.length > 0 &&
-                                                                        <div>
-                                                                            {comment.comments.map((comment, i) => (
-                                                                                <div key={i}>
-                                                                                    <div style={indent5}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                                                    <div style={indent5}>{comment.content}</div>
-                                                                                    {comment.comments && comment.comments.length > 0 &&
-                                                                                    <div>
-                                                                                        {comment.comments.map((comment, i) => (
-                                                                                            <div key={i}>
-                                                                                                <div style={indent6}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                                                                <div style={indent6}>{comment.content}</div>
-                                                                                                {comment.comments && comment.comments.length > 0 &&
-                                                                                                <div>
-                                                                                                    {comment.comments.map((comment, i) => (
-                                                                                                        <div key={i}>
-                                                                                                            <div style={indent7}><b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b></div>
-                                                                                                            <div style={indent7}>{comment.content}</div>
-                                                                                                        </div>
-                                                                                                    ))}
-                                                                                                </div>
-                                                                                                }
-                                                                                            </div>
-                                                                                        ))}
-                                                                                    </div>
-                                                                                    }
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-                                                                        }
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                            }
-                                                        </div>
-                                                    ))}
+                                                    <Comments comments={synonym.comments} level={1}/>
                                                 </div>
                                                 }
                                             </div>
