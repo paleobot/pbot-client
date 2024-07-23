@@ -649,29 +649,34 @@ function OTUs(props) {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                 {synonyms && synonyms.length > 0 &&
-                                <div>
-                                    {synonyms.map((synonym, i) => {
-                                        const synOTU=synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
-                                        return (
-                                            <div key={i}>
-                                                <div style={indent}> 
-                                                    <DirectQueryLink type="otu" pbotID={synOTU.pbotID} params={directQParams} >
-                                                        {synOTU.name}
-                                                    </DirectQueryLink>
-                                                </div>
-                                                <div style={indent2}><b>family:</b> {synOTU.family}</div>
-                                                <div style={indent2}><b>genus:</b> {synOTU.genus}</div>
-                                                <div style={indent2}><b>species:</b> {synOTU.species}</div>
-                                                {synonym.comments && synonym.comments.length > 0 &&
-                                                <div>
-                                                    <div style={indent2}><b>comments:</b></div>
-                                                    <Comments comments={synonym.comments} level={1}/>
-                                                </div>
-                                                }
-                                            </div>
-                                        )
-                                    })}
-                                </div>
+                                <TableContainer component={Paper}>
+                                    <Table sx={{width:"100%", mr:"10px"}} aria-label="synonym table">
+                                        <TableBody>
+                                            {synonyms.map((synonym, i) => {
+                                                const synOTU=synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
+                                                return (
+                                                    <AlternatingTableRow key={synOTU.pbotID}>
+                                                        <TableCell align="left">
+
+                                                            <DirectQueryLink type="otu" pbotID={synOTU.pbotID} params={directQParams} >
+                                                                {synOTU.name}
+                                                            </DirectQueryLink>
+                                                            <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br />{synOTU.family}</Box>
+                                                            <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br />{synOTU.genus}</Box>
+                                                            <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br />{synOTU.species}</Box>
+                                                            {synonym.comments && synonym.comments.length > 0 &&
+                                                                <Box sx={boxedDisplay}>
+                                                                    <Typography variant="caption">Comments</Typography><br />
+                                                                    <Comments comments={synonym.comments} level={1}/>
+                                                                </Box>
+                                                            }
+                                                        </TableCell>
+                                                    </AlternatingTableRow>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>                                        
                                 }
                                 {(!synonyms || !synonyms.length > 0) &&
                                     <div style={indent}>No proposed synonyms</div>
