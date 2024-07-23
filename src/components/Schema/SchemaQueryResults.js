@@ -3,12 +3,13 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { Link, Grid, Typography, TableContainer, Paper, Table, TableBody, TableCell } from '@mui/material';
+import { Link, Grid, Typography, TableContainer, Paper, Table, TableBody, TableCell, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import Characters from "../Character/Characters";
 import { alphabetize, AlternatingTableRow, sort } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function Schemas(props) {
     console.log(props);
@@ -279,6 +280,9 @@ function Schemas(props) {
     }
     
     if (props.standAlone) {
+        const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
+        const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
+
         return (
             schemas.map((schema) => {
                 const directURL = new URL(window.location.origin + "/query/schema/" + schema.pbotID);
@@ -308,7 +312,7 @@ function Schemas(props) {
                                 </Grid>
                                 <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                                     <Typography variant="h5">
-                                        Schema: {schema.title}
+                                        Schema
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
@@ -317,51 +321,76 @@ function Schemas(props) {
                                     </Typography>
                                 </Grid>
                             </Grid>
-                            <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
-                            <div style={indent}><b>pbotID:</b> {schema.pbotID}</div>
-                            <div style={indent}><b>year:</b> {schema.year} </div>
-                            <div style={indent}><b>purpose:</b> {schema.purpose} </div>
-                            {schema.acknowledgments && <div style={indent}><b>acknowledgments:</b> {schema.acknowledgments} </div>}
-                            {schema.partsPreserved && schema.partsPreserved.length > 0 &&
-                                <div>
-                                    <div style={indent}><b>parts preserved:</b></div>
+                            <Grid container spacing={1} sx={{ml:"10px"}}>
+                                <Grid item><b>direct link:</b></Grid>
+                                <Grid item><Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></Grid>
+                            </Grid>
+
+
+                            <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
+                                <Box sx={boxedDisplay}>
+                                    <b>{schema.title}</b>
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{schema.pbotID}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Year</Typography><br />{schema.year}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Purpose</Typography><br />{schema.purpose}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Acknowledgments</Typography><br />{schema.acknowledgments}
+                                </Box>
+                                {schema.partsPreserved && schema.partsPreserved.length > 0 &&
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Parts preserved</Typography><br />
                                     {alphabetize([...schema.partsPreserved], "type").map(partPreserved => (
-                                        <div key={partPreserved.type} style={indent2}>{partPreserved.type}</div>
+                                        <div key={partPreserved.type}>{partPreserved.type}</div>
                                     ))}
-                                </div>
-                            }
-                            {schema.notableFeatures && schema.notableFeatures.length > 0 &&
-                                <div>
-                                    <div style={indent}><b>notable features:</b></div>
+
+                                </Box>}
+                                {schema.notableFeatures && schema.notableFeatures.length > 0 &&
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Notable features</Typography><br />
                                     {alphabetize([...schema.notableFeatures], "name").map(notableFeature => (
-                                        <div key={notableFeature.name} style={indent2}>{notableFeature.name}</div>
+                                        <div key={notableFeature.name}>{notableFeature.name}</div>
                                     ))}
-                                </div>
-                            }
-                            {schema.references && schema.references.length > 0 &&
-                                <div>
-                                    <div style={indent}><b>references:</b></div>
+
+                                </Box>}
+                                {schema.references && schema.references.length > 0 &&
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Year</Typography><br />
                                     {sort([...schema.references], "#order").map(reference => (
-                                        <div key={reference.Reference.pbotID} style={indent2}>{reference.Reference.title}, {reference.Reference.year}</div>
+                                        <div key={reference.Reference.pbotID}>{reference.Reference.title}, {reference.Reference.year}</div>
                                     ))}
-                                </div>
-                            }
-                            {schema.authoredBy && schema.authoredBy.length > 0 &&
-                                <div>
-                                    <div style={indent}><b>authors:</b></div>
+                                </Box>}
+                                {schema.authoredBy && schema.authoredBy.length > 0 &&
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Authors</Typography><br />
                                     {sort([...schema.authoredBy], "#order").map(author => (
-                                        <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
+                                        <div key={author.Person.pbotID}>{author.Person.given} {author.Person.surname}</div>
                                     ))}
-                                </div>
-                            }
-                            {schema.characters && schema.characters.length > 0 &&
-                                <div>
-                                    <div style={indent}><b>characters:</b></div>
-                                    <Characters characters={schema.characters} top="true"/>
-                                </div>
-                            }
-                            <br />
+                                </Box>}
+                            </Paper>
+
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="required-content"
+                                    id="required-header"                        
+                                >
+                                    Characters
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Box sx={boxedDisplay}>
+                                        <Characters characters={schema.characters} top="true"/>
+                                    </Box>
+                                </AccordionDetails>
+                            </Accordion>
+
                             </>
                         }
                     </div>

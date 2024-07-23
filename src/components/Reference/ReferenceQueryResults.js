@@ -4,10 +4,12 @@ import {
   gql
 } from "@apollo/client";
 import { alphabetize, sort, AlternatingTableRow } from '../../util.js';
-import { Link, Grid, List, ListItem, ListItemButton, ListItemText, Typography, TableContainer, Table, TableCell, TableBody, TableRow, styled, Paper } from '@mui/material';
+import { Link, Grid, List, ListItem, ListItemButton, ListItemText, Typography, TableContainer, Table, TableCell, TableBody, TableRow, styled, Paper, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ReferenceSet from 'yup/lib/util/ReferenceSet.js';
 
 function References(props) {
     console.log("References")
@@ -158,18 +160,21 @@ function References(props) {
     }
     
     if (props.standAlone) {
-    return ( 
-        references.map((reference) => {
-            console.log("*********************************")
-            console.log(reference.pbotID);
-            const directURL = new URL(window.location.origin + "/query/reference/" + reference.pbotID);
-            console.log(directURL);
-            console.log("*********************************")
+        const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
+        const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
 
-            const listIndent = {marginLeft:"2em"}
-            const header1 = {marginLeft:"2em", marginTop:"10px"}
-            return (
-            <div key={reference.pbotID} style={style}>
+        return ( 
+            references.map((reference) => {
+                console.log("*********************************")
+                console.log(reference.pbotID);
+                const directURL = new URL(window.location.origin + "/query/reference/" + reference.pbotID);
+                console.log(directURL);
+                console.log("*********************************")
+
+                const listIndent = {marginLeft:"2em"}
+                const header1 = {marginLeft:"2em", marginTop:"10px"}
+                return (
+                <div key={reference.pbotID} style={style}>
                     <Grid container sx={{
                         width: "100%",
                         minHeight: "50px",
@@ -187,7 +192,7 @@ function References(props) {
                         </Grid>
                         <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
                             <Typography variant="h5">
-                                Reference: {reference.title}
+                                Reference
                             </Typography>
                         </Grid>
                         <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
@@ -196,36 +201,93 @@ function References(props) {
                             </Typography>
                         </Grid>
                     </Grid>
-                    <div style={indent}><b>direct link:</b> <Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></div>
 
-                    <div style={header1}><Typography variant="h6">Identity</Typography></div>
-                    <div style={indent}><b>pbotID:</b> {reference.pbotID}</div>
-                    <div style={indent}><b>title:</b> {reference.title}</div>
-                    {reference.doi && <div style={indent}><b>doi:</b> {reference.doi} </div>}
-                    {reference.pbdbid && <div style={indent}><b>pbdb id:</b> {reference.pbdbid} </div>}
+                    <Grid container spacing={1} sx={{ml:"10px"}}>
+                        <Grid item><b>direct link:</b></Grid>
+                        <Grid item><Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></Grid>
+                    </Grid>
 
+                    <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
+                        <Box sx={boxedDisplay}>
+                            <b>{reference.title}</b>
+                        </Box>
+                        <Box sx={boxedDisplay}>
+                            <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{reference.pbotID}
+                        </Box>
+                        <Box sx={boxedDisplay}>
+                            <Typography variant="caption" sx={{lineHeight:0}}>PBDB ID</Typography><br />{reference.pbdbid}
+                        </Box>
+                        {reference.doi &&
+                        <Box sx={boxedDisplay}>
+                            <Typography variant="caption" sx={{lineHeight:0}}>DOI</Typography><br />{reference.doi}
+                        </Box>}
+                    </Paper>
 
-                    <div style={header1}><Typography variant="h6">Publication details</Typography></div>
-                    <div style={indent}><b>authors:</b></div>
-                        {sort([...reference.authoredBy], "#order").map(author => (
-                            <div key={author.Person.pbotID} style={indent2}>{author.Person.given} {author.Person.surname}</div>
-                        ))}
-                    {reference.year && <div style={indent}><b>year:</b> {reference.year} </div>}
-                    {reference.publicationType && <div style={indent}><b>publicationType</b> {reference.publicationType} </div>}
-                    {reference.journal && <div style={indent}><b>journal</b> {reference.journal} </div> }
-                    {reference.publicationVolume && <div style={indent}><b>publicationVolume</b> {reference.publicationVolume} </div>}
-                    {reference.publicationNumber && <div style={indent}><b>publicationNumber</b> {reference.publicationNumber} </div>}
-                    {reference.bookTitle && <div style={indent}><b>bookTitle</b> {reference.bookTitle} </div>}  
-                    {reference.bookType && <div style={indent}><b>bookType</b> {reference.bookType} </div> }
-                    {reference.publisher && <div style={indent}><b>publisher:</b> {reference.publisher}</div>} 
-                    {reference.firstPage && <div style={indent}><b>firstPage</b> {reference.firstPage} </div>}
-                    {reference.lastPage && <div style={indent}><b>lastPage</b> {reference.lastPage} </div>} 
-                    
-                    <br />
-            </div>
-            )
-        })
-    )}
+                    <Accordion style={accstyle} defaultExpanded={false}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="required-content"
+                            id="required-header"                        
+                        >
+                            Publication details
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Authors</Typography>
+                                {sort([...reference.authoredBy], "#order").map(author => (
+                                <div key={author.Person.pbotID} >{author.Person.given} {author.Person.surname}</div>
+                                ))}
+                            </Box>
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Year</Typography><br />{reference.year}
+                            </Box>
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Publication type</Typography><br />{reference.publicationType}
+                            </Box>
+                            {reference.journal &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Journal</Typography><br />{reference.journal}
+                            </Box>}
+                            {reference.publicationVolume &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Publication volume</Typography><br />{reference.publicationVolume}
+                            </Box>}
+                            {reference.publicationVolume &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Publication volume</Typography><br />{reference.publicationVolume}
+                            </Box>}
+                            {reference.publicationNumber &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Publication number</Typography><br />{reference.publicationNumber}
+                            </Box>}
+                            {reference.bookTitle &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Book title</Typography><br />{reference.bookTitle}
+                            </Box>}
+                            {reference.bookType &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Book type</Typography><br />{reference.bookType}
+                            </Box>}
+                            {reference.publisher &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Publisher</Typography><br />{reference.publisher}
+                            </Box>}
+                            {reference.firstPage &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>First page</Typography><br />{reference.firstPage}
+                            </Box>}
+                            {reference.lastPage &&
+                            <Box sx={boxedDisplay}>
+                                <Typography variant="caption" sx={{lineHeight:0}}>Last page</Typography><br />{reference.lastPage}
+                            </Box>}
+
+                        </AccordionDetails>
+                    </Accordion>
+                </div>
+                )
+            })
+        )
+    }
 
     if (!props.standAlone) {
         /*
