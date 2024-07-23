@@ -6,8 +6,8 @@ export function Comments(props) {
     console.log("Comments");
     if (!props.comments) return ''; //TODO: is this the best place to handle this?
    
-   const style1 = {marginLeft:`${(props.level * 2) + 4}em`}
-   const style2 = {marginLeft:`${(props.level * 2) + 6}em`}
+   const style1 = {marginLeft:`${(props.level * 2)}em`}
+   const style2 = {marginLeft:`${(props.level * 2) + 2}em`}
 
    console.log(style1)
    console.log(style2)
