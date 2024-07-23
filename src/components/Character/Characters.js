@@ -22,7 +22,7 @@ function Characters(props) {
    const characters = sort([...props.characters], "#order", "name");
 
     
-    const style = props.top ? {marginLeft:"4em"} : {marginLeft:"2em"};
+    const style = props.top ? {marginLeft:"0em"} : {marginLeft:"2em"};
     console.log(style);
     return characters.map(({pbotID, name, definition, states, characters}) => (
         <div key={pbotID}  style={style}>
