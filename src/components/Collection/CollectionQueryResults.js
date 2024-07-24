@@ -42,7 +42,7 @@ function Collections(props) {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.partsPreserved && !filters.notableFeatures && !filters.preservationModeIDs && !filters.lat && !filters.lon && !filters.enterers) {
+        if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.partsPreserved && !filters.notableFeatures && !filters.preservationModeIDs && !filters.lat && !filters.lon && !filters.enterers && !filters.intervals) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -186,6 +186,15 @@ function Collections(props) {
                             }
                         }
                     }
+                }`
+            }
+
+            if (filters.intervals) {
+                filter += `, {
+                    OR: [
+                        {mininterval_in: $intervals},
+                        {maxinterval_in: $intervals}
+                    ]
                 }`
             }
 
@@ -359,6 +368,7 @@ function Collections(props) {
                 ${filters.species ? ", $species: String" : ""}
                 ${filters.lat ? ", $lat: Float" : ""}
                 ${filters.lon ? ", $lon: Float" : ""}
+                ${filters.intervals ? ", $intervals: [String!]" : ""}
             ) {
                 Collection (
                     pbotID: $pbotID, 
@@ -796,7 +806,48 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
     console.log(queryParams);
 
     const global = useContext(GlobalContext);
-   
+
+
+    const [intervals, setIntervals] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
+
+    React.useEffect(() => {
+        if (!queryParams.includeOverlappingIntervals) return;
+        setLoading(true);
+        fetch(`https://macrostrat.org/api/v2/defs/intervals?t_age=${JSON.parse(queryParams.mininterval).minAge}&b_age=${JSON.parse(queryParams.maxinterval).maxAge}`)
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                if (response.status_code) {
+                    throw new Error (response.errors[0]);
+                }
+                console.log(response.success.data)
+                const ints = response.success.data.map(int => { 
+                    return int.name
+                })
+                console.log(ints)
+                setIntervals(ints);
+            }
+        ).catch (
+            (error) => {
+                console.log("error!")
+                console.log(error)
+                setError(error)
+            }
+        )
+    }, [])
+
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>Error fetching intervals. Try unchecking the "Include overlapping intervals" box.</p>
+
+    console.log("overlapping intervals")
+    console.log(intervals)
+
+    console.log("queryParams.mininterval")
+    console.log(queryParams.mininterval)
+
     return (
         <Collections 
             filters={{
@@ -815,8 +866,11 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 stratigraphicFormation: queryParams.stratigraphicformation || null,
                 stratigraphicMember: queryParams.stratigraphicmember || null,
                 stratigraphicBed: queryParams.stratigraphicbed || null,
-                mininterval: queryParams.mininterval || queryParams.maxinterval,
-                maxinterval: queryParams.maxinterval || null,
+                mininterval: queryParams.mininterval && !queryParams.includeOverlappingIntervals ?
+                    JSON.parse(queryParams.mininterval).name : null,
+                maxinterval: queryParams.maxinterval && !queryParams.includeOverlappingIntervals ?
+                    JSON.parse(queryParams.maxinterval).name : null,
+                intervals: intervals,
                 collectionMethods: queryParams.collectionmethods && queryParams.collectionmethods.length > 0 ? queryParams.collectionmethods : null,
                 preservationModeIDs: queryParams.preservationmodes && queryParams.preservationmodes.length > 0 ? queryParams.preservationmodes : null,
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
@@ -833,6 +887,7 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSpecimens={true} 
+            includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
             standAlone={queryParams.standAlone} 
             handleSelect={handleSelect}
         />

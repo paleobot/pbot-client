@@ -257,7 +257,7 @@ export const IntervalSelect = (props) => {
             {intervals.map((interval) => (
                 <MenuItem 
                     key={interval.name} 
-                    value={interval.name}
+                    value={JSON.stringify(interval)}
                 >{`${interval.name} (${interval.maxAge} - ${interval.minAge} Ma)`}</MenuItem>
             ))}
         </Field>
