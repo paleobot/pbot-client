@@ -54,7 +54,8 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
         species: '',
         enterers: [],
         groups: [],
-        includeSpecimens: true
+        includeSpecimens: true,
+        includeOverlappingIntervals: false
     };
     
     const accstyle = {textAlign: "left", width: "70%"}
@@ -191,6 +192,15 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                             <IntervalSelect name="maxinterval" values={props.values} setFieldValue={props.setFieldValue}/>
                             <IntervalSelect name="mininterval" values={props.values} setFieldValue={props.setFieldValue}/>
                         </Stack>
+                        <br />
+                        <Field
+                            component={CheckboxWithLabel}
+                            name="includeOverlappingIntervals" 
+                            type="checkbox" 
+                            Label={{ label: 'Include overlapping intervals from other timescales' }}
+                            disabled={false}
+                            variant="standard"
+                        />
             
                     </AccordionDetails>
                 </Accordion>
