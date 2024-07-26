@@ -24,8 +24,7 @@ const Home = () => {
                 <span style={{fontSize: "1.35rem", textAlign:"left", fontStyle: 'italic'}}>The community gateway to fossil plant research and education</span>
             </Grid>
 
-            <Box sx={{mt:"30px"}}>
-            <Grid container item alignItems="center" justifyContent="center" spacing={10}>
+            <Grid container item sx={{mt:"0px", mb:"50px"}} alignItems="center" justifyContent="center" spacing={10}>
                 <Grid item>
                     <Button variant="contained" size="large" color="success" onClick={() => {navigate(`/query`);}}>Explore<br/>fossil plants</Button>
                 </Grid>
@@ -33,7 +32,6 @@ const Home = () => {
                     <Button variant="contained" size="large" color="success" onClick={() => {navigate(`/mutate`);}}>Go to<br />Workbench</Button>
                 </Grid>
             </Grid>
-            </Box>
         </Grid>
 
     )
