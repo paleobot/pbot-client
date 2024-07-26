@@ -1,3 +1,4 @@
+import React from 'react';
 import { styled, TableRow } from "@mui/material";
 
 export const alphabetize = (list, sortField) => {
@@ -65,3 +66,40 @@ export const AlternatingTableRow = styled(TableRow)(({ theme }) => ({
       border: 0,
     },
   }));
+
+
+export const useFetchIntervals = (minInt, maxInt, includeOverlappingIntervals, setLoading, setError) => {
+    console.log("useFetchIntervalsEffect")
+    const [intervals, setIntervals] = React.useState(null);
+    React.useEffect(() => {
+        if (!includeOverlappingIntervals) return;
+        setLoading(true);
+        const minAge = JSON.parse(minInt).minAge; 
+        const maxAge = JSON.parse(maxInt).maxAge; 
+
+        fetch(`https://macrostrat.org/api/v2/defs/intervals?t_age=${minAge}&b_age=${maxAge}`)
+        .then(res => res.json())
+        .then(
+            (response) => {
+                setLoading(false);
+                if (response.status_code) {
+                    throw new Error ("Error fetching intervals. Try unchecking the \"Include overlapping intervals\" box.");
+                }
+                console.log(response.success.data)
+                const ints = response.success.data.map(int => { 
+                    return int.name
+                })
+                console.log(ints)
+                setIntervals(ints);
+            }
+        ).catch (
+            (error) => {
+                console.log("error!")
+                console.log(error)
+                setError(error)
+            }
+        )
+    }, [])
+    return intervals
+
+}
