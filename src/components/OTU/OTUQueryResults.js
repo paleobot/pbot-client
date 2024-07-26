@@ -7,6 +7,7 @@ import OTUs from "./OTUs.js";
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 import { OTUFilterHelper } from './OTUFilterHelper.js';
+import { useFetchIntervals } from '../../util.js';
 
 function OTUList(props) {
     console.log("OTUList");
@@ -322,6 +323,7 @@ function OTUList(props) {
                 ${filters.stratigraphicBed ? ", $stratigraphicBed: String" : ""}
                 ${filters.collection ? ", $collection: ID" : ""} 
                 ${filters.enterers ? ", $enterers: [ID!]" : ""} 
+                ${filters.intervals ? ", $intervals: [String!]" : ""}
             ) {
                 OTU (
                     pbotID: $pbotID, 
@@ -399,6 +401,23 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
 
     const global = useContext(GlobalContext);
 
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
+
+    const intervals = useFetchIntervals(
+        queryParams.mininterval,
+        queryParams.maxinterval,
+        queryParams.includeOverlappingIntervals, 
+        setLoading, setError
+    );
+
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>{error.message}</p>
+
+    console.log("overlapping intervals")
+    console.log(intervals)
+
+
     return (
         <OTUList 
             filters={{
@@ -425,8 +444,11 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
                 states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
-                mininterval: queryParams.mininterval || queryParams.maxinterval,
-                maxinterval: queryParams.maxinterval || null,
+                mininterval: queryParams.mininterval && !queryParams.includeOverlappingIntervals ?
+                    JSON.parse(queryParams.mininterval).name : null,
+                maxinterval: queryParams.maxinterval && !queryParams.includeOverlappingIntervals ?
+                    JSON.parse(queryParams.maxinterval).name : null,
+                intervals: intervals,
                 lat: parseFloat(queryParams.lat) || null, 
                 lon: parseFloat(queryParams.lon) || null,
                 country: queryParams.country || null,
@@ -443,6 +465,7 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
             includeComments={true} 
             includeHolotypeDescription={true} 
             includeMergedDescription={true} 
+            includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
             standAlone={queryParams.standAlone} 
             select={select}
             handleSelect={handleSelect}

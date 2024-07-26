@@ -64,7 +64,8 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 includeComments: true,
                 collection: '',
                 enterers: [],
-            };
+                includeOverlappingIntervals: false
+    };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     
     const indent01 = {marginLeft: "2em"}
@@ -243,6 +244,15 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                             <IntervalSelect name="maxinterval" values={props.values} setFieldValue={props.setFieldValue}/>
                             <IntervalSelect name="mininterval" values={props.values} setFieldValue={props.setFieldValue}/>
                         </Stack>
+                        <br />
+                        <Field
+                            component={CheckboxWithLabel}
+                            name="includeOverlappingIntervals" 
+                            type="checkbox" 
+                            Label={{ label: 'Include overlapping intervals from other timescales' }}
+                            disabled={false}
+                            variant="standard"
+                        />
             
                     </AccordionDetails>
                 </Accordion>

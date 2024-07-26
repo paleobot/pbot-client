@@ -7,7 +7,7 @@ export const OTUFilterHelper = (filters, props) => {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.collection && !filters.enterers) {
+        if (!filters.name && !filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.collection && !filters.enterers && !filters.intervals) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -85,6 +85,21 @@ export const OTUFilterHelper = (filters, props) => {
                         Specimen: {
                             collection: {
                                 maxinterval: $maxinterval
+                            }
+                        }
+                    }
+                }`
+            }
+
+            if (filters.intervals) {
+                filter += `, {
+                    identifiedSpecimens_some: {
+                        Specimen: {
+                            collection: {
+                                OR: [
+                                    {mininterval_in: $intervals},
+                                    {maxinterval_in: $intervals}
+                                ]
                             }
                         }
                     }

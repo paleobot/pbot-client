@@ -179,6 +179,20 @@ function OTUs(props) {
 
         return (
             otus.map(({ pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy}) => {
+
+                //Private group membership of Specimens can cause empty values. 
+                //Here we clean that up 
+                if (holotypeSpecimen && !holotypeSpecimen.Specimen) {
+                    holotypeSpecimen = null;
+                }
+                if (typeSpecimens) {
+                    typeSpecimens = typeSpecimens.filter(tS => tS.Specimen)
+                    console.log("typeSpecimens0")
+                    console.log(typeSpecimens)
+                }
+                if (identifiedSpecimens) {
+                    identifiedSpecimens = identifiedSpecimens.filter(iS => iS.Specimen)
+                }
              
                 const history = sort(enteredBy.map(e => { 
                     return {
@@ -191,19 +205,23 @@ function OTUs(props) {
                 const holotypeImages = (holotypeSpecimen && holotypeSpecimen.Specimen && holotypeSpecimen.Specimen.images && holotypeSpecimen.Specimen.images.length > 0) ?
                     holotypeSpecimen.Specimen.images.reduce((acc, i) => {
                         acc.push({
+                            ...i, 
                             caption: `${holotypeSpecimen.Specimen.name} - ${i.caption}`,
-                            ...i 
                         })
                         return acc
                     }, []) : []; 
 
                 let typeImages = [];
-                typeSpecimens.filter(tS => holotypeSpecimen ? tS.pbotID !== holotypeSpecimen.pbotID : true).forEach(tS => {
+                typeSpecimens.filter(tS =>  
+                    holotypeSpecimen ? 
+                        tS.Specimen.pbotID !== holotypeSpecimen.Specimen.pbotID :
+                        true
+                ).forEach(tS => {
                     if (tS.Specimen && tS.Specimen.images) typeImages = typeImages.concat(
                         tS.Specimen.images.reduce((acc, i) => {
                             acc.push({
+                                ...i,
                                 caption: `${tS.Specimen.name} - ${i.caption}`,
-                                ...i
                             })     
                             return acc                       
                         }, [])
@@ -212,21 +230,17 @@ function OTUs(props) {
 
                 let identifiedImages = [];
                 const typeIDSet = new Set(typeSpecimens.map(tS => tS.Specimen.pbotID));
-                console.log("XXXXXXXXXX")
-                console.log(identifiedSpecimens)
-                console.log(typeSpecimens)
                 identifiedSpecimens.filter(tS => !typeIDSet.has(tS.Specimen.pbotID)).forEach(tS => {
                     if (tS.Specimen && tS.Specimen.images) identifiedImages = identifiedImages.concat(
                         tS.Specimen.images.reduce((acc, i) => {
                             acc.push({
+                                ...i,
                                 caption: `${tS.Specimen.name} - ${i.caption}`,
-                                ...i
                             })     
                             return acc                       
                         }, [])
                     )
                 });
-                console.log(identifiedImages)
 
                 const minIntervals = new Set();
                 const maxIntervals = new Set();
