@@ -4,7 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import { Link, Grid, Typography, Stack, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { alphabetize, AlternatingTableRow, sort } from '../../util.js';
+import { alphabetize, AlternatingTableRow, sort, useFetchIntervals } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
@@ -808,39 +808,18 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
     const global = useContext(GlobalContext);
 
 
-    const [intervals, setIntervals] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
 
-    React.useEffect(() => {
-        if (!queryParams.includeOverlappingIntervals) return;
-        setLoading(true);
-        fetch(`https://macrostrat.org/api/v2/defs/intervals?t_age=${JSON.parse(queryParams.mininterval).minAge}&b_age=${JSON.parse(queryParams.maxinterval).maxAge}`)
-        .then(res => res.json())
-        .then(
-            (response) => {
-                setLoading(false);
-                if (response.status_code) {
-                    throw new Error (response.errors[0]);
-                }
-                console.log(response.success.data)
-                const ints = response.success.data.map(int => { 
-                    return int.name
-                })
-                console.log(ints)
-                setIntervals(ints);
-            }
-        ).catch (
-            (error) => {
-                console.log("error!")
-                console.log(error)
-                setError(error)
-            }
-        )
-    }, [])
+    const intervals = useFetchIntervals(
+        queryParams.mininterval,
+        queryParams.maxinterval,
+        queryParams.includeOverlappingIntervals, 
+        setLoading, setError
+    );
 
     if (loading) return <p>Loading...</p>
-    if (error) return <p>Error fetching intervals. Try unchecking the "Include overlapping intervals" box.</p>
+    if (error) return <p>{error.message}</p>
 
     console.log("overlapping intervals")
     console.log(intervals)
