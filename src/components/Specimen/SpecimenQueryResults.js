@@ -5,7 +5,7 @@ import {
 } from "@apollo/client";
 import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Card, Box, Stack, Accordion, AccordionDetails, AccordionSummary, OutlinedInput } from '@mui/material';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { alphabetize, sort, AlternatingTableRow } from '../../util.js';
+import { alphabetize, sort, AlternatingTableRow, useFetchIntervals } from '../../util.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import {Carousel} from 'react-responsive-carousel'
 import {SecureImage} from '../Image/SecureImage.js';
@@ -46,6 +46,7 @@ function Specimens(props) {
             pbotID
             name
             collection {
+                pbotID
                 name
                 country
                 state
@@ -263,6 +264,7 @@ function Specimens(props) {
                 ${filters.stratigraphicFormation ? ", $stratigraphicFormation: String" : ""}
                 ${filters.stratigraphicMember ? ", $stratigraphicMember: String" : ""}
                 ${filters.stratigraphicBed ? ", $stratigraphicBed: String" : ""}
+                ${filters.intervals ? ", $intervals: [String!]" : ""}
                 $excludeList: [ID!]
             ) {
                 Specimen (
@@ -483,7 +485,10 @@ function Specimens(props) {
                             </AccordionSummary>
                             <AccordionDetails>
 
-                                <Box sx={boxedDisplay}><Typography variant="caption">Collection</Typography><br />{s.collection.name}</Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption">Collection</Typography><br />
+                                    <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/collection/" + s.collection.pbotID).toString()}  target="_blank">{s.collection.name}</Link>
+                                </Box>
                                 <br />
                                 <Box sx={boxedDisplay}><Typography variant="caption">Country</Typography><br />{s.collection.country ? 
                                                     `${Country.getCountryByCode(s.collection.country).name} (${s.collection.country})` :
@@ -829,6 +834,23 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
     
     const global = useContext(GlobalContext);
 
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
+
+    const intervals = useFetchIntervals(
+        queryParams.mininterval,
+        queryParams.maxinterval,
+        queryParams.includeOverlappingIntervals, 
+        setLoading, setError
+    );
+
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>{error.message}</p>
+
+    console.log("overlapping intervals")
+    console.log(intervals)
+
+
     return (
         <Specimens 
             filters={{
@@ -857,8 +879,11 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 family: queryParams.family || null,
                 genus: queryParams.genus || null,
                 species: queryParams.species || null,
-                mininterval: queryParams.mininterval || queryParams.maxinterval,
-                maxinterval: queryParams.maxinterval || null,
+                mininterval: queryParams.mininterval && !queryParams.includeOverlappingIntervals ?
+                    JSON.parse(queryParams.mininterval).name : null,
+                maxinterval: queryParams.maxinterval && !queryParams.includeOverlappingIntervals ?
+                    JSON.parse(queryParams.maxinterval).name : null,
+                intervals: intervals,
                 lat: parseFloat(queryParams.lat) || null, 
                 lon: parseFloat(queryParams.lon) || null,
                 country: queryParams.country || null,
@@ -869,6 +894,7 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 stratigraphicBed: queryParams.stratigraphicbed || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
+            includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
             includeImages={true}
             includeDescriptions={true} 
             includeOTUs={true} 

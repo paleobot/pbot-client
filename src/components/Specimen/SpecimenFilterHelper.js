@@ -7,7 +7,7 @@ export const SpecimenFilterHelper = (filters, props) => {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.enterers) {
+        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.enterers && !filters.intervals) {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}";
@@ -214,6 +214,25 @@ export const SpecimenFilterHelper = (filters, props) => {
                         OTU: {
                             pbotID: $holotypeOf 
                         } 
+                    }
+                }`
+            }
+
+            if (filters.intervals) {
+                /*
+                filter += `, {
+                    OR: [
+                        {collection: {mininterval_in: $intervals}},
+                        {collection: {maxinterval_in: $intervals}}
+                    ]
+                }`
+                */
+                filter += `, {
+                    collection: {
+                        OR: [
+                            {mininterval_in: $intervals},
+                            {maxinterval_in: $intervals}
+                        ]
                     }
                 }`
             }
