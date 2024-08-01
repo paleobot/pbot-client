@@ -224,6 +224,20 @@ function Specimens(props) {
             }
         `;
 
+    //Note: This foolishness is necessary because _every does not appear to work on
+    //relationships with properties. So, we need a separate filter clause for each schema.
+    //To get that, we need separate a variable for each schema ID rather than an array of
+    //schema IDs. 
+    //Also note: describedBy actually has no properties that we use, but it is defined 
+    //with some in the schema.
+    let schemaIDstrings = []
+    if (filters.schemas) {
+        filters.schemas.forEach((s,i) => {
+            schemaIDstrings[i] = `, $schema${i}: ID`;
+            filters[`schema${i}`] = s
+        })
+    }
+
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
@@ -242,8 +256,8 @@ function Specimens(props) {
                 ${filters.enterers ? ", $enterers: [ID!]" : ""} 
                 ${filters.references ? ", $references: [ID!]" : ""}
                 ${filters.collection ? ", $collection: ID" : ""} 
-                ${filters.schema ? ", $schema: ID" : ""} 
-                ${filters.character ? ", $character: ID" : ""} 
+                ${schemaIDstrings}
+                ${filters.characters ? ", $characters: [ID!]" : ""} 
                 ${filters.states ? ", $states: [ID!]" : ""}, 
                 ${filters.description ? ", $description: ID" : ""},
                 ${filters.identifiedAs ? ", $identifiedAs: ID" : ""},
@@ -831,6 +845,8 @@ function Specimens(props) {
 const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
     console.log("SpecimenQueryResults");
     console.log(queryParams); 
+
+    console.log(queryParams.characterInstances)
     
     const global = useContext(GlobalContext);
 
@@ -850,6 +866,18 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
     console.log("overlapping intervals")
     console.log(intervals)
 
+    let states, characters, schemas;
+    if (queryParams.characterInstances && queryParams.characterInstances.length > 0) {
+        schemas = queryParams.characterInstances.map(cI => cI.schema).filter(n => n !== '');
+        schemas = schemas.length === 0 ? null : schemas; 
+
+        characters = queryParams.characterInstances.map(cI => cI.character).filter(n => n !== '');
+        characters = characters.length === 0 ? null : characters; 
+
+        states = queryParams.characterInstances.reduce((acc, cI) => 
+        acc.concat(cI.states.map(state => state.split("~,")[1])), []).filter(n => n !== '');
+        states = states.length === 0 ? null : states; 
+    }
 
     return (
         <Specimens 
@@ -860,9 +888,26 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 identifiedAs: queryParams.identifiedAs || null,
                 typeOf: queryParams.typeOf || null,
                 holotypeOf: queryParams.holotypeOf || null,
-                schema: queryParams.character ? null : queryParams.schema || null,
-                character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
-                states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
+                //schema: queryParams.character ? null : queryParams.schema || null,
+                //character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
+                //states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
+                
+                /*
+                schemas: queryParams.characterInstances.length > 0 ?
+                    queryParams.characterInstances.map(cI => cI.schema).filter(n => n !== '') :
+                    null,
+                characters: queryParams.characterInstances.length > 0 ?
+                    queryParams.characterInstances.map(cI => cI.character).filter(n => n !== '') :
+                    null,
+                states: queryParams.characterInstances.length > 0 ?
+                    queryParams.characterInstances.reduce((acc, cI) => 
+                        acc.concat(cI.states.map(state => state.split("~,")[1])), []).filter(n => n !== '') : 
+                    null,
+                */
+                schemas: schemas,
+                characters: characters,
+                states: states,
+
                 collection: queryParams.collection || null, 
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
