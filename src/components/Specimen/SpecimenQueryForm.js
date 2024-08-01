@@ -22,6 +22,7 @@ import { MajorTaxonGroupSelect } from '../OTU/OTUHelper.js';
 import { IntervalSelect, TimescaleSelect } from '../Collection/CollectionUtil.js';
 import { CountrySelect } from '../Collection/CountrySelect.js';
 import { StateSelect as GeoStateSelect } from '../Collection/StateSelect.js';
+import CharacterInstanceQueryManager from '../CharacterInstance/CharacterInstanceQueryManager.js';
 
 const SpecimenQueryForm = ({handleSubmit, select}) => {
     console.log("SpecimenQueryForm")
@@ -31,9 +32,14 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
         specimenID: '', 
         name: '', 
         collection: '',
-        schema: '',
-        character: '',
-        states: [],
+        characterInstances: []/*[{
+            schema: '',
+            character: '',
+            states: []
+        }]*/,
+        //schema: '',
+        //character: '',
+        //states: [],
         partsPreserved: [],
         notableFeatures: [],
         preservationModes: [],
@@ -323,22 +329,26 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                     </AccordionSummary>
                     <AccordionDetails>
 
+                        <CharacterInstanceQueryManager values={props.values} />
+
+                        {/*
                         <SchemaSelect />
                         <br />
 
-                        {props.values.schema !== '' &&
+                        {props.values.characterInstances[0].schema !== '' &&
                             <>
                                 <CharacterSelect values={props.values} source="characterInstance"/>
                                 <br />
                             </>
                         }
                         
-                        {props.values.character !== "" &&
+                        {props.values.characterInstances[0].character !== "" &&
                             <>
                                 <StateSelect values={props.values} source="characterInstance" multi={true}/>
                                 <br />
                             </>
                         }
+                        */}
 
                     </AccordionDetails>
                 </Accordion>
