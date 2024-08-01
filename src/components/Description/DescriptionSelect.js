@@ -192,7 +192,8 @@ export const DescriptionSelect = (props) => {
             formikProps.setFieldValue("name", description.name || '');
             formikProps.setFieldValue("writtenDescription", description.writtenDescription);
             formikProps.setFieldValue("notes", description.notes);
-            formikProps.setFieldValue("specimens", description.specimens.map(specimen => {return{pbotID: specimen.Specimen.pbotID}}) || []);
+            //filter out null specimens (possible if no group access)
+            formikProps.setFieldValue("specimens", description.specimens.filter(s => s.Specimen !== null).map(specimen => {return{pbotID: specimen.Specimen.pbotID}}) || []);
             formikProps.setFieldValue("public", description.elementOf && description.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false));
             formikProps.setFieldValue("origPublic", formikProps.values.public);
             formikProps.setFieldValue("groups", groups || []);
