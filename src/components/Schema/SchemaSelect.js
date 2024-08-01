@@ -34,9 +34,9 @@ export const SchemaSelect = (props) => {
             style={style}
             component={TextField}
             type="text"
-            name="schema"
+            name={`characterInstances[${props.index}].schema`}
             label="Schema"
-            fullWidth 
+            sx={{width: 1}}
             select={true}
             SelectProps={{
                 multiple: false,

@@ -114,7 +114,11 @@ export const CharacterSelect = (props) => {
     }
     `;
 
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {schemaID: props.values.schema}});
+    console.log("CharacterSelect before useQuery")
+    console.log(props.source)
+    console.log(props.values.schema)
+
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {schemaID:  props.values.characterInstances && props.values.characterInstances.length > 0 ? props.values.characterInstances[props.index].schema : props.values.schema}});
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -217,9 +221,9 @@ export const CharacterSelect = (props) => {
                 style={style}
                 component={TextField}
                 type="text"
-                name={name}
+                name={`characterInstances[${props.index}].${name}`}
                 label={label}
-                fullWidth 
+                sx={{width: 1}}
                 select={true}
                 SelectProps={{
                     multiple: false,

@@ -85,7 +85,7 @@ export const StateSelect = (props) => {
     }
     `;
 
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {characterID: props.values.character}});
+    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network", variables: {characterID: props.values.characterInstances && props.values.characterInstances.length > 0 ? props.values.characterInstances[props.index].character : props.values.character}});
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -160,9 +160,9 @@ export const StateSelect = (props) => {
         <Field
             component={TextField}
             type="text"
-            name={props.multi ? "states" : "state"}
+            name={props.multi ? `characterInstances[${props.index}].states` : "state"}
             label={props.multi ? "States" : "State"}
-            fullWidth 
+            sx={{width: 1}}
             select={true}
             SelectProps={{
                 multiple: props.multi || false,
