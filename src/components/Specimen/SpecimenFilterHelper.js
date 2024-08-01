@@ -7,7 +7,7 @@ export const SpecimenFilterHelper = (filters, props) => {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.character && !filters.schema && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.enterers && !filters.intervals) {
+        if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.states && !filters.characters && !filters.schemas && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.enterers && !filters.intervals) {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}";
@@ -237,11 +237,14 @@ export const SpecimenFilterHelper = (filters, props) => {
                 }`
             }
 
+            //Note: Regarding the some/every logic below. There is no reason "every" should
+            //not work for situations in which the child node pbotID array has only one entry.
+            //But it doesn't. Soooo, we change to "some" in this situation. Whatever.
             if (filters.states) {
                 filter += `, {
-                    describedBy: {
+                    describedBy_some: {
                         Description: { 
-                            characterInstances_some: {
+                            ${filters.states.length > 1 ? "characterInstances_every" : "characterInstances_some"}: {
                                 state: {
                                     State: {pbotID_in: $states}
                                 }
@@ -249,25 +252,51 @@ export const SpecimenFilterHelper = (filters, props) => {
                         }
                     }
                 }`
-            } else if (filters.character) {
+            } 
+            
+            if (filters.characters) {
                 filter += `, {
-                    describedBy: {
+                    describedBy_some: {
                         Description: { 
-                            characterInstances_some: {
-                                character: {pbotID: $character}
+                            ${filters.characters.length > 1 ? "characterInstances_every" : "characterInstances_some"}: {
+                                character: {pbotID_in: $characters}
                             }
                         }
                     }
                 }`
-            } else if (filters.schema) {
+            } 
+            
+            /*
+            if (filters.schemas) {
                 filter += `, {
-                    describedBy: {
+                    ${filters.schemas.length > 1 ? "describedBy_every" : "describedBy_some"}: {
                         Description: { 
-                            schema: {pbotID: $schema}
+                            schema: {pbotID_in: $schemas}
                         }
                     }
                 }`
             }
+            */
+           
+            //Note: This foolishness is necessary because _every does not appear to work on
+            //relationships with properties. So, we need a separate clause for each schema.
+            //This also means  we need separate a variable for each schema ID rather than 
+            //an array of schema IDs. This is handled in SpecimenQueryResults.js. 
+            //Also note: describedBy actually has no properties that we use, but it is defined 
+            //with some in the schema.
+            if (filters.schemas) {
+                filters.schemas.forEach((s,i) => {
+                    filter += `, {
+                        describedBy_some: {
+                            Description: { 
+                                schema: {pbotID: $schema${i}}
+                            }
+                        }
+                    }`
+                })
+            }
+            
+
             filter +="]"
         }
         filter += "}"
