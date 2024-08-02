@@ -269,8 +269,6 @@ function Specimens(props) {
                 ${schemaIDstrings}
                 ${characterIDstrings}
                 ${stateIDstrings}
-                ${filters.characters ? ", $characters: [ID!]" : ""} 
-                ${filters.states ? ", $states: [ID!]" : ""}, 
                 ${filters.description ? ", $description: ID" : ""},
                 ${filters.identifiedAs ? ", $identifiedAs: ID" : ""},
                 ${filters.typeOf ? ", $typeOf: ID" : ""},
