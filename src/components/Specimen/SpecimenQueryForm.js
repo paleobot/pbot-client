@@ -331,25 +331,6 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
 
                         <CharacterInstanceQueryManager values={props.values} />
 
-                        {/*
-                        <SchemaSelect />
-                        <br />
-
-                        {props.values.characterInstances[0].schema !== '' &&
-                            <>
-                                <CharacterSelect values={props.values} source="characterInstance"/>
-                                <br />
-                            </>
-                        }
-                        
-                        {props.values.characterInstances[0].character !== "" &&
-                            <>
-                                <StateSelect values={props.values} source="characterInstance" multi={true}/>
-                                <br />
-                            </>
-                        }
-                        */}
-
                     </AccordionDetails>
                 </Accordion>
 
