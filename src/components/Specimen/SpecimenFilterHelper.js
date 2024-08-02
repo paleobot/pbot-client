@@ -283,7 +283,6 @@ export const SpecimenFilterHelper = (filters, props) => {
                 })
             }
 
-
             filter +="]"
         }
         filter += "}"
