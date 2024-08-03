@@ -21,6 +21,7 @@ import { CountrySelect } from '../Collection/CountrySelect.js';
 import { StateSelect as GeoStateSelect } from '../Collection/StateSelect.js';
 import { CollectionSelect } from '../Collection/CollectionSelect.js';
 import { PersonManager } from '../Person/PersonManager.js';
+import CharacterInstanceQueryManager from '../CharacterInstance/CharacterInstanceQueryManager.js';
 
 const OTUQueryForm = ({handleSubmit, select}) => {
     //const [values, setValues] = useState({});
@@ -41,9 +42,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 holotypeSpecimen: '',
                 synonym: '',
                 references: [],
-                schema: '',
-                character: '',
-                states: [],
+                characterInstances: [],
                 partsPreserved: [],
                 notableFeatures: [],
                 timescale: '',
@@ -208,22 +207,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                     </AccordionSummary>
                     <AccordionDetails>
 
-                        <SchemaSelect />
-                        <br />
-
-                        {props.values.schema !== '' &&
-                            <div>
-                                <CharacterSelect values={props.values} source="characterInstance"/>
-                                <br />
-                            </div>
-                        }
-                        
-                        {props.values.character !== "" &&
-                            <div>
-                                <StateSelect values={props.values} source="characterInstance" multi={true}/>
-                                <br />
-                            </div>
-                        }     
+                        <CharacterInstanceQueryManager values={props.values} />
 
                     </AccordionDetails>
                 </Accordion>

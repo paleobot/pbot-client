@@ -7,7 +7,7 @@ export const OTUFilterHelper = (filters, props) => {
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"
-        if (!filters.name && !filters.states && !filters.character && !filters.schema && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.collection && !filters.enterers && !filters.intervals) {
+        if (!filters.name && !filters.characterInstances && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.collection && !filters.enterers && !filters.intervals) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
@@ -227,49 +227,57 @@ export const OTUFilterHelper = (filters, props) => {
                     }
                 }`
             }
-            if (filters.states) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            describedBy: {
-                                Description: { 
-                                    characterInstances_some: {
-                                        state: {
-                                            State: {pbotID_in: $states}
+
+            //To support an AND query on mulitiple character instances, we must generate a
+            //query clause for each. A fully specified character instance includes a schema,
+            //a character, and a state. 
+            //
+            //We allow partial specification (i.e. can specify only a schema or a schema 
+            //and character). 
+            //
+            //Also, to streamline the UI, we allow multiple states to be entered for a given 
+            //character. This results in a nested array, which must be flattened.
+            if (filters.characterInstances) {
+                filters.characterInstances.forEach((ci,i) => {
+                    filter += `, {
+                        identifiedSpecimens_some: {
+                            Specimen: {
+                                describedBy_some: {
+                                    Description: {
+                                        schema: {
+                                            pbotID: $schema${i}
                                         }
+                        `
+                    if (ci.character) {
+                        filter += `
+                                        characterInstances_some: {
+                                            character: {
+                                                pbotID: $character${i}
+                                            }
+                        `
+                        if (ci.state) {
+                            filter += `
+                                            state: {
+                                                State: {
+                                                    pbotID: $state${i}
+                                                }
+                                            }
+                            `
+                        }
+                        filter += `
+                                        }
+                        `
+                    }
+                    filter += `
                                     }
                                 }
                             }
                         }
                     }
-                }`
-            } else if (filters.character) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            describedBy: {
-                                Description: { 
-                                    characterInstances_some: {
-                                        character: {pbotID: $character}
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }`
-            } else if (filters.schema) {
-                filter += `, {
-                    identifiedSpecimens_some: {
-                        Specimen: {
-                            describedBy: {
-                                Description: { 
-                                    schema: {pbotID: $schema}
-                                }
-                            }
-                        }
-                    }
-                }`
+                    `
+                })
             }
+
             filter +="]"
         }
         filter += "}"

@@ -287,6 +287,30 @@ function OTUList(props) {
 
     let gQL;
     if (!props.standAlone) {
+
+        //To support an AND query on mulitiple character instances, we must generate a
+        //query clause for each. A fully specified character instance includes a schema,
+        //a character, and a state. There must be an explicit query variable for each 
+        //schema, character, and state. These are set up here.
+        //
+        //We allow partial specification (i.e. can specify only a schema or a schema 
+        //and character). 
+        let schemaIDstrings = [], characterIDstrings = [], stateIDstrings = []
+        if (filters.characterInstances) {
+            filters.characterInstances.forEach((ci,i) => {
+                schemaIDstrings[i] = `, $schema${i}: ID`;
+                filters[`schema${i}`] = ci.schema;
+                if (ci.character) {
+                    characterIDstrings[i] = `, $character${i}: ID`;
+                    filters[`character${i}`] = ci.character;
+                }
+                if (ci.state) {
+                    stateIDstrings[i] = `, $state${i}: ID`;
+                    filters[`state${i}`] = ci.state;
+                }   
+            })
+        }
+
         gQL = gql`
             query (
                 $pbotID: ID, 
@@ -303,9 +327,9 @@ function OTUList(props) {
                 ${groups} 
                 ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""} 
                 ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""} 
-                ${filters.schema ? ", $schema: ID" : ""} 
-                ${filters.character ? ", $character: ID" : ""} 
-                ${filters.states ? ", $states: [ID!]" : ""} 
+                ${schemaIDstrings}
+                ${characterIDstrings}
+                ${stateIDstrings}
                 ${filters.identifiedSpecimens ? ", $identifiedSpecimens: [ID!]" : ""} 
                 ${filters.typeSpecimens ? ", $typeSpecimens: [ID!]" : ""} 
                 ${filters.holotypeSpecimen ? ", $holotypeSpecimen: ID!" : ""} 
@@ -417,6 +441,41 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
     console.log("overlapping intervals")
     console.log(intervals)
 
+    //To support an AND query on mulitiple character instances, we must generate a
+    //query clause for each. A fully specified character instance includes a schema,
+    //a character, and a state. There must be an explicit query variable for each 
+    //schema, character, and state. These are set up here.
+    //
+    //To streamline the UI, we allow multiple states to be entered for a given 
+    //character. This results in a nested array, which must be flattened.
+    let characterInstances;
+    if (queryParams.characterInstances && queryParams.characterInstances.length > 0) {
+        characterInstances = queryParams.characterInstances.reduce((acc, ci) => {
+            console.log(ci)
+            if (ci.states && ci.states.length > 0) {
+                ci.states.filter(n => n !== '').forEach((s) => {
+                    console.log(s)
+                    acc.push({
+                        schema: ci.schema,
+                        character: ci.character,
+                        state: s.split("~,")[1]
+                    });
+                })
+            } else if (ci.character) { 
+                acc.push({
+                    schema: ci.schema,
+                    character: ci.character
+                })
+            } else {
+                acc.push({
+                    schema: ci.schema,
+               })
+            }
+            return acc;
+        }, [])
+    }
+    console.log("Flattened characterInstances")
+    console.log(characterInstances)
 
     return (
         <OTUList 
@@ -439,9 +498,7 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
                 holotypeSpecimen: queryParams.holotypeSpecimen || null,
                 synonym: queryParams.synonym || null,
                 references: queryParams.references && queryParams.references.length > 0 ? queryParams.references.map(r => r.pbotID) : null,
-                schema: queryParams.character ? null : queryParams.schema || null,
-                character: queryParams.states && queryParams.states.length > 0 ? null : queryParams.character || null,
-                states: queryParams.states && queryParams.states.length > 0  ? queryParams.states.map(state => state.split("~,")[1]) : null,
+                characterInstances: characterInstances || null,
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
                 mininterval: queryParams.mininterval && !queryParams.includeOverlappingIntervals ?
