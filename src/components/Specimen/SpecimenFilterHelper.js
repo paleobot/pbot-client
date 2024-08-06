@@ -1,9 +1,35 @@
+import QueryHelper from '../QueryHelper'
+
 /*
 Handling filter string generation in this separate  file was necessary because, apparently, having too much logic in the same file that uses the useQuery hook triggers some faulty logic in whatever lint-ish thing parses the react code, causing a conditional use of hook error (see paleobot/pbot-client#37). 
 
 Simply moving that logic here got rid of the error. No idea, and don't have time or inclination to pursue further.
 */
 export const SpecimenFilterHelper = (filters, props) => {
+
+    let queryFilters = QueryHelper(null, "elementOf", filters.groups)
+    queryFilters = QueryHelper(queryFilters, "preservationModes", filters.preservationModes)
+    queryFilters = QueryHelper(queryFilters, "partsPreserved", filters.partsPreserved)
+    queryFilters = QueryHelper(queryFilters, "notableFeatures", filters.notableFeatures)
+    queryFilters = QueryHelper(queryFilters, "identifiers", filters.identifiers)
+    queryFilters = QueryHelper(queryFilters, "enteredBy", filters.enterers, `, {
+        enteredBy_some: {
+            Person: {
+                pbotID_in: <<nameString>>, 
+            }
+            type: "CREATE"
+        }
+    }`)
+    queryFilters = QueryHelper(queryFilters, "references", filters.references, `, {
+        references_some: {
+            RefqueryFilterserence: {
+                pbotID_in: <<nameString>> 
+            } 
+        }
+    }`)
+    console.log("QueryHelper return")
+    console.log(queryFilters)
+
     let filter = '';
     if (!props.standAlone) {
         filter = ", filter: {"

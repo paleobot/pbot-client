@@ -15,6 +15,7 @@ import { GlobalContext } from '../GlobalContext';
 import { SpecimenFilterHelper } from './SpecimenFilterHelper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Country, State }  from 'country-state-city';
+import QueryHelper from '../QueryHelper'
 
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
@@ -226,6 +227,20 @@ function Specimens(props) {
 
     let gQL;
     if (!props.standAlone) {
+
+        /*
+        let queryHelper = QueryHelper(null, "partsPreserved", filters.partsPreserved)
+        queryHelper = QueryHelper(queryHelper, "enteredBy", filters.enterers, `, {
+            enteredBy_some: {
+                Person: {
+                    pbotID_in: <<nameString>>, 
+                }
+                type: "CREATE"
+            }
+        }`)
+        console.log("QueryHelper")
+        console.log(queryHelper)
+        */
 
         //To support an AND query on mulitiple character instances, we must generate a
         //query clause for each. A fully specified character instance includes a schema,
