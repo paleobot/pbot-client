@@ -22,6 +22,7 @@ const SpecimenDirectQueryResults = () => {
             includeDescriptions: "true" === search.get("includeDescriptions"),
             includeOTUs: "true" === search.get("includeOTUs"),
             standAlone: true,
+            format: search.get("format"),
         };
         return (
             <GlobalProvider>

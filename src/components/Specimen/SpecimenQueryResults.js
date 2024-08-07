@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   useQuery,
   gql
 } from "@apollo/client";
-import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Card, Box, Stack, Accordion, AccordionDetails, AccordionSummary, OutlinedInput } from '@mui/material';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Card, Box, Stack, Accordion, AccordionDetails, AccordionSummary, Button } from '@mui/material';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize, sort, AlternatingTableRow, useFetchIntervals } from '../../util.js';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
@@ -19,7 +19,7 @@ import { Country, State }  from 'country-state-city';
 function Specimens(props) {
     console.log("SpecimenQueryResults Specimens");
     console.log(props);
- 
+
     const global = useContext(GlobalContext);
 
     //toss out falsy fields
@@ -370,8 +370,15 @@ function Specimens(props) {
         )
     }
     if (props.standAlone) {
+        if (props.format && "JSON" === props.format.toUpperCase()) {
+            return (
+                <><pre>{JSON.stringify(data, null, 2)}</pre></>
+            )
+        }
+
         return (
             specimens.map((s) => {
+        
                 const directURL = new URL(window.location.origin + "/query/specimen/" + s.pbotID);
                 if (props.includeImages) {
                     directURL.searchParams.append("includeImages", "true");
@@ -422,49 +429,52 @@ function Specimens(props) {
                                 </Typography>
                             </Grid>
                             <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
+                                
                                 <Typography variant="h5" sx={{marginRight: "10px"}}>
                                     Workspace: {s.elementOf[0].name}
                                 </Typography>
+                                
                             </Grid>
                         </Grid>
 
-                        <Grid container spacing={1} sx={{ml:"10px"}}>
-                            <Grid item><b>direct link:</b></Grid>
-                            <Grid item><Link color="success.main" underline="hover" href={directURL} target="_blank">{directURL.toString()}</Link></Grid>
-                        </Grid>
-
                         <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
-                                        <Box sx={boxedDisplay}>
-                                            <b>{s.name}</b>
-                                        </Box>
-                                        <Box sx={boxedDisplay}>
-                                        <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{s.pbotID}
-                                        </Box>
-                                        <br />
-                                        <Box sx={boxedDisplay}>
-                                        <Typography variant="caption">Repository</Typography><br />{s.repository}
-                                        </Box>
-                                        <Box sx={boxedDisplay}>
-                                        <Typography variant="caption">Other repository link</Typography><br />{s.otherRepositoryLink}
-                                        </Box>
-                                        <Box sx={boxedDisplay}>
-                                        <Typography variant="caption">iDigBio InstitutionCode, CatalogNumber, uuid</Typography><br />{`${s.idigbioInstitutionCode}, ${s.idigbioCatalogNumber}, ${s.idigbiouuid}`}
-                                        </Box>
-                                        <br />
-                                        <Box sx={boxedDisplay}>
-                                        <Typography variant="caption">Parts preserved</Typography><br />{s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}
-                                        </Box>
-                                        <Box sx={boxedDisplay}>
-                                        <Typography variant="caption">Notable features preserved</Typography><br />{s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}
-                                        </Box>        
-                                        <Box sx={boxedDisplay}>
-                                        <Typography variant="caption">Preservation modes</Typography><br />{s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}
-                                        </Box>    
-                                        <br />
-                                        <Box sx={boxedDisplay}>
-                                        <Typography variant="caption">Data access groups</Typography><br />{s.elementOf.map((e, index, arr) => e.name + (index+1 === arr.length ? '' : ", "))} 
-                                        </Box>    
-                                    </Paper>
+                            <Box sx={boxedDisplay}>
+                                <b>{s.name}</b>
+                            </Box>
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{s.pbotID}
+                            </Box>
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption" sx={{lineHeight:0}}>Direct link</Typography><br /><Link color="success.main" underline="hover" href={directURL} target="_blank">{directURL.toString()}</Link>
+                            </Box>
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={directURL + "&format=json"} target="_blank">{directURL.toString() + "&format=json"}</Link>
+                            </Box>
+                            <br />
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption">Repository</Typography><br />{s.repository}
+                            </Box>
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption">Other repository link</Typography><br />{s.otherRepositoryLink}
+                            </Box>
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption">iDigBio InstitutionCode, CatalogNumber, uuid</Typography><br />{`${s.idigbioInstitutionCode}, ${s.idigbioCatalogNumber}, ${s.idigbiouuid}`}
+                            </Box>
+                            <br />
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption">Parts preserved</Typography><br />{s.partsPreserved.map((organ, index, arr) => organ.type + (index+1 === arr.length ? '' : ", "))}
+                            </Box>
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption">Notable features preserved</Typography><br />{s.notableFeatures.map((feature, index, arr) => feature.name + (index+1 === arr.length ? '' : ", "))}
+                            </Box>        
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption">Preservation modes</Typography><br />{s.preservationModes.map((pM, index, arr) => pM.name + (index+1 === arr.length ? '' : ", "))}
+                            </Box>    
+                            <br />
+                            <Box sx={boxedDisplay}>
+                            <Typography variant="caption">Data access groups</Typography><br />{s.elementOf.map((e, index, arr) => e.name + (index+1 === arr.length ? '' : ", "))} 
+                            </Box>    
+                        </Paper>
 
 
                         <Accordion style={accstyle} defaultExpanded={s.images && s.images.length > 0}>
@@ -528,90 +538,8 @@ function Specimens(props) {
                                 <br />
                                 <Box sx={boxedDisplay}><Typography variant="caption">Maximum time interval</Typography><br />{s.collection.maxinterval}</Box>
                                 <Box sx={boxedDisplay}><Typography variant="caption">Minimum time interval</Typography><br />{s.collection.mininterval}</Box>
- 
-                                {/*}
-                                <Stack 
-                                    spacing={{xs:2}}
-                                    direction="row"
-                                >
-                                    <Box sx={{border: 1, margin:"4px"}}><b>collection:</b> asdkgj aslkdgj asaf</Box>
-                                    <Box sx={{border: 1, margin:"4px"}}><b>country:</b> asdfdsaf</Box>
-                                    <Box sx={{border: 1, margin:"4px"}}><b>state/province:</b> asdfdfda</Box>
-                                </Stack>
-                                */}
-                                {/*
-                                <Grid 
-                                    container
-                                    spacing={{xs:0}}
-                                >
-                                    <Grid
-                                        item
-                                        xs={6}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">Collection</Typography><br />{s.collection.name}</Box>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={3}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">Country</Typography><br />{s.collection.country}</Box>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={3}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">State/province</Typography><br />{s.collection.state}</Box>
-                                    </Grid>
-                                </Grid>
-                                <Grid 
-                                    container
-                                    spacing={{xs:0}}
-                                >
-                                    <Grid
-                                        item
-                                        xs={3}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">Geologic group</Typography><br />{s.collection.stratigraphicGroup}</Box>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={3}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">Geologic formation</Typography><br />{s.collection.stratigraphicFormation}</Box>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={3}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">Geologic member</Typography><br />{s.collection.stratigraphicMember}</Box>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={3}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">Geologic bed</Typography><br />{s.collection.stratigraphicBed}</Box>
-                                    </Grid>
-                                </Grid>
-                                <Grid 
-                                    container
-                                    spacing={{xs:0}}
-                                >
-                                    <Grid
-                                        item
-                                        xs={6}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">Maximum time interval</Typography><br />{s.collection.maxinterval}</Box>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={6}
-                                    >
-                                        <Box sx={boxedDisplay}><Typography variant="caption">Minimum time interval</Typography><br />{s.collection.mininterval}</Box>
-                                    </Grid>
-                                </Grid>
-                            */}
 
-                            </AccordionDetails>
+                         </AccordionDetails>
                         </Accordion>
 
                         <Accordion style={accstyle} defaultExpanded={false}>
@@ -719,7 +647,7 @@ function Specimens(props) {
                                 History
                             </AccordionSummary>
                             <AccordionDetails>
-                                         <TableContainer component={Paper}>
+                                        <TableContainer component={Paper}>
                                             <Table sx={{width:"100%", mr:"10px"}} aria-label="history table">
                                                 <TableBody>
                                                     {history.map(eb => {
@@ -781,6 +709,12 @@ function Specimens(props) {
         );
     } else {
         return (
+            <>
+
+            {/*
+            <Button sx={{mb:"10px"}} size="small" color="secondary" variant="outlined" onClick={() => {}}>View raw JSON</Button>
+            */}
+            
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="specimens table">
                     <TableHead>
@@ -847,6 +781,9 @@ function Specimens(props) {
                     </TableBody>
                 </Table>
             </TableContainer>
+            
+
+        </>
         )
     }
 
@@ -954,12 +891,13 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
-            includeImages={true}
-            includeDescriptions={true} 
-            includeOTUs={true} 
+            includeImages={queryParams.includeImages}
+            includeDescriptions={queryParams.includeDescriptions} 
+            includeOTUs={queryParams.includeOTUs} 
             standAlone={queryParams.standAlone} 
             handleSelect={handleSelect}
             exclude={exclude}
+            format={queryParams.format}
         />
     );
 };
