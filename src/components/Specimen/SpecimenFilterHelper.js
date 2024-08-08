@@ -286,6 +286,8 @@ export const SpecimenFilterHelper = (filters, props) => {
             filter +="]"
         }
         filter += "}"
+    } else {
+        filter += `, filter: {pbotID_in: $pbotIDs}`
     }
     return filter;
 }
