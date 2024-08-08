@@ -307,6 +307,7 @@ function Specimens(props) {
         gQL = gql`
             query (
                 $pbotID: ID, 
+                $pbotIDs: [ID!], 
                 $name: String, 
                 ${groups} 
                 $includeImages: Boolean!, 
@@ -708,13 +709,28 @@ function Specimens(props) {
             })
         );
     } else {
+
+        const jsonURL = new URL(window.location.origin + "/query/specimen/" + specimens.reduce((acc, s) => {
+            return '' === acc ?
+                s.pbotID :
+                acc + "," + s.pbotID
+        }, ''));
+        if (props.includeImages) {
+            jsonURL.searchParams.append("includeImages", "true");
+        }
+        if (props.includeDescriptions) {
+            jsonURL.searchParams.append("includeDescriptions", "true");
+        }
+        if (props.includeOTUs) {
+            jsonURL.searchParams.append("includeOTUs", "true");
+        }
+        jsonURL.searchParams.append("format", "json")
+
+        const boxedDisplay = {wordWrap: "break-word", border: 0, mt: "10px", paddingLeft:"2px"};
+
         return (
             <>
-
-            {/*
-            <Button sx={{mb:"10px"}} size="small" color="secondary" variant="outlined" onClick={() => {}}>View raw JSON</Button>
-            */}
-            
+                        
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="specimens table">
                     <TableHead>
@@ -782,6 +798,12 @@ function Specimens(props) {
                 </Table>
             </TableContainer>
             
+            {/*
+            <Button sx={{mb:"10px"}} size="small" color="secondary" variant="outlined" onClick={() => {}}>View raw JSON</Button>
+            */}
+            <Box sx={boxedDisplay}>
+            <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={jsonURL} target="_blank">{jsonURL.toString()}</Link>
+            </Box>
 
         </>
         )
@@ -849,10 +871,15 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
     console.log("Flattened characterInstances")
     console.log(characterInstances)
 
+    console.log(queryParams.specimenID)
+
     return (
         <Specimens 
             filters={{
-                pbotID: queryParams.specimenID,
+                pbotID: queryParams.specimenID && !Array.isArray(queryParams.specimenID) ?
+                    queryParams.specimenID : null,
+                pbotIDs: queryParams.specimenID && Array.isArray(queryParams.specimenID) ?
+                        queryParams.specimenID : null,
                 name: queryParams.name ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
                 description: queryParams.description || null,
                 identifiedAs: queryParams.identifiedAs || null,
