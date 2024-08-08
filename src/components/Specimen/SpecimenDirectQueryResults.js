@@ -13,9 +13,10 @@ const SpecimenDirectQueryResults = () => {
 
     console.log("specimenid = " + specimenid);
     //Get specimenid ID, create necessary parameters, and call SpecimenQueryResults to do the work
-    if (specimenid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
+    //if (specimenid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
+    if (specimenid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(,?[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})*$/gi)) {
         const queryParams = {
-            specimenID: specimenid,
+            specimenID: specimenid ? specimenid.split(',') : null,
             organs:[],
             groups: [], 
             includeImages: "true" === search.get("includeImages"),
