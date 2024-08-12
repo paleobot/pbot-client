@@ -719,19 +719,19 @@ function OTUs(props) {
                                     <TableCell>
                                         {o.partsPreserved.map((p, i) => {
                                             return (
-                                                <>
+                                                <span key={i}>
                                                 {i > 0 ? ', ' : ''}{p.type}
-                                                </>
+                                                </span>
                                             )
                                         })}
                                     </TableCell>
                                     <TableCell>
-                                        {o.enteredBy.map((p) => {
+                                        {o.enteredBy.map((p, i) => {
                                             if ("CREATE" === p.type) {
                                                 return (
-                                                    <>
+                                                    <span key={i}>
                                                     {`${p.Person.given}${p.Person.middle ? ` ${p.Person.middle}` : ''} ${p.Person.surname}`}
-                                                    </>
+                                                    </span>
                                                 )
                                             } else {
                                                 return ('')
