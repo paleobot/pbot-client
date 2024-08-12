@@ -5,7 +5,11 @@ Simply moving that logic here got rid of the error. No idea, and don't have time
 */
 export const OTUFilterHelper = (filters, props) => {
     let filter = '';
-    if (!props.standAlone) {
+    if (props.standAlone) {
+        if (filters.pbotID && Array.isArray(filters.pbotID)) {
+            filter += `, filter: {pbotID_in: $pbotID}`
+        }
+    } else  {
         filter = ", filter: {"
         if (!filters.name && !filters.characterInstances && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiedSpecimens && !filters.typeSpecimens && !filters.holotypeSpecimen && !filters.references && !filters.synonym && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.collection && !filters.enterers && !filters.intervals) {
             filter += "elementOf_some: {pbotID_in: $groups}"

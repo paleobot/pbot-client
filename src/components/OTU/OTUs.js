@@ -1,6 +1,6 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { alphabetize, sort, AlternatingTableRow } from '../../util.js';
+import { alphabetize, sort, AlternatingTableRow, DirectQueryLink } from '../../util.js';
 import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Accordion, AccordionSummary, AccordionDetails, Tabs, Tab } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -11,27 +11,6 @@ import { array } from 'yup';
 import { Country, State }  from 'country-state-city';
 import { Comments } from '../Comment/Comments';
 
-//TODO: Might be worth moving this to its own file and using elsewhere
-const DirectQueryLink = (props) => {
-    console.log("DirectQueryLink")
-    console.log(props.children)
-    const url = new URL(`${window.location.origin}/query/${props.type}/${props.pbotID}`);
-    console.log(props.params)
-    //props.params.forEach(p => console.log(p))
-    if (props.params) props.params.forEach(p => {
-        console.log(p)
-        url.searchParams.append(p, "true");
-    })
-    return (
-        <Link style={props.style} color="success.main" underline="hover" href={url}  target="_blank">
-            {props.children && props.children.length > 0 &&
-                <b>{props.children}</b>
-            } 
-            {(!props.children || props.children.length === 0) &&
-                <b>{props.text || url.toString()}</b>
-            }</Link>
-    )
-}
 
 const ImageTabs = ({holotypeImages, typeImages, identifiedImages}) => {
     const [value, setValue] = React.useState(
@@ -122,8 +101,8 @@ const ImageTabs = ({holotypeImages, typeImages, identifiedImages}) => {
 
 function OTUs(props) {
     console.log("OTUs");
-    console.log(props.otus);
-    let otus = alphabetize([...props.otus], "name");
+    console.log(props.data);
+    const otus = props.data ? alphabetize([...props.data.OTU], "name") : [];
     console.log(otus);
     
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
@@ -171,8 +150,16 @@ function OTUs(props) {
         directQParams.push("includeMergedDescription");
     }
 
+    const jsonDirectQParams = directQParams.concat(["format=json"])
+
     if (props.standalone) {
     //TODO:Figure out a more modular way to handle nested comments query and presentation  
+
+        if (props.format && "JSON" === props.format.toUpperCase()) {
+            return (
+                <><pre>{JSON.stringify(props.data, null, 2)}</pre></>
+            )
+        }
 
         const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
         const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
@@ -331,17 +318,18 @@ function OTUs(props) {
                                 </Grid>
                             </Grid>
 
-                            <Grid container spacing={1} sx={{ml:"10px"}}>
-                                <Grid item><b>direct link:</b></Grid>
-                                <Grid item><DirectQueryLink type="otu" pbotID={pbotID} params={directQParams} /></Grid>
-                            </Grid>
-
                             <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
                                 <Box sx={boxedDisplay}>
                                     <b>{name}</b>
                                 </Box>
                                 <Box sx={boxedDisplay}>
                                     <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{pbotID}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Direct link</Typography><br /><DirectQueryLink type="otu" pbotID={pbotID} params={directQParams} />
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="otu" pbotID={pbotID} params={jsonDirectQParams} />
                                 </Box>
                                 <br />
                                 <Box sx={boxedDisplay}>
@@ -707,7 +695,11 @@ function OTUs(props) {
             })
         );
     } else {
+
+        const boxedDisplay = {wordWrap: "break-word", border: 0, mt: "10px", paddingLeft:"2px"};
+
         return (
+            <>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="otus table">
                     <TableHead>
@@ -722,7 +714,7 @@ function OTUs(props) {
                             return (
                                 <AlternatingTableRow key={o.pbotID}>
                                     <TableCell>
-                                        <DirectQueryLink type="otu" pbotID={o.pbotID} params={directQParams} text={o.name || "(title missing)"} />
+                                        <DirectQueryLink style={{fontWeight:"bold"}} type="otu" pbotID={o.pbotID} params={directQParams} text={o.name || "(name missing)"} />
                                     </TableCell>
                                     <TableCell>
                                         {o.partsPreserved.map((p, i) => {
@@ -752,6 +744,12 @@ function OTUs(props) {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="otu" pbotID={otus} params={jsonDirectQParams} />
+            </Box>
+
+            </>
         )
     }
 }

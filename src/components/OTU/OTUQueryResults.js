@@ -369,7 +369,8 @@ function OTUList(props) {
     } else {
         gQL = gql`
             query (
-                $pbotID: ID, 
+                $pbotID: ${filters.pbotID && Array.isArray(filters.pbotID) ?
+                    "[ID!]" : "ID"},
                 $name: String, 
                 $family: String, 
                 $genus: String, 
@@ -381,7 +382,8 @@ function OTUList(props) {
                 $includeMergedDescription: Boolean!
             ) {
                 OTU (
-                    pbotID: $pbotID, 
+                    ${filters.pbotID && !Array.isArray(filters.pbotID) ?
+                        "pbotID: $pbotID" : ""}, 
                     name: $name,
                     family: $family, 
                     genus: $genus, 
@@ -413,7 +415,7 @@ function OTUList(props) {
     console.log(data.OTU);
     
     return (
-        <OTUs select={props.select} handleSelect={props.handleSelect} public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} otus={data.OTU} standalone={props.standAlone} includeSynonyms={props.includeSynonyms} includeComments={props.includeComments} includeHolotypeDescription={props.includeHolotypeDescription} includeMergedDescription={props.includeMergedDescription}/>
+        <OTUs select={props.select} handleSelect={props.handleSelect} public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} data={data} standalone={props.standAlone} includeSynonyms={props.includeSynonyms} includeComments={props.includeComments} includeHolotypeDescription={props.includeHolotypeDescription} includeMergedDescription={props.includeMergedDescription} format={props.format}/>
     );
 
 }
@@ -518,14 +520,15 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
                 enterers: queryParams.enterers && queryParams.enterers.length > 0 ?queryParams.enterers.map(({pbotID}) => pbotID)  : null, 
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
-            includeSynonyms={true} 
-            includeComments={true} 
-            includeHolotypeDescription={true} 
-            includeMergedDescription={true} 
+            includeSynonyms={queryParams.includeSynonyms} 
+            includeComments={queryParams.includeComments} 
+            includeHolotypeDescription={queryParams.includeHolotypeDescription} 
+            includeMergedDescription={queryParams.includeMergedDescription} 
             includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
             standAlone={queryParams.standAlone} 
             select={select}
             handleSelect={handleSelect}
+            format={queryParams.format}
         />
     );
 };
