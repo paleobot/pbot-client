@@ -3,7 +3,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import { alphabetize, sort, AlternatingTableRow } from '../../util.js';
+import { alphabetize, sort, AlternatingTableRow, DirectQueryLink } from '../../util.js';
 import { Link, Grid, List, ListItem, ListItemButton, ListItemText, Typography, TableContainer, Table, TableCell, TableBody, TableRow, styled, Paper, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
@@ -22,8 +22,15 @@ function References(props) {
     console.log(filters)
 
     const groups = props.standAlone ? '' : ', $groups: [ID!] ';
-    const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
     
+    const filter = props.standAlone ? 
+        (filters.pbotID && Array.isArray(filters.pbotID)) ?
+            `filter: {pbotID_in: $pbotID}` 
+            :
+            ''  
+        : 
+        ',  filter:{elementOf_some: {pbotID_in: $groups}}'
+
     let gQL;
     if (!props.standAlone) {
         gQL = gql`
@@ -85,8 +92,14 @@ function References(props) {
     `;
 } else {
         gQL = gql`
-            query ($pbotID: ID, ${groups}) {
-                Reference (pbotID: $pbotID, ${filter}) {
+            query (
+                $pbotID: ${filters.pbotID && Array.isArray(filters.pbotID) ?
+                    "[ID!]" : "ID"},
+                ${groups}) {
+                Reference (
+                    ${filters.pbotID && !Array.isArray(filters.pbotID) ?
+                        "pbotID: $pbotID" : ""}, 
+                    ${filter}) {
                     pbotID
                     title
                     year
@@ -159,7 +172,18 @@ function References(props) {
         )
     }
     
+    const directQParams = [];
+
+    const jsonDirectQParams = directQParams.concat(["format=json"])
+
     if (props.standAlone) {
+
+        if (props.format && "JSON" === props.format.toUpperCase()) {
+            return (
+                <><pre>{JSON.stringify(data, null, 2)}</pre></>
+            )
+        }
+
         const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
         const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
 
@@ -202,17 +226,18 @@ function References(props) {
                         </Grid>
                     </Grid>
 
-                    <Grid container spacing={1} sx={{ml:"10px"}}>
-                        <Grid item><b>direct link:</b></Grid>
-                        <Grid item><Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></Grid>
-                    </Grid>
-
                     <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
                         <Box sx={boxedDisplay}>
                             <b>{reference.title}</b>
                         </Box>
                         <Box sx={boxedDisplay}>
                             <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{reference.pbotID}
+                        </Box>
+                        <Box sx={boxedDisplay}>
+                            <Typography variant="caption" sx={{lineHeight:0}}>Direct link</Typography><br /><DirectQueryLink type="reference" pbotID={reference.pbotID} params={directQParams} />
+                        </Box>
+                        <Box sx={boxedDisplay}>
+                            <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="reference" pbotID={reference.pbotID} params={jsonDirectQParams} />
                         </Box>
                         <Box sx={boxedDisplay}>
                             <Typography variant="caption" sx={{lineHeight:0}}>PBDB ID</Typography><br />{reference.pbdbid}
@@ -290,12 +315,17 @@ function References(props) {
     }
 
     if (!props.standAlone) {
+
+
+        const boxedDisplay = {wordWrap: "break-word", border: 0, mt: "10px", paddingLeft:"2px"};
+
         /*
         return (
             <Link style={listIndent} color="success.main" underline="hover" href={directURL}  target="_blank"><b>{`${reference.year}, ${reference.title}`}</b></Link>
         )
         */
         return (
+            <>
            <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="references table">
                     <TableBody>
@@ -314,6 +344,12 @@ function References(props) {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="reference" pbotID={references} params={jsonDirectQParams} />
+            </Box>
+
+            </>
         )        
     }
 }
@@ -349,6 +385,7 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => 
             handleSelect={handleSelect}
             exclude={exclude}
             standAlone={queryParams.standAlone} 
+            format={queryParams.format}
         />
     );
 };

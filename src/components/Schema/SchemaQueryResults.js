@@ -5,15 +5,15 @@ import {
 } from "@apollo/client";
 import { Link, Grid, Typography, TableContainer, Paper, Table, TableBody, TableCell, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import Characters from "../Character/Characters";
-import { alphabetize, AlternatingTableRow, sort } from '../../util.js';
+import { alphabetize, AlternatingTableRow, DirectQueryLink, sort } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function Schemas(props) {
+    console.log("Schemas")
     console.log(props);
-    console.log(props.filters.genus);
     
     const global = useContext(GlobalContext);
 
@@ -24,18 +24,20 @@ function Schemas(props) {
     //const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
     
     let filter = '';
-    if (!props.standAlone) {
+    if (props.standAlone) {
+        if (filters.pbotID && Array.isArray(filters.pbotID)) {
+            filter += `, filter: {pbotID_in: $pbotID}`
+        }
+    } else  {
         filter = ", filter: {"
         if (!filters.title && !filters.partsPreserved && !filters.notableFeatures && !filters.reference && !filters.purpose && !filters.specimen) {
             filter += "elementOf_some: {pbotID_in: $groups}"
         } else {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}";
             if (filters.title) {
-                console.log("adding title")
                 filter += ", {title_regexp: $title}"
             }
             if (filters.partsPreserved) {
-                console.log("adding partsPreserved")
                 filter += ", {partsPreserved_some: {pbotID_in: $partsPreserved}}"
             }
             if (filters.notableFeatures) {
@@ -102,14 +104,16 @@ function Schemas(props) {
     } else if (!props.includeCharacters) {
         gQL = gql`
             query (
-                $pbotID: ID, 
+                $pbotID: ${filters.pbotID && Array.isArray(filters.pbotID) ?
+                    "[ID!]" : "ID"},
                 $year: String 
                 ${groups}
                 ${filters.title ? ", $title: String" : ""} 
             ) {
                 Schema (
-                    pbotID: $pbotID, 
-                    year: $year 
+                    ${filters.pbotID && !Array.isArray(filters.pbotID) ?
+                        "pbotID: $pbotID" : ""}, 
+                    year: $year
                     ${filter}
                 ) {
                     pbotID
@@ -207,13 +211,15 @@ function Schemas(props) {
             }
 
             query (
-                $pbotID: ID, 
+                $pbotID: ${filters.pbotID && Array.isArray(filters.pbotID) ?
+                    "[ID!]" : "ID"},
                 $year: String 
                 ${groups}
                 ${filters.title ? ", $title: String" : ""} 
             ) {
                 Schema (
-                    pbotID: $pbotID, 
+                    ${filters.pbotID && !Array.isArray(filters.pbotID) ?
+                        "pbotID: $pbotID" : ""}, 
                     year: $year 
                     ${filter}
                 ) {
@@ -279,7 +285,21 @@ function Schemas(props) {
         )
     }
     
+    const directQParams = [];
+    if (props.includeCharacters) {
+        directQParams.push("includeCharacters");
+    }
+
+    const jsonDirectQParams = directQParams.concat(["format=json"])
+
     if (props.standAlone) {
+
+        if (props.format && "JSON" === props.format.toUpperCase()) {
+            return (
+                <><pre>{JSON.stringify(data, null, 2)}</pre></>
+            )
+        }
+
         const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
         const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
 
@@ -322,18 +342,18 @@ function Schemas(props) {
                                 </Grid>
                             </Grid>
 
-                            <Grid container spacing={1} sx={{ml:"10px"}}>
-                                <Grid item><b>direct link:</b></Grid>
-                                <Grid item><Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></Grid>
-                            </Grid>
-
-
                             <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
                                 <Box sx={boxedDisplay}>
                                     <b>{schema.title}</b>
                                 </Box>
                                 <Box sx={boxedDisplay}>
                                     <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{schema.pbotID}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Direct link</Typography><br /><DirectQueryLink type="schema" pbotID={schema.pbotID} params={directQParams} />
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="schema" pbotID={schema.pbotID} params={jsonDirectQParams} />
                                 </Box>
                                 <Box sx={boxedDisplay}>
                                     <Typography variant="caption" sx={{lineHeight:0}}>Year</Typography><br />{schema.year}
@@ -398,7 +418,11 @@ function Schemas(props) {
             })
         )
     } else {
+
+        const boxedDisplay = {wordWrap: "break-word", border: 0, mt: "10px", paddingLeft:"2px"};
+
         return (
+            <>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="schemas table">
                     <TableBody>
@@ -421,6 +445,12 @@ function Schemas(props) {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="schema" pbotID={schemas} params={jsonDirectQParams} />
+            </Box>
+
+            </>
         )
     }
 }
@@ -448,6 +478,7 @@ const SchemaQueryResults = ({queryParams}) => {
             }}
             includeCharacters={queryParams.includeCharacters} 
             standAlone={queryParams.standAlone} 
+            format={queryParams.format}
         />
     );
 };

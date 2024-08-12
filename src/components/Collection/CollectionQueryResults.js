@@ -4,7 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import { Link, Grid, Typography, Stack, List, ListItem, ListItemButton, ListItemText, TableContainer, Table, TableBody, Paper, TableCell, TableHead, TableRow, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { alphabetize, AlternatingTableRow, sort, useFetchIntervals } from '../../util.js';
+import { alphabetize, AlternatingTableRow, DirectQueryLink, sort, useFetchIntervals } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
@@ -38,9 +38,12 @@ function Collections(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
     const groups = props.standAlone ? '' : ', $groups: [ID!] ';
-    //const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
     let filter = '';
-    if (!props.standAlone) {
+    if (props.standAlone) {
+        if (filters.pbotID && Array.isArray(filters.pbotID)) {
+            filter += `, filter: {pbotID_in: $pbotID}`
+        }
+    } else  {
         filter = ", filter: {"
         if (!filters.name && !filters.specimens && !filters.references && !filters.otu && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.partsPreserved && !filters.notableFeatures && !filters.preservationModeIDs && !filters.lat && !filters.lon && !filters.enterers && !filters.intervals) {
             filter += "elementOf_some: {pbotID_in: $groups}"
@@ -394,8 +397,24 @@ function Collections(props) {
         `
     } else {
         gQL = gql`
-            query ($pbotID: ID, $name: String, $country: String, $state: String, $collectionType: String, ${groups} $includeSpecimens: Boolean! ${filters.collection ? ", $collection: ID" : ""}) {
-                Collection (pbotID: $pbotID, name: $name, country: $country, state: $state, collectionType: $collectionType ${filter}) {
+            query (
+                $pbotID: ${filters.pbotID && Array.isArray(filters.pbotID) ?
+                    "[ID!]" : "ID"},
+                $name: String, 
+                $country: String, 
+                $state: String, 
+                $collectionType: String, 
+                ${groups} 
+                $includeSpecimens: Boolean! 
+                ${filters.collection ? ", $collection: ID" : ""}) {
+                Collection (
+                    ${filters.pbotID && !Array.isArray(filters.pbotID) ?
+                        "pbotID: $pbotID" : ""}, 
+                    name: $name, 
+                    country: $country, 
+                    state: $state, 
+                    collectionType: $collectionType 
+                    ${filter}) {
                     ${fields}
                 }            
             }
@@ -443,7 +462,20 @@ function Collections(props) {
         )
     }
 
+    const directQParams = [];
+    if (props.includeSpecimens) {
+        directQParams.push("includeSpecimens");
+    }
+
+    const jsonDirectQParams = directQParams.concat(["format=json"])
+
+
     if (props.standAlone) {
+        if (props.format && "JSON" === props.format.toUpperCase()) {
+            return (
+                <><pre>{JSON.stringify(data, null, 2)}</pre></>
+            )
+        }
 
         const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
         const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
@@ -486,17 +518,18 @@ function Collections(props) {
                                 </Grid>
                             </Grid>
 
-                            <Grid container spacing={1} sx={{ml:"10px"}}>
-                                <Grid item><b>direct link:</b></Grid>
-                                <Grid item><Link color="success.main" underline="hover" href={directURL}  target="_blank">{directURL.toString()}</Link></Grid>
-                            </Grid>
-
                             <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
                                 <Box sx={boxedDisplay}>
                                     <b>{collection.name}</b>
                                 </Box>
                                 <Box sx={boxedDisplay}>
                                     <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{collection.pbotID}
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>Direct link</Typography><br /><DirectQueryLink type="collection" pbotID={collection.pbotID} params={directQParams} />
+                                </Box>
+                                <Box sx={boxedDisplay}>
+                                    <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="collection" pbotID={collection.pbotID} params={jsonDirectQParams} />
                                 </Box>
                                 <Box sx={boxedDisplay}>
                                     <Typography variant="caption" sx={{lineHeight:0}}>PBDB ID</Typography><br />{collection.pbdbid}
@@ -759,7 +792,11 @@ function Collections(props) {
             })
         );
     } else {
+
+        const boxedDisplay = {wordWrap: "break-word", border: 0, mt: "10px", paddingLeft:"2px"};
+
         return (
+            <>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="collections table">
                     <TableHead>
@@ -779,7 +816,7 @@ function Collections(props) {
                             return (
                                 <AlternatingTableRow key={collection.pbotID}>
                                     <TableCell>
-                                        <Link color="success.main" underline="hover" href={directURL}  target="_blank"><b>{collection.name || "(name missing)"}</b></Link>
+                                        <DirectQueryLink style={{fontWeight:"bold"}} type="collection" pbotID={collection.pbotID} params={directQParams} text={collection.name || "(name missing)"} />
                                     </TableCell>
                                     <TableCell>
                                         {collection.mininterval}
@@ -796,6 +833,12 @@ function Collections(props) {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="collection" pbotID={collections} params={jsonDirectQParams} />
+            </Box>
+
+            </>
         )
     }
 
@@ -865,10 +908,11 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 species: queryParams.species || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
-            includeSpecimens={true} 
+            includeSpecimens={queryParams.includeSpecimens} 
             includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
             standAlone={queryParams.standAlone} 
             handleSelect={handleSelect}
+            format={queryParams.format}
         />
     );
 };
