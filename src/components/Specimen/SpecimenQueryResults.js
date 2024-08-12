@@ -306,8 +306,8 @@ function Specimens(props) {
     } else {
         gQL = gql`
             query (
-                $pbotID: ID, 
-                $pbotIDs: [ID!], 
+                $pbotID: ${filters.pbotID && Array.isArray(filters.pbotID) ?
+                    "[ID!]" : "ID"},
                 $name: String, 
                 ${groups} 
                 $includeImages: Boolean!, 
@@ -315,7 +315,11 @@ function Specimens(props) {
                 $includeOTUs: Boolean!
                 ${filters.collection ? ", $collection: ID" : ""}
             ) {
-                Specimen (pbotID: $pbotID, name: $name ${filter}) {
+                Specimen (
+                    ${filters.pbotID && !Array.isArray(filters.pbotID) ?
+                        "pbotID: $pbotID" : ""}, 
+                    name: $name 
+                    ${filter}) {
                     ${fields}
                 }            
             }
@@ -876,10 +880,7 @@ const SpecimenQueryResults = ({queryParams, handleSelect, exclude}) => {
     return (
         <Specimens 
             filters={{
-                pbotID: queryParams.specimenID && !Array.isArray(queryParams.specimenID) ?
-                    queryParams.specimenID : null,
-                pbotIDs: queryParams.specimenID && Array.isArray(queryParams.specimenID) ?
-                        queryParams.specimenID : null,
+                pbotID: queryParams.specimenID || null,
                 name: queryParams.name ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
                 description: queryParams.description || null,
                 identifiedAs: queryParams.identifiedAs || null,

@@ -5,7 +5,11 @@ Simply moving that logic here got rid of the error. No idea, and don't have time
 */
 export const SpecimenFilterHelper = (filters, props) => {
     let filter = '';
-    if (!props.standAlone) {
+    if (props.standAlone) {
+        if (filters.pbotID && Array.isArray(filters.pbotID)) {
+            filter += `, filter: {pbotID_in: $pbotID}`
+        }
+    } else  {
         filter = ", filter: {"
         if (!filters.name && !filters.collection && !filters.preservationModes && !filters.partsPreserved && !filters.notableFeatures && !filters.identifiers && !filters.characterInstances && !filters.references && !filters.description && !filters.identifiedAs && !filters.typeOf && !filters.holotypeOf && !filters.majorTaxonGroup && !filters.pbdbParentTaxon && !filters.family && !filters.genus && !filters.species && !filters.mininterval && !filters.maxinterval && !filters.lat && !filters.lon && !filters.country && !filters.state && !filters.stratigraphicGroup && !filters.stratigraphicFormation && !filters.stratigraphicMember && !filters.stratigraphicBed && !filters.enterers && !filters.intervals) {
             filter += "AND: [{elementOf_some: {pbotID_in: $groups}}, {pbotID_not_in: $excludeList}]"
@@ -286,8 +290,6 @@ export const SpecimenFilterHelper = (filters, props) => {
             filter +="]"
         }
         filter += "}"
-    } else {
-        filter += `, filter: {pbotID_in: $pbotIDs}`
     }
     return filter;
 }
