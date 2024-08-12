@@ -27,7 +27,7 @@ const SchemaQueryForm = ({handleSubmit}) => {
         partsPreserved: [],
         notableFeatures: [],
         groups: [],
-        includeCharacters: false
+        includeCharacters: true
     };
     
     return (
