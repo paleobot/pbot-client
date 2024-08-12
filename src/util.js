@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled, TableRow } from "@mui/material";
+import { Link, styled, TableRow } from "@mui/material";
 
 export const alphabetize = (list, sortField) => {
     return list.sort((a,b) => {
@@ -102,4 +102,41 @@ export const useFetchIntervals = (minInt, maxInt, includeOverlappingIntervals, s
     }, [])
     return intervals
 
+}
+
+export const DirectQueryLink = (props) => {
+    console.log("DirectQueryLink")
+    console.log(props.children)
+    let url
+    if (!Array.isArray(props.pbotID)) {
+        url = new URL(`${window.location.origin}/query/${props.type}/${props.pbotID}`);
+    } else {
+        url = new URL(`${window.location.origin}/query/${props.type}/${props.pbotID.reduce((acc, s) => {
+            return '' === acc ?
+                s.pbotID :
+                acc + "," + s.pbotID
+        }, '')}`);
+    }
+    console.log(props.params)
+    //props.params.forEach(p => console.log(p))
+    if (props.params) props.params.forEach(p => {
+        console.log(p)
+        const kv = p.split('=')
+        console.log(kv)
+        url.searchParams.append(kv[0], kv[1] || "true");
+    })
+    return (
+        <Link style={props.style} color="success.main" underline="hover" href={url}  target="_blank">
+            {props.children && props.children.length > 0 &&
+                <>
+                {props.children}
+                </>
+            } 
+            {(!props.children || props.children.length === 0) &&
+                <>
+                {props.text || url.toString()}
+                </>
+            }
+        </Link>
+    )
 }
