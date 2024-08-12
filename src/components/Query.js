@@ -22,7 +22,7 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
         return (
             <FormControl component="fieldset">
                 <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                <FormControlLabel value="otu" control={<Radio />} label="Taxa (OTU)" labelPlacement="end"/>
+                <FormControlLabel value="otu" control={<Radio />} label="Taxon (OTU)" labelPlacement="end"/>
                 <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end"/>
                 <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
                 <Divider />
