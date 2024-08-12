@@ -76,19 +76,17 @@ export const InnerReferenceSelect = (props) => {
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error :(</p>;
                                     
-        console.log(data.Reference);
+        //console.log(data.Reference);
         
         //const references = alphabetize([...data.Reference], "title");
         const references = alphabetize(
             data.Reference.map(reference => {
                 const newRef = {...reference};
-                console.log(newRef);
-
                 newRef.name = reference.title + ", " + reference.year;
                 return newRef;
             }), 
         "name");
-        console.log(references)
+        //console.log(references)
         
         const style = {minWidth: "12ch"}
         return "reference" === props.name ? //This is a standalone ReferenceSelect for Reference edit/delete
