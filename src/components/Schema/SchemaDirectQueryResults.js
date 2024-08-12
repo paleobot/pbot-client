@@ -13,12 +13,13 @@ const SchemaDirectQueryResults = () => {
 
     console.log("schemaid = " + schemaid);
     //Get schema ID, create necessary parameters, and call SchemaQueryResults to do the work
-    if (schemaid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
+    if (schemaid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(,?[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})*$/gi)) {
         const queryParams = {
-            schemaID: schemaid,
+            schemaID: schemaid ? schemaid.split(',') : null,
             groups: [], 
             includeCharacters: "true" === search.get("includeCharacters"),
             standAlone: true,
+            format: search.get("format"),
         };
         return (
             <GlobalProvider>

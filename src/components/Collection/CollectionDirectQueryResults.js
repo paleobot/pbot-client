@@ -9,16 +9,18 @@ import { GlobalProvider } from '../GlobalContext';
 const CollectionDirectQueryResults = () => {
     const { collectionid } = useParams();
     const [search] = useSearchParams();
+    console.log("CollectionDirectQueryResults")
     console.log("search = " + search)
 
     console.log("collectionid = " + collectionid);
     //Get collection ID, create necessary parameters, and call CollectionQueryResults to do the work
-    if (collectionid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
+    if (collectionid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(,?[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})*$/gi)) {
         const queryParams = {
-            collectionID: collectionid,
+            collectionID: collectionid ? collectionid.split(',') : null,
             groups: [], 
             includeSpecimens: "true" === search.get("includeSpecimens"),
             standAlone: true,
+            format: search.get("format"),
         };
         return (
             <GlobalProvider>

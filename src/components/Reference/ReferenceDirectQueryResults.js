@@ -13,11 +13,12 @@ const ReferenceDirectQueryResults = () => {
 
     console.log("referenceid = " + referenceid);
     //Get reference ID, create necessary parameters, and call ReferenceQueryResults to do the work
-    if (referenceid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
+    if (referenceid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(,?[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})*$/gi)) {
         const queryParams = {
-            referenceID: referenceid,
+            referenceID: referenceid ? referenceid.split(',') : null,
             groups: [], 
             standAlone: true,
+            format: search.get("format"),
         };
         return (
             <GlobalProvider>

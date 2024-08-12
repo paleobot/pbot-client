@@ -13,16 +13,17 @@ const OTUDirectQueryResults = () => {
     console.log("search = " + search)
 
     //Get otu ID, create necessary parameters, and call OTUQueryResults to do the work
-    if (otuid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi)) {
+    if (otuid.match(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}(,?[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})*$/gi)) {
         const queryParams = {
-            otuID: otuid,
+            otuID: otuid ? otuid.split(',') : null,
             groups: [], 
             includeSynonyms: "true" === search.get("includeSynonyms"),
             includeComments: "true" === search.get("includeComments"),
             includeHolotypeDescription: "true" === search.get("includeHolotypeDescription"),
             includeMergedDescription: "true" === search.get("includeMergedDescription"), 
             standAlone: true,
-        };
+            format: search.get("format"),
+         };
         return (
             <GlobalProvider>
             <ApolloProvider client={client}>
