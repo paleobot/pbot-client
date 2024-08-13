@@ -103,7 +103,7 @@ const RegisterForm = ({ setShowRegistration }) => {
 
     return(
         <div>
-        <h2>Register for PBOT</h2>
+        <h2>Register for PBot</h2>
         <Formik
             initialValues={{
                 givenName: '',
