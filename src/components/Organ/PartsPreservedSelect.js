@@ -32,7 +32,7 @@ export const PartsPreservedSelect = (props) => {
             component={TextField}
             type="text"
             name="partsPreserved"
-            label="Parts preserved"
+            label={props.label || "Parts preserved"}
             fullWidth 
             select={true}
             SelectProps={{

@@ -32,7 +32,7 @@ export const NotableFeaturesSelect = (props) => {
             component={TextField}
             type="text"
             name="notableFeatures"
-            label="Notable features preserved"
+            label={props.label || "Notable features preserved"}
             fullWidth 
             select={true}
             SelectProps={{
