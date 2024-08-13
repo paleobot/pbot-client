@@ -461,7 +461,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         />
                         <br />
                
-                        <PartsPreservedSelect />
+                        <PartsPreservedSelect label="Parts described" />
                         <br />
 
                         <Field 
@@ -601,7 +601,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         />
                         <br />
 
-                        <NotableFeaturesSelect />
+                        <NotableFeaturesSelect label="Notable features described" />
                         <br />
                 
                         <Field
