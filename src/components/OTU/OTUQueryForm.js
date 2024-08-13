@@ -185,10 +185,10 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                     </AccordionSummary>
                     <AccordionDetails>
 
-                        <PartsPreservedSelect/>
+                        <PartsPreservedSelect label="Parts described" />
                         <br />
                         
-                        <NotableFeaturesSelect />
+                        <NotableFeaturesSelect label="Notable features described" />
                         <br />
 
                         <QualityIndexSelect />
