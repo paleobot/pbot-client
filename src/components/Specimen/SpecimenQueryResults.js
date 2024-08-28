@@ -395,6 +395,9 @@ function Specimens(props) {
                     directURL.searchParams.append("includeOTUs", "true");
                 }
                     
+                const jsonURL = new URL(directURL.toString());
+                jsonURL.searchParams.append("format", "json")
+
                 const history = sort(s.enteredBy.map(e => { 
                     return {
                         timestamp: e.timestamp.formatted,
@@ -453,7 +456,7 @@ function Specimens(props) {
                             <Typography variant="caption" sx={{lineHeight:0}}>Direct link</Typography><br /><Link color="success.main" underline="hover" href={directURL} target="_blank">{directURL.toString()}</Link>
                             </Box>
                             <Box sx={boxedDisplay}>
-                            <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={directURL + "&format=json"} target="_blank">{directURL.toString() + "&format=json"}</Link>
+                            <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={jsonURL} target="_blank">{jsonURL.toString()}</Link>
                             </Box>
                             <br />
                             <Box sx={boxedDisplay}>
