@@ -278,7 +278,7 @@ export const LithologySelect = (props) => {
 
     useEffect(() => {
         setLoading(true);
-        fetch("https://macrostrat.org/api/v1/defs/lithologies?all")
+        fetch("https://macrostrat.org/api/v2/defs/lithologies?all")
         .then(res => res.json())
         .then(
             (response) => {
@@ -288,7 +288,7 @@ export const LithologySelect = (props) => {
                 }
                 setLithologies(response.success.data.map(int => { //only care about name
                     return {
-                        name: int.lith
+                        name: int.name
                     }
                 }));
             }
@@ -343,7 +343,7 @@ export const EnvironmentSelect = (props) => {
 
     useEffect(() => {
         setLoading(true);
-        fetch("https://macrostrat.org/api/v1/defs/environments?all")
+        fetch("https://macrostrat.org/api/v2/defs/environments?all")
         .then(res => res.json())
         .then(
             (response) => {
@@ -353,7 +353,7 @@ export const EnvironmentSelect = (props) => {
                 }
                 setEnvironments(response.success.data.map(int => { //only care about name
                     return {
-                        name: int.environ
+                        name: int.name
                     }
                 }));
             }
