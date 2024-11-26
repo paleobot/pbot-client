@@ -38,8 +38,8 @@ export const sort = (list, sortField1, sortField2) => {
                 field2A = a[sortField2.substring(1)] ? Number.parseFloat(a[sortField2.substring(1)]) : 1000; 
                 field2B = b[sortField2.substring(1)] ? Number.parseFloat(b[sortField2.substring(1)]) : 1000; 
             } else {
-                field2A = a[sortField2].toString().toUpperCase();
-                field2B = b[sortField2].toString().toUpperCase();
+                field2A = a[sortField2] ? a[sortField2].toString().toUpperCase() : "z";
+                field2B = b[sortField2] ? b[sortField2].toString().toUpperCase() : "z";
             }
         }
 
