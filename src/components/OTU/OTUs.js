@@ -150,6 +150,12 @@ function OTUs(props) {
         directQParams.push("includeMergedDescription");
     }
 
+    const specimenDirectQParams = [
+        "includeImages",
+        "includeDescriptions",
+        "includeOTUs"
+    ];
+
     const jsonDirectQParams = directQParams.concat(["format=json"])
 
     if (props.standalone) {
@@ -494,7 +500,7 @@ function OTUs(props) {
                                     {holotypeSpecimen && (
                                         <>
                                             <div style={indent}><b>Holotype specimen</b></div>
-                                            <DirectQueryLink type="specimen" pbotID={holotypeSpecimen.Specimen.pbotID} params={directQParams} style={indent2}>
+                                            <DirectQueryLink type="specimen" pbotID={holotypeSpecimen.Specimen.pbotID} params={specimenDirectQParams} style={indent2}>
                                                 {holotypeSpecimen.Specimen.name}
                                             </DirectQueryLink><div>&nbsp;</div>
                                         </>
@@ -506,7 +512,7 @@ function OTUs(props) {
                                                 <div key={s.Specimen.pbotID}>
                                                     {s.Specimen && s.Specimen.name &&
                                                         <>
-                                                        <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={directQParams} style={indent2}>
+                                                        <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={specimenDirectQParams} style={indent2}>
                                                             {s.Specimen.name}
                                                         </DirectQueryLink><br />
                                                         </>
@@ -539,7 +545,7 @@ function OTUs(props) {
                                                 <div key={s.Specimen.pbotID}>
                                                     {s.Specimen && s.Specimen.name &&
                                                         <>
-                                                        <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={directQParams} style={indent2}>
+                                                        <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={specimenDirectQParams} style={indent2}>
                                                             {s.Specimen.name}
                                                         </DirectQueryLink><br />
                                                         </>
