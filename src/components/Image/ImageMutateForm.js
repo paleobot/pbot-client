@@ -1,7 +1,7 @@
 import React, { useState, useEffect }from 'react';
 import { Formik, Field, Form, ErrorMessage, useFormikContext } from 'formik';
 import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Box, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
+import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Box, Accordion, AccordionSummary, AccordionDetails, Stack, Typography } from '@mui/material';
 import { TextField, CheckboxWithLabel, RadioGroup, Select, SimpleFileUpload } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
@@ -308,8 +308,13 @@ const ImageSelect = (props) => {
                     dcitation={image.citation}
                     dcaption={image.caption}
                     dtype={image.type}
+                    sx={{whiteSpace: 'normal', width: '400px'}}
+                    divider={true}
                 >
-                    <SecureImage src={image.link} width="100"/>
+                    <div>
+                        <SecureImage src={image.link} width="100"/><br />
+                        <Typography variant="caption">{image.caption}</Typography>
+                    </div>
                 </MenuItem>
             ))}
         </Field>
