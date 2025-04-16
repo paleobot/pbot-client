@@ -3,10 +3,6 @@ import { Field, useFormikContext } from 'formik';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack, Tooltip } from '@mui/material';
 import { TextField } from 'formik-mui';
 import { alphabetize } from '../../util.js';
-import {
-  useQuery,
-  gql
-} from "@apollo/client";
 import PersonQueryForm from './PersonQueryForm.js';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonQueryResults from './PersonQueryResults.js';
@@ -16,62 +12,7 @@ import { GlobalContext } from '../GlobalContext.js';
 export const InnerPersonSelect = (props) => {
     console.log("InnerPersonSelect");
     console.log(props);
-    
-    const gQL = "person" === props.name ? //This is a standalone PersonSelect for Person edit/delete
-        gql`
-            query {
-                Person {
-                    pbotID
-                    given
-                    middle
-                    surname
-                    email
-                    orcid
-                    memberOf {
-                        pbotID
-                    }
-                }            
-            }
-        ` : //This is one of possibly several PersonSelects in AuthorManager
-        gql`
-            query  ($excludeList: [ID!]){
-                Person (filter: {AND: [{given_not: "guest"}, {surname_not: "guest"}, {pbotID_not_in: $excludeList}]}) {
-                    pbotID
-                    given
-                    middle
-                    surname
-                }            
-            }
-        `;
-
-       //For AuthorManager applications, omit authors that are already in the list
-        const excludeIDs = props.exclude ? props.exclude.map(person => person.pbotID) : [];
-
-        const { loading: loading, error: error, data: data } = useQuery(gQL, {        
-            variables: {
-                excludeList: excludeIDs
-            },
-            fetchPolicy: "cache-and-network"
-        });
-
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error :(</p>;
-                                    
-        console.log(data.Person);
-        
-        //const persons = alphabetize([...data.Person], "surname");
-        const persons = alphabetize(
-            data.Person.map((person, x) => {
-                return {
-                    ...person,
-                    index: x
-                }
-            }),  
-            "surname"
-        );
-        console.log(persons)
-        
-        const style = {minWidth: "12ch"}
+       const style = {minWidth: "12ch"}
         return "person" === props.name ? //This is a standalone PersonSelect for Person edit/delete
             (
                 <Field
