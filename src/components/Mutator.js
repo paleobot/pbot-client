@@ -10,23 +10,27 @@ const Mutator = (props) => {
     let [data, setData] = useState(null)
     let [error, setError] = useState(null)
 
-    useEffect(async () => {
-        const url = "http://localhost:3000/api/v1/";
-        try {
-          const response = await fetch(url);
-          console.log(response)
-          if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-          }
-          
-          const json = await response.json();
-          console.log(json);
-          setLoading(false)
-          console.log("setting data")
-          setData(json)
-        } catch (error) {
-          console.error(error.message);
-        }        
+    useEffect(() => {
+
+        async function fetchData () {
+            const url = "http://localhost:3000/api/v1/";
+            try {
+                const response = await fetch(url);
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+            
+                const json = await response.json();
+                console.log(json);
+                setLoading(false)
+                console.log("setting data")
+                setData(json)
+            } catch (error) {
+                console.error(error.message);
+            }   
+        }
+        fetchData()     
     }, []);
 
     if (loading) {
