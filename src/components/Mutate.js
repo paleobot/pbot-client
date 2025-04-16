@@ -57,11 +57,11 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
     return (
         <div>
             <Grid container spacing={3} style={{marginLeft:"10px"}}>
-                <Grid item >
+                <Grid item size={2}>
                     <FormSelector form={selectedForm} reset={forceUpdate} />
                 </Grid>
             
-                <Grid item alignItems="right" xs>
+                <Grid item alignItems="right" size={6}>
                     {selectedForm && 
                         <ToggleButtonGroup sx={{marginTop: "5px", marginBottom:"10px"}} 
                             value={mode}
