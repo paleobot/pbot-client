@@ -1,6 +1,7 @@
 import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import {
     createBrowserRouter,
     RouterProvider, 
@@ -13,7 +14,6 @@ import LoginForm from './components/LoginForm';
 import AZlibAdminInterface from './components/AZlibAdminInterface';
 import RegisterForm from './components/RegisterForm';
 import './index.css';
-import reportWebVitals from './reportWebVitals';
 
 //import '@fontsource/roboto/300.css';
 //import '@fontsource/roboto/400.css';
@@ -143,18 +143,19 @@ const theme = createTheme({
     }
 });
 
-ReactDOM.render(
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+
+//ReactDOM.render(
+root.render(
     <React.StrictMode>
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={theme}>
                 <RouterProvider router={router} />
             </ThemeProvider>
         </StyledEngineProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
+  //,
+  //document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
