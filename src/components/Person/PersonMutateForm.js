@@ -7,11 +7,6 @@ import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import { SensibleTextField } from '../SensibleTextField.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-import {
-  useQuery,
-  gql
-} from "@apollo/client";
 import { PersonSelect } from './PersonSelect.js';
 
 const PersonMutateForm = ({handleSubmit, mode}) => {
