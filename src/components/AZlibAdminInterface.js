@@ -1,19 +1,14 @@
-import React, { useState }from 'react';
-import { AppBar, Tabs, Tab, Box } from '@mui/material';
+import { Box, Tab, Tabs } from '@mui/material';
+import React, { useState } from 'react';
 import Result from './Result';
-import Action from './Action';
-import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 
-import {ApolloProvider} from "@apollo/client";
-import {client} from '../ApolloClientSetup.js';
 import {
-    useNavigate,
-    useLocation
+    Outlet,
+    useLocation,
+    useNavigate
 } from "react-router-dom";
-import { Outlet } from "react-router-dom";
-import { GlobalProvider } from './GlobalContext';
 
-const PBOTInterface = (props) => {
+const AZlibAdminInterface = (props) => {
     console.log("----------PBOTInterface--------------");
     console.log(props);
     const navigate = useNavigate();
@@ -35,6 +30,7 @@ const PBOTInterface = (props) => {
         console.log(event.target.value);
         setShowResult(false);
         navigate(`/${props.formClass}/${event.target.value.replace("-mutate", "").toLowerCase()}`);
+        //navigate(`/${event.target.value.replace("-mutate", "").toLowerCase()}`);
     };
 
     const handleTabChange = (event, newTab) => {
@@ -70,7 +66,6 @@ const PBOTInterface = (props) => {
     const style = {textAlign: "left"}
     //Note: The use of hidden for display of result is critical for avoiding repeat executions of that code.
     return (
-        <ApolloProvider client={client}>
         <div style={style}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={selectedTab} onChange={handleTabChange} textColor="secondary" indicatorColor="secondary">
@@ -88,9 +83,8 @@ const PBOTInterface = (props) => {
                 </div>
             </div>
         </div>
-        </ApolloProvider>
 
     );
 };
 
-export default PBOTInterface;
+export default AZlibAdminInterface;

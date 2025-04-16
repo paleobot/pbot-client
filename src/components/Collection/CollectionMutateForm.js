@@ -1,81 +1,66 @@
-import React, { useState, useEffect }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Stack, Box, Typography } from '@mui/material';
-import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
-import { alphabetize } from '../../util.js';
-import {GroupSelect} from '../Group/GroupSelect.js';
-import {ReferenceManager} from '../Reference/ReferenceManager.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {collectionTypes, sizeClasses, geographicResolutionScale, collectionMethods} from "../../Lists.js"
-import { CountrySelect } from './CountrySelect.js'
-import { StateSelect } from './StateSelect.js'
-import {CollectionSelect} from '../Collection/CollectionSelect.js';
-import  { CollectionTypeSelect, SizeClassSelect, CollectionMethodSelect, GeographicResolutionSelect, TimescaleSelect, IntervalSelect, LithologySelect, EnvironmentSelect, PreservationModeSelect } from '../Collection/CollectionUtil.js';
+import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack } from '@mui/material';
+import { Field, Form, Formik } from 'formik';
+import { CheckboxWithLabel } from 'formik-mui';
+import React from 'react';
+import * as Yup from 'yup';
 //import IntervalSelect from './IntervalSelect.js';
 
-import {
-  useQuery,
-  gql
-} from "@apollo/client";
-import PBDBSelect from './PBDBSelect.js';
-import States from '../State/States.js';
 import { SensibleTextField } from '../SensibleTextField.js';
-import { DateEntry } from './DateEntry.js';
 
 
 const CollectionMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
-                collection: '', 
-                name: '',
-                collectiontype: '',
-                timescale: '',
-                maxinterval: '',
-                mininterval: '',
-                lat: '',
-                lon: '',
-                gpsuncertainty: '',
-                geographicresolution: '',
-                geographiccomments: '',
-                country: '',
-                state: '',
-                directdate: '',
-                directdateerror: '',
-                directdatetype: '',
-                numericagemin: '',
-                numericageminerror: '',
-                numericagemintype: '',
-                numericagemax: '',
-                numericagemaxerror: '',
-                numericagemaxtype: '',
-                agecomments: '',
-                lithology: '',
-                additionallithology: '',
-                stratigraphicgroup: '',
-                stratigraphicformation: '',
-                stratigraphicmember: '',
-                stratigraphicbed: '',
-                stratigraphiccomments: '',
-                environment: '',
-                environmentcomments: '',
-                preservationmodes: [],
-                collectors: '',
-                collectionmethods: [],
-                collectingcomments: '',
-                sizeclasses: [],
-                pbdbid: '',
-                pbdbCheck: "delete" === mode, //only force pbdb check if not deleting
-                references: [{
-                    pbotID: '',
-                    order:'',
-                }],
-                cascade: false,
-                public: true,
-                groups: [],
-                mode: mode,
-                protectedSite: false,
+        collection: '', 
+        title: '',
+        collectiongroup: '',
+        authors: [{
+            person: '',
+            givenname: '',
+            surname: '',
+            organization: ''
+        }],
+        year: '',
+        journal: {
+            name: '',
+            publisher: '',
+            url: ''
+        },
+        series: '',
+        abstract: '',
+        informalname: '',
+        links: [{
+            name: '',
+            url: ''
+        }],
+        keywords: [{
+            name: '',
+            type: ''
+        }],
+        language: 'English',
+        license: {
+            type: 'CC BY-NC-SA 4.0',
+            url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
+        },
+        private: false,
+        bondingbox: {
+            west: -113,
+            south: 33.5,
+            east: -112,
+            north: 34
+        },
+        documents: [],
+        images: [],
+        notes: [],
+        metadata: [],
+        gems2: [],
+        ncgmp09: [],
+        legacy: [],
+        layers: [],
+        raster: [],
+        complete: ''
     };
+                
 
     //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
     //allowing useEffect to call resetForm
@@ -100,59 +85,57 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             innerRef={formikRef}
             initialValues={initValues}
             validationSchema={Yup.object({
-                name: Yup.string().required(),
-                collectiontype: Yup.string().required(),
-                lithology: Yup.string().required(),
-                additionallithology: Yup.string(),
-                stratigraphicgroup: Yup.string(),
-                stratigraphicformation: Yup.string(),
-                stratigraphicmember: Yup.string(),
-                stratigraphicbed: Yup.string(),
-                stratigraphiccomments: Yup.string(),
-                environment: Yup.string(),
-                environmentcomments: Yup.string(),
-                preservationmodes: Yup.array().of(Yup.string()).min(1, "preservation modes must have at least one entry"),
-                collectors: Yup.string(),
-                collectionmethods: Yup.array().of(Yup.string()),
-                collectingcomments: Yup.string(),
-                timescale: Yup.string().required("timescale is a required field"),
-                maxinterval: Yup.string().required("maximum interval is a required field"),
-                mininterval: Yup.string(),
-                lat: Yup.number().required("latitude is a required field").min(-90).max(90),
-                lon: Yup.number().required("longitude is a required field").min(-180).max(180),
-                gpsuncertainty: Yup.number().required("gps uncertainty is required").positive().integer(),
-                geographicresolution: Yup.string(),
-                geographiccomments: Yup.string(),
-                protectedSite: Yup.boolean().required("Protection status is required"),
-                pbdbid: Yup.string().when('pbdbCheck', {
-                    is: false,
-                    then: Yup.string().required("While PBDB ID is not required, you must at least check")
-                }),
-                pbdbCheck: Yup.bool(),
-                country: Yup.string().required(),
-                directdate: Yup.number(),
-                directdateerror: Yup.number(),
-                directdatetype: Yup.string(),
-                numericagemin: Yup.number(),
-                numericageminerror: Yup.number(),
-                numericagemintype: Yup.string(),
-                numericagemax: Yup.number(),
-                numericagemaxerror: Yup.number(),
-                numericagemaxtype: Yup.string(),
-                agecomments: Yup.string(),
-                references: Yup.array().of(
+                title: Yup.string().required(),
+                collectiongroup: Yup.string().required(),
+                year: Yup.string().required(),
+                authors: Yup.array().of(
                     Yup.object().shape({
-                        pbotID: Yup.string()
-                            .required('Reference title is required'),
-                        order: Yup.string()
-                            .required('Reference order is required')
-                            .typeError('Reference order is required')
+                        person: Yup.string()
+                            .required('Person is required'),
+                        givenname: Yup.string()
+                            .required('Given name is required'),
+                        surname: Yup.string()
+                            .required('Surname is required'),
+                        organization: Yup.string(),
                     })
                 ),
-                groups: Yup.array().of(Yup.string()).when('public', {
-                    is: false,
-                    then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
+                journal: Yup.object().shape({
+                    name: Yup.string(),
+                    publisher: Yup.string(),
+                    url: Yup.string(),
                 }),
+                series: Yup.string(),
+                abstract: Yup.string(),
+                informalname: Yup.string(),
+                links: Yup.array().of(
+                    Yup.object().shape({
+                        name: Yup.string(),
+                        url: Yup.string(),
+                    })
+                ),
+                keywords: Yup.array().of(
+                    Yup.object().shape({
+                        name: Yup.string(),
+                        type: Yup.string(),
+                    })
+                ),
+                private: Yup.boolean(),
+                boundingbox: Yup.object().shape({
+                    west: Yup.number().min(-180).max(180),
+                    south: Yup.number().min(-90).max(90),
+                    east: Yup.number().min(-180).max(180),
+                    north: Yup.number().min(-90).max(90),
+                }),
+                documents: Yup.array().of(Yup.string()),
+                images: Yup.array().of(Yup.string()),
+                notes: Yup.array().of(Yup.string()),
+                metadata: Yup.array().of(Yup.string()),
+                gems2: Yup.array().of(Yup.string()),
+                ncgmp09: Yup.array().of(Yup.string()),
+                legacy: Yup.array().of(Yup.string()),
+                layers: Yup.array().of(Yup.string()),
+                raster: Yup.array().of(Yup.string()),
+                complete: Yup.string()
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
@@ -172,17 +155,22 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     disabled={false}
                 />
                 
-                {(mode === "edit" || mode === "delete") &&
+                {(mode === "edit" || mode === "delete" || mode === "replace") &&
                     <div>
-                        {/*}
-                        <CollectionSelect values={props.values} handleChange={props.handleChange}/>
-                        <br />*/}
-                        <CollectionSelect name="collection" label="Collection" populateMode="full"/>
+                        {/*<CollectionSelect name="collection" label="Collection" populateMode="full"/>*/}
+                        <Field
+                            component={SensibleTextField}
+                            type="text"
+                            name="collection"
+                            label="Collection"
+                            fullWidth 
+                            disabled={false}
+                        />
                         <br />
                     </div>
                 }
                 
-                {(mode === "create" || (mode === "edit" && props.values.collection !== '')) &&
+                {(mode === "create" || ((mode === "edit" || mode === "replace") && props.values.collection !== '')) &&
                     <>
                     <Accordion style={accstyle} defaultExpanded={true}>
                     <AccordionSummary
@@ -197,100 +185,34 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             <Field
                                 component={SensibleTextField}
                                 type="text"
-                                name="name"
-                                label="Name"
+                                name="title"
+                                label="Title"
                                 fullWidth 
                                 disabled={false}
                             />
                             <br />
 
-                            <CollectionTypeSelect />
-                            <br />
-
-                            <Stack direction="row" spacing={4}>
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="lat"
-                                    label="Latitude"
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="lon"
-                                    label="Longitude"
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                            </Stack>
-
                             <Field
                                 component={SensibleTextField}
-                                name="gpsuncertainty"
                                 type="text"
-                                label="GPS coordinate uncertainty (meters)"
+                                name="year"
+                                label="Year"
+                                fullWidth 
+                                disabled={false}
                             />
                             <br />
 
-                            <CountrySelect />
-                            <br />
-
-                            <br />
-                            <Field 
-                                component={CheckboxWithLabel}
-                                name="protectedSite" 
-                                type="checkbox"
-                                Label={{label:"Protected site"}}
+                            {/*<CollectionGroupSelect />*/}
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="collectiongroup"
+                                label="Collection group"
+                                fullWidth 
+                                disabled={false}
                             />
                             <br />
 
-                            <TimescaleSelect values={props.values} setFieldValue={props.setFieldValue}/>
-                            
-                            <Stack direction="row" spacing={4}>
-                                <IntervalSelect name="maxinterval" values={props.values} setFieldValue={props.setFieldValue}/>
-                                <IntervalSelect name="mininterval" values={props.values} setFieldValue={props.setFieldValue}/>
-                            </Stack>
-                            
-                            <LithologySelect />
-                            <br />
-                            
-                            <PreservationModeSelect />
-                            <br />
-
-                            <SizeClassSelect />
-                            <br />
-
-                            <Stack direction="row" spacing={0}>
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="pbdbid"
-                                    label="PBDB ID"
-                                    fullWidth 
-                                    disabled={false}
-                                />
-                                <PBDBSelect />
-                            </Stack>
-
-                            <ReferenceManager values={props.values}/>
-                        
-                            <Field 
-                                component={CheckboxWithLabel}
-                                name="public" 
-                                type="checkbox"
-                                Label={{label:"Public"}}
-                                disabled={(mode === "edit" && props.values.origPublic)}
-                            />
-                            
-                            {!props.values.public &&
-                            <div>
-                                <GroupSelect  omitPublic={true} />
-                                <br />
-                            </div>
-                            }
-                            
                         </AccordionDetails>
                     </Accordion>
 
@@ -303,154 +225,230 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             Optional fields
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Box sx={{ width: '100%', typography: 'body1' }}>
-                                <TabContext value={selectedTab}>
-                                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                        <TabList 
-                                            textColor="secondary" 
-                                            indicatorColor="secondary" 
-                                            onChange={handleTabChange} 
-                                            aria-label="optional tabs"
-                                        >
-                                            <Tab label="Geographic" value="1"/>
-                                            <Tab label="Age" value="2"/>
-                                            <Tab label="Geologic" value="3"/>
-                                            <Tab label="Collecting" value="4"/>
-                                        </TabList>
-                                    </Box>
-                                    <TabPanel value="1">
-                                        <StateSelect country={props.values.country} includeNone/>
-                                        <br />
 
-                                        <GeographicResolutionSelect />
-                                        <br />
+                            {/*<AuthorsManager />*/}
+                            <InputLabel>
+                                Authors
+                            </InputLabel>
+                            <Stack direction="column" spacing={4}>
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="authors[0].person"
+                                    label="Person"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="authors[0].givenname"
+                                    label="Given name"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="authors[0].surname"
+                                    label="Surname"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="authors[0].organization"
+                                    label="Organization"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                            </Stack>
 
-                                        <Field
-                                            component={SensibleTextField}
-                                            name="geographiccomments"
-                                            type="text"
-                                            multiline
-                                            label="Notes on geographic information"
-                                        />
-                                        <br />
+                            <InputLabel>
+                                Journal
+                            </InputLabel>
+                            <Stack direction="column" spacing={4}>
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="journal.name"
+                                    label="Name"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="journal.publisher"
+                                    label="Publisher"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="journal.url"
+                                    label="URL"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                            </Stack>
 
-                                    </TabPanel>
-                                    <TabPanel value="2">
-                                        <DateEntry name="directdate" />
-                                        <br />
-                                        <DateEntry name="numericagemax" />
-                                        <br />
-                                        <DateEntry name="numericagemin" />
-                                        <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="series"
+                                label="Series"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                                        <Field
-                                            component={SensibleTextField}
-                                            name="agecomments"
-                                            type="text"
-                                            multiline
-                                            label="Notes on age"
-                                        />
-                                        <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="abstract"
+                                label="Abstract"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
+                           
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="informalname"
+                                label="Informal name"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                                    </TabPanel>
-                                    <TabPanel value="3">
-                                        <Field
-                                            component={SensibleTextField}
-                                            name="additionallithology"
-                                            type="text"
-                                            multiline
-                                            label="Additional description of lithology"
-                                        />
-                                        <br />
+                            {/*<LinksManager />*/}
+                            <InputLabel>
+                                Links
+                            </InputLabel>
+                            <Stack direction="column" spacing={4}>
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="links[0].name"
+                                    label="Name"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="links[0].url"
+                                    label="URL"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                            </Stack>
 
-                                        <br />
-                                        <Typography variant="h7">Stratigraphy</Typography>
-                                        
-                                        <div style={{marginLeft:"2em"}}>
-                                            <Field
-                                                component={SensibleTextField}
-                                                name="stratigraphicgroup"
-                                                type="text"
-                                                label="Group"
-                                            />
-                                            <br />
+                            {/*<KeywordsManager />*/}
+                            <InputLabel>
+                                Keywords
+                            </InputLabel>
+                            <Stack direction="column" spacing={4}>
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="keywords[0].name"
+                                    label="Name"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="keywords[0].type"
+                                    label="Type"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                            </Stack>
 
-                                            <Field
-                                                component={SensibleTextField}
-                                                name="stratigraphicformation"
-                                                type="text"
-                                                label="Formation"
-                                            />
-                                            <br />
+                            <Field
+                                component={SensibleTextField}
+                                type="text"
+                                name="language"
+                                label="Language"
+                                fullWidth 
+                                disabled={false}
+                            />
+                            <br />
 
-                                            <Field
-                                                component={SensibleTextField}
-                                                name="stratigraphicmember"
-                                                type="text"
-                                                label="Member"
-                                            />
-                                            <br />
+                            <InputLabel>
+                                License
+                            </InputLabel>
+                            <Stack direction="column" spacing={4}>
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="license.type"
+                                    label="Name"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="license.url"
+                                    label="URL"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                            </Stack>
 
-                                            <Field
-                                                component={SensibleTextField}
-                                                name="stratigraphicbed"
-                                                type="text"
-                                                label="Bed"
-                                            />
-                                            <br />
+                            <Field 
+                                component={CheckboxWithLabel}
+                                name="private" 
+                                type="checkbox"
+                                Label={{label:"Private"}}
+                                disabled={(mode === "edit" && props.values.private)}
+                            />
 
-                                            <Field
-                                                component={SensibleTextField}
-                                                name="stratigraphiccomments"
-                                                type="text"
-                                                multiline
-                                                label="Notes on stratigraphy"
-                                            />
-                                            <br />
-                                        </div>
-
-                                        <EnvironmentSelect/>
-                                        <br />
-
-                                        <Field
-                                            component={SensibleTextField}
-                                            name="environmentcomments"
-                                            type="text"
-                                            multiline
-                                            label="Notes on environment"
-                                        />
-                                        <br />
-
-                                    </TabPanel>                            
-                                    <TabPanel value="4">
-                                        <Field
-                                            component={SensibleTextField}
-                                            type="text"
-                                            name="collectors"
-                                            label="Collectors"
-                                            fullWidth 
-                                            disabled={false}
-                                        />
-                                        <br />
-
-                                        <CollectionMethodSelect />
-                                        <br />
-
-                                        <Field
-                                            component={SensibleTextField}
-                                            type="text"
-                                            name="collectingcomments"
-                                            multiline
-                                            label="Notes on collection methods"
-                                            fullWidth 
-                                            disabled={false}
-                                        />
-                                        <br />
-                                    </TabPanel>   
-                                </TabContext>
-                            </Box>                         
-  
-                      </AccordionDetails>
+                            <InputLabel>
+                                Bounding box
+                            </InputLabel>
+                            <Stack direction="column" spacing={4}>
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="west"
+                                    label="West"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="south"
+                                    label="South"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="east"
+                                    label="East"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                                <Field
+                                    component={SensibleTextField}
+                                    type="text"
+                                    name="north"
+                                    label="North"
+                                    style={{minWidth: "12ch", width:"35%"}}
+                                    disabled={false}
+                                />
+                            </Stack>
+                        </AccordionDetails>
                     </Accordion>
                 
                     </>

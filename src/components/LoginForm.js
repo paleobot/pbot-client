@@ -19,6 +19,8 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
 
     const loginUser = async (credentials) => {
         console.log("loginUser")
+            return { ok: true, token: "Hi there", pbotID: "none"}
+
         return fetch(origin + '/user/login', {
             method: 'POST',
             headers: {
@@ -85,10 +87,16 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     const handleSubmit = async (values, {setStatus}) => {
         console.log(values.userName);
         
-        const loginResult = await loginUser({
-            username: values.userName,
-            password: values.password
-        });
+        //const loginResult = await loginUser({
+        //    username: values.userName,
+        //    password: values.password
+        //});
+
+        const loginResult = {
+            ok: true,
+            token: "Hi there",
+            pbotID: "none"
+        }
         
         if (loginResult.ok) {
             localStorage.setItem('PBOTMutationToken', loginResult.token);
@@ -96,7 +104,8 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
             //localStorage.setItem('PBOTMe', values.userName);
             localStorage.setItem('PBOTMe', loginResult.pbotID);
             console.log("navigating to workbench")
-            navigate("/mutate");
+            //navigate("/mutate");
+            navigate("/");
         } else {
             console.log("else");
             setStatus({error: loginResult.message}); //TODO: figure out how Formik setStatus works

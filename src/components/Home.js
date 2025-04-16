@@ -1,6 +1,6 @@
-import { Button, Grid, Typography, Box } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, redirect } from 'react-router-dom';
 import logo from '../PBOT-logo-transparent.png';
 
 const PBOTIcon = ({rotatePBOT}) => {
@@ -26,10 +26,10 @@ const Home = () => {
 
             <Grid container item sx={{mt:"0px", mb:"50px"}} alignItems="center" justifyContent="center" spacing={10}>
                 <Grid item>
-                    <Button variant="contained" size="large" color="success" onClick={() => {navigate(`/query`);}}>Explore<br/>fossil plants</Button>
+                    <Button variant="contained" size="large" color="primary" onClick={() => {navigate(`/query`);}}>Explore<br/>fossil plants</Button>
                 </Grid>
                 <Grid item>
-                    <Button variant="contained" size="large" color="success" onClick={() => {navigate(`/mutate`);}}>Go to<br />Workbench</Button>
+                    <Button variant="contained" size="large" color="primary" onClick={() => {navigate(`/mutate`);}}>Go to<br />Workbench</Button>
                 </Grid>
             </Grid>
         </Grid>

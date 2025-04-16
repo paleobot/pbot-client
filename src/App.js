@@ -1,22 +1,12 @@
+import { Box, Button, Grid } from '@mui/material';
 import React, { useState } from 'react';
-import logo from './PBOT-logo-transparent.png';
+import { Outlet, useNavigate } from "react-router-dom";
 import './App.css';
-import PBOTInterface from './components/PBOTInterface';
-import Footer from "./components/Footer";
-import { Button, Grid, Stack, Box } from '@mui/material';
-import OTUDirectQueryResults from './components/OTU/OTUDirectQueryResults';
-//import { FormControlUnstyledContext } from '@mui/base';
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import NavBar from './components/NavBar';
 import { AuthProvider } from './components/AuthContext';
+import Footer from "./components/Footer";
 import { GlobalProvider } from './components/GlobalContext';
-
-const PBOTIcon = ({rotatePBOT}) => {
-    const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
-    return (
-             <img src={logo} style={{ transform: rotate, transition: "all 0.2s linear", height: "30vmin" }}  />
-      )
-}
+import NavBar from './components/NavBar';
+import logo from './PBOT-logo-transparent.png';
 
 function App(props) {
     console.log("----------------App-------------------------");
@@ -54,13 +44,7 @@ function App(props) {
                         <Button color="secondary" variant="contained" onClick={() => {navigate(`/about`);}}>About</Button>
                     </Grid>
                     <Grid item>
-                        <Button color="secondary" variant="contained" onClick={() => {navigate(`/howto`);}}>How to use Pbot</Button>
-                    </Grid>
-                    <Grid item>
-                        <Button color="secondary" variant="contained" onClick={() => {navigate(`/resources`);}}>Resources</Button>
-                    </Grid>
-                    <Grid item>
-                        <Button color="secondary" variant="contained" onClick={() => {navigate(`/education`);}}>Go to Education & Outreach Hub</Button>
+                        <Button color="secondary" variant="contained" onClick={() => {navigate(`/howto`);}}>How to use</Button>
                     </Grid>
                 </Grid>
                 </Box>

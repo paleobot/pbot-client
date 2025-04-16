@@ -1,33 +1,26 @@
-import * as React from 'react';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import EngineeringIcon from '@mui/icons-material/Engineering';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Button, Stack } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import { Link, useNavigate } from "react-router-dom";
-import logo from '../PBOT-logo-transparent.png';
-import { Button, Grid, Stack } from '@mui/material';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import Drawer from '@mui/material/Drawer';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import EngineeringIcon from '@mui/icons-material/Engineering';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
+import logo from '../PBOT-logo-transparent.png';
 import { useAuth } from './AuthContext';
-import { useLocation } from 'react-router-dom';
-import { NodeTally } from '../NodeTally';
 
 const PBOTIcon = ({rotatePBOT}) => {
     const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
@@ -74,8 +67,8 @@ export default function NavBar() {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
-    const secondaryNavTitles = ['About', 'How to use PBot', 'Resources', 'Go to Education & Outreach Hub'];
-    const secondaryNavDests = ["about", "howto", "resources", "education"]
+    const secondaryNavTitles = ['About', 'How to use'];
+    const secondaryNavDests = ["about", "howto"]
     const drawer = (
         <div>
             <Toolbar />
@@ -134,10 +127,7 @@ export default function NavBar() {
                         <MenuIcon fontSize='large'/>
                     </IconButton>
                     <Typography variant="h4" component="div" sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Link to="/">
-                            <PBOTIcon rotatePBOT={rotatePBOT} />
-                        </Link>
-                        PBot {location}
+                       Azlibrary Admin
                     </Typography>
                     {!token && (
                         <Button variant="contained" color="secondary" onClick={() => {navigate(`/login`);}}>
@@ -154,7 +144,7 @@ export default function NavBar() {
                                 onClick={handleMenu}
                                 color="inherit"
                             >
-                                <AccountCircle fontSize='large' color='success'/>
+                                <AccountCircle fontSize='large' color='primary'/>
                             </IconButton>
                             <Menu
                                 id="menu-appbar"
@@ -179,29 +169,7 @@ export default function NavBar() {
                     )}
                 </Toolbar>
                 {"" === location &&
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                >
-                    <Grid item container justifyContent="center" spacing={0} sx={{m:"0px", width:"70%"}} >
-                        <Grid item xs={3} md={2}>
-                            <NodeTally nodeType="References" />
-                        </Grid>
-                        <Grid item xs={3} md={2}>
-                            <NodeTally nodeType="Taxa" />
-                        </Grid>
-                        <Grid item xs={3} md={2}>
-                            <NodeTally nodeType="Collections" />
-                        </Grid>
-                        <Grid item xs={3} md={2}>
-                            <NodeTally nodeType="Specimens" />
-                        </Grid>
-                        <Grid item xs={3} md={2}>
-                            <NodeTally nodeType="Contributors" />
-                        </Grid>
-                    </Grid>
-                </Box>
+                <></>
                 }
                 </Stack>
             </AppBar>

@@ -1,6 +1,4 @@
-import { gql, useQuery } from '@apollo/client'
-import * as React from 'react'
-import { useEffect } from 'react';
+import * as React from 'react';
 import { useState } from 'react';
 
 
@@ -10,39 +8,13 @@ const GlobalProvider = (props) => {
     console.log("GlobalProvider"); 
 
     const [publicGroupID, setPublicGroupID] = useState(null)
-    //const value = React.useMemo(() => [publicGroupID, setPublicGroupID], [publicGroupID])
-
-    /*
-    const gQL = gql`
-            query ($name: String) {
-                Group (name: $name) {
-                    pbotID
-                }            
-            }
-        `;
-
-    console.log("executing query")
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {
-        variables: {
-            name: "public"
-        },        
-        fetchPolicy: "cache-and-network"
-    });
-    
-    React.useEffect(() => {
-        if(data) {
-            console.log("data loaded : ", data)
-            const group = data.Group;
-            setPublicGroupID(group[0].pbotID)
-        }
-    }, [data])
-    */
-
+ 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     /* Note: I'm going at the graphql server via fetch here because I couldn't figure out how to use Apollo client to load a value from the server one time; it kept loading on every render (leaving the Apollo version ghosted above for possible tinkering later). Also, this lets me use this context at the App level, outside of the ApolloProvider (this actually isn't a big deal; I could have put it in PBOTInterface.js; but I prefer it in App.js)
     */
+   /*
     const gQL = `
             {
                 Group (name: "public") {
@@ -80,9 +52,9 @@ const GlobalProvider = (props) => {
             }
         )
     }, [])
-
+*/
 
     return <GlobalContext.Provider value={{publicGroupID: publicGroupID}} {...props}/>
 }
 
-export {GlobalContext, GlobalProvider}
+export { GlobalContext, GlobalProvider };
