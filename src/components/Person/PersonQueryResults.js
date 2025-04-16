@@ -1,8 +1,4 @@
 import React from 'react';
-import {
-  useQuery,
-  gql
-} from "@apollo/client";
 import { alphabetize, AlternatingTableRow } from '../../util.js';
 import { List, ListItem, ListItemButton, ListItemText, Paper, styled, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
 import { useContext } from 'react';
@@ -15,43 +11,6 @@ function Persons(props) {
 
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
-
-    const gQL = gql`
-            query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String, $groups: [ID!], $excludeList: [ID!]) {
-                Person (pbotID: $pbotID, email: $email, orcid: $orcid, filter:{AND: [
-                    {surname_regexp: $surname},
-                    {given_regexp: $given},
-                    {memberOf_some: {pbotID_in: $groups}}, 
-                    {pbotID_not_in: $excludeList}
-                ]}) {
-                    pbotID
-                    given
-                    middle
-                    surname
-                    email
-                    orcid
-                    bio
-                    registered
-                }
-            }
-        `;
-
-    //For AuthorManager applications, omit persons that are already in the list
-    const excludeIDs = props.exclude ? props.exclude.map(person => person.pbotID) : [];
-
-    const { loading, error, data } = useQuery(gQL, {
-        variables: {
-            ...filters,
-            excludeList: excludeIDs
-        },
-        fetchPolicy: "cache-and-network"
-    });
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-
-    const people = alphabetize([...data.Person], "surname");
-
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
     if (props.select) {
