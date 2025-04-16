@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 //import IntervalSelect from './IntervalSelect.js';
 
 import { SensibleTextField } from '../SensibleTextField.js';
+import { PersonManager } from '../Person/PersonManager.js';
 
 
 const CollectionMutateForm = ({handleSubmit, mode}) => {
@@ -78,7 +79,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     };
     
     const style = {textAlign: "left", width: "60%", margin: "auto"}
-    const accstyle = {textAlign: "left", width: "70%"}
+    const accstyle = {textAlign: "left", width: "100%"}
     return (
        
         <Formik
@@ -226,11 +227,13 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                         </AccordionSummary>
                         <AccordionDetails>
 
-                            {/*<AuthorsManager />*/}
+                            <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange} omitOrder={true}/>
+                            <br />
+                            {/*
                             <InputLabel>
                                 Authors
                             </InputLabel>
-                            <Stack direction="column" spacing={4}>
+                            <Stack direction="column" spacing={0}>
                                 <Field
                                     component={SensibleTextField}
                                     type="text"
@@ -264,11 +267,12 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     disabled={false}
                                 />
                             </Stack>
+                            */}
 
                             <InputLabel>
                                 Journal
                             </InputLabel>
-                            <Stack direction="column" spacing={4}>
+                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
                                 <Field
                                     component={SensibleTextField}
                                     type="text"
@@ -294,6 +298,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     disabled={false}
                                 />
                             </Stack>
+                            <br />
 
                             <Field
                                 component={SensibleTextField}
@@ -311,7 +316,11 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 name="abstract"
                                 label="Abstract"
                                 fullWidth 
+                                multiline
+                                rows={4}
                                 disabled={false}
+                                variant="outlined"
+                                sx={{marginTop:"0.5em"}}
                             />
                             <br />
                            
@@ -326,10 +335,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             <br />
 
                             {/*<LinksManager />*/}
-                            <InputLabel>
+                            <InputLabel sx={{marginTop: "1.5em"}}>
                                 Links
                             </InputLabel>
-                            <Stack direction="column" spacing={4}>
+                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
                                 <Field
                                     component={SensibleTextField}
                                     type="text"
@@ -347,12 +356,13 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     disabled={false}
                                 />
                             </Stack>
+                            <br />
 
                             {/*<KeywordsManager />*/}
-                            <InputLabel>
+                            <InputLabel sx={{marginTop: "1.5em"}}>
                                 Keywords
                             </InputLabel>
-                            <Stack direction="column" spacing={4}>
+                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
                                 <Field
                                     component={SensibleTextField}
                                     type="text"
@@ -370,6 +380,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     disabled={false}
                                 />
                             </Stack>
+                            <br />
 
                             <Field
                                 component={SensibleTextField}
@@ -381,10 +392,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             />
                             <br />
 
-                            <InputLabel>
+                            <InputLabel sx={{ marginTop:"1.5em"}}>
                                 License
                             </InputLabel>
-                            <Stack direction="column" spacing={4}>
+                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
                                 <Field
                                     component={SensibleTextField}
                                     type="text"
@@ -402,6 +413,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                     disabled={false}
                                 />
                             </Stack>
+                            <br />
 
                             <Field 
                                 component={CheckboxWithLabel}
@@ -410,11 +422,12 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 Label={{label:"Private"}}
                                 disabled={(mode === "edit" && props.values.private)}
                             />
+                            <br />
 
                             <InputLabel>
                                 Bounding box
                             </InputLabel>
-                            <Stack direction="column" spacing={4}>
+                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
                                 <Field
                                     component={SensibleTextField}
                                     type="text"
