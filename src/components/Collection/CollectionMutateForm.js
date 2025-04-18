@@ -1,14 +1,140 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack } from '@mui/material';
-import { Field, Form, Formik } from 'formik';
+import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem } from '@mui/material';
+import { Field, Form, Formik, useFormikContext } from 'formik';
 import { CheckboxWithLabel } from 'formik-mui';
 import React from 'react';
 import * as Yup from 'yup';
-//import IntervalSelect from './IntervalSelect.js';
-
 import { SensibleTextField } from '../SensibleTextField.js';
-import { PersonManager } from '../Person/PersonManager.js';
+import { MultiManager } from '../MultiManager.js';
 
+const authorShape = {
+    person: null,
+    givenname: null,
+    surname: null,
+    organization: null
+};
+const AuthorFields = (props) => {
+    return (
+        <Stack direction="column" spacing={0}>
+            <Field
+                component={SensibleTextField}
+                type="text"
+                name={`authors.${props.index}.person`}
+                label="Person"
+                style={{minWidth: "12ch", width:"100%"}}h
+                disabled={false}
+            />
+            <Field
+                component={SensibleTextField}
+                type="text"
+                name={`authors.${props.index}.givenname`}
+                label="Given name"
+                style={{minWidth: "12ch", width:"100%"}}
+                disabled={false}
+            />
+            <Field
+                component={SensibleTextField}
+                type="text"
+                name={`authors.${props.index}.surname`}
+                label="Surname"
+                style={{minWidth: "12ch", width:"100%"}}
+                disabled={false}
+            />
+            <Field
+                component={SensibleTextField}
+                type="text"
+                name={`authors.${props.index}.organization`}
+                label="Organization"
+                style={{minWidth: "12ch", width:"100%"}}
+                disabled={false}
+            />
+        </Stack>
+    )
+}    
+           
+const linkShape = {
+    name: null,
+    url: null,
+};
+const LinkFields = (props) => {
+    return (
+        <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
+            <Field
+                component={SensibleTextField}
+                type="text"
+                name={`links.${props.index}.name`}
+                label="Name"
+                style={{minWidth: "12ch", width:"35%"}}
+                disabled={false}
+            />
+            <Field
+                component={SensibleTextField}
+                type="text"
+                name={`links.${props.index}.url`}
+                label="URL"
+                style={{minWidth: "12ch", width:"35%"}}
+                disabled={false}
+            />
+        </Stack>
+    )
+}    
+
+const keywordShape = {
+    name: null,
+    type: null,
+};
+const KeywordFields = (props) => {
+    const formikProps = useFormikContext()
+    return (
+        <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
+            <Field
+                component={SensibleTextField}
+                type="text"
+                name={`keywords.${props.index}.name`}
+                label="Name"
+                style={{minWidth: "12ch", width:"35%"}}
+                disabled={false}
+            />
+            {/*
+            <Field
+                component={SensibleTextField}
+                type="text"
+                name={`keywords.${props.index}.type`}
+                label="URL"
+                style={{minWidth: "12ch", width:"35%"}}
+                disabled={false}
+            />
+            */}
+            <Field
+                component={TextField}
+                type="text"
+                name={`keywords.${props.index}.type`}
+                label="Type"
+                style={{minWidth: "12ch", width:"35%"}}
+                select={true}
+                SelectProps={{
+                    multiple: false,
+                }}
+                onChange={(event,child) => {
+                    //props.handleSelect(JSON.parse(child.props.dperson))
+                    console.log("onchange")
+                    console.log(event)
+                    console.log(child)
+                    formikProps.setFieldValue(`keywords.${props.index}.type`, event.target.value);
+                }}
+                disabled={false}
+            >
+                {["theme", "place", "temporal"].map((type, idx) => (
+                    <MenuItem 
+                        key={idx} 
+                        value={type}
+                    >{type}</MenuItem>
+                ))}
+            </Field>
+
+        </Stack>
+    )
+}    
 
 const CollectionMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
@@ -16,10 +142,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
         title: '',
         collectiongroup: '',
         authors: [{
-            person: '',
-            givenname: '',
-            surname: '',
-            organization: ''
+            person: null,
+            givenname: null,
+            surname: null,
+            organization: null
         }],
         year: '',
         journal: {
@@ -31,12 +157,12 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
         abstract: '',
         informalname: '',
         links: [{
-            name: '',
-            url: ''
+            name: null,
+            url: null
         }],
         keywords: [{
-            name: '',
-            type: ''
+            name: null,
+            type: null
         }],
         language: 'English',
         license: {
@@ -61,7 +187,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
         raster: [],
         complete: ''
     };
-                
+
 
     //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
     //allowing useEffect to call resetForm
@@ -97,9 +223,9 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             .required('Given name is required'),
                         surname: Yup.string()
                             .required('Surname is required'),
-                        organization: Yup.string(),
+                        organization: Yup.string().nullable(),
                     })
-                ),
+                ).min(1, 'At least one author is required'),
                 journal: Yup.object().shape({
                     name: Yup.string(),
                     publisher: Yup.string(),
@@ -227,47 +353,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                         </AccordionSummary>
                         <AccordionDetails>
 
-                            <PersonManager label="Authors" name="authors" values={props.values} handleChange={props.handleChange} omitOrder={true}/>
+                            <MultiManager label="Authors" name="authors" content={AuthorFields} shape={authorShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
                             <br />
-                            {/*
-                            <InputLabel>
-                                Authors
-                            </InputLabel>
-                            <Stack direction="column" spacing={0}>
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="authors[0].person"
-                                    label="Person"
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="authors[0].givenname"
-                                    label="Given name"
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="authors[0].surname"
-                                    label="Surname"
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="authors[0].organization"
-                                    label="Organization"
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                            </Stack>
-                            */}
 
                             <InputLabel>
                                 Journal
@@ -334,7 +421,9 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             />
                             <br />
 
-                            {/*<LinksManager />*/}
+                            <MultiManager label="Links" name="links" content={LinkFields} shape={linkShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
+                            <br />
+                            {/*
                             <InputLabel sx={{marginTop: "1.5em"}}>
                                 Links
                             </InputLabel>
@@ -357,8 +446,11 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 />
                             </Stack>
                             <br />
+                            */}
 
-                            {/*<KeywordsManager />*/}
+                            <MultiManager label="Keywords" name="keywords" content={KeywordFields} shape={keywordShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
+                            <br />
+                            {/*
                             <InputLabel sx={{marginTop: "1.5em"}}>
                                 Keywords
                             </InputLabel>
@@ -381,6 +473,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 />
                             </Stack>
                             <br />
+                            */}
 
                             <Field
                                 component={SensibleTextField}
