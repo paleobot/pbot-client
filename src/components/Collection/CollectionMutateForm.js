@@ -1,57 +1,116 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem } from '@mui/material';
-import { Field, Form, Formik, useFormikContext } from 'formik';
-import { CheckboxWithLabel } from 'formik-mui';
+import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem, Checkbox, FormControlLabel } from '@mui/material';
+//import { Field, Form, Formik, useFormikContext } from 'formik';
+//import { CheckboxWithLabel } from 'formik-mui';
 import React from 'react';
 import * as Yup from 'yup';
-import { SensibleTextField } from '../SensibleTextField.js';
+//import { SensibleTextField } from '../SensibleTextField.js';
 import { MultiManager } from '../MultiManager.js';
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+
+const TextFieldController = ({name, label, control, errors}) => {
+    const pathElements = name.split(".");
+
+    let topName, index, fieldName;
+    if (pathElements.length === 3) {
+        topName = pathElements[0];
+        index = pathElements[1];
+        fieldName = pathElements[2];
+    } else if (pathElements.length === 2) {
+        topName = pathElements[0];
+        fieldName = pathElements[1];          
+    } 
+
+    return (
+        <Controller
+            control={control}
+            render={({ field }) => <TextField 
+                {...field} 
+                label={label}
+                //error={!!errors.authors?.[index]?.person} 
+                //helperText={errors.authors?.[index]?.person?.message}
+                error={topName ?
+                    index ? 
+                        !!errors[topName]?.[index]?.[fieldName] :
+                        !!errors[topName]?.[fieldName] :
+                    !!errors[fieldName]
+                } 
+                helperText={topName ?
+                    index ?
+                        errors[topName]?.[index]?.[fieldName]?.message :
+                        errors[topName]?.[fieldName]?.message :
+                    errors[fieldName]?.message
+                }
+            />}
+            name={name}
+            style={{minWidth: "12ch", width:"100%"}}h
+            disabled={false}
+        />
+    );
+}
+
 
 const authorShape = {
-    person: null,
-    givenname: null,
-    surname: null,
-    organization: null
+    person: '',
+    givenname: '',
+    surname: '',
+    organization: ''
 };
-const AuthorFields = (props) => {
+const AuthorFields = ({index, control, errors}) => {
+      
     return (
         <Stack direction="column" spacing={0}>
-            <Field
-                component={SensibleTextField}
-                type="text"
-                name={`authors.${props.index}.person`}
-                label="Person"
+            {/*
+            <Controller
+                control={control}
+                render={({ field }) => <TextField 
+                    {...field} 
+                    label="Person"
+                    error={!!errors.authors?.[index]?.person} 
+                    helperText={errors.authors?.[index]?.person?.message}
+                />}
+                name={`authors.${index}.person`}
                 style={{minWidth: "12ch", width:"100%"}}h
                 disabled={false}
             />
-            <Field
-                component={SensibleTextField}
-                type="text"
-                name={`authors.${props.index}.givenname`}
-                label="Given name"
+            */}
+            <TextFieldController name={`authors.${index}.person`} label="Person" control={control} errors={errors}/>
+            <Controller
+                control={control}
+                render={({ field }) => <TextField 
+                    {...field} 
+                    label="Given name"
+                />}
+                name={`authors.${index}.givenname`}                
                 style={{minWidth: "12ch", width:"100%"}}
                 disabled={false}
             />
-            <Field
-                component={SensibleTextField}
-                type="text"
-                name={`authors.${props.index}.surname`}
-                label="Surname"
+            <Controller
+                control={control}
+                render={({ field }) => <TextField 
+                    {...field} 
+                    label="Surname"
+                />}
+                name={`authors.${index}.surname`}               
                 style={{minWidth: "12ch", width:"100%"}}
                 disabled={false}
             />
-            <Field
-                component={SensibleTextField}
-                type="text"
-                name={`authors.${props.index}.organization`}
-                label="Organization"
+            <Controller
+                control={control}
+                render={({ field }) => <TextField 
+                    {...field} 
+                    label="Organization"
+                />}
+                name={`authors.${index}.organization`}                
                 style={{minWidth: "12ch", width:"100%"}}
                 disabled={false}
             />
         </Stack>
     )
 }    
-           
+/*           
 const linkShape = {
     name: null,
     url: null,
@@ -104,7 +163,7 @@ const KeywordFields = (props) => {
                 style={{minWidth: "12ch", width:"35%"}}
                 disabled={false}
             />
-            */}
+            *}
             <Field
                 component={TextField}
                 type="text"
@@ -135,17 +194,18 @@ const KeywordFields = (props) => {
         </Stack>
     )
 }    
+*/
 
-const CollectionMutateForm = ({handleSubmit, mode}) => {
+const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const initValues = {
         collection: '', 
         title: '',
         collectiongroup: '',
         authors: [{
-            person: null,
-            givenname: null,
-            surname: null,
-            organization: null
+            person: '',
+            givenname: '',
+            surname: '',
+            organization: ''
         }],
         year: '',
         journal: {
@@ -170,7 +230,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
         },
         private: false,
-        bondingbox: {
+        boundingbox: {
             west: -113,
             south: 33.5,
             east: -112,
@@ -188,9 +248,87 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
         complete: ''
     };
 
+    const validationSchema=Yup.object({
+        title: Yup.string().required(),
+        collectiongroup: Yup.string().required(),
+        year: Yup.string().required(),
+        authors: Yup.array().of(
+            Yup.object().shape({
+                person: Yup.string()
+                    .required('Person is required'),
+                givenname: Yup.string()
+                    .required('Given name is required'),
+                surname: Yup.string()
+                    .required('Surname is required'),
+                organization: Yup.string().nullable(),
+            })
+        ).min(1, 'At least one author is required'),
+        journal: Yup.object().shape({
+            name: Yup.string(),
+            publisher: Yup.string(),
+            url: Yup.string().url(),
+        }),
+        series: Yup.string(),
+        abstract: Yup.string(),
+        informalname: Yup.string(),
+        /*
+        links: Yup.array().of(
+            Yup.object().shape({
+                name: Yup.string(),
+                url: Yup.string(),
+            })
+        ),
+        keywords: Yup.array().of(
+            Yup.object().shape({
+                name: Yup.string(),
+                type: Yup.string(),
+            })
+        ),
+        */
+        license: Yup.object().shape({
+            name: Yup.string(),
+            url: Yup.string().url(),
+        }),
+        private: Yup.boolean(),
+        boundingbox: Yup.object().shape({
+            west: Yup.number().min(-180).max(180),
+            south: Yup.number().min(-90).max(90),
+            east: Yup.number().min(-180).max(180),
+            north: Yup.number().min(-90).max(90),
+        }),
+        documents: Yup.array().of(Yup.string()),
+        images: Yup.array().of(Yup.string()),
+        notes: Yup.array().of(Yup.string()),
+        metadata: Yup.array().of(Yup.string()),
+        gems2: Yup.array().of(Yup.string()),
+        ncgmp09: Yup.array().of(Yup.string()),
+        legacy: Yup.array().of(Yup.string()),
+        layers: Yup.array().of(Yup.string()),
+        raster: Yup.array().of(Yup.string()),
+        complete: Yup.string()
+    })
+
+    const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
+        defaultValues: initValues,
+        resolver: yupResolver(validationSchema),
+        mode: "onBlur",
+        trigger: "onBlur",
+      });
+    
+    const doSubmit = (data) => {
+        //e.preventDefault();
+        console.log("doSubmit")
+        console.log(JSON.parse(JSON.stringify(data)))
+        //console.log(data.authors[0])
+        data.mode = mode;
+        hSubmit(data);
+        reset()
+    }
+    
 
     //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
     //allowing useEffect to call resetForm
+    /*
     const formikRef = React.useRef();
     React.useEffect(() => {
         console.log("useEffect (mode)")
@@ -198,6 +336,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
             formikRef.current.resetForm({values:initValues});
         }
     },[mode]);
+    */
 
     const [selectedTab, setSelectedTab] = React.useState('1');
     const handleTabChange = (event, newValue) => {
@@ -208,75 +347,8 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
     const accstyle = {textAlign: "left", width: "100%"}
     return (
        
-        <Formik
-            innerRef={formikRef}
-            initialValues={initValues}
-            validationSchema={Yup.object({
-                title: Yup.string().required(),
-                collectiongroup: Yup.string().required(),
-                year: Yup.string().required(),
-                authors: Yup.array().of(
-                    Yup.object().shape({
-                        person: Yup.string()
-                            .required('Person is required'),
-                        givenname: Yup.string()
-                            .required('Given name is required'),
-                        surname: Yup.string()
-                            .required('Surname is required'),
-                        organization: Yup.string().nullable(),
-                    })
-                ).min(1, 'At least one author is required'),
-                journal: Yup.object().shape({
-                    name: Yup.string(),
-                    publisher: Yup.string(),
-                    url: Yup.string(),
-                }),
-                series: Yup.string(),
-                abstract: Yup.string(),
-                informalname: Yup.string(),
-                links: Yup.array().of(
-                    Yup.object().shape({
-                        name: Yup.string(),
-                        url: Yup.string(),
-                    })
-                ),
-                keywords: Yup.array().of(
-                    Yup.object().shape({
-                        name: Yup.string(),
-                        type: Yup.string(),
-                    })
-                ),
-                private: Yup.boolean(),
-                boundingbox: Yup.object().shape({
-                    west: Yup.number().min(-180).max(180),
-                    south: Yup.number().min(-90).max(90),
-                    east: Yup.number().min(-180).max(180),
-                    north: Yup.number().min(-90).max(90),
-                }),
-                documents: Yup.array().of(Yup.string()),
-                images: Yup.array().of(Yup.string()),
-                notes: Yup.array().of(Yup.string()),
-                metadata: Yup.array().of(Yup.string()),
-                gems2: Yup.array().of(Yup.string()),
-                ncgmp09: Yup.array().of(Yup.string()),
-                legacy: Yup.array().of(Yup.string()),
-                layers: Yup.array().of(Yup.string()),
-                raster: Yup.array().of(Yup.string()),
-                complete: Yup.string()
-            })}
-            onSubmit={(values, {resetForm}) => {
-                //alert(JSON.stringify(values, null, 2));
-                //setValues(values);
-                values.mode = mode;
-                handleSubmit(values);
-                //setShowOTUs(true);
-                resetForm({values: initValues});
-            }}
-        >
-            {props => (
-            <Form>
-
-                <Field 
+        <form onSubmit={handleSubmit(doSubmit)} >
+                <input 
                     name="mode" 
                     type="hidden" 
                     disabled={false}
@@ -285,11 +357,15 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 {(mode === "edit" || mode === "delete" || mode === "replace") &&
                     <div>
                         {/*<CollectionSelect name="collection" label="Collection" populateMode="full"/>*/}
-                        <Field
-                            component={SensibleTextField}
-                            type="text"
+                        <Controller
+                            render={({ field }) => <TextField 
+                                {...field}
+                                error={!!errors.collection} 
+                                helperText={errors.collection?.message}
+                            />}
                             name="collection"
                             label="Collection"
+                            control={control}
                             fullWidth 
                             disabled={false}
                         />
@@ -309,32 +385,44 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     </AccordionSummary>
                     <AccordionDetails>
                 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
+                            <Controller
+                                render={({ field }) => <TextField 
+                                    {...field} 
+                                    label="Title" 
+                                    error={!!errors.title} 
+                                    helperText={errors.title?.message}
+                                />}
                                 name="title"
-                                label="Title"
+                                control={control}
                                 fullWidth 
                                 disabled={false}
                             />
                             <br />
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
+                            <Controller
+                                render={({ field }) => <TextField 
+                                    {...field} 
+                                    label="Year"
+                                    error={!!errors.year} 
+                                    helperText={errors.year?.message}
+                                />}
                                 name="year"
-                                label="Year"
+                                control={control}
                                 fullWidth 
                                 disabled={false}
                             />
                             <br />
 
                             {/*<CollectionGroupSelect />*/}
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
+                            <Controller
+                                render={({ field }) => <TextField 
+                                    {...field} 
+                                    label="Collection group"
+                                    error={!!errors.collectiongroup} 
+                                    helperText={errors.collectiongroup?.message}
+                                />}
                                 name="collectiongroup"
-                                label="Collection group"
+                                control={control}
                                 fullWidth 
                                 disabled={false}
                             />
@@ -353,76 +441,103 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                         </AccordionSummary>
                         <AccordionDetails>
 
-                            <MultiManager label="Authors" name="authors" content={AuthorFields} shape={authorShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
+                            
+                            <MultiManager label="Authors" name="authors" content={AuthorFields} shape={authorShape} control={control} watch={watch("authors")} errors={errors}/>
                             <br />
+                            
 
                             <InputLabel>
                                 Journal
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="journal.name"
-                                    label="Name"
+                                <Controller
+                                    render={({ field }) => <TextField
+                                        {...field} 
+                                        label="Name"
+                                        error={!!errors.journal?.name} 
+                                        helperText={errors.journal?.name?.message}
+                                    />}
+                                    name="journal.name"                               
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="journal.publisher"
-                                    label="Publisher"
+                                <Controller
+                                    render={({ field }) => <TextField
+                                        {...field} 
+                                        label="Publisher"
+                                        error={!!errors.journal?.publisher} 
+                                        helperText={errors.journal?.publisher?.message}
+                                    />}
+                                    name="journal.publisher"                          
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="journal.url"
-                                    label="URL"
+                                <Controller
+                                    render={({ field }) => <TextField 
+                                        {...field} 
+                                        label="URL"
+                                        error={!!errors.journal?.url} 
+                                        helperText={errors.journal?.url?.message}
+                                    />}
+                                    name="journal.url"                               
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
                             </Stack>
                             <br />
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="series"
-                                label="Series"
+                            <Controller
+                                render={({ field }) => <TextField 
+                                    {...field} 
+                                    label="Series"
+                                    error={!!errors.series} 
+                                    helperText={errors.series?.message}
+                                />}
+                                name="series"                            
+                                control={control}
                                 fullWidth 
                                 disabled={false}
                             />
                             <br />
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="abstract"
-                                label="Abstract"
+                            <Controller
+                                render={({ field }) => <TextField 
+                                    {...field} 
+                                    multiline 
+                                    label="Abstract"
+                                    error={!!errors.abstract} 
+                                    helperText={errors.abstract?.message}
+                                />}
+                                name="abstract"                         
+                                control={control}
                                 fullWidth 
-                                multiline
-                                rows={4}
                                 disabled={false}
                                 variant="outlined"
                                 sx={{marginTop:"0.5em"}}
                             />
                             <br />
                            
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="informalname"
-                                label="Informal name"
+                            <Controller
+                                render={({ field }) => <TextField 
+                                    {...field} 
+                                    label="Informal name"
+                                    error={!!errors.informalname} 
+                                    helperText={errors.informalname?.message}
+                                />}
+                                name="informalname"                      
+                                control={control}
                                 fullWidth 
                                 disabled={false}
                             />
                             <br />
 
+                            {/*}
                             <MultiManager label="Links" name="links" content={LinkFields} shape={linkShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
                             <br />
+                            */}
                             {/*
                             <InputLabel sx={{marginTop: "1.5em"}}>
                                 Links
@@ -448,8 +563,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             <br />
                             */}
 
+                            {/*}
                             <MultiManager label="Keywords" name="keywords" content={KeywordFields} shape={keywordShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
                             <br />
+                            */}
                             {/*
                             <InputLabel sx={{marginTop: "1.5em"}}>
                                 Keywords
@@ -475,11 +592,15 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                             <br />
                             */}
 
-                            <Field
-                                component={SensibleTextField}
-                                type="text"
-                                name="language"
-                                label="Language"
+                            <Controller
+                                render={({ field }) => <TextField 
+                                    {...field} 
+                                    label="Language"
+                                    error={!!errors.language} 
+                                    helperText={errors.language?.message}
+                                />}
+                                name="language"                          
+                                control={control}
                                 fullWidth 
                                 disabled={false}
                             />
@@ -489,67 +610,102 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                                 License
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="license.type"
-                                    label="Name"
+                                <Controller
+                                    render={({ field }) => <TextField 
+                                        {...field} 
+                                        label="Name"
+                                        error={!!errors.license?.type} 
+                                        helperText={errors.license?.type?.message}    
+                                    />}
+                                    name="license.type"                               
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="license.url"
-                                    label="URL"
+                                <Controller
+                                    render={({ field }) => <TextField 
+                                        {...field} 
+                                        label="URL"
+                                        error={!!errors.license?.url} 
+                                        helperText={errors.license?.url?.message}    
+                                    />}
+                                    name="license.url"                                 
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
                             </Stack>
                             <br />
-
-                            <Field 
-                                component={CheckboxWithLabel}
-                                name="private" 
-                                type="checkbox"
-                                Label={{label:"Private"}}
-                                disabled={(mode === "edit" && props.values.private)}
-                            />
+                        
+                            <FormControlLabel
+                                control={
+                                <Controller
+                                    name="private"
+                                    control={control}
+                                    render={({ field: props }) => (
+                                    <Checkbox
+                                        {...props}
+                                        checked={props.value}
+                                        onChange={(e) => props.onChange(e.target.checked)}
+                                        error={!!errors.private} 
+                                        helperText={errors.private?.message}    
+                                    />
+                                    )}
+                                />
+                                }
+                                label="Private"
+                            />                            
                             <br />
 
                             <InputLabel>
                                 Bounding box
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="west"
-                                    label="West"
+                                <Controller
+                                    render={({ field }) => <TextField 
+                                        {...field} 
+                                        label="West"
+                                        error={!!errors.boundingbox?.west} 
+                                        helperText={errors.boundingbox?.west?.message}    
+                                    />}
+                                    name="boundingbox.west"                                
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="south"
-                                    label="South"
+                                <Controller
+                                    render={({ field }) => <TextField 
+                                        {...field} 
+                                        label="South"
+                                        error={!!errors.boundingbox?.south} 
+                                        helperText={errors.boundingbox?.south?.message}    
+                                    />}
+                                    name="boundingbox.south"                               
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="east"
-                                    label="East"
+                                <Controller
+                                    render={({ field }) => <TextField 
+                                        {...field} 
+                                        label="East"
+                                        error={!!errors.boundingbox?.east} 
+                                        helperText={errors.boundingbox?.east?.message}    
+                                    />}
+                                    name="boundingbox.east"                                
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="north"
-                                    label="North"
+                                <Controller
+                                    render={({ field }) => <TextField 
+                                        {...field} 
+                                        label="North"
+                                        error={!!errors.boundingbox?.north} 
+                                        helperText={errors.boundingbox?.north?.message}    
+                                    />}
+                                    name="boundingbox.north"                               
+                                    control={control}
                                     style={{minWidth: "12ch", width:"35%"}}
                                     disabled={false}
                                 />
@@ -560,17 +716,6 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                     </>
                 }
                 
-                {(mode === "delete") &&
-                <div>
-                    <Field
-                        type="checkbox"
-                        component={CheckboxWithLabel}
-                        name="cascade"
-                        Label={{ label: 'Cascade' }}
-                    />
-                  <br />
-                </div>
-                }
 
                 <br />
                 <br />
@@ -581,9 +726,7 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
                 </Stack>
                 <br />
                 <br />
-            </Form>
-            )}
-        </Formik>
+            </form>
     
     );
 };
