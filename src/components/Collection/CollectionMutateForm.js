@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 
-const TextFieldController = ({name, label, control, errors}) => {
+const TextFieldController = ({name, label, control, errors, ...props}) => {
     const pathElements = name.split(".");
 
     let topName, index, fieldName;
@@ -28,20 +28,19 @@ const TextFieldController = ({name, label, control, errors}) => {
             control={control}
             render={({ field }) => <TextField 
                 {...field} 
+                {...props}
                 label={label}
-                //error={!!errors.authors?.[index]?.person} 
-                //helperText={errors.authors?.[index]?.person?.message}
                 error={topName ?
                     index ? 
                         !!errors[topName]?.[index]?.[fieldName] :
                         !!errors[topName]?.[fieldName] :
-                    !!errors[fieldName]
+                    !!errors[name]
                 } 
                 helperText={topName ?
                     index ?
                         errors[topName]?.[index]?.[fieldName]?.message :
                         errors[topName]?.[fieldName]?.message :
-                    errors[fieldName]?.message
+                    errors[name]?.message
                 }
             />}
             name={name}
@@ -62,82 +61,32 @@ const AuthorFields = ({index, control, errors}) => {
       
     return (
         <Stack direction="column" spacing={0}>
-            {/*
-            <Controller
-                control={control}
-                render={({ field }) => <TextField 
-                    {...field} 
-                    label="Person"
-                    error={!!errors.authors?.[index]?.person} 
-                    helperText={errors.authors?.[index]?.person?.message}
-                />}
-                name={`authors.${index}.person`}
-                style={{minWidth: "12ch", width:"100%"}}h
-                disabled={false}
-            />
-            */}
             <TextFieldController name={`authors.${index}.person`} label="Person" control={control} errors={errors}/>
-            <Controller
-                control={control}
-                render={({ field }) => <TextField 
-                    {...field} 
-                    label="Given name"
-                />}
-                name={`authors.${index}.givenname`}                
-                style={{minWidth: "12ch", width:"100%"}}
-                disabled={false}
-            />
-            <Controller
-                control={control}
-                render={({ field }) => <TextField 
-                    {...field} 
-                    label="Surname"
-                />}
-                name={`authors.${index}.surname`}               
-                style={{minWidth: "12ch", width:"100%"}}
-                disabled={false}
-            />
-            <Controller
-                control={control}
-                render={({ field }) => <TextField 
-                    {...field} 
-                    label="Organization"
-                />}
-                name={`authors.${index}.organization`}                
-                style={{minWidth: "12ch", width:"100%"}}
-                disabled={false}
-            />
+
+            <TextFieldController name={`authors.${index}.givenname`} label="Given name" control={control} errors={errors}/>     
+
+            <TextFieldController name={`authors.${index}.surname`} label="Surname" control={control} errors={errors}/>
+
+            <TextFieldController name={`authors.${index}.organization`} label="Organization" control={control} errors={errors}/>
         </Stack>
     )
 }    
-/*           
+           
 const linkShape = {
-    name: null,
-    url: null,
+    name: '',
+    url: '',
 };
-const LinkFields = (props) => {
+const LinkFields = ({index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-            <Field
-                component={SensibleTextField}
-                type="text"
-                name={`links.${props.index}.name`}
-                label="Name"
-                style={{minWidth: "12ch", width:"35%"}}
-                disabled={false}
-            />
-            <Field
-                component={SensibleTextField}
-                type="text"
-                name={`links.${props.index}.url`}
-                label="URL"
-                style={{minWidth: "12ch", width:"35%"}}
-                disabled={false}
-            />
-        </Stack>
+            <TextFieldController name={`links.${index}.name`} label="Name" control={control} errors={errors} style={{minWidth: "12ch", width:"35%"}}/>
+
+            <TextFieldController name={`links.${index}.url`} label="URL" control={control} errors={errors} style={{minWidth: "12ch", width:"35%"}}/>
+         </Stack>
     )
 }    
 
+/*
 const keywordShape = {
     name: null,
     type: null,
@@ -217,12 +166,12 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         abstract: '',
         informalname: '',
         links: [{
-            name: null,
-            url: null
+            name: '',
+            url: ''
         }],
         keywords: [{
-            name: null,
-            type: null
+            name: '',
+            type: ''
         }],
         language: 'English',
         license: {
@@ -271,13 +220,13 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         series: Yup.string(),
         abstract: Yup.string(),
         informalname: Yup.string(),
-        /*
         links: Yup.array().of(
             Yup.object().shape({
                 name: Yup.string(),
-                url: Yup.string(),
+                url: Yup.string().url(),
             })
         ),
+        /*
         keywords: Yup.array().of(
             Yup.object().shape({
                 name: Yup.string(),
@@ -357,18 +306,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 {(mode === "edit" || mode === "delete" || mode === "replace") &&
                     <div>
                         {/*<CollectionSelect name="collection" label="Collection" populateMode="full"/>*/}
-                        <Controller
-                            render={({ field }) => <TextField 
-                                {...field}
-                                error={!!errors.collection} 
-                                helperText={errors.collection?.message}
-                            />}
-                            name="collection"
-                            label="Collection"
-                            control={control}
-                            fullWidth 
-                            disabled={false}
-                        />
+                        <TextFieldController name={`collection`} label="Collection" control={control} errors={errors}/>
                         <br />
                     </div>
                 }
@@ -385,47 +323,14 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                     </AccordionSummary>
                     <AccordionDetails>
                 
-                            <Controller
-                                render={({ field }) => <TextField 
-                                    {...field} 
-                                    label="Title" 
-                                    error={!!errors.title} 
-                                    helperText={errors.title?.message}
-                                />}
-                                name="title"
-                                control={control}
-                                fullWidth 
-                                disabled={false}
-                            />
+                            <TextFieldController name={`title`} label="Title" control={control} errors={errors}/>
                             <br />
 
-                            <Controller
-                                render={({ field }) => <TextField 
-                                    {...field} 
-                                    label="Year"
-                                    error={!!errors.year} 
-                                    helperText={errors.year?.message}
-                                />}
-                                name="year"
-                                control={control}
-                                fullWidth 
-                                disabled={false}
-                            />
+                            <TextFieldController name={`year`} label="Year" control={control} errors={errors}/>
                             <br />
 
                             {/*<CollectionGroupSelect />*/}
-                            <Controller
-                                render={({ field }) => <TextField 
-                                    {...field} 
-                                    label="Collection group"
-                                    error={!!errors.collectiongroup} 
-                                    helperText={errors.collectiongroup?.message}
-                                />}
-                                name="collectiongroup"
-                                control={control}
-                                fullWidth 
-                                disabled={false}
-                            />
+                            <TextFieldController name={`collectiongroup`} label="Collection group" control={control} errors={errors}/>
                             <br />
 
                         </AccordionDetails>
@@ -450,118 +355,27 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                 Journal
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <Controller
-                                    render={({ field }) => <TextField
-                                        {...field} 
-                                        label="Name"
-                                        error={!!errors.journal?.name} 
-                                        helperText={errors.journal?.name?.message}
-                                    />}
-                                    name="journal.name"                               
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Controller
-                                    render={({ field }) => <TextField
-                                        {...field} 
-                                        label="Publisher"
-                                        error={!!errors.journal?.publisher} 
-                                        helperText={errors.journal?.publisher?.message}
-                                    />}
-                                    name="journal.publisher"                          
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Controller
-                                    render={({ field }) => <TextField 
-                                        {...field} 
-                                        label="URL"
-                                        error={!!errors.journal?.url} 
-                                        helperText={errors.journal?.url?.message}
-                                    />}
-                                    name="journal.url"                               
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
+
+                                <TextFieldController name={`journal.name`} label="Name" control={control} errors={errors}/>
+
+                                <TextFieldController name={`journal.publisher`} label="Publisher" control={control} errors={errors}/>
+
+                                <TextFieldController name={`journal.url`} label="URL" control={control} errors={errors}/>
+
                             </Stack>
                             <br />
 
-                            <Controller
-                                render={({ field }) => <TextField 
-                                    {...field} 
-                                    label="Series"
-                                    error={!!errors.series} 
-                                    helperText={errors.series?.message}
-                                />}
-                                name="series"                            
-                                control={control}
-                                fullWidth 
-                                disabled={false}
-                            />
+                            <TextFieldController name={`series`} label="Series" control={control} errors={errors}/>
                             <br />
 
-                            <Controller
-                                render={({ field }) => <TextField 
-                                    {...field} 
-                                    multiline 
-                                    label="Abstract"
-                                    error={!!errors.abstract} 
-                                    helperText={errors.abstract?.message}
-                                />}
-                                name="abstract"                         
-                                control={control}
-                                fullWidth 
-                                disabled={false}
-                                variant="outlined"
-                                sx={{marginTop:"0.5em"}}
-                            />
+                            <TextFieldController name={`abstract`} label="Abstract" control={control} errors={errors} multiline sx={{marginTop:"0.5em"}}/>
                             <br />
                            
-                            <Controller
-                                render={({ field }) => <TextField 
-                                    {...field} 
-                                    label="Informal name"
-                                    error={!!errors.informalname} 
-                                    helperText={errors.informalname?.message}
-                                />}
-                                name="informalname"                      
-                                control={control}
-                                fullWidth 
-                                disabled={false}
-                            />
+                            <TextFieldController name={`informalname`} label="Informal name" control={control} errors={errors}/>
                             <br />
 
-                            {/*}
-                            <MultiManager label="Links" name="links" content={LinkFields} shape={linkShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
+                            <MultiManager label="Links" name="links" content={LinkFields} shape={linkShape} control={control} watch={watch("links")} errors={errors}/>
                             <br />
-                            */}
-                            {/*
-                            <InputLabel sx={{marginTop: "1.5em"}}>
-                                Links
-                            </InputLabel>
-                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="links[0].name"
-                                    label="Name"
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Field
-                                    component={SensibleTextField}
-                                    type="text"
-                                    name="links[0].url"
-                                    label="URL"
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                            </Stack>
-                            <br />
-                            */}
 
                             {/*}
                             <MultiManager label="Keywords" name="keywords" content={KeywordFields} shape={keywordShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
@@ -592,48 +406,18 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             <br />
                             */}
 
-                            <Controller
-                                render={({ field }) => <TextField 
-                                    {...field} 
-                                    label="Language"
-                                    error={!!errors.language} 
-                                    helperText={errors.language?.message}
-                                />}
-                                name="language"                          
-                                control={control}
-                                fullWidth 
-                                disabled={false}
-                            />
+                            <TextFieldController name={`language`} label="Language" control={control} errors={errors}/>
                             <br />
 
                             <InputLabel sx={{ marginTop:"1.5em"}}>
                                 License
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <Controller
-                                    render={({ field }) => <TextField 
-                                        {...field} 
-                                        label="Name"
-                                        error={!!errors.license?.type} 
-                                        helperText={errors.license?.type?.message}    
-                                    />}
-                                    name="license.type"                               
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Controller
-                                    render={({ field }) => <TextField 
-                                        {...field} 
-                                        label="URL"
-                                        error={!!errors.license?.url} 
-                                        helperText={errors.license?.url?.message}    
-                                    />}
-                                    name="license.url"                                 
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
+
+                                <TextFieldController name={`license.type`} label="Type" control={control} errors={errors}/>
+
+                                <TextFieldController name={`license.url`} label="URL" control={control} errors={errors}/>
+
                             </Stack>
                             <br />
                         
@@ -661,54 +445,13 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                 Bounding box
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <Controller
-                                    render={({ field }) => <TextField 
-                                        {...field} 
-                                        label="West"
-                                        error={!!errors.boundingbox?.west} 
-                                        helperText={errors.boundingbox?.west?.message}    
-                                    />}
-                                    name="boundingbox.west"                                
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Controller
-                                    render={({ field }) => <TextField 
-                                        {...field} 
-                                        label="South"
-                                        error={!!errors.boundingbox?.south} 
-                                        helperText={errors.boundingbox?.south?.message}    
-                                    />}
-                                    name="boundingbox.south"                               
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Controller
-                                    render={({ field }) => <TextField 
-                                        {...field} 
-                                        label="East"
-                                        error={!!errors.boundingbox?.east} 
-                                        helperText={errors.boundingbox?.east?.message}    
-                                    />}
-                                    name="boundingbox.east"                                
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
-                                <Controller
-                                    render={({ field }) => <TextField 
-                                        {...field} 
-                                        label="North"
-                                        error={!!errors.boundingbox?.north} 
-                                        helperText={errors.boundingbox?.north?.message}    
-                                    />}
-                                    name="boundingbox.north"                               
-                                    control={control}
-                                    style={{minWidth: "12ch", width:"35%"}}
-                                    disabled={false}
-                                />
+                                <TextFieldController name={`boundingbox.west`} label="West" control={control} errors={errors}/>
+
+                                <TextFieldController name={`boundingbox.south`} label="South" control={control} errors={errors}/>
+
+                                <TextFieldController name={`boundingbox.east`} label="East" control={control} errors={errors}/>
+
+                                <TextFieldController name={`boundingbox.north`} label="North" control={control} errors={errors}/>
                             </Stack>
                         </AccordionDetails>
                     </Accordion>
