@@ -1,5 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem, Checkbox, FormControlLabel } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem, Checkbox, FormControlLabel, Select } from '@mui/material';
 //import { Field, Form, Formik, useFormikContext } from 'formik';
 //import { CheckboxWithLabel } from 'formik-mui';
 import React from 'react';
@@ -29,6 +29,11 @@ const TextFieldController = ({name, label, control, errors, ...props}) => {
             render={({ field }) => <TextField 
                 {...field} 
                 {...props}
+                sx={[
+                    {minWidth: "12ch"},
+                    // You cannot spread `sx` directly because `SxProps` (typeof sx) can be an array.
+                    ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
+                ]}
                 label={label}
                 error={topName ?
                     index ? 
@@ -44,12 +49,112 @@ const TextFieldController = ({name, label, control, errors, ...props}) => {
                 }
             />}
             name={name}
-            style={{minWidth: "12ch", width:"100%"}}h
+            //style={{minWidth: "12ch", width:"100%"}}
             disabled={false}
         />
     );
 }
 
+
+const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
+    //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
+
+    return (
+        <Controller
+            control={control}
+            render={({ field }) => <FormControlLabel 
+                label={label}        
+                control={
+                    <Checkbox
+                        {...field} 
+                        {...props}
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                    />
+               }
+            />}
+            error={!!errors[name]} 
+            helperText={errors[name]?.message}    
+            name={name}
+        />   
+    )
+
+}                         
+
+const SelectController = ({name, label, options, control, errors, ...props}) => {
+    //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
+
+    const [data, setData] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
+  
+    React.useEffect(() => {
+        const fetchData = async () => {
+            //If options is an array, we don't need to fetch anything. Just set the data.
+            if (Array.isArray(options)) {
+                setData(options);
+                setLoading(false);
+                return;
+            }
+
+            //Otherwise, we need to fetch the data. 
+            //TODO: For now, I'm assuming options is a URL. I might change that to expect only the path, and then add the base URL in the fetchData function.
+            try {
+                const response = await fetch(options.url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                let json = await response.json();
+                json = json.data.map((item) => {
+                    return {
+                        name: item[options.nameField],
+                        value: item[options.valueField]
+                    }
+                })
+                setData(json);
+                setLoading(false);
+            } catch (e) {
+                setError(e);
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+    }, []);
+  
+    if (loading) {
+      return <p>Loading...</p>;
+    }
+  
+    if (error) {
+      return <p>Error: {error.message}</p>;
+    }
+  
+    return (
+        <Controller
+            control={control}
+            error={!!errors[name]} 
+            helperText={errors[name]?.message}    
+            name={name}
+            render={({ field }) => 
+                <Select
+                    {...field}
+                    {...props}
+                    sx={[
+                        {marginTop: "1em",},
+                        // You cannot spread `sx` directly because `SxProps` (typeof sx) can be an array.
+                        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
+                    ]}
+                    label={label}
+                >
+                    {data.map((option, index) => (
+                        <MenuItem value={option.value}>{option.name}</MenuItem>
+                    ))}
+                </Select>
+            }
+        />
+    )
+}
 
 const authorShape = {
     person: '',
@@ -61,13 +166,13 @@ const AuthorFields = ({index, control, errors}) => {
       
     return (
         <Stack direction="column" spacing={0}>
-            <TextFieldController name={`authors.${index}.person`} label="Person" control={control} errors={errors}/>
+            <TextFieldController name={`authors.${index}.person`} label="Person" control={control} errors={errors} sx={{width:"75%"}}/>
 
-            <TextFieldController name={`authors.${index}.givenname`} label="Given name" control={control} errors={errors}/>     
+            <TextFieldController name={`authors.${index}.givenname`} label="Given name" control={control} errors={errors} sx={{width:"75%"}}/>     
 
-            <TextFieldController name={`authors.${index}.surname`} label="Surname" control={control} errors={errors}/>
+            <TextFieldController name={`authors.${index}.surname`} label="Surname" control={control} errors={errors} sx={{width:"75%"}}/>
 
-            <TextFieldController name={`authors.${index}.organization`} label="Organization" control={control} errors={errors}/>
+            <TextFieldController name={`authors.${index}.organization`} label="Organization" control={control} errors={errors} sx={{width:"75%"}}/>
         </Stack>
     )
 }    
@@ -79,71 +184,39 @@ const linkShape = {
 const LinkFields = ({index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-            <TextFieldController name={`links.${index}.name`} label="Name" control={control} errors={errors} style={{minWidth: "12ch", width:"35%"}}/>
+            <TextFieldController name={`links.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
 
-            <TextFieldController name={`links.${index}.url`} label="URL" control={control} errors={errors} style={{minWidth: "12ch", width:"35%"}}/>
+            <TextFieldController name={`links.${index}.url`} label="URL" control={control} errors={errors} sx={{width:"75%"}}/>
          </Stack>
     )
 }    
 
-/*
+
 const keywordShape = {
-    name: null,
-    type: null,
+    name: '',
+    type: '',
 };
-const KeywordFields = (props) => {
-    const formikProps = useFormikContext()
+const KeywordFields = ({index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-            <Field
-                component={SensibleTextField}
-                type="text"
-                name={`keywords.${props.index}.name`}
-                label="Name"
-                style={{minWidth: "12ch", width:"35%"}}
-                disabled={false}
+            <TextFieldController name={`keywords.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
+            <SelectController 
+                name={`keywords.${index}.type`} 
+                label="Type" 
+                options={[
+                    {name: "theme", value: "theme"}, 
+                    {name: "place", value: "place"}, 
+                    {name: "temporal", value: "temporal"}
+                ]} 
+                control={control} 
+                errors={errors} 
+                sx={{minWidth: "12ch", width:"75%"}} 
+                variant="standard"
             />
-            {/*
-            <Field
-                component={SensibleTextField}
-                type="text"
-                name={`keywords.${props.index}.type`}
-                label="URL"
-                style={{minWidth: "12ch", width:"35%"}}
-                disabled={false}
-            />
-            *}
-            <Field
-                component={TextField}
-                type="text"
-                name={`keywords.${props.index}.type`}
-                label="Type"
-                style={{minWidth: "12ch", width:"35%"}}
-                select={true}
-                SelectProps={{
-                    multiple: false,
-                }}
-                onChange={(event,child) => {
-                    //props.handleSelect(JSON.parse(child.props.dperson))
-                    console.log("onchange")
-                    console.log(event)
-                    console.log(child)
-                    formikProps.setFieldValue(`keywords.${props.index}.type`, event.target.value);
-                }}
-                disabled={false}
-            >
-                {["theme", "place", "temporal"].map((type, idx) => (
-                    <MenuItem 
-                        key={idx} 
-                        value={type}
-                    >{type}</MenuItem>
-                ))}
-            </Field>
-
         </Stack>
     )
 }    
-*/
+
 
 const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const initValues = {
@@ -226,14 +299,12 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 url: Yup.string().url(),
             })
         ),
-        /*
         keywords: Yup.array().of(
             Yup.object().shape({
                 name: Yup.string(),
                 type: Yup.string(),
             })
         ),
-        */
         license: Yup.object().shape({
             name: Yup.string(),
             url: Yup.string().url(),
@@ -329,8 +400,18 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             <TextFieldController name={`year`} label="Year" control={control} errors={errors}/>
                             <br />
 
-                            {/*<CollectionGroupSelect />*/}
-                            <TextFieldController name={`collectiongroup`} label="Collection group" control={control} errors={errors}/>
+                            <SelectController 
+                                name="collectiongroup"
+                                label="Collection group" 
+                                options={{
+                                    url: "https://data.azgs.arizona.edu/api/v1/dicts/collection_groups",
+                                    nameField: "name",
+                                    valueField: "name"
+                                }} 
+                                control={control} 
+                                errors={errors} 
+                                style={{minWidth: "12ch", marginTop: "1em", width:"75%"}} variant="standard"
+                            />
                             <br />
 
                         </AccordionDetails>
@@ -356,11 +437,11 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
 
-                                <TextFieldController name={`journal.name`} label="Name" control={control} errors={errors}/>
+                                <TextFieldController name={`journal.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
 
-                                <TextFieldController name={`journal.publisher`} label="Publisher" control={control} errors={errors}/>
+                                <TextFieldController name={`journal.publisher`} label="Publisher" control={control} errors={errors} sx={{width:"75%"}}/>
 
-                                <TextFieldController name={`journal.url`} label="URL" control={control} errors={errors}/>
+                                <TextFieldController name={`journal.url`} label="URL" control={control} errors={errors} sx={{width:"75%"}}/>
 
                             </Stack>
                             <br />
@@ -377,10 +458,10 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             <MultiManager label="Links" name="links" content={LinkFields} shape={linkShape} control={control} watch={watch("links")} errors={errors}/>
                             <br />
 
-                            {/*}
-                            <MultiManager label="Keywords" name="keywords" content={KeywordFields} shape={keywordShape} values={props.values} handleChange={props.handleChange} omitOrder={true}/>
+                            
+                            <MultiManager label="Keywords" name="keywords" content={KeywordFields} shape={keywordShape} control={control} watch={watch("keywords")} errors={errors}/>
                             <br />
-                            */}
+                        
                             {/*
                             <InputLabel sx={{marginTop: "1.5em"}}>
                                 Keywords
@@ -421,24 +502,8 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             </Stack>
                             <br />
                         
-                            <FormControlLabel
-                                control={
-                                <Controller
-                                    name="private"
-                                    control={control}
-                                    render={({ field: props }) => (
-                                    <Checkbox
-                                        {...props}
-                                        checked={props.value}
-                                        onChange={(e) => props.onChange(e.target.checked)}
-                                        error={!!errors.private} 
-                                        helperText={errors.private?.message}    
-                                    />
-                                    )}
-                                />
-                                }
-                                label="Private"
-                            />                            
+                            
+                            <LabeledCheckboxController name={`private`} label="Private" control={control} errors={errors}/>
                             <br />
 
                             <InputLabel>
