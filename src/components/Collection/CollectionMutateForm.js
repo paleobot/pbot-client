@@ -1,5 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem, Checkbox, FormControlLabel, Select } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem, Checkbox, FormControlLabel, Select, FormControl } from '@mui/material';
 //import { Field, Form, Formik, useFormikContext } from 'formik';
 //import { CheckboxWithLabel } from 'formik-mui';
 import React from 'react';
@@ -137,11 +137,12 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
             helperText={errors[name]?.message}    
             name={name}
             render={({ field }) => 
-                <Select
+                <TextField
                     {...field}
                     {...props}
+                    select
                     sx={[
-                        {marginTop: "1em",},
+                        {minWidth: "12ch"},
                         // You cannot spread `sx` directly because `SxProps` (typeof sx) can be an array.
                         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
                     ]}
@@ -150,7 +151,7 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
                     {data.map((option, index) => (
                         <MenuItem value={option.value}>{option.name}</MenuItem>
                     ))}
-                </Select>
+                </TextField>
             }
         />
     )
