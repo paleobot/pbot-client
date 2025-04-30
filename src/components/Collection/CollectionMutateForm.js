@@ -8,53 +8,8 @@ import * as Yup from 'yup';
 import { MultiManager } from '../MultiManager.js';
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-
-
-const TextFieldController = ({name, label, control, errors, ...props}) => {
-    const pathElements = name.split(".");
-
-    let topName, index, fieldName;
-    if (pathElements.length === 3) {
-        topName = pathElements[0];
-        index = pathElements[1];
-        fieldName = pathElements[2];
-    } else if (pathElements.length === 2) {
-        topName = pathElements[0];
-        fieldName = pathElements[1];          
-    } 
-
-    return (
-        <Controller
-            control={control}
-            render={({ field }) => <TextField 
-                {...field} 
-                {...props}
-                sx={[
-                    {minWidth: "12ch"},
-                    // You cannot spread `sx` directly because `SxProps` (typeof sx) can be an array.
-                    ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-                ]}
-                label={label}
-                error={topName ?
-                    index ? 
-                        !!errors[topName]?.[index]?.[fieldName] :
-                        !!errors[topName]?.[fieldName] :
-                    !!errors[name]
-                } 
-                helperText={topName ?
-                    index ?
-                        errors[topName]?.[index]?.[fieldName]?.message :
-                        errors[topName]?.[fieldName]?.message :
-                    errors[name]?.message
-                }
-            />}
-            name={name}
-            //style={{minWidth: "12ch", width:"100%"}}
-            disabled={false}
-        />
-    );
-}
-
+import { ExistingCollectionManager } from './ExistingCollectionManager';
+import { TextFieldController } from '../util/TextFieldController';
 
 const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
     //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
@@ -221,7 +176,9 @@ const KeywordFields = ({index, control, errors}) => {
 
 const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const initValues = {
-        collection: '', 
+        identifiers: {
+            perm_id: '',
+        }, 
         title: '',
         collectiongroup: '',
         authors: [{
@@ -253,7 +210,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
             url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
         },
         private: false,
-        boundingbox: {
+        bounding_box: {
             west: -113,
             south: 33.5,
             east: -112,
@@ -268,7 +225,10 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         legacy: [],
         layers: [],
         raster: [],
-        complete: ''
+        complete: '',
+        //extra fields, not part of collection metadata
+        oldCollection: '',
+        oldCollections: [],
     };
 
     const validationSchema=Yup.object({
@@ -377,13 +337,11 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 
                 {(mode === "edit" || mode === "delete" || mode === "replace") &&
                     <div>
-                        {/*<CollectionSelect name="collection" label="Collection" populateMode="full"/>*/}
-                        <TextFieldController name={`collection`} label="Collection" control={control} errors={errors}/>
-                        <br />
+                        <ExistingCollectionManager mode={mode} control={control} reset={reset} watch={watch} errors={errors}/>
                     </div>
                 }
                 
-                {(mode === "create" || ((mode === "edit" || mode === "replace") && props.values.collection !== '')) &&
+                {(mode === "create" || ((mode === "edit" || mode === "replace") /*&& control._formValues.collection !== ''*/)) &&
                     <>
                     <Accordion style={accstyle} defaultExpanded={true}>
                     <AccordionSummary
@@ -511,13 +469,13 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                 Bounding box
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <TextFieldController name={`boundingbox.west`} label="West" control={control} errors={errors}/>
+                                <TextFieldController name={`bounding_box.west`} label="West" control={control} errors={errors}/>
 
-                                <TextFieldController name={`boundingbox.south`} label="South" control={control} errors={errors}/>
+                                <TextFieldController name={`bounding_box.south`} label="South" control={control} errors={errors}/>
 
-                                <TextFieldController name={`boundingbox.east`} label="East" control={control} errors={errors}/>
+                                <TextFieldController name={`bounding_box.east`} label="East" control={control} errors={errors}/>
 
-                                <TextFieldController name={`boundingbox.north`} label="North" control={control} errors={errors}/>
+                                <TextFieldController name={`bounding_box.north`} label="North" control={control} errors={errors}/>
                             </Stack>
                         </AccordionDetails>
                     </Accordion>
