@@ -1,0 +1,83 @@
+import { Button, Stack } from "@mui/material"
+import { TextFieldController } from "../util/TextFieldController";
+import { useState } from "react";
+import { MultiManager } from "../MultiManager";
+import { useWatch } from "react-hook-form";
+
+
+export const ExistingCollectionManager = ({mode, control, reset, watch, errors, ...props}) => {
+
+    //const [id, setId] = useState('')
+    //const [data, setData] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+
+    const fetchData = async (permID) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`https://data.azgs.arizona.edu/api/v1/metadata/${permID}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            let json = await response.json();
+            console.log(JSON.parse(JSON.stringify(json)));
+
+            //TODO: This is a little cheesy. Setting all of values to the metadata zaps oldCollections, which we need if we are here for replace. A better way to do this might be to put all the form values that correspond to collection metadata inside a metadata object in the form init values. This would require renaming all the fields. I'm lazy, so I'm not going to do that right now.
+            json.data.metadata.oldCollections = control._formValues.oldCollections;
+            
+            reset(json.data.metadata, {keepDefaultValues: true});
+            setLoading(false);
+        } catch (e) {
+            setError(e);
+            setLoading(false);
+        }
+    }
+
+    const FetchStatus = () => {
+        if (loading) {
+            return <p>Loading...</p>;
+        }
+
+        if (error) {
+            return <p>Error: {error.message}</p>;
+        }
+    }
+
+
+    const replaceShape = {
+        permID: '',
+    };
+    const ReplaceFields = ({index, control, errors}) => {
+        return (
+            <Stack direction="row" spacing={0} sx={{ marginLeft:"1.5em"}}>
+                <TextFieldController name={`oldCollections.${index}.permID`} label="Old collection" control={control} errors={errors} sx={{width:"90%"}}/>
+    
+                <Button variant="outlined" color="secondary" size="small" onClick={() => {fetchData(control._formValues.oldCollections[index].permID)}}>Load</Button>
+             </Stack>
+        )
+    }   
+    
+    if ("delete" === mode) {
+        return (
+            <TextFieldController  name={`identifiers.perm_id`} label="Remove existing collection" control={control} errors={errors}/>
+        )
+    } else if ("edit" === mode) {
+        return (
+            <>
+            <Stack direction="row" spacing={2} sx={{marginTop: "1.5em"}}>
+                <TextFieldController  name={`identifiers.perm_id`} label="Edit existing collection" control={control} errors={errors}/>
+                <Button variant="outlined" color="secondary" size="small" onClick={() => {fetchData(control._formValues.identifiers.perm_id)}}>Load</Button>
+                <Button variant="outlined" color="secondary" size="small" onClick={() => {reset()}}>Clear</Button>
+            </Stack>
+            <FetchStatus/>
+            </>
+        )
+    } else if ("replace" === mode) {
+        //I tried to use UseWatch here, but it was causing issues with the number of hooks. I think this is because the watch is inside a conditional. So, instead, I get around this by passing in watch as a prop from the calling component.
+        return (
+            <>
+            <MultiManager label="Replace existing collections" name="oldCollections" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"oldCollections"})*/watch("oldCollections")} errors={errors} optional/>
+            </>
+        )
+    }
+}
