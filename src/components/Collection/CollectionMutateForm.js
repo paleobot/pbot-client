@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ExistingCollectionManager } from './ExistingCollectionManager';
 import { TextFieldController } from '../util/TextFieldController';
+import { FileSelectController } from '../util/FileSelectController.jsx';
 
 const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
     //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
@@ -173,6 +174,16 @@ const KeywordFields = ({index, control, errors}) => {
     )
 }    
 
+const fileShape = {
+    name: '',
+};
+const FileFields = ({name, index, control, errors}) => {
+    return (
+        <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
+            <FileSelectController name={`${name}.${index}.name`} control={control} errors={errors} sx={{width:"75%"}}/>
+        </Stack>
+    )
+}    
 
 const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const initValues = {
@@ -196,10 +207,10 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         series: '',
         abstract: '',
         informalname: '',
-        links: [{
+        links: [/*{
             name: '',
             url: ''
-        }],
+        }*/],
         keywords: [{
             name: '',
             type: ''
@@ -277,15 +288,15 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
             east: Yup.number().min(-180).max(180),
             north: Yup.number().min(-90).max(90),
         }),
-        documents: Yup.array().of(Yup.string()),
-        images: Yup.array().of(Yup.string()),
-        notes: Yup.array().of(Yup.string()),
-        metadata: Yup.array().of(Yup.string()),
-        gems2: Yup.array().of(Yup.string()),
-        ncgmp09: Yup.array().of(Yup.string()),
-        legacy: Yup.array().of(Yup.string()),
-        layers: Yup.array().of(Yup.string()),
-        raster: Yup.array().of(Yup.string()),
+        //documents: Yup.array().of(Yup.string()),
+        //images: Yup.array().of(Yup.string()),
+        //notes: Yup.array().of(Yup.string()),
+        //metadata: Yup.array().of(Yup.string()),
+        //gems2: Yup.array().of(Yup.string()),
+        //ncgmp09: Yup.array().of(Yup.string()),
+        //legacy: Yup.array().of(Yup.string()),
+        //layers: Yup.array().of(Yup.string()),
+        //raster: Yup.array().of(Yup.string()),
         complete: Yup.string()
     })
 
@@ -414,7 +425,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             <TextFieldController name={`informalname`} label="Informal name" control={control} errors={errors}/>
                             <br />
 
-                            <MultiManager label="Links" name="links" content={LinkFields} shape={linkShape} control={control} watch={watch("links")} errors={errors}/>
+                            <MultiManager label="Links" name="links" content={LinkFields} shape={linkShape} control={control} watch={watch("links")} errors={errors} optional/>
                             <br />
 
                             
@@ -477,6 +488,40 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
                                 <TextFieldController name={`bounding_box.north`} label="North" control={control} errors={errors}/>
                             </Stack>
+
+                            <MultiManager label="Documents" name="documents" content={FileFields} shape={fileShape} control={control} watch={watch("documents")} errors={errors} optional/>
+                            <br />
+
+                            <MultiManager label="Images" name="images" content={FileFields} shape={fileShape} control={control} watch={watch("images")} errors={errors} optional/>
+                            <br />
+
+                            <MultiManager label="Notes" name="notes" content={FileFields} shape={fileShape} control={control} watch={watch("notes")} errors={errors} optional/>
+                            <br />
+
+                            <MultiManager label="Metadata" name="metadata" content={FileFields} shape={fileShape} control={control} watch={watch("metadata")} errors={errors} optional/>
+                            <br />
+
+                            <MultiManager label="GEMS2" name="gems2" content={FileFields} shape={fileShape} control={control} watch={watch("gems2")} errors={errors} optional/>
+                            <br />
+
+                            <MultiManager label="NCGMP09" name="ncgmp09" content={FileFields} shape={fileShape} control={control} watch={watch("ncgmp09")} errors={errors} optional/>
+                            <br />
+
+                            <MultiManager label="Legacy" name="legacy" content={FileFields} shape={fileShape} control={control} watch={watch("legacy")} errors={errors} optional/>
+                            <br />
+
+                            <MultiManager label="Layers" name="layers" content={FileFields} shape={fileShape} control={control} watch={watch("layers")} errors={errors} optional/>
+                            <br />
+
+                            <MultiManager label="Raster" name="raster" content={FileFields} shape={fileShape} control={control} watch={watch("raster")} errors={errors} optional/>
+                            <br />
+
+                            <InputLabel>
+                                Complete collection
+                            </InputLabel>
+
+                            <FileSelectController name={`complete`} label="Complete" control={control} errors={errors} />
+
                         </AccordionDetails>
                     </Accordion>
                 
