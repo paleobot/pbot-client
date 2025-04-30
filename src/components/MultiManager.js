@@ -16,7 +16,7 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
 
     const formElementName = name;
     console.log(formElementName)
-    console.log(Object.keys(shape)[0])
+    //console.log(Object.keys(shape)[0])
 
     const ItemContent = content
 
@@ -32,7 +32,8 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
             {fields.map((item, index) => (
                 <Grid container spacing={2} direction="row" key={item.id}>
                     <Grid item xs={7}>
-                        <ItemContent index={index} control={control} errors={errors}/>
+                        <ItemContent name={name} index={index} control={control} errors={errors}/>
+                        <Divider variant='middle' sx={{marginTop:"1em", marginBottom:"1em"}}/>
                     </Grid>
                     {(index > 0 || optional) &&
                         <Grid item xs={2}>
@@ -55,14 +56,18 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
                 type="button"
                 variant="text" 
                 color="secondary" 
-                onClick={() => append({...shape})}
+                onClick={() => append({...shape}/*shape ? {...shape} : ''*/)}
                 disabled={
                     //We don't know what is required, but it doesn't make sense to allow creating another unless the user has at least partially filled in the first. So, only enable if first field is not null.
                     /*props.values[formElementName] && 
                     props.values[formElementName].length > 0 && 
                     !props.values[formElementName][props.values[formElementName].length-1][Object.keys(props.shape)[0]]*/
-                    watch.length > 0 &&
-                    watch[watch.length-1][Object.keys(shape)[0]] === ""
+                    watch.length > 0 && 
+                    watch[watch.length-1][Object.keys(shape)[0]] === "" 
+                    //(shape ? 
+                    //    watch[watch.length-1][Object.keys(shape)[0]] === "" :
+                    //</div>    watch[watch.length-1]
+                    //)
                 }
             >
                 Add another
