@@ -1,5 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem, Checkbox, FormControlLabel, Select, FormControl } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem, Checkbox, FormControlLabel, Select, FormControl, Typography } from '@mui/material';
 //import { Field, Form, Formik, useFormikContext } from 'formik';
 //import { CheckboxWithLabel } from 'formik-mui';
 import React from 'react';
@@ -11,6 +11,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ExistingCollectionManager } from './ExistingCollectionManager';
 import { TextFieldController } from '../util/TextFieldController';
 import { FileSelectController } from '../util/FileSelectController.jsx';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
     //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
@@ -489,6 +490,40 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                 <TextFieldController name={`bounding_box.north`} label="North" control={control} errors={errors}/>
                             </Stack>
 
+                            {//TODO: This is to display existing files when editing. Needs to be moved into its own component.
+                            }
+                            {control._formValues.files && control._formValues.files.length > 0 &&
+                            <>
+                            <InputLabel sx={{ marginTop:"1.5em"}}>
+                                Existing documents
+                            </InputLabel>
+                            {control._formValues.files.map((file, index) => {
+                                if (file.type === "documents") {
+                                    return (
+                                        <Stack direction="row" spacing={0} sx={{ marginLeft:"1.5em"}}>
+                                            <Typography name={`files.${index}.name`}  control={control} errors={errors} sx={{width:"75%"}}>
+                                                {file.name}
+                                            </Typography>
+                                            <Button
+                                                type="button"
+                                                variant="text" 
+                                                color="secondary" 
+                                                size="large"
+                                                onClick={() => remove(index)}
+                                                sx={{width:"100px"}}
+                                            >
+                                                <ClearIcon/>
+                                            </Button>
+
+                                        </Stack>
+                                    )
+                                }
+                                return null;
+                            })}
+
+                            </>
+                            }
+                            
                             <MultiManager label="Documents" name="documents" content={FileFields} shape={fileShape} control={control} watch={watch("documents")} errors={errors} optional/>
                             <br />
 
