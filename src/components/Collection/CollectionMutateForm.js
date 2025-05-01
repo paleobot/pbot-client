@@ -385,6 +385,31 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             />
                             <br />
 
+                            <MultiManager label="Authors" name="authors" content={AuthorFields} shape={authorShape} control={control} watch={watch("authors")} errors={errors}/>
+                            <br />
+
+                            <TextFieldController name={`series`} label="Series" control={control} errors={errors}/>
+                            <br />
+
+                            <TextFieldController name={`abstract`} label="Abstract" control={control} errors={errors} multiline sx={{marginTop:"0.5em"}}/>
+                            <br />
+
+                            <LabeledCheckboxController name={`private`} label="Private" control={control} errors={errors}/>
+                            <br />
+
+                            <InputLabel>
+                                Bounding box
+                            </InputLabel>
+                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
+                                <TextFieldController name={`bounding_box.west`} label="West" control={control} errors={errors}/>
+
+                                <TextFieldController name={`bounding_box.south`} label="South" control={control} errors={errors}/>
+
+                                <TextFieldController name={`bounding_box.east`} label="East" control={control} errors={errors}/>
+
+                                <TextFieldController name={`bounding_box.north`} label="North" control={control} errors={errors}/>
+                            </Stack>
+
                         </AccordionDetails>
                     </Accordion>
 
@@ -397,32 +422,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             Optional fields
                         </AccordionSummary>
                         <AccordionDetails>
-
-                            
-                            <MultiManager label="Authors" name="authors" content={AuthorFields} shape={authorShape} control={control} watch={watch("authors")} errors={errors}/>
-                            <br />
-                            
-
-                            <InputLabel>
-                                Journal
-                            </InputLabel>
-                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-
-                                <TextFieldController name={`journal.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
-
-                                <TextFieldController name={`journal.publisher`} label="Publisher" control={control} errors={errors} sx={{width:"75%"}}/>
-
-                                <TextFieldController name={`journal.url`} label="URL" control={control} errors={errors} sx={{width:"75%"}}/>
-
-                            </Stack>
-                            <br />
-
-                            <TextFieldController name={`series`} label="Series" control={control} errors={errors}/>
-                            <br />
-
-                            <TextFieldController name={`abstract`} label="Abstract" control={control} errors={errors} multiline sx={{marginTop:"0.5em"}}/>
-                            <br />
-                           
+ 
                             <TextFieldController name={`informalname`} label="Informal name" control={control} errors={errors}/>
                             <br />
 
@@ -474,22 +474,6 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             <br />
                         
                             
-                            <LabeledCheckboxController name={`private`} label="Private" control={control} errors={errors}/>
-                            <br />
-
-                            <InputLabel>
-                                Bounding box
-                            </InputLabel>
-                            <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <TextFieldController name={`bounding_box.west`} label="West" control={control} errors={errors}/>
-
-                                <TextFieldController name={`bounding_box.south`} label="South" control={control} errors={errors}/>
-
-                                <TextFieldController name={`bounding_box.east`} label="East" control={control} errors={errors}/>
-
-                                <TextFieldController name={`bounding_box.north`} label="North" control={control} errors={errors}/>
-                            </Stack>
-
                             {//TODO: This is to display existing files when editing. Needs to be moved into its own component.
                             }
                             {control._formValues.files && control._formValues.files.length > 0 &&
@@ -550,12 +534,6 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
                             <MultiManager label="Raster" name="raster" content={FileFields} shape={fileShape} control={control} watch={watch("raster")} errors={errors} optional/>
                             <br />
-
-                            <InputLabel>
-                                Complete collection
-                            </InputLabel>
-
-                            <FileSelectController name={`complete`} label="Complete" control={control} errors={errors} />
 
                         </AccordionDetails>
                     </Accordion>
