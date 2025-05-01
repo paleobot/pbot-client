@@ -22,6 +22,7 @@ const LabeledCheckboxController = ({name, label, control, errors, ...props}) => 
             control={control}
             render={({ field }) => <FormControlLabel 
                 label={label}        
+                sx={{marginTop: "1.5em"}}
                 control={
                     <Checkbox
                         {...field} 
@@ -209,10 +210,10 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         series: '',
         abstract: '',
         informalname: '',
-        links: [/*{
-            name: '',
+        links: [{
+            name: 'UA Library',
             url: ''
-        }*/],
+        }],
         keywords: [{
             name: '',
             type: ''
@@ -386,19 +387,19 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             />
                             <br />
 
+                            <LabeledCheckboxController name={`private`} label="Private" control={control} errors={errors} size="large" />
+                            <br />
+
                             <MultiManager label="Authors" name="authors" content={AuthorFields} shape={authorShape} control={control} watch={watch("authors")} errors={errors}/>
                             <br />
 
                             <TextFieldController name={`series`} label="Series" control={control} errors={errors}/>
                             <br />
 
-                            <TextFieldController name={`abstract`} label="Abstract" control={control} errors={errors} multiline sx={{marginTop:"0.5em"}}/>
+                            <TextFieldController name={`abstract`} label="Abstract" control={control} errors={errors} variant="filled" multiline rows={4} sx={{marginTop:"1.5em"}}/>
                             <br />
 
-                            <LabeledCheckboxController name={`private`} label="Private" control={control} errors={errors}/>
-                            <br />
-
-                            <InputLabel>
+                            <InputLabel sx={{ marginTop:"1.5em"}}>
                                 Bounding box
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
