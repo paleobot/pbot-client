@@ -11,8 +11,32 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ExistingCollectionManager } from './ExistingCollectionManager';
 import { TextFieldController } from '../util/TextFieldController';
 import { FileSelectController } from '../util/FileSelectController.jsx';
+import { AutocompleteController } from '../util/AutocompleteController.jsx';
 import ClearIcon from '@mui/icons-material/Clear';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { Autocomplete } from 'formik-mui';
+
+const CheckboxController = ({name, control, errors, ...props}) => {
+    //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
+
+    return (
+        <Controller
+            control={control}
+            render={({ field }) => 
+                <Checkbox
+                    {...field} 
+                    {...props}
+                    checked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                />
+            }
+            error={!!errors[name]} 
+            helperText={errors[name]?.message}    
+            name={name}
+        />   
+    )
+
+}                         
 
 const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
     //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
@@ -82,12 +106,13 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
     }, []);
   
     if (loading) {
-      return <p>Loading...</p>;
+        return <Typography variant="body1">Loading...</Typography>;
     }
-  
+
     if (error) {
-      return <p>Error: {error.message}</p>;
+        return <Typography color="error" variant="caption">Error accessing API: {error.message}</Typography>;
     }
+
   
     return (
         <Controller
@@ -144,7 +169,10 @@ const linkShape = {
 const LinkFields = ({index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-            <TextFieldController name={`links.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
+
+            <AutocompleteController name={`links.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
+
+            {/*<TextFieldController name={`links.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>*/}
 
             <TextFieldController name={`links.${index}.url`} label="URL" control={control} errors={errors} sx={{width:"75%"}}/>
          </Stack>
@@ -210,10 +238,10 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         series: '',
         abstract: '',
         informalname: '',
-        links: [{
+        links: [/*{
             name: 'UA Library',
             url: ''
-        }],
+        }*/],
         keywords: [{
             name: '',
             type: ''
@@ -291,16 +319,35 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
             east: Yup.number().min(-180).max(180),
             north: Yup.number().min(-90).max(90),
         }),
-        //documents: Yup.array().of(Yup.string()),
-        //images: Yup.array().of(Yup.string()),
-        //notes: Yup.array().of(Yup.string()),
-        //metadata: Yup.array().of(Yup.string()),
-        //gems2: Yup.array().of(Yup.string()),
-        //ncgmp09: Yup.array().of(Yup.string()),
-        //legacy: Yup.array().of(Yup.string()),
-        //layers: Yup.array().of(Yup.string()),
-        //raster: Yup.array().of(Yup.string()),
-        complete: Yup.string()
+        //These need to be objects to work with the file select controller
+        documents: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        images: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        notes: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        metadata: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        gems2: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        ncgmp09: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        legacy: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        layers: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        raster: Yup.array().of(Yup.object().shape({
+            name: Yup.string()
+        })),
+        //complete: Yup.string()
     })
 
     const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
@@ -467,29 +514,19 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
                                         {//TODO: This is to display existing files when editing. Needs to be moved into its own component.
                                         }
-                                        {control._formValues.files && control._formValues.files.length > 0 &&
+                                        {mode === "edit" && control._formValues.files && control._formValues.files.length > 0 &&
                                         <>
-                                        <InputLabel sx={{ marginTop:"1.5em"}}>
-                                            Existing documents
+                                        <InputLabel sx={{ marginTop:"1.5em", marginBottom:"1em"}}>
+                                            Existing documents (check to delete)
                                         </InputLabel>
                                         {control._formValues.files.map((file, index) => {
                                             if (file.type === "documents") {
                                                 return (
-                                                    <Stack direction="row" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                                        <Typography name={`files.${index}.name`}  control={control} errors={errors} sx={{width:"75%"}}>
+                                                    <Stack direction="row" alignItems="center" spacing={0} sx={{ marginLeft:"1.5em"}}>
+                                                        <Typography name={`files.${index}.name`}  control={control} errors={errors} sx={{width:"50%", }} variant ="body2">
                                                             {file.name}
                                                         </Typography>
-                                                        <Button
-                                                            type="button"
-                                                            variant="text" 
-                                                            color="secondary" 
-                                                            size="large"
-                                                            onClick={() => remove(index)}
-                                                            sx={{width:"100px"}}
-                                                        >
-                                                            <ClearIcon/>
-                                                        </Button>
-
+                                                        <CheckboxController sx={{padding:"0", margin:"0"}} name={`files.${index}.delete`} control={control} errors={errors} />
                                                     </Stack>
                                                 )
                                             }
@@ -529,7 +566,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                     </TabPanel>
                                     <TabPanel value="3">
 
-                                        <MultiManager label="Keywords" name="keywords" content={KeywordFields} shape={keywordShape} control={control} watch={watch("keywords")} errors={errors}/>
+                                        <MultiManager label="Keywords" name="keywords" content={KeywordFields} shape={keywordShape} control={control} watch={watch("keywords")} errors={errors} optional/>
                                         <br />
 
                                     </TabPanel>
@@ -547,7 +584,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
                 <Stack direction="row" spacing={2}>
                     <Button type="submit" variant="contained" color="primary">Submit</Button>
-                    <Button type="reset" variant="outlined" color="secondary">Reset</Button>
+                    <Button type="reset" variant="outlined" color="secondary" onClick={() => {reset()}}>Reset</Button>
                 </Stack>
                 <br />
                 <br />
