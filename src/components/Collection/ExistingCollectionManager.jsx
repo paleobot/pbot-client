@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material"
+import { Button, Stack, Typography } from "@mui/material"
 import { TextFieldController } from "../util/TextFieldController";
 import { useState } from "react";
 import { MultiManager } from "../MultiManager";
@@ -13,7 +13,9 @@ export const ExistingCollectionManager = ({mode, control, reset, watch, errors, 
     const [error, setError] = useState(null)
 
     const fetchData = async (permID) => {
+        console.log("fetchData");
         setLoading(true);
+        setError(null);
         try {
             const response = await fetch(`https://data.azgs.arizona.edu/api/v1/metadata/${permID}`);
             if (!response.ok) {
@@ -24,7 +26,10 @@ export const ExistingCollectionManager = ({mode, control, reset, watch, errors, 
 
             //TODO: This is a little cheesy. Setting all of values to the metadata zaps oldCollections, which we need if we are here for replace. A better way to do this might be to put all the form values that correspond to collection metadata inside a metadata object in the form init values. This would require renaming all the fields. I'm lazy, so I'm not going to do that right now.
             json.data.metadata.oldCollections = control._formValues.oldCollections;
-            
+
+            console.log("massaged data:");
+            console.log(json.data.metadata);
+
             reset(json.data.metadata, {keepDefaultValues: true});
             setLoading(false);
         } catch (e) {
@@ -35,11 +40,11 @@ export const ExistingCollectionManager = ({mode, control, reset, watch, errors, 
 
     const FetchStatus = () => {
         if (loading) {
-            return <p>Loading...</p>;
+            return <Typography variant="body1">Loading...</Typography>;
         }
 
         if (error) {
-            return <p>Error: {error.message}</p>;
+            return <Typography color="error" variant="caption">Error accessing API: {error.message}</Typography>;
         }
     }
 
