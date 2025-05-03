@@ -205,13 +205,14 @@ const KeywordFields = ({index, control, errors}) => {
     )
 }    
 
+
 const fileShape = {
-    name: '',
+    file: null
 };
 const FileFields = ({name, index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-            <FileSelectController name={`${name}.${index}.name`} control={control} errors={errors} sx={{width:"75%",}}/>
+            <FileSelectController name={`${name}.${index}.file`} control={control} errors={errors} sx={{width:"75%",}}/>
         </Stack>
     )
 }    
