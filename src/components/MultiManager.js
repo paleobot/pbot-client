@@ -8,6 +8,7 @@ import { Controller, useFieldArray } from "react-hook-form";
 
 export const MultiManager = ({name, label, content, control, shape, watch, optional, errors, ...props}) => {
     console.log("MultiManager");
+    console.log(control._formValues);
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -64,7 +65,7 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
                     props.values[formElementName].length > 0 && 
                     !props.values[formElementName][props.values[formElementName].length-1][Object.keys(props.shape)[0]]*/
                     watch && watch.length > 0 && 
-                    watch[watch.length-1][Object.keys(shape)[0]] === "" 
+                    !watch[watch.length-1][Object.keys(shape)[0]]
                     //(shape ? 
                     //    watch[watch.length-1][Object.keys(shape)[0]] === "" :
                     //</div>    watch[watch.length-1]
