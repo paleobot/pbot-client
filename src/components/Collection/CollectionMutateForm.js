@@ -15,28 +15,7 @@ import { AutocompleteController } from '../util/AutocompleteController.jsx';
 import ClearIcon from '@mui/icons-material/Clear';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Autocomplete } from 'formik-mui';
-
-const CheckboxController = ({name, control, errors, ...props}) => {
-    //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
-
-    return (
-        <Controller
-            control={control}
-            render={({ field }) => 
-                <Checkbox
-                    {...field} 
-                    {...props}
-                    checked={field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                />
-            }
-            error={!!errors[name]} 
-            helperText={errors[name]?.message}    
-            name={name}
-        />   
-    )
-
-}                         
+import { FileManager } from './FileManager.jsx';
 
 const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
     //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
@@ -201,18 +180,6 @@ const KeywordFields = ({index, control, errors}) => {
                 sx={{minWidth: "12ch", width:"75%"}} 
                 variant="standard"
             />
-        </Stack>
-    )
-}    
-
-
-const fileShape = {
-    file: null
-};
-const FileFields = ({name, index, control, errors}) => {
-    return (
-        <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-            <FileSelectController name={`${name}.${index}.file`} control={control} errors={errors} sx={{width:"75%",}}/>
         </Stack>
     )
 }    
@@ -513,102 +480,23 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                     </TabPanel>
                                     <TabPanel value="2">
 
-                                        {(() => {
-                                            if (
-                                                    mode === "edit" && 
-                                                    control._formValues.files && 
-                                                    control._formValues.files.filter(file => file.type === "documents").length > 0
-                                            ) {
-                                                return (
-                                                    <>
-                                                    <InputLabel sx={{ marginTop:"1.5em", }}>
-                                                        Documents
-                                                    </InputLabel>
-                                                    <InputLabel sx={{ marginTop:"1em", marginBottom:"0.5em", marginLeft:"1em"}}>
-                                                        Existing (check to delete)
-                                                    </InputLabel>
-                                                    {control._formValues.files.map((file, index) => {
-                                                        if (file.type === "documents") {
-                                                            return (
-                                                                <Stack direction="row" alignItems="center" spacing={0} sx={{ marginLeft:"2em"}}>
-                                                                    <Typography name={`files.${index}.name`}  control={control} errors={errors} sx={{width:"50%", }} variant ="body2">
-                                                                        {file.name}
-                                                                    </Typography>
-                                                                    <CheckboxController sx={{padding:"0", margin:"0"}} name={`files.${index}.delete`} control={control} errors={errors} />
-                                                                </Stack>
-                                                            )
-                                                        }
-                                                        return null;
-                                                    })}
+                                        <FileManager name="documents" label="Documents" control={control} watch={watch("documents")} errors={errors} mode={mode}/>
 
-                                                    <MultiManager label="New" name="documents" content={FileFields} shape={fileShape} control={control} watch={watch("documents")} errors={errors} optional sx={{marginLeft: "1em"}} />
-                                                    <br />
+                                        <FileManager name="images" label="Images" control={control} watch={watch("images")} errors={errors} mode={mode}/>
 
-                                                    </>
-            
-                                                )
-                                            } else {
-                                                return (
-                                                    <>
-                                                    <MultiManager label="Documents" name="documents" content={FileFields} shape={fileShape} control={control} watch={watch("documents")} errors={errors} optional/>
-                                                    <br />
-                                                    </>
-                                                )
-                                            }
-                                        })()}
+                                        <FileManager name="notes" label="Notes" control={control} watch={watch("notes")} errors={errors} mode={mode}/>
 
-                                        {/*
-                                        {//TODO: This is to display existing files when editing. Needs to be moved into its own component.
-                                        }
-                                        {mode === "edit" && control._formValues.files && control._formValues.files.length > 0 &&
-                                        <>
-                                        <InputLabel sx={{ marginTop:"1.5em", marginBottom:"1em"}}>
-                                            Existing documents (check to delete)
-                                        </InputLabel>
-                                        {control._formValues.files.map((file, index) => {
-                                            if (file.type === "documents") {
-                                                return (
-                                                    <Stack direction="row" alignItems="center" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                                        <Typography name={`files.${index}.name`}  control={control} errors={errors} sx={{width:"50%", }} variant ="body2">
-                                                            {file.name}
-                                                        </Typography>
-                                                        <CheckboxController sx={{padding:"0", margin:"0"}} name={`files.${index}.delete`} control={control} errors={errors} />
-                                                    </Stack>
-                                                )
-                                            }
-                                            return null;
-                                        })}
+                                        <FileManager name="metadata" label="Metadata" control={control} watch={watch("metadata")} errors={errors} mode={mode}/>
 
-                                        </>
-                                        }
+                                        <FileManager name="gems2" label="GeMS2" control={control} watch={watch("gems2")} errors={errors} mode={mode}/>
 
-                                        <MultiManager label="Documents" name="documents" content={FileFields} shape={fileShape} control={control} watch={watch("documents")} errors={errors} optional/>
-                                        <br />
-                                        */}
+                                        <FileManager name="ncgmp09" label="NCGMP09" control={control} watch={watch("ncgmp09")} errors={errors} mode={mode}/>
 
-                                        <MultiManager label="Images" name="images" content={FileFields} shape={fileShape} control={control} watch={watch("images")} errors={errors} optional/>
-                                        <br />
+                                        <FileManager name="legacy" label="Legacy" control={control} watch={watch("legacy")} errors={errors} mode={mode}/>
 
-                                        <MultiManager label="Notes" name="notes" content={FileFields} shape={fileShape} control={control} watch={watch("notes")} errors={errors} optional/>
-                                        <br />
+                                        <FileManager name="layers" label="Layers" control={control} watch={watch("layers")} errors={errors} mode={mode}/>
 
-                                        <MultiManager label="Metadata" name="metadata" content={FileFields} shape={fileShape} control={control} watch={watch("metadata")} errors={errors} optional/>
-                                        <br />
-
-                                        <MultiManager label="GEMS2" name="gems2" content={FileFields} shape={fileShape} control={control} watch={watch("gems2")} errors={errors} optional/>
-                                        <br />
-
-                                        <MultiManager label="NCGMP09" name="ncgmp09" content={FileFields} shape={fileShape} control={control} watch={watch("ncgmp09")} errors={errors} optional/>
-                                        <br />
-
-                                        <MultiManager label="Legacy" name="legacy" content={FileFields} shape={fileShape} control={control} watch={watch("legacy")} errors={errors} optional/>
-                                        <br />
-
-                                        <MultiManager label="Layers" name="layers" content={FileFields} shape={fileShape} control={control} watch={watch("layers")} errors={errors} optional/>
-                                        <br />
-
-                                        <MultiManager label="Raster" name="raster" content={FileFields} shape={fileShape} control={control} watch={watch("raster")} errors={errors} optional/>
-                                        <br />
+                                        <FileManager name="raster" label="Raster" control={control} watch={watch("raster")} errors={errors} mode={mode}/>
 
                                     </TabPanel>
                                     <TabPanel value="3">
