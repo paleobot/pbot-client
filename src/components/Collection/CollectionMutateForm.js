@@ -62,7 +62,8 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
             //Otherwise, we need to fetch the data. 
             //TODO: For now, I'm assuming options is a URL. I might change that to expect only the path, and then add the base URL in the fetchData function.
             try {
-                const response = await fetch(options.url);
+                console.log(`Fetching data from ${process.env.REACT_APP_AZLIB_API_URL}`);
+                const response = await fetch(new URL(options.path, process.env.REACT_APP_AZLIB_API_URL));
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -335,19 +336,11 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         reset()
     }
     
-
-    //To clear form when mode changes (this and the innerRef below). formikRef points to the Formik DOM element, 
-    //allowing useEffect to call resetForm
-    /*
-    const formikRef = React.useRef();
+    //To clear form when mode changes 
     React.useEffect(() => {
-        console.log("useEffect (mode)")
-        if (formikRef.current) {
-            formikRef.current.resetForm({values:initValues});
-        }
+            reset(initValues);
     },[mode]);
-    */
-
+    
     const [selectedTab, setSelectedTab] = React.useState('1');
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -392,7 +385,8 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                 name="collectiongroup"
                                 label="Collection group" 
                                 options={{
-                                    url: "https://data.azgs.arizona.edu/api/v1/dicts/collection_groups",
+                                    //url: "https://data.azgs.arizona.edu/api/v1/dicts/collection_groups",
+                                    path: "api/v1/dicts/collection_groups",
                                     nameField: "name",
                                     valueField: "name"
                                 }} 

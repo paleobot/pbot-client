@@ -17,7 +17,7 @@ export const ExistingCollectionManager = ({mode, control, reset, watch, errors, 
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(`https://data.azgs.arizona.edu/api/v1/metadata/${permID}`);
+            const response = await fetch(new URL(`api/v1/metadata/${permID}`, process.env.REACT_APP_AZLIB_API_URL));
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
