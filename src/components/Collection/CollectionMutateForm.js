@@ -240,6 +240,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         //extra fields, not part of collection metadata
         oldCollection: '',
         oldCollections: [],
+        supersedes: [],
     };
 
     const validationSchema=Yup.object({
@@ -450,6 +451,13 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                     </Box>
                                     <TabPanel value="1">
     
+                                        {mode === "edit" &&
+                                            <div>
+                                                <ExistingCollectionManager supersedes mode={mode} control={control} reset={reset} watch={watch} errors={errors}/>
+                                            </div>
+                                        }
+                                        <br />
+
                                         <TextFieldController name={`informalname`} label="Informal name" control={control} errors={errors}/>
                                         <br />
 

@@ -1,11 +1,11 @@
-import { Button, Stack, Typography } from "@mui/material"
+import { Button, InputLabel, Stack, Typography } from "@mui/material"
 import { TextFieldController } from "../util/TextFieldController";
 import { useState } from "react";
 import { MultiManager } from "../MultiManager";
 import { useWatch } from "react-hook-form";
 
 
-export const ExistingCollectionManager = ({mode, control, reset, watch, errors, ...props}) => {
+export const ExistingCollectionManager = ({supersedes, mode, control, reset, watch, errors, ...props}) => {
 
     //const [id, setId] = useState('')
     //const [data, setData] = useState(null)
@@ -61,22 +61,42 @@ export const ExistingCollectionManager = ({mode, control, reset, watch, errors, 
              </Stack>
         )
     }   
-    
+
+    const editSupersedesShape = {
+        permID: '',
+    };
+    const EditSupersedesFields = ({index, control, errors}) => {
+        return (
+            <Stack direction="row" spacing={0} sx={{ marginLeft:"1.5em"}}>
+                <TextFieldController name={`supersedes.${index}.permID`} label="Old collection" control={control} errors={errors} sx={{width:"90%"}}/>
+             </Stack>
+        )
+    }   
+
     if ("delete" === mode) {
         return (
             <TextFieldController  name={`identifiers.perm_id`} label="Remove existing collection" control={control} errors={errors}/>
         )
     } else if ("edit" === mode) {
-        return (
-            <>
-            <Stack direction="row" spacing={2} sx={{marginTop: "1.5em"}}>
-                <TextFieldController  name={`identifiers.perm_id`} label="Edit existing collection" control={control} errors={errors}/>
-                <Button variant="outlined" color="secondary" size="small" onClick={() => {fetchData(control._formValues.identifiers.perm_id)}}>Load</Button>
-                <Button variant="outlined" color="secondary" size="small" onClick={() => {reset()}}>Clear</Button>
-            </Stack>
-            <FetchStatus/>
-            </>
-        )
+        if (supersedes) {
+            return (
+                <>
+                <MultiManager label="Supersedes" name="supersedes" content={EditSupersedesFields} shape={editSupersedesShape} control={control} watch={watch("supersedes")} errors={errors} optional/>
+                </>
+            )
+        } else {
+            console.log("other");
+            return (
+                <>
+                <Stack direction="row" spacing={2} sx={{marginTop: "1.5em"}}>
+                    <TextFieldController  name={`identifiers.perm_id`} label="Edit existing collection" control={control} errors={errors}/>
+                    <Button variant="outlined" color="secondary" size="small" onClick={() => {fetchData(control._formValues.identifiers.perm_id)}}>Load</Button>
+                    <Button variant="outlined" color="secondary" size="small" onClick={() => {reset()}}>Clear</Button>
+                </Stack>
+                <FetchStatus/>
+                </>
+            )
+        }
     } else if ("replace" === mode) {
         //I tried to use UseWatch here, but it was causing issues with the number of hooks. I think this is because the watch is inside a conditional. So, instead, I get around this by passing in watch as a prop from the calling component.
         return (
