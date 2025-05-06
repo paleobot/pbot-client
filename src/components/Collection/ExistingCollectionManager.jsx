@@ -26,6 +26,9 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
 
             //TODO: This is a little cheesy. Setting all of values to the metadata zaps oldCollections, which we need if we are here for replace. A better way to do this might be to put all the form values that correspond to collection metadata inside a metadata object in the form init values. This would require renaming all the fields. I'm lazy, so I'm not going to do that right now.
             json.data.metadata.oldCollections = control._formValues.oldCollections;
+            
+            //Raise supersedes to the top level before reseting the form from the fetched data. This is only relevant to the edit mode.
+            json.data.metadata.supersedes = json.data.metadata.identifiers.supersedes.map((oldID) => { return {permID: oldID} });
 
             console.log("massaged data:");
             console.log(json.data.metadata);
@@ -47,7 +50,6 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
             return <Typography color="error" variant="caption">Error accessing API: {error.message}</Typography>;
         }
     }
-
 
     const replaceShape = {
         permID: '',
