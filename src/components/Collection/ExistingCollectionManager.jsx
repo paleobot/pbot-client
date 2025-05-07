@@ -32,8 +32,8 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
                 originalMetadata: {...json.data.metadata},
                 oldCollections: control._formValues.oldCollections,
                 supersedes: json.data.metadata.identifiers.supersedes ?
-                json.data.metadata.identifiers.supersedes.map((oldID) => { return {permID: oldID} }) :
-                [],
+                    json.data.metadata.identifiers.supersedes.map((oldID) => { return {permID: oldID} }) :
+                    [],
             }
 
             reset(initValues, {keepDefaultValues: true});
