@@ -20,8 +20,8 @@ export const FileManager = ({ name, label, control, watch, errors, mode }) => {
         {(() => {
             if (
                     mode === "edit" && 
-                    control._formValues.files && 
-                    control._formValues.files.filter(file => file.type === name).length > 0
+                    control._formValues.metadata.files && 
+                    control._formValues.metadata.files.filter(file => file.type === name).length > 0
             ) {
                 return (
                     <>
@@ -31,14 +31,14 @@ export const FileManager = ({ name, label, control, watch, errors, mode }) => {
                     <InputLabel sx={{ marginTop:"1em", marginBottom:"0.5em", marginLeft:"1em"}}>
                         Existing (check to delete)
                     </InputLabel>
-                    {control._formValues.files.map((file, index) => {
+                    {control._formValues.metadata.files.map((file, index) => {
                         if (file.type === name) {
                             return (
                                 <Stack direction="row" alignItems="center" spacing={0} sx={{ marginLeft:"2em"}}>
-                                    <Typography name={`files.${index}.name`}  control={control} errors={errors} sx={{width:"50%", }} variant ="body2">
+                                    <Typography name={`metadata.files.${index}.name`}  control={control} errors={errors} sx={{width:"50%", }} variant ="body2">
                                         {file.name}
                                     </Typography>
-                                    <CheckboxController sx={{padding:"0", margin:"0"}} name={`files.${index}.delete`} control={control} errors={errors} />
+                                    <CheckboxController sx={{padding:"0", margin:"0"}} name={`metadata.files.${index}.remove`} control={control} errors={errors} />
                                 </Stack>
                             )
                         }

@@ -16,6 +16,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Autocomplete } from 'formik-mui';
 import { FileManager } from './FileManager.jsx';
+import jsonMergePatch from "json-merge-patch";
 
 const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
     //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
@@ -131,13 +132,13 @@ const AuthorFields = ({index, control, errors}) => {
       
     return (
         <Stack direction="column" spacing={0}>
-            <TextFieldController name={`authors.${index}.person`} label="Person" control={control} errors={errors} sx={{width:"75%"}}/>
+            <TextFieldController name={`metadata.authors.${index}.person`} label="Person" control={control} errors={errors} sx={{width:"75%"}}/>
 
-            <TextFieldController name={`authors.${index}.givenname`} label="Given name" control={control} errors={errors} sx={{width:"75%"}}/>     
+            <TextFieldController name={`metadata.authors.${index}.givenname`} label="Given name" control={control} errors={errors} sx={{width:"75%"}}/>     
 
-            <TextFieldController name={`authors.${index}.surname`} label="Surname" control={control} errors={errors} sx={{width:"75%"}}/>
+            <TextFieldController name={`metadata.authors.${index}.surname`} label="Surname" control={control} errors={errors} sx={{width:"75%"}}/>
 
-            <TextFieldController name={`authors.${index}.organization`} label="Organization" control={control} errors={errors} sx={{width:"75%"}}/>
+            <TextFieldController name={`metadata.authors.${index}.organization`} label="Organization" control={control} errors={errors} sx={{width:"75%"}}/>
         </Stack>
     )
 }    
@@ -150,11 +151,11 @@ const LinkFields = ({index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
 
-            <AutocompleteController name={`links.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
+            <AutocompleteController name={`metadata.links.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
 
             {/*<TextFieldController name={`links.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>*/}
 
-            <TextFieldController name={`links.${index}.url`} label="URL" control={control} errors={errors} sx={{width:"75%"}}/>
+            <TextFieldController name={`metadata.links.${index}.url`} label="URL" control={control} errors={errors} sx={{width:"75%"}}/>
          </Stack>
     )
 }    
@@ -167,9 +168,9 @@ const keywordShape = {
 const KeywordFields = ({index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-            <TextFieldController name={`keywords.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
+            <TextFieldController name={`metadata.keywords.${index}.name`} label="Name" control={control} errors={errors} sx={{width:"75%"}}/>
             <SelectController 
-                name={`keywords.${index}.type`} 
+                name={`metadata.keywords.${index}.type`} 
                 label="Type" 
                 options={[
                     {name: "theme", value: "theme"}, 
@@ -187,55 +188,99 @@ const KeywordFields = ({index, control, errors}) => {
 
 const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const initValues = {
-        identifiers: {
-            perm_id: '',
-        }, 
-        title: '',
-        collectiongroup: '',
-        authors: [{
-            person: '',
-            givenname: '',
-            surname: '',
-            organization: ''
-        }],
-        year: '',
-        journal: {
-            name: '',
-            publisher: '',
-            url: ''
+        metadata: {
+            identifiers: {
+                perm_id: '',
+                supersedes: [],
+            }, 
+            title: '',
+            year: '',
+            collection_group: {name: ''},
+            authors: [{
+                person: '',
+                givenname: '',
+                surname: '',
+                organization: ''
+            }],
+            //journal: {
+            //    name: '',
+            //    publisher: '',
+            //    url: ''
+            //},
+            series: '',
+            abstract: '',
+            informalname: '',
+            links: [/*{
+                name: 'UA Library',
+                url: ''
+            }*/],
+            language: 'English',
+            license: {
+                type: 'CC BY-NC-SA 4.0',
+                url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
+            },
+            private: false,
+            bounding_box: {
+                west: -113,
+                south: 33.5,
+                east: -112,
+                north: 34
+            },
+                
+            keywords: [{
+                name: '',
+                type: ''
+            }],    
         },
-        series: '',
-        abstract: '',
-        informalname: '',
-        links: [/*{
-            name: 'UA Library',
-            url: ''
-        }*/],
-        keywords: [{
-            name: '',
-            type: ''
-        }],
-        language: 'English',
-        license: {
-            type: 'CC BY-NC-SA 4.0',
-            url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
-        },
-        private: false,
-        bounding_box: {
-            west: -113,
-            south: 33.5,
-            east: -112,
-            north: 34
-        },
-        documents: [],
-        images: [],
-        notes: [],
-        metadata: [],
-        gems2: [],
-        ncgmp09: [],
-        legacy: [],
-        layers: [],
-        raster: [],
+        //identifiers: {
+        //    perm_id: '',
+        //}, 
+        //title: '',
+        //collectiongroup: '',
+        //authors: [{
+        //    person: '',
+        //    givenname: '',
+        //    surname: '',
+        //    organization: ''
+        //}],
+        //year: '',
+        //journal: {
+        //    name: '',
+        //    publisher: '',
+        //    url: ''
+        //},
+        //series: '',
+        //abstract: '',
+        //informalname: '',
+        //links: [/*{
+        //    name: 'UA Library',
+        //    url: ''
+        //}*/],
+        //keywords: [{
+        //    name: '',
+        //    type: ''
+        //}],
+        //language: 'English',
+        //license: {
+        //    type: 'CC BY-NC-SA 4.0',
+        //    url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
+        //},
+        //private: false,
+        //bounding_box: {
+        //    west: -113,
+        //    south: 33.5,
+        //    east: -112,
+        //    north: 34
+        //},
+        documentFiles: [],
+        imageFiles: [],
+        noteFiles: [],
+        metadataFiles: [],
+        gems2Files: [],
+        ncgmp09Files: [],
+        legacyFiles: [],
+        layerFiles: [],
+        rasterFiles: [],
         complete: '',
         //extra fields, not part of collection metadata
         oldCollection: '',
@@ -244,6 +289,10 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     };
 
     const validationSchema=Yup.object({
+        metadata: Yup.object().shape({
+            title: Yup.string().required('Title is required'),
+        })
+        /*
         title: Yup.string().required(),
         collectiongroup: Yup.string().required(),
         year: Yup.string().required(),
@@ -318,6 +367,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
             name: Yup.string()
         })),
         //complete: Yup.string()
+        */
     })
 
     const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
@@ -331,7 +381,10 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         //e.preventDefault();
         console.log("doSubmit")
         console.log(JSON.parse(JSON.stringify(data)))
-        //console.log(data.authors[0])
+        
+        const patch = jsonMergePatch.generate(data.originalMetadata, data.metadata);
+        console.log(JSON.parse(JSON.stringify(patch)))
+        
         data.mode = mode;
         hSubmit(data);
         reset()
@@ -376,14 +429,15 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                     </AccordionSummary>
                     <AccordionDetails>
                 
-                            <TextFieldController name={`title`} label="Title" control={control} errors={errors}/>
+                            <TextFieldController name={`metadata.title`} label="Title" control={control} errors={errors}/>
                             <br />
 
-                            <TextFieldController name={`year`} label="Year" control={control} errors={errors}/>
+                            <TextFieldController name={`metadata.year`} label="Year" control={control} errors={errors}/>
                             <br />
 
                             <SelectController 
-                                name="collectiongroup"
+                                //name="metadata.collection_group.name"
+                                name="metadata.collection_group.name"
                                 label="Collection group" 
                                 options={{
                                     //url: "https://data.azgs.arizona.edu/api/v1/dicts/collection_groups",
@@ -397,29 +451,29 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             />
                             <br />
 
-                            <LabeledCheckboxController name={`private`} label="Private" control={control} errors={errors} size="large" />
+                            <LabeledCheckboxController name={`metadata.private`} label="Private" control={control} errors={errors} size="large" />
                             <br />
 
-                            <MultiManager label="Authors" name="authors" content={AuthorFields} shape={authorShape} control={control} watch={watch("authors")} errors={errors}/>
+                            <MultiManager label="Authors" name="metadata.authors" content={AuthorFields} shape={authorShape} control={control} watch={watch("authors")} errors={errors}/>
                             <br />
 
-                            <TextFieldController name={`series`} label="Series" control={control} errors={errors}/>
+                            <TextFieldController name={`metadata.series`} label="Series" control={control} errors={errors}/>
                             <br />
 
-                            <TextFieldController name={`abstract`} label="Abstract" control={control} errors={errors} variant="filled" multiline rows={4} sx={{marginTop:"1.5em"}}/>
+                            <TextFieldController name={`metadata.abstract`} label="Abstract" control={control} errors={errors} variant="filled" multiline rows={4} sx={{marginTop:"1.5em"}}/>
                             <br />
 
                             <InputLabel sx={{ marginTop:"1.5em"}}>
                                 Bounding box
                             </InputLabel>
                             <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                                <TextFieldController name={`bounding_box.west`} label="West" control={control} errors={errors}/>
+                                <TextFieldController name={`metadata.bounding_box.west`} label="West" control={control} errors={errors}/>
 
-                                <TextFieldController name={`bounding_box.south`} label="South" control={control} errors={errors}/>
+                                <TextFieldController name={`metadata.bounding_box.south`} label="South" control={control} errors={errors}/>
 
-                                <TextFieldController name={`bounding_box.east`} label="East" control={control} errors={errors}/>
+                                <TextFieldController name={`metadata.bounding_box.east`} label="East" control={control} errors={errors}/>
 
-                                <TextFieldController name={`bounding_box.north`} label="North" control={control} errors={errors}/>
+                                <TextFieldController name={`metadata.bounding_box.north`} label="North" control={control} errors={errors}/>
                             </Stack>
 
                         </AccordionDetails>
@@ -458,13 +512,13 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                         }
                                         <br />
 
-                                        <TextFieldController name={`informalname`} label="Informal name" control={control} errors={errors}/>
+                                        <TextFieldController name={`metadata.informalname`} label="Informal name" control={control} errors={errors}/>
                                         <br />
 
-                                        <MultiManager label="Links" name="links" content={LinkFields} shape={linkShape} control={control} watch={watch("links")} errors={errors} optional/>
+                                        <MultiManager label="Links" name="metadata.links" content={LinkFields} shape={linkShape} control={control} watch={watch("links")} errors={errors} optional/>
                                         <br />
 
-                                        <TextFieldController name={`language`} label="Language" control={control} errors={errors}/>
+                                        <TextFieldController name={`metadata.language`} label="Language" control={control} errors={errors}/>
                                         <br />
 
                                         <InputLabel sx={{ marginTop:"1.5em"}}>
@@ -472,9 +526,9 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                         </InputLabel>
                                         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
 
-                                            <TextFieldController name={`license.type`} label="Type" control={control} errors={errors}/>
+                                            <TextFieldController name={`metadata.license.type`} label="Type" control={control} errors={errors}/>
 
-                                            <TextFieldController name={`license.url`} label="URL" control={control} errors={errors}/>
+                                            <TextFieldController name={`metadata.license.url`} label="URL" control={control} errors={errors}/>
 
                                         </Stack>
                                         <br />
@@ -482,28 +536,28 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                     </TabPanel>
                                     <TabPanel value="2">
 
-                                        <FileManager name="documents" label="Documents" control={control} watch={watch("documents")} errors={errors} mode={mode}/>
+                                        <FileManager name="documentFiles" label="Documents" control={control} watch={watch("documents")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="images" label="Images" control={control} watch={watch("images")} errors={errors} mode={mode}/>
+                                        <FileManager name="imageFiles" label="Images" control={control} watch={watch("images")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="notes" label="Notes" control={control} watch={watch("notes")} errors={errors} mode={mode}/>
+                                        <FileManager name="noteFiles" label="Notes" control={control} watch={watch("notes")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="metadata" label="Metadata" control={control} watch={watch("metadata")} errors={errors} mode={mode}/>
+                                        <FileManager name="metadataFiles" label="Metadata" control={control} watch={watch("metadata")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="gems2" label="GeMS2" control={control} watch={watch("gems2")} errors={errors} mode={mode}/>
+                                        <FileManager name="gems2Files" label="GeMS2" control={control} watch={watch("gems2")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="ncgmp09" label="NCGMP09" control={control} watch={watch("ncgmp09")} errors={errors} mode={mode}/>
+                                        <FileManager name="ncgmp09Files" label="NCGMP09" control={control} watch={watch("ncgmp09")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="legacy" label="Legacy" control={control} watch={watch("legacy")} errors={errors} mode={mode}/>
+                                        <FileManager name="legacyFiles" label="Legacy" control={control} watch={watch("legacy")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="layers" label="Layers" control={control} watch={watch("layers")} errors={errors} mode={mode}/>
+                                        <FileManager name="layerFiles" label="Layers" control={control} watch={watch("layers")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="raster" label="Raster" control={control} watch={watch("raster")} errors={errors} mode={mode}/>
+                                        <FileManager name="rasterFiles" label="Raster" control={control} watch={watch("raster")} errors={errors} mode={mode}/>
 
                                     </TabPanel>
                                     <TabPanel value="3">
 
-                                        <MultiManager label="Keywords" name="keywords" content={KeywordFields} shape={keywordShape} control={control} watch={watch("keywords")} errors={errors} optional/>
+                                        <MultiManager label="Keywords" name="metadata.keywords" content={KeywordFields} shape={keywordShape} control={control} watch={watch("metadata.keywords")} errors={errors} optional/>
                                         <br />
 
                                     </TabPanel>
