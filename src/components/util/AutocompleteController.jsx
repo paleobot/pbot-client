@@ -5,15 +5,18 @@ import { Controller } from "react-hook-form";
 export const AutocompleteController = ({name, label, control, errors, ...props}) => {
     const pathElements = name.split(".");
 
-    let topName, index, fieldName;
-    if (pathElements.length === 3) {
-        topName = pathElements[0];
-        index = pathElements[1];
-        fieldName = pathElements[2];
-    } else if (pathElements.length === 2) {
-        topName = pathElements[0];
-        fieldName = pathElements[1];          
-    } 
+    //This, with the use of eval, provides a clever, if inelegant, way to handle the error and helperText props below for arbitrarily nested fields
+    const errorsPathString = pathElements.reduce((acc, curr, idx) => {
+        if (idx === 0) {
+            return `${acc}${curr}`;
+        } else {
+            if (isNaN(curr)) {
+                return `${acc}?.${curr}`;
+            } else {
+                return `${acc}?.[${curr}]`;
+            }
+        }    
+    },'errors.')
 
     return (
         <Controller
@@ -33,18 +36,8 @@ export const AutocompleteController = ({name, label, control, errors, ...props})
                         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
                     ]}
                     label={label}
-                    error={topName ?
-                        index ? 
-                            !!errors[topName]?.[index]?.[fieldName] :
-                            !!errors[topName]?.[fieldName] :
-                        !!errors[name]
-                    } 
-                    helperText={topName ?
-                        index ?
-                            errors[topName]?.[index]?.[fieldName]?.message :
-                            errors[topName]?.[fieldName]?.message :
-                        errors[name]?.message
-                    }
+                    error={eval(`!!${errorsPathString}`)} 
+                    helperText={eval(`${errorsPathString}?.message`)}
                 />}
             />}
             name={name}

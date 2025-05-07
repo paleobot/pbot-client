@@ -2,7 +2,20 @@ import { Checkbox } from "@mui/material"
 import { Controller } from "react-hook-form"
 
 export const CheckboxController = ({name, control, errors, ...props}) => {
-    //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
+
+    //This, with the use of eval, provides a clever, if inelegant, way to handle the error and helperText props below for arbitrarily nested fields
+    const pathElements = name.split(".");
+    const errorsPathString = pathElements.reduce((acc, curr, idx) => {
+        if (idx === 0) {
+            return `${acc}${curr}`;
+        } else {
+            if (isNaN(curr)) {
+                return `${acc}?.${curr}`;
+            } else {
+                return `${acc}?.[${curr}]`;
+            }
+        }    
+    },'errors.')
 
     return (
         <Controller
@@ -15,8 +28,8 @@ export const CheckboxController = ({name, control, errors, ...props}) => {
                     onChange={(e) => field.onChange(e.target.checked)}
                 />
             }
-            error={!!errors[name]} 
-            helperText={errors[name]?.message}    
+            error={eval(`!!${errorsPathString}`)} 
+            helperText={eval(`${errorsPathString}?.message`)}                  
             name={name}
         />   
     )
