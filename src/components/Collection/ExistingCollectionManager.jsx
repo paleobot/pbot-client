@@ -24,12 +24,17 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
             let json = await response.json();
             console.log(JSON.parse(JSON.stringify(json)));
 
+            //TODO: Setting collectiongroup from collection_group.name here makes me wonder if the form values should be set up to match the API. This would make it easier to set up the form, but would require a lot of renaming. I think this is a good idea, but not for now. 
+            json.data.metadata.collectiongroup = json.data.metadata.collection_group.name;
+
+            //Raise supersedes to the top level before reseting the form from the fetched data. This is only relevant to the edit mode.
+            json.data.metadata.supersedes = json.data.metadata.identifiers.supersedes ?
+            json.data.metadata.identifiers.supersedes.map((oldID) => { return {permID: oldID} }) :
+            [];
+        
             //TODO: This is a little cheesy. Setting all of values to the metadata zaps oldCollections, which we need if we are here for replace. A better way to do this might be to put all the form values that correspond to collection metadata inside a metadata object in the form init values. This would require renaming all the fields. I'm lazy, so I'm not going to do that right now.
             json.data.metadata.oldCollections = control._formValues.oldCollections;
             
-            //Raise supersedes to the top level before reseting the form from the fetched data. This is only relevant to the edit mode.
-            json.data.metadata.supersedes = json.data.metadata.identifiers.supersedes.map((oldID) => { return {permID: oldID} });
-
             console.log("massaged data:");
             console.log(json.data.metadata);
 
