@@ -30,7 +30,7 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
             const initValues = {
                 metadata: {...json.data.metadata},
                 originalMetadata: {...json.data.metadata},
-                oldCollections: control._formValues.oldCollections,
+                //oldCollections: control._formValues.oldCollections,
                 supersedes: json.data.metadata.identifiers.supersedes ?
                     json.data.metadata.identifiers.supersedes.map((oldID) => { return {permID: oldID} }) :
                     [],
@@ -58,11 +58,17 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
         permID: '',
     };
     const ReplaceFields = ({index, control, errors}) => {
+        //TODO: The old form used separate variables: oldCollections here and supersedes in edit. I'm not sure why. I'm going to use supersedes for both. I'm ghosting the oldCollections stuff everywhere for now. Eventually, I should remove it.
         return (
             <Stack direction="row" spacing={0} sx={{ marginLeft:"1.5em"}}>
-                <TextFieldController name={`oldCollections.${index}.permID`} label="Old collection" control={control} errors={errors} sx={{width:"90%"}}/>
-    
+                {/*<TextFieldController name={`oldCollections.${index}.permID`} label="Old collection" control={control} errors={errors} sx={{width:"90%"}}/>
+                
                 <Button variant="outlined" color="secondary" size="small" onClick={() => {fetchData(control._formValues.oldCollections[index].permID)}}>Load</Button>
+
+                */}
+                <TextFieldController name={`supersedes.${index}.permID`} label="Old collection" control={control} errors={errors} sx={{width:"90%"}}/>
+    
+                <Button variant="outlined" color="secondary" size="small" onClick={() => {fetchData(control._formValues.supersedes[index].permID)}}>Load</Button>
              </Stack>
         )
     }   
@@ -106,7 +112,10 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
         //I tried to use UseWatch here, but it was causing issues with the number of hooks. I think this is because the watch is inside a conditional. So, instead, I get around this by passing in watch as a prop from the calling component.
         return (
             <>
-            <MultiManager label="Replace existing collections" name="oldCollections" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"oldCollections"})*/watch("oldCollections")} errors={errors} optional/>
+            {/*<MultiManager label="Replace existing collections" name="oldCollections" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"oldCollections"})#/watch("oldCollections")} errors={errors} optional/>*/}
+
+            <MultiManager label="Replace existing collections" name="supersedes" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"supersedes"})*/watch("supersedes")} errors={errors} optional/>
+
             </>
         )
     }

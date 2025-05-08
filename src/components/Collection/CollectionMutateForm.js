@@ -283,8 +283,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         rasterFiles: [],
         complete: '',
         //extra fields, not part of collection metadata
-        oldCollection: '',
-        oldCollections: [],
+        //oldCollections: [],
         supersedes: [],
     };
 
@@ -380,6 +379,10 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const doSubmit = (data) => {
         //e.preventDefault();
         console.log("doSubmit")
+        console.log(JSON.parse(JSON.stringify(data)))
+
+        //TODO: Just experimenting here. Any data manipulation and patch generation will be handled in the mutate functions.
+        data.metadata.identifiers.supersedes = data.supersedes.map((oldID) => { return oldID.permID });
         console.log(JSON.parse(JSON.stringify(data)))
         
         const patch = jsonMergePatch.generate(data.originalMetadata, data.metadata);
