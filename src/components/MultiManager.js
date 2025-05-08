@@ -25,7 +25,7 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
 
     //TODO: Change below to Stacks. Grid is just weird.
     return (
-    <Box sx={{...props.sx, marginTop: "1em"}}>
+    <Box sx={{...props.sx, marginTop: "1.5em"}}>
     {/*<div style={style}>*/}
         <InputLabel>
             {label ? label : formElementName.charAt(0).toUpperCase() + formElementName.slice(1)}
@@ -57,7 +57,7 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
         <Button
                 type="button"
                 variant="text" 
-                color="secondary" 
+                color="primary" 
                 onClick={() => append({...shape}/*shape ? {...shape} : ''*/)}
                 disabled={
                     //We don't know what is required, but it doesn't make sense to allow creating another unless the user has at least partially filled in the first. So, only enable if first field is not null.
