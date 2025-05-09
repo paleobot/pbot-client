@@ -3,9 +3,10 @@ import { Controller } from "react-hook-form";
 
 
 export const TextFieldController = ({name, label, control, errors, ...props}) => {
-    const pathElements = name.split(".");
+    console.log("TextFieldController");
 
     //This, with the use of eval, provides a clever, if inelegant, way to handle the error and helperText props below for arbitrarily nested fields
+    const pathElements = name.split(".");
     const errorsPathString = pathElements.reduce((acc, curr, idx) => {
         if (idx === 0) {
             return `${acc}${curr}`;
@@ -17,7 +18,12 @@ export const TextFieldController = ({name, label, control, errors, ...props}) =>
             }
         }    
     },'errors.')
-    
+    console.log(errorsPathString)
+    //console.log(JSON.stringify(JSON.parse(errors)))
+    console.log(JSON.parse(JSON.stringify(errors)))
+    console.log(eval(`!!${errorsPathString}`))
+    console.log(eval(`${errorsPathString}?.message`))
+
     return (
         <Controller
             control={control}
