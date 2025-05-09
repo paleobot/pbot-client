@@ -51,21 +51,6 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
   
-    //This, with the use of eval, provides a clever, if inelegant, way to handle the error and helperText props below for arbitrarily nested fields
-    const pathElements = name.split(".");
-    const errorsPathString = pathElements.reduce((acc, curr, idx) => {
-        if (idx === 0) {
-            return `${acc}${curr}`;
-        } else {
-            if (isNaN(curr)) {
-                return `${acc}?.${curr}`;
-            } else {
-                return `${acc}?.[${curr}]`;
-            }
-        }    
-    },'errors.')
-
-
     React.useEffect(() => {
         const fetchData = async () => {
             //If options is an array, we don't need to fetch anything. Just set the data.
@@ -114,7 +99,7 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
         <Controller
             control={control}
             name={name}
-            render={({ field }) => 
+            render={({ field, fieldState }) => 
                 <TextField
                     {...field}
                     {...props}
@@ -125,8 +110,8 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
                         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
                     ]}
                     label={label}
-                    error={eval(`!!${errorsPathString}`)} 
-                    helperText={eval(`${errorsPathString}?.message`)}            
+                    error={fieldState.invalid} 
+                    helperText={fieldState.error?.message}
                 >
                     {data.map((option, index) => (
                         <MenuItem value={option.value}>{option.name}</MenuItem>
@@ -352,6 +337,8 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         //e.preventDefault();
         console.log("doSubmit")
         console.log(JSON.parse(JSON.stringify(data)))
+        //Note: Previous does not show the file names.
+        //console.log(data.documentFiles[0].file.name)
 
         //TODO: Just experimenting here. Any data manipulation and patch generation will be handled in the mutate functions.
         data.metadata.identifiers.supersedes = data.supersedes.map((oldID) => { return oldID.permID });
@@ -510,23 +497,23 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                     </TabPanel>
                                     <TabPanel value="2">
 
-                                        <FileManager name="documentFiles" label="Documents" control={control} watch={watch("documents")} errors={errors} mode={mode}/>
+                                        <FileManager name="documentFiles" label="Documents" control={control} watch={watch("documentFiles")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="imageFiles" label="Images" control={control} watch={watch("images")} errors={errors} mode={mode}/>
+                                        <FileManager name="imageFiles" label="Images" control={control} watch={watch("imageFiles")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="noteFiles" label="Notes" control={control} watch={watch("notes")} errors={errors} mode={mode}/>
+                                        <FileManager name="noteFiles" label="Notes" control={control} watch={watch("noteFiles")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="metadataFiles" label="Metadata" control={control} watch={watch("metadata")} errors={errors} mode={mode}/>
+                                        <FileManager name="metadataFiles" label="Metadata" control={control} watch={watch("metadataFiles")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="gems2Files" label="GeMS2" control={control} watch={watch("gems2")} errors={errors} mode={mode}/>
+                                        <FileManager name="gems2Files" label="GeMS2" control={control} watch={watch("gems2Files")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="ncgmp09Files" label="NCGMP09" control={control} watch={watch("ncgmp09")} errors={errors} mode={mode}/>
+                                        <FileManager name="ncgmp09Files" label="NCGMP09" control={control} watch={watch("ncgmp09Files")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="legacyFiles" label="Legacy" control={control} watch={watch("legacy")} errors={errors} mode={mode}/>
+                                        <FileManager name="legacyFiles" label="Legacy" control={control} watch={watch("legacyFiles")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="layerFiles" label="Layers" control={control} watch={watch("layers")} errors={errors} mode={mode}/>
+                                        <FileManager name="layerFiles" label="Layers" control={control} watch={watch("layerFiles")} errors={errors} mode={mode}/>
 
-                                        <FileManager name="rasterFiles" label="Raster" control={control} watch={watch("raster")} errors={errors} mode={mode}/>
+                                        <FileManager name="rasterFiles" label="Raster" control={control} watch={watch("rasterFiles")} errors={errors} mode={mode}/>
 
                                     </TabPanel>
                                     <TabPanel value="3">
