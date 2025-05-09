@@ -51,6 +51,21 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
   
+    //This, with the use of eval, provides a clever, if inelegant, way to handle the error and helperText props below for arbitrarily nested fields
+    const pathElements = name.split(".");
+    const errorsPathString = pathElements.reduce((acc, curr, idx) => {
+        if (idx === 0) {
+            return `${acc}${curr}`;
+        } else {
+            if (isNaN(curr)) {
+                return `${acc}?.${curr}`;
+            } else {
+                return `${acc}?.[${curr}]`;
+            }
+        }    
+    },'errors.')
+
+
     React.useEffect(() => {
         const fetchData = async () => {
             //If options is an array, we don't need to fetch anything. Just set the data.
@@ -98,8 +113,6 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
     return (
         <Controller
             control={control}
-            error={!!errors[name]} 
-            helperText={errors[name]?.message}    
             name={name}
             render={({ field }) => 
                 <TextField
@@ -112,6 +125,8 @@ const SelectController = ({name, label, options, control, errors, ...props}) => 
                         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
                     ]}
                     label={label}
+                    error={eval(`!!${errorsPathString}`)} 
+                    helperText={eval(`${errorsPathString}?.message`)}            
                 >
                     {data.map((option, index) => (
                         <MenuItem value={option.value}>{option.name}</MenuItem>
@@ -131,7 +146,7 @@ const authorShape = {
 const AuthorFields = ({index, control, errors}) => {
       
     return (
-        <Stack direction="column" spacing={0}>
+        <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
             <TextFieldController name={`metadata.authors.${index}.person`} label="Person" control={control} errors={errors} sx={{width:"75%"}}/>
 
             <TextFieldController name={`metadata.authors.${index}.givenname`} label="Given name" control={control} errors={errors} sx={{width:"75%"}}/>     
@@ -227,51 +242,13 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 north: 34
             },
                 
-            keywords: [{
+            keywords: [/*{
                 name: '',
                 type: ''
-            }],    
+            }*/],
+            files: [],    
         },
-        //identifiers: {
-        //    perm_id: '',
-        //}, 
-        //title: '',
-        //collectiongroup: '',
-        //authors: [{
-        //    person: '',
-        //    givenname: '',
-        //    surname: '',
-        //    organization: ''
-        //}],
-        //year: '',
-        //journal: {
-        //    name: '',
-        //    publisher: '',
-        //    url: ''
-        //},
-        //series: '',
-        //abstract: '',
-        //informalname: '',
-        //links: [/*{
-        //    name: 'UA Library',
-        //    url: ''
-        //}*/],
-        //keywords: [{
-        //    name: '',
-        //    type: ''
-        //}],
-        //language: 'English',
-        //license: {
-        //    type: 'CC BY-NC-SA 4.0',
-        //    url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
-        //},
-        //private: false,
-        //bounding_box: {
-        //    west: -113,
-        //    south: 33.5,
-        //    east: -112,
-        //    north: 34
-        //},
+        //extra fields, not part of collection metadata
         documentFiles: [],
         imageFiles: [],
         noteFiles: [],
@@ -282,91 +259,86 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         layerFiles: [],
         rasterFiles: [],
         complete: '',
-        //extra fields, not part of collection metadata
         //oldCollections: [],
         supersedes: [],
     };
 
-    const validationSchema=Yup.object({
+    const minYear = 1700
+    const maxYear = new Date().getFullYear();
+    const validationSchema=Yup.object().shape({
         metadata: Yup.object().shape({
             title: Yup.string().required('Title is required'),
-        })
-        /*
-        title: Yup.string().required(),
-        collectiongroup: Yup.string().required(),
-        year: Yup.string().required(),
-        authors: Yup.array().of(
-            Yup.object().shape({
-                person: Yup.string()
-                    .required('Person is required'),
-                givenname: Yup.string()
-                    .required('Given name is required'),
-                surname: Yup.string()
-                    .required('Surname is required'),
-                organization: Yup.string().nullable(),
-            })
-        ).min(1, 'At least one author is required'),
-        journal: Yup.object().shape({
-            name: Yup.string(),
-            publisher: Yup.string(),
-            url: Yup.string().url(),
-        }),
-        series: Yup.string(),
-        abstract: Yup.string(),
-        informalname: Yup.string(),
-        links: Yup.array().of(
-            Yup.object().shape({
+            collection_group: Yup.object().shape({
+                name: Yup.string().required('Collection group is required')
+            }).required('Collection group is required'),
+            year: Yup.number().min(minYear, `Year must be greater than or equal to ${minYear}`).max(maxYear, `Year must be less than or equal to ${maxYear}`).required('Year is required'),
+            authors: Yup.array().of(
+                Yup.object().shape({
+                    person: Yup.string()
+                        .required('Person is required'),
+                    givenname: Yup.string()
+                        .required('Given name is required'),
+                    surname: Yup.string()
+                        .required('Surname is required'),
+                    organization: Yup.string().nullable(),
+                })
+            ).min(1, 'At least one author is required'),
+            series: Yup.string().required('Series is required'),
+            abstract: Yup.string().required('Abstract is required'),
+            informalname: Yup.string(),
+            links: Yup.array().of(
+                Yup.object().shape({
+                    name: Yup.string().required('Name is required'),
+                    url: Yup.string().url("Must be a valid URL").required('URL is required'),
+                })
+            ),
+            keywords: Yup.array().of(
+                Yup.object().shape({
+                    name: Yup.string().required('Name is required'),
+                    type: Yup.string().required('Type is required'),
+                })
+            ),
+            license: Yup.object().shape({
                 name: Yup.string(),
                 url: Yup.string().url(),
-            })
-        ),
-        keywords: Yup.array().of(
-            Yup.object().shape({
-                name: Yup.string(),
-                type: Yup.string(),
-            })
-        ),
-        license: Yup.object().shape({
-            name: Yup.string(),
-            url: Yup.string().url(),
-        }),
-        private: Yup.boolean(),
-        boundingbox: Yup.object().shape({
-            west: Yup.number().min(-180).max(180),
-            south: Yup.number().min(-90).max(90),
-            east: Yup.number().min(-180).max(180),
-            north: Yup.number().min(-90).max(90),
+            }),
+            private: Yup.boolean(),
+            boundingbox: Yup.object().shape({
+                west: Yup.number().min(-180).max(180),
+                south: Yup.number().min(-90).max(90),
+                east: Yup.number().min(-180).max(180),
+                north: Yup.number().min(-90).max(90),
+            }).required('Bounding box is required'),
         }),
         //These need to be objects to work with the file select controller
-        documents: Yup.array().of(Yup.object().shape({
+        documentFiles: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
-        images: Yup.array().of(Yup.object().shape({
+        imageFiles: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
-        notes: Yup.array().of(Yup.object().shape({
+        noteFiles: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
-        metadata: Yup.array().of(Yup.object().shape({
+        metadataFiles: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
-        gems2: Yup.array().of(Yup.object().shape({
+        gems2Files: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
-        ncgmp09: Yup.array().of(Yup.object().shape({
+        ncgmp09Files: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
-        legacy: Yup.array().of(Yup.object().shape({
+        legacyFiles: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
-        layers: Yup.array().of(Yup.object().shape({
+        layerFiles: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
-        raster: Yup.array().of(Yup.object().shape({
+        rasterFiles: Yup.array().of(Yup.object().shape({
             name: Yup.string()
         })),
         //complete: Yup.string()
-        */
     })
 
     const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
@@ -439,7 +411,6 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             <br />
 
                             <SelectController 
-                                //name="metadata.collection_group.name"
                                 name="metadata.collection_group.name"
                                 label="Collection group" 
                                 options={{
@@ -518,7 +489,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                         <TextFieldController name={`metadata.informalname`} label="Informal name" control={control} errors={errors}/>
                                         <br />
 
-                                        <MultiManager label="Links" name="metadata.links" content={LinkFields} shape={linkShape} control={control} watch={watch("links")} errors={errors} optional/>
+                                        <MultiManager label="Links" name="metadata.links" content={LinkFields} shape={linkShape} control={control} watch={watch("metadata.links")} errors={errors} optional/> 
                                         <br />
 
                                         <TextFieldController name={`metadata.language`} label="Language" control={control} errors={errors}/>
