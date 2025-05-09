@@ -3,20 +3,6 @@ import { Controller } from "react-hook-form";
 
 
 export const FileSelectController = ({name, label, control, errors, ...props}) => {
-    const pathElements = name.split(".");
-
-    //This, with the use of eval, provides a clever, if inelegant, way to handle the error and helperText props below for arbitrarily nested fields
-    const errorsPathString = pathElements.reduce((acc, curr, idx) => {
-        if (idx === 0) {
-            return `${acc}${curr}`;
-        } else {
-            if (isNaN(curr)) {
-                return `${acc}?.${curr}`;
-            } else {
-                return `${acc}?.[${curr}]`;
-            }
-        }    
-    },'errors.')
 
     return (
         <>
@@ -25,7 +11,7 @@ export const FileSelectController = ({name, label, control, errors, ...props}) =
             name={name}
             control={control}
             defaultValue={null}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
+            render={({ field: { onChange, value }, fieldState: { invalid, error } }) => (
             <>
                 <input
                     type="file"
@@ -50,8 +36,8 @@ export const FileSelectController = ({name, label, control, errors, ...props}) =
                         variant="standard"
                         size="small"
                         style={{ marginLeft: '10px' }}
-                        error={eval(`!!${errorsPathString}`)} 
-                        helperText={eval(`${errorsPathString}?.message`)}           
+                        error={invalid} 
+                        helperText={error?.message}
                     />
                 )}
                 {/*error && (

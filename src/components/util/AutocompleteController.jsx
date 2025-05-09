@@ -4,21 +4,6 @@ import { Controller } from "react-hook-form";
 
 export const AutocompleteController = ({name, label, control, errors, ...props}) => {
 
-    /*
-    //This, with the use of eval, provides a clever, if inelegant, way to handle the error and helperText props below for arbitrarily nested fields
-    const pathElements = name.split(".");
-    const errorsPathString = pathElements.reduce((acc, curr, idx) => {
-        if (idx === 0) {
-            return `${acc}${curr}`;
-        } else {
-            if (isNaN(curr)) {
-                return `${acc}?.${curr}`;
-            } else {
-                return `${acc}?.[${curr}]`;
-            }
-        }    
-    },'errors.')
-    */
     return (
         <Controller
             control={control}
@@ -40,8 +25,6 @@ export const AutocompleteController = ({name, label, control, errors, ...props})
                         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
                     ]}
                     label={label}
-                    //error={eval(`!!${errorsPathString}`)} 
-                    //helperText={eval(`${errorsPathString}?.message`)}
                     error={fieldState.invalid} 
                     helperText={fieldState.error?.message}
                 />}
