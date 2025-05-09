@@ -27,7 +27,7 @@ export const TextFieldController = ({name, label, control, errors, ...props}) =>
     return (
         <Controller
             control={control}
-            render={({ field }) => <TextField 
+            render={({ field, fieldState }) => <TextField 
                 {...field} 
                 {...props}
                 sx={[
@@ -36,9 +36,9 @@ export const TextFieldController = ({name, label, control, errors, ...props}) =>
                     ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
                 ]}
                 label={label}          
-                error={eval(`!!${errorsPathString}`)} 
-                helperText={eval(`${errorsPathString}?.message`)}                  
-            />}
+                error={fieldState.invalid} 
+                helperText={fieldState.error?.message}
+        />}
             name={name}
             //style={{minWidth: "12ch", width:"100%"}}
             disabled={false}
