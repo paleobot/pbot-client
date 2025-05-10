@@ -288,7 +288,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 url: Yup.string().url(),
             }),
             private: Yup.boolean(),
-            boundingbox: Yup.object().shape({
+            bounding_box: Yup.object().shape({
                 west: Yup.number().min(-180).max(180),
                 south: Yup.number().min(-90).max(90),
                 east: Yup.number().min(-180).max(180),
@@ -333,7 +333,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         trigger: "onBlur",
       });
     
-    const doSubmit = (data) => {
+    const doSubmit = async (data) => {
         //e.preventDefault();
         console.log("doSubmit")
         console.log(JSON.parse(JSON.stringify(data)))
@@ -341,14 +341,9 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         //console.log(data.documentFiles[0].file.name)
 
         //TODO: Just experimenting here. Any data manipulation and patch generation will be handled in the mutate functions.
-        data.metadata.identifiers.supersedes = data.supersedes.map((oldID) => { return oldID.permID });
-        console.log(JSON.parse(JSON.stringify(data)))
-        
-        const patch = jsonMergePatch.generate(data.originalMetadata, data.metadata);
-        console.log(JSON.parse(JSON.stringify(patch)))
-        
+                
         data.mode = mode;
-        hSubmit(data);
+        await hSubmit(data);
         reset()
     }
     
