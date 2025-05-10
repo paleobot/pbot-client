@@ -4,6 +4,7 @@ import { Controller } from "react-hook-form";
 
 export const FileSelectController = ({name, label, control, errors, ...props}) => {
 
+    //TODO: Something about this is not working. The File object is not being passed to the form data.
     return (
         <>
 
