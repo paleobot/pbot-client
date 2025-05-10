@@ -68,7 +68,7 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
                 */}
                 <TextFieldController name={`supersedes.${index}.permID`} label="Old collection" control={control} errors={errors} sx={{width:"90%"}}/>
     
-                <Button variant="outlined" color="secondary" size="small" onClick={() => {fetchData(control._formValues.supersedes[index].permID)}}>Load</Button>
+                <Button variant="outlined" color="secondary" size="small" disabled={!watch(`supersedes.${index}.permID`)} onClick={() => {fetchData(control._formValues.supersedes[index].permID)}}>Load</Button>
              </Stack>
         )
     }   
@@ -100,8 +100,8 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
             return (
                 <>
                 <Stack direction="row" spacing={2} sx={{marginTop: "1.5em"}}>
-                    <TextFieldController  name={`identifiers.perm_id`} label="Edit existing collection" control={control} errors={errors}/>
-                    <Button variant="outlined" color="secondary" size="small" onClick={() => {fetchData(control._formValues.identifiers.perm_id)}}>Load</Button>
+                    <TextFieldController  name={`metadata.identifiers.perm_id`} label="Edit existing collection" control={control} errors={errors}/>
+                    <Button variant="outlined" color="secondary" size="small" disabled={!watch("metadata.identifiers.perm_id")} onClick={() => {fetchData(control._formValues.metadata.identifiers.perm_id)}}>Load</Button>
                     <Button variant="outlined" color="secondary" size="small" onClick={() => {reset()}}>Clear</Button>
                 </Stack>
                 <FetchStatus/>
