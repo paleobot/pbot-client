@@ -80,10 +80,13 @@ const Mutator = (props) => {
                 }
                 console.log("response");
                 
+                //TODO: I'm thinking now that we don't need to check for ok. Just pass the error on through and let it display.
+                /*
                 if (!response.ok) {
                     throw new Error(`Response status: ${response.status}`);
                 }
-            
+                */
+
                 const json = await response.json();
                 console.log(json);
                 setLoading(false)
