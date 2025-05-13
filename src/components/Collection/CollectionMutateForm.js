@@ -16,7 +16,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Autocomplete } from 'formik-mui';
 import { FileManager } from './FileManager.jsx';
-import jsonMergePatch from "json-merge-patch";
 
 const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
     //Note 1: We could add path elements here to allow for nested checkboxes, but we don't need it right now. If we do, we can use the same logic as in TextFieldController, or better yet, we could factor it out into a common controller function.
@@ -403,6 +402,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                 }} 
                                 control={control} 
                                 errors={errors} 
+                                disabled={mode === "edit" || mode === "replace"}
                                 style={{minWidth: "12ch", marginTop: "1em", width:"75%"}} variant="standard"
                             />
                             <br />
