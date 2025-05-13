@@ -8,7 +8,7 @@ import { Controller, useFieldArray } from "react-hook-form";
 
 export const MultiManager = ({name, label, content, control, shape, watch, optional, errors, ...props}) => {
     console.log("MultiManager");
-    console.log(control._formValues);
+    console.log(JSON.parse(JSON.stringify(control._formValues)));
 
     const { fields, append, remove } = useFieldArray({
         control,
