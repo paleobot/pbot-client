@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-//import axios from 'axios';
 
 const Mutator = (props) => {
     console.log("Mutator");
@@ -30,11 +29,11 @@ const Mutator = (props) => {
                         {
                             method: 'PUT',
                             headers: {
-                                'Content-Type': 'multipart/form-data',
+                                //'Content-Type': 'multipart/form-data',
                                 'Accept': 'application/json',
                                 'Authorization': "Bearer " + token
                             },
-                            body: props.formData,
+                            body: props.data,
                         }
                     );                
                 } else if (props.mode === "edit") {
@@ -44,11 +43,11 @@ const Mutator = (props) => {
                         {
                             method: 'PATCH',
                             headers: {
-                                'Content-Type': 'multipart/form-data',
+                                //'Content-Type': 'multipart/form-data', let the browser set this
                                 'Accept': 'application/json',
                                 'Authorization': "Bearer " + token
                             },
-                            body: props.formData,
+                            body: props.data,
                         }
                     );                
                 } else if (props.mode === "delete") {
@@ -78,18 +77,6 @@ const Mutator = (props) => {
                             body: props.data,
                         }
                     );    
-                    
-                    /*
-                    Had this for debugging, but it didn't help. The problem appears to be in FileSelectController. Ghosting for now
-                    response = await axios.post(`${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}`, props.data, {
-                        headers: {
-                            'Content-Type':'multipart/form-data',	
-                            'Accept': 'application/json',
-                            'Authorization': "Bearer " + token
-                        }
-                    });
-                    */
-
                 }
                 console.log("response");
                 
@@ -126,10 +113,17 @@ const Mutator = (props) => {
         }
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
+        return (
+            <div>
+                <pre>{JSON.stringify(data, null, 4)}</pre>
+            </div>
+        )
+
+        /*
         return props.mode === "edit" ?
         (
             <div>
-                {JSON.stringify(data)}
+                <pre>{JSON.stringify(data, null, 4)}</pre>
             </div>
             //<div key={data[`Update${props.entity}`][`${entityID}`]} style={style}>
             //    {data[`Update${props.entity}`][`${entityID}`]} updated<br />
@@ -139,7 +133,7 @@ const Mutator = (props) => {
         props.mode === "create" ?
         (
             <div>
-                {JSON.stringify(data)}
+                <pre>{JSON.stringify(data, null, 4)}</pre>
             </div>
             //<div key={data[`Create${props.entity}`][`${entityID}`]} style={style}>
             //    {data[`Create${props.entity}`][`${entityID}`]} created<br />
@@ -149,7 +143,7 @@ const Mutator = (props) => {
         props.mode === "delete" ?
         (
             <div>
-                {JSON.stringify(data)}
+                <pre>{JSON.stringify(data, null, 4)}</pre>
             </div>
             //<div key={data[`Delete${props.entity}`][`${entityID}`]} style={style}>
             //    {data[`Delete${props.entity}`][`${entityID}`]} deleted<br />
@@ -157,7 +151,8 @@ const Mutator = (props) => {
             //</div>
         ) :
         '';
-                
+        */
+
     } else {
         return (<div></div>); //gotta return something until addDescription runs
     }
