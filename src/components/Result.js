@@ -7,6 +7,7 @@ const Result = ({queryParams, type, queryEntity}) => {
     console.log(">>>>>>>>>>>>>>>>>>>>>>Result<<<<<<<<<<<<<<<<<<<<<<<<");
     console.log(type)
     console.log(queryEntity)
+    console.log(JSON.parse(JSON.stringify(queryParams)))
  
     let result = 
         type === "mutate" && queryEntity === "collection" ? (
