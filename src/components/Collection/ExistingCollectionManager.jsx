@@ -31,9 +31,9 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
                 metadata: {...json.data.metadata},
                 originalMetadata: {...json.data.metadata},
                 //oldCollections: control._formValues.oldCollections,
-                supersedes: json.data.metadata.identifiers.supersedes ?
+                supersedes: control._formValues.supersedes.concat(json.data.metadata.identifiers.supersedes ?
                     json.data.metadata.identifiers.supersedes.map((oldID) => { return {permID: oldID} }) :
-                    [],
+                    [])
             }
 
             reset(initValues, {keepDefaultValues: true});
@@ -114,7 +114,7 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
             <>
             {/*<MultiManager label="Replace existing collections" name="oldCollections" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"oldCollections"})#/watch("oldCollections")} errors={errors} optional/>*/}
 
-            <MultiManager label="Replace existing collections" name="supersedes" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"supersedes"})*/watch("supersedes")} errors={errors} optional/>
+            <MultiManager label="Replace existing collections" name="supersedes" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"supersedes"})*/watch("supersedes")} errors={errors} />
 
             </>
         )
