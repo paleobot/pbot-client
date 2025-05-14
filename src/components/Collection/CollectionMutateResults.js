@@ -19,6 +19,11 @@ const CollectionMutateResults = ({queryParams}) => {
 
 
     queryParams.metadata.identifiers.supersedes = queryParams.supersedes.map((oldID) => { return oldID.permID });
+
+    if (queryParams.mode === "replace") {
+        delete queryParams.metadata.identifiers.perm_id
+    }
+
     console.log(JSON.parse(JSON.stringify(queryParams)))
 
     /*
