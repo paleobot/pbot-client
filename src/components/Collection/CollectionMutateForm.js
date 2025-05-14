@@ -402,7 +402,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                 }} 
                                 control={control} 
                                 errors={errors} 
-                                disabled={mode === "edit" || mode === "replace"}
+                                disabled={mode === "edit"}
                                 style={{minWidth: "12ch", marginTop: "1em", width:"75%"}} variant="standard"
                             />
                             <br />
