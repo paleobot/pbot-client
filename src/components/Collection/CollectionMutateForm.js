@@ -249,6 +249,13 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
     const minYear = 1700
     const maxYear = new Date().getFullYear();
+    const deleteValidationSchema = Yup.object().shape({
+        metadata: Yup.object().shape({
+            identifiers: Yup.object().shape({
+                perm_id: Yup.string().required('Perm ID is required'),
+            }).required('Perm ID is required'),
+        })
+    })
     const validationSchema=Yup.object().shape({
         metadata: Yup.object().shape({
             title: Yup.string().required('Title is required'),
@@ -327,7 +334,8 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
     const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
         defaultValues: initValues,
-        resolver: yupResolver(validationSchema),
+        //resolver: yupResolver(validationSchema),
+        resolver: mode === "delete" ? yupResolver(deleteValidationSchema) : yupResolver(validationSchema),
         mode: "onBlur",
         trigger: "onBlur",
       });
