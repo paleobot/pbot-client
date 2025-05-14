@@ -19,6 +19,7 @@ const Mutator = (props) => {
 
     useEffect(() => {
 
+        //TODO: We have state issues here. We need this to execute whenever a new submit occurs. But, because Mutator remains extant, the useEffect does not run again. Need to condition useEffect on something that changes with each submit.
         async function fetchData () {
             try {
                 let response
