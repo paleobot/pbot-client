@@ -15,6 +15,10 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
         name: name,
     });    
 
+    if (!optional && !fields.length) {
+        append({...shape});
+    }
+    
     const formElementName = name;
     console.log(formElementName)
     //console.log(Object.keys(shape)[0])
