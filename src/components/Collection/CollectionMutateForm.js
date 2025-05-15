@@ -339,6 +339,12 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
         mode: "onBlur",
         trigger: "onBlur",
       });
+
+    const resetForm = (initialValues = initValues, props) => {
+        //Add random value to ensure results are not retained (e.g. useEffect in Mutator is contingent on this value)
+        initialValues.random = Math.random();
+        reset(initialValues, props);
+    }
     
     const doSubmit = async (data) => {
         //e.preventDefault();
@@ -351,13 +357,13 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 
         data.mode = mode;
         await hSubmit(data);
-        reset()
+        resetForm();
     }
     
     //To clear form when mode changes 
     React.useEffect(() => {
-            reset(initValues);
-    },[mode]);
+            resetForm();
+        },[mode]);
     
     const [selectedTab, setSelectedTab] = React.useState('1');
     const handleTabChange = (event, newValue) => {
@@ -377,7 +383,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 
                 {(mode === "edit" || mode === "delete" || mode === "replace") &&
                     <div>
-                        <ExistingCollectionManager mode={mode} control={control} reset={reset} watch={watch} errors={errors}/>
+                        <ExistingCollectionManager mode={mode} control={control} reset={resetForm} watch={watch} errors={errors}/>
                     </div>
                 }
                 
@@ -471,7 +477,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     
                                         {mode === "edit" &&
                                             <div>
-                                                <ExistingCollectionManager supersedes mode={mode} control={control} reset={reset} watch={watch} errors={errors}/>
+                                                <ExistingCollectionManager supersedes mode={mode} control={control} reset={resetForm} watch={watch} errors={errors}/>
                                             </div>
                                         }
                                         <br />
@@ -539,7 +545,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
                 <Stack direction="row" spacing={2}>
                     <Button type="submit" variant="contained" color="primary">Submit</Button>
-                    <Button type="reset" variant="outlined" color="secondary" onClick={() => {reset()}}>Reset</Button>
+                    <Button type="reset" variant="outlined" color="secondary" onClick={() => {resetForm()}}>Reset</Button>
                 </Stack>
                 <br />
                 <br />

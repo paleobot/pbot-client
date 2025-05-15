@@ -113,6 +113,7 @@ const CollectionMutateResults = ({queryParams}) => {
             entity="collections"
             id={collectionID}
             mode={queryParams.mode}
+            random={queryParams.random}
         />
     );
 };

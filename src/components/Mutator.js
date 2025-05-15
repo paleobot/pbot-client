@@ -98,7 +98,7 @@ const Mutator = (props) => {
             }   
         }
         fetchData()     
-    }, []);
+    }, [props.random]);
 
     if (loading) {
         return <p>Loading...</p>;
