@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from './AuthContext';
 
 const Mutator = (props) => {
     console.log("Mutator");
@@ -10,16 +11,10 @@ const Mutator = (props) => {
     let [data, setData] = useState(null)
     let [error, setError] = useState(null)
 
-    //const url = "http://localhost:3000/api/v1/";
-    //const url = new URL(`${props.entity}${props.id ? `/${props.id}` : ''}`, process.env.REACT_APP_AZLIB_API_URL)
-
-    //TODO: Get this properly
-    //This is for localhost
-    const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOnsidXNlcl9pZCI6NSwiZW1haWwiOiJlbWFpbEBlbWFpbC5jb20iLCJyb2xlX2lkIjoxLCJmaXJzdF9uYW1lIjoiUGFzcyIsImxhc3RfbmFtZSI6IldvcmQiLCJvcmdhbml6YXRpb24iOiJub25lIiwidG9zX2FjY2VwdGVkIjp0cnVlLCJhcHByb3ZlZCI6dHJ1ZSwiY3JlYXRlZF9kYXRlIjoiMjAyMC0wMi0xNFQyMzo0NjoxMi40NjJaIiwibW9kaWZpZWRfZGF0ZSI6bnVsbCwicHdfcmVzZXRfdG9rZW4iOm51bGwsInB3X3Jlc2V0X3RpbWUiOm51bGx9LCJleHAiOjE2OTkzOTY1NTY0OTZ9.m0SljTDFdW_8fpM2dgdQAEz23h4oOlRrFoyDP1x-6as" 
+    const [token, setToken] = useAuth();
 
     useEffect(() => {
 
-        //TODO: We have state issues here. We need this to execute whenever a new submit occurs. But, because Mutator remains extant, the useEffect does not run again. Need to condition useEffect on something that changes with each submit.
         async function fetchData () {
             try {
                 let response

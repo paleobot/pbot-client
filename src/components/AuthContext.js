@@ -11,7 +11,7 @@ const useAuth = () => {
 }
 
 const AuthProvider = (props) => {
-    const [token, setToken] = React.useState(localStorage.getItem('PBOTMutationToken'))
+    const [token, setToken] = React.useState(localStorage.getItem('AzlibAdminToken'))
     const value = React.useMemo(() => [token, setToken], [token])
     return <AuthContext.Provider value={value} {...props} />
 }

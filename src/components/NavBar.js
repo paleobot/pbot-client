@@ -53,9 +53,9 @@ export default function NavBar() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('PBOTMutationToken');
-        setToken(localStorage.getItem('PBOTMutationToken'));
-        localStorage.removeItem('PBOTMe');
+        localStorage.removeItem('AzlibAdminToken');
+        setToken(localStorage.getItem('AzlibAdminToken'));
+        //localStorage.removeItem('PBOTMe');
         navigate("/");
     }
    

@@ -9,8 +9,6 @@ import { useAuth } from './AuthContext';
 const origin = window.location.origin;
 
 const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
-    //const [username, setUserName] = useState();
-    //const [password, setPassword] = useState();
 
     const navigate = useNavigate();
     const [search] = useSearchParams();
@@ -19,9 +17,9 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
 
     const loginUser = async (credentials) => {
         console.log("loginUser")
-            return { ok: true, token: "Hi there", pbotID: "none"}
+            //return { ok: true, token: "Hi there", pbotID: "none"}
 
-        return fetch(origin + '/user/login', {
+        return fetch(origin + '/api/v1/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -36,7 +34,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
         .then(data => {
             console.log(data);
             if (data.token) {
-                return { ok: true, token: data.token, pbotID: data.pbotID}
+                return { ok: true, token: data.token}
             } else if (data.msg) {
                 return { ok: false, message: data.msg}
             } else {
@@ -87,22 +85,20 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     const handleSubmit = async (values, {setStatus}) => {
         console.log(values.userName);
         
-        //const loginResult = await loginUser({
-        //    username: values.userName,
-        //    password: values.password
-        //});
+        const loginResult = await loginUser({
+            email: values.userName,
+            password: values.password
+        });
 
-        const loginResult = {
-            ok: true,
-            token: "Hi there",
-            pbotID: "none"
-        }
+        //const loginResult = {
+        //    ok: true,
+        //    token: "Hi there",
+        //    pbotID: "none"
+        //}
         
         if (loginResult.ok) {
-            localStorage.setItem('PBOTMutationToken', loginResult.token);
+            localStorage.setItem('AzlibAdminToken', loginResult.token);
             setToken(loginResult.token);
-            //localStorage.setItem('PBOTMe', values.userName);
-            localStorage.setItem('PBOTMe', loginResult.pbotID);
             console.log("navigating to workbench")
             //navigate("/mutate");
             navigate("/");
@@ -156,12 +152,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
                 confirmPassword: Yup.string()
                     .oneOf([Yup.ref('password'), null], 'Passwords must match')
             })}
-            onSubmit={handleSubmit}/*({values => {
-                //alert(JSON.stringify(values, null, 2));
-                //setValues(values);
-                handleSubmit(values);
-                setStatus("Oh no!");
-            }}*/
+            onSubmit={handleSubmit}
         >
         {({ status }) => (
         <Form>
@@ -194,7 +185,6 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
             </Form>
             )}
         </Formik>
-        {/*<Button variant="text" color="secondary" onClick={() => {setShowRegistration(true);}}>Register</Button>*/}
         <Button variant="text" color="secondary" onClick={() => {navigate(`/register`);}}>Register</Button>
         <br />
         {reset}

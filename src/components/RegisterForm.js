@@ -9,13 +9,11 @@ import { SensibleTextField } from './SensibleTextField.js';
 const origin = window.location.origin;
 
 const RegisterForm = ({ setShowRegistration }) => {
-    //const [username, setUserName] = useState();
-    //const [password, setPassword] = useState();
     const [showUseExistingUser, setshowUseExistingUser] = useState(false);
     const navigate = useNavigate();
 
     const registerUser = async (credentials) => {
-        return fetch(origin + '/user/register', {
+        return fetch(origin + '/api/v1/users?signup=true', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -45,40 +43,24 @@ const RegisterForm = ({ setShowRegistration }) => {
     //TODO: Look into pushing previous page in React Router so we can navigate back to there.
     
     const handleCancel = () => {       
-        //setShowRegistration(false);
-        navigate("/query");
+        navigate("/login");
     }
             
     const handleSubmit = async (values, {setStatus}) => {
         console.log(values.givenName);
         
-        const result = await registerUser(values);
+        const result = await registerUser({firstName: values.givenName, lastName: values.surname, email: values.email, password: values.password, organization: "AZlibrary", tos: true});
         
         if (result.ok) {
-            //setShowRegistration(false);
             navigate("/login?newReg=true");
         } else {
             setStatus({error: result.message});
-            if (result.message === "Unregistered user with that email found") {
-                setshowUseExistingUser(true);
-            }
+
+            //TODO: Not sure if we will provide use existing user functionality. If we do, we need to set the checkbox.
+            //if (result.message === "Unregistered user with that email found") {
+            //    setshowUseExistingUser(true);
+            //}
         }
-        /*
-        const registerResult = await registerUser({
-            givenname: values.givenName,
-            surname: values.surname,
-            email: values.email,
-            password: values.password
-        });
-        
-        if (registerResult.ok) {
-            //localStorage.setItem('PBOTMutationToken', loginResult.token);
-            setToken(loginResult.token);
-        } else {
-            console.log("else");
-            setStatus({error: resigterResult.message}); //TODO: figure out how Formik setStatus works
-        }
-        */
     }
     
     //TODO: try out styled-components
@@ -103,16 +85,12 @@ const RegisterForm = ({ setShowRegistration }) => {
 
     return(
         <div>
-        <h2>Register for PBot</h2>
+        <h2>Register for AZlibrary Admin</h2>
         <Formik
             initialValues={{
                 givenName: '',
-                middleName: '',
                 surname: '',
                 email: '', 
-                reason: '',
-                bio: '',
-                orcid: '',
                 password: '', 
                 confirmPassword: '',
                 useExistingUser: false,
@@ -121,8 +99,6 @@ const RegisterForm = ({ setShowRegistration }) => {
                 givenName: Yup.string()
                     .required("Given Name is required")
                     .max(30, 'Must be 30 characters or less'),
-                middleName: Yup.string()
-                    .max(30, 'Must be 30 characters or less'),
                 surname: Yup.string()
                     .required("Surname is required")
                     .max(30, 'Must be 30 characters or less'),
@@ -130,10 +106,6 @@ const RegisterForm = ({ setShowRegistration }) => {
                     .required("Email is required")
                     .max(30, 'Must be 30 characters or less')
                     .email("Must be a valid email address"),
-                reason: Yup.string()
-                    .required("Reason is required"),
-                bio: Yup.string(),
-                orcid: Yup.string().matches(/https:\/\/orcid.org\/\d{4}-\d{4}-\d{4}-\d{4}/, {message: "not a valid orcid"}),
                 password: Yup.string()
                     .required("Password is required")
                     .min(6, "Passwords must contain at least six characters")
@@ -156,15 +128,6 @@ const RegisterForm = ({ setShowRegistration }) => {
 
                 <Field 
                     component={SensibleTextField}
-                    name="middleName" 
-                    type="text"
-                    label="Middle Name/Initial"
-                    disabled={false}
-                />
-                <br />
-
-                <Field 
-                    component={SensibleTextField}
                     name="surname" 
                     type="text"
                     label="Surname"
@@ -181,37 +144,6 @@ const RegisterForm = ({ setShowRegistration }) => {
                 />
                 <br />
                 
-                <Field 
-                    component={SensibleTextField}
-                    name="reason" 
-                    type="text"
-                    label="Why do you want a PBot account?"
-                    multiline
-                    disabled={false}
-                />
-                <br />
-
-                <Field 
-                    component={SensibleTextField}
-                    name="bio" 
-                    type="text"
-                    label="Short bio"
-                    multiline
-                    disabled={false}
-                />
-                <br />
-
-                <Field
-                    component={SensibleTextField}
-                    type="text"
-                    name="orcid"
-                    label="ORCID"
-                    fullWidth 
-                    prefix="https://orcid.org/"
-                    disabled={false}
-                />
-                <br />
-
                 <Field 
                     component={SensibleTextField}
                     name="password" 
