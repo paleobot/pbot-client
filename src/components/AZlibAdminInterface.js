@@ -39,7 +39,7 @@ const AZlibAdminInterface = (props) => {
 
     const handleSubmit = (values) => {
         console.log("handleSubmit");
-        console.log(values);
+        console.log(JSON.parse(JSON.stringify(values)));
         //TODO: Must set showResult to false here to trigger rerender of Result. I used to do this in
         //the validate routine of formik whenever a form field changed, but this caused a strange bug
         //wherein the top select box would not take the first selection after a submit. No idea what 
@@ -61,7 +61,7 @@ const AZlibAdminInterface = (props) => {
     let result = showResult ? (
                     <Result queryParams={queryParams} type={props.formClass} queryEntity={form}/>
                  ) :
-                 '';
+                 'Loading...';
   
     const style = {textAlign: "left"}
     //Note: The use of hidden for display of result is critical for avoiding repeat executions of that code.
