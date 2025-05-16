@@ -14,6 +14,8 @@ import LoginForm from './components/LoginForm';
 import AZlibAdminInterface from './components/AZlibAdminInterface';
 import RegisterForm from './components/RegisterForm';
 import './index.css';
+import About from './components/About/About';
+import HowToUseAzlibAdmin from './components/HowToUseAzlibAdmin/HowToUseAzlibAdmin';
 
 //import '@fontsource/roboto/300.css';
 //import '@fontsource/roboto/400.css';
@@ -56,6 +58,14 @@ const router = createBrowserRouter([
             {
                 path: "register",
                 element: <RegisterForm/>
+            },
+            {
+                path: "about",
+                element: <About/>
+            },
+            {
+                path: "howto",
+                element: <HowToUseAzlibAdmin/>
             },
             {
                 path: "mutate",
@@ -148,13 +158,13 @@ const root = createRoot(rootElement);
 
 //ReactDOM.render(
 root.render(
-    <React.StrictMode>
+    //<React.StrictMode>
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={theme}>
                 <RouterProvider router={router} />
             </ThemeProvider>
         </StyledEngineProvider>
-  </React.StrictMode>
+  //</React.StrictMode>
   //,
   //document.getElementById('root')
 );
