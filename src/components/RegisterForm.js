@@ -1,16 +1,50 @@
 import React, { useState }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Grid, Button } from '@mui/material';
-import { TextField, CheckboxWithLabel } from 'formik-mui';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { SensibleTextField } from './SensibleTextField.js';
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { TextFieldController } from './util/TextFieldController';
 
 const origin = window.location.origin;
 
 const RegisterForm = ({ setShowRegistration }) => {
     const [showUseExistingUser, setshowUseExistingUser] = useState(false);
     const navigate = useNavigate();
+
+    const initialValues = {
+        givenName: '',
+        surname: '',
+        email: '', 
+        password: '', 
+        confirmPassword: '',
+        useExistingUser: false,
+    }
+    const validationSchema= Yup.object().shape({
+        givenName: Yup.string()
+            .required("Given Name is required")
+            .max(30, 'Must be 30 characters or less'),
+        surname: Yup.string()
+            .required("Surname is required")
+            .max(30, 'Must be 30 characters or less'),
+        email: Yup.string()
+            .required("Email is required")
+            .max(30, 'Must be 30 characters or less')
+            .email("Must be a valid email address"),
+        password: Yup.string()
+            .required("Password is required")
+            .min(6, "Passwords must contain at least six characters")
+            .max(30, 'Must be 30 characters or less'),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+    })
+
+    const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
+        defaultValues: initialValues,
+        resolver: yupResolver(validationSchema),
+        mode: "onBlur",
+        trigger: "onBlur",
+    });
 
     const registerUser = async (credentials) => {
         return fetch(origin + '/api/v1/users?signup=true', {
@@ -46,7 +80,8 @@ const RegisterForm = ({ setShowRegistration }) => {
         navigate("/login");
     }
             
-    const handleSubmit = async (values, {setStatus}) => {
+    const [status, setStatus] = useState(null);
+    const doSubmit = async (values) => {
         console.log(values.givenName);
         
         const result = await registerUser({firstName: values.givenName, lastName: values.surname, email: values.email, password: values.password, organization: "AZlibrary", tos: true});
@@ -85,81 +120,21 @@ const RegisterForm = ({ setShowRegistration }) => {
 
     return(
         <div>
-        <h2>Register for AZlibrary Admin</h2>
-        <Formik
-            initialValues={{
-                givenName: '',
-                surname: '',
-                email: '', 
-                password: '', 
-                confirmPassword: '',
-                useExistingUser: false,
-            }}
-            validationSchema={Yup.object({
-                givenName: Yup.string()
-                    .required("Given Name is required")
-                    .max(30, 'Must be 30 characters or less'),
-                surname: Yup.string()
-                    .required("Surname is required")
-                    .max(30, 'Must be 30 characters or less'),
-                email: Yup.string()
-                    .required("Email is required")
-                    .max(30, 'Must be 30 characters or less')
-                    .email("Must be a valid email address"),
-                password: Yup.string()
-                    .required("Password is required")
-                    .min(6, "Passwords must contain at least six characters")
-                    .max(30, 'Must be 30 characters or less'),
-                confirmPassword: Yup.string()
-                    .oneOf([Yup.ref('password'), null], 'Passwords must match'),
-            })}
-            onSubmit={handleSubmit}
-        >
-        {({ status }) => (
-        <Form>
-                <Field 
-                    component={SensibleTextField}
-                    name="givenName" 
-                    type="text"
-                    label="Given Name"
-                    disabled={false}
-                />
+            <h2>Register for AZlibrary Admin</h2>
+            <form onSubmit={handleSubmit(doSubmit)} >
+                <TextFieldController name={`givenName`} label="Given name" control={control} errors={errors}/>
                 <br />
 
-                <Field 
-                    component={SensibleTextField}
-                    name="surname" 
-                    type="text"
-                    label="Surname"
-                    disabled={false}
-                />
+                <TextFieldController name={`surname`} label="Surname" control={control} errors={errors}/>
                 <br />
 
-                <Field 
-                    component={SensibleTextField}
-                    name="email" 
-                    type="text"
-                    label="Email"
-                    disabled={false}
-                />
+                <TextFieldController name={`email`} label="Email" control={control} errors={errors}/>
                 <br />
-                
-                <Field 
-                    component={SensibleTextField}
-                    name="password" 
-                    type="password" 
-                    label="Password"
-                    disabled={false}
-                />
+
+                <TextFieldController type="password" name={`password`} label="Password" control={control} errors={errors}/>
                 <br />
-                
-                <Field 
-                    component={SensibleTextField}
-                    name="confirmPassword" 
-                    type="password" 
-                    label="Confirm password"
-                    disabled={false}
-                />
+
+                <TextFieldController type="password" name={`confirmPassword`} label="Confirm password" control={control} errors={errors}/>
                 <br />
 
                 {existingUserCheckbox}
@@ -180,9 +155,7 @@ const RegisterForm = ({ setShowRegistration }) => {
                 {status && status.error && (
                     <div style={apiErrorStyle}>{status.error}</div>
                 )}
-            </Form>
-            )}
-        </Formik>
+            </form>
         </div>
     );
 };

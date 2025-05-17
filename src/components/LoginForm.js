@@ -1,10 +1,11 @@
 import React, { useState, useRef }from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Box } from '@mui/material';
-import { TextField } from 'formik-mui';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { TextFieldController } from './util/TextFieldController';
 
 const origin = window.location.origin;
 
@@ -14,6 +15,31 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     const [search] = useSearchParams();
 
     const [token, setToken] = useAuth();
+
+    const initialValues= {
+        userName: '', 
+        password: '', 
+    }
+
+    const validationSchema= Yup.object().shape({
+        userName: Yup.string()
+            .required("User Name is required")
+            .max(30, 'Must be 30 characters or less'),
+        password: Yup.string()
+            .required("Password is required")
+            .min(6, "Passwords must contain at least six characters")
+            .max(30, 'Must be 30 characters or less'),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    })
+
+    const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
+        defaultValues: initialValues,
+        resolver: yupResolver(validationSchema),
+        mode: "onBlur",
+        trigger: "onBlur",
+    });
+
 
     const loginUser = async (credentials) => {
         console.log("loginUser")
@@ -82,7 +108,8 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
         })
     }
     
-    const handleSubmit = async (values, {setStatus}) => {
+    const [status, setStatus] = useState(null);
+    const doSubmit = async (values) => {
         console.log(values.userName);
         
         const loginResult = await loginUser({
@@ -115,14 +142,14 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     
     const ref = useRef(null);
 
-    let reset = 
+    let resetPW = 
         <Button variant="text" color="secondary" onClick={() => {resetPassword({username: ref.current.values.userName});}}>Reset Password</Button>;
     if (resetStatus) {
         if (resetStatus.ok) {
-            reset = 
+            resetPW = 
                 <div>{resetStatus.message}</div>
         } else {
-            reset = 
+            resetPW = 
                 <div>
                 <Button variant="text" color="secondary" onClick={() => {resetPassword({username: ref.current.values.userName});}}>Reset Password</Button>
                 <div style={apiErrorStyle}>{resetStatus.message}</div>
@@ -132,46 +159,14 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     
     return(
         <div>
-        {search.get("newReg") &&
-            <h2>Registration Successful. Please login.</h2>
-        }
-        <Formik
-            innerRef= {ref}
-            initialValues={{
-                userName: '', 
-                password: '', 
-            }}
-            validationSchema={Yup.object({
-                userName: Yup.string()
-                    .required("User Name is required")
-                    .max(30, 'Must be 30 characters or less'),
-                password: Yup.string()
-                    .required("Password is required")
-                    .min(6, "Passwords must contain at least six characters")
-                    .max(30, 'Must be 30 characters or less'),
-                confirmPassword: Yup.string()
-                    .oneOf([Yup.ref('password'), null], 'Passwords must match')
-            })}
-            onSubmit={handleSubmit}
-        >
-        {({ status }) => (
-        <Form>
-                <Field 
-                    component={TextField}
-                    name="userName" 
-                    type="text"
-                    label="Email"
-                    disabled={false}
-                />
+            {search.get("newReg") &&
+                <h2>Registration Successful. Please login.</h2>
+            }
+            <form onSubmit={handleSubmit(doSubmit)} >
+                <TextFieldController name={`userName`} label="Email" control={control} errors={errors}/>
                 <br />
                 
-                <Field 
-                    component={TextField}
-                    name="password" 
-                    type="password" 
-                    label="Password"
-                    disabled={false}
-                />
+                <TextFieldController type="password" name={`password`} label="Password" control={control} errors={errors}/>
                 <br />
                 <br />
                 <br />
@@ -182,12 +177,10 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
                 {status && status.error && (
                     <div style={apiErrorStyle}>{status.error}</div>
                 )}
-            </Form>
-            )}
-        </Formik>
-        <Button variant="text" color="secondary" onClick={() => {navigate(`/register`);}}>Register</Button>
-        <br />
-        {reset}
+            </form>        
+            <Button variant="text" color="secondary" onClick={() => {navigate(`/register`);}}>Register</Button>
+            <br />
+            {resetPW}
         </div>
     );
 };
