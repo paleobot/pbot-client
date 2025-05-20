@@ -16,6 +16,7 @@ const Mutator = (props) => {
     useEffect(() => {
 
         async function fetchData () {
+            setLoading(true)
             try {
                 let response
                 if (props.mode === "replace") {
