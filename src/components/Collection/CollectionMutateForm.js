@@ -1,20 +1,17 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, InputLabel, Stack, TextField, MenuItem, Checkbox, FormControlLabel, Select, FormControl, Typography, Box, Tab } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Checkbox, FormControlLabel, InputLabel, MenuItem, Stack, Tab, TextField, Typography } from '@mui/material';
 //import { Field, Form, Formik, useFormikContext } from 'formik';
 //import { CheckboxWithLabel } from 'formik-mui';
 import React from 'react';
 import * as Yup from 'yup';
 //import { SensibleTextField } from '../SensibleTextField.js';
-import { MultiManager } from '../MultiManager.js';
-import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ExistingCollectionManager } from './ExistingCollectionManager';
-import { TextFieldController } from '../util/TextFieldController';
-import { FileSelectController } from '../util/FileSelectController.jsx';
-import { AutocompleteController } from '../util/AutocompleteController.jsx';
-import ClearIcon from '@mui/icons-material/Clear';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Autocomplete } from 'formik-mui';
+import { Controller, useForm } from "react-hook-form";
+import { MultiManager } from '../MultiManager.js';
+import { AutocompleteController } from '../util/AutocompleteController.jsx';
+import { TextFieldController } from '../util/TextFieldController';
+import { ExistingCollectionManager } from './ExistingCollectionManager';
 import { FileManager } from './FileManager.jsx';
 
 const LabeledCheckboxController = ({name, label, control, errors, ...props}) => {
@@ -127,6 +124,15 @@ const authorShape = {
     surname: '',
     organization: ''
 };
+const authorSchema = Yup.object().shape({
+    person: Yup.string()
+        .required('Person is required'),
+    givenname: Yup.string()
+        .required('Given name is required'),
+    surname: Yup.string()
+        .required('Surname is required'),
+    organization: Yup.string().nullable(),
+});
 const AuthorFields = ({index, control, errors}) => {
       
     return (
@@ -146,6 +152,10 @@ const linkShape = {
     name: '',
     url: '',
 };
+const linkSchema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    url: Yup.string().url("Must be a valid URL").required('URL is required'),
+});
 const LinkFields = ({index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
@@ -164,6 +174,10 @@ const keywordShape = {
     name: '',
     type: '',
 };
+const keywordSchema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    type: Yup.string().required('Type is required'),
+});
 const KeywordFields = ({index, control, errors}) => {
     return (
         <Stack direction="column" spacing={0} sx={{ marginLeft:"1.5em"}}>
@@ -263,32 +277,12 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 name: Yup.string().required('Collection group is required')
             }).required('Collection group is required'),
             year: Yup.number().min(minYear, `Year must be greater than or equal to ${minYear}`).max(maxYear, `Year must be less than or equal to ${maxYear}`).required('Year is required'),
-            authors: Yup.array().of(
-                Yup.object().shape({
-                    person: Yup.string()
-                        .required('Person is required'),
-                    givenname: Yup.string()
-                        .required('Given name is required'),
-                    surname: Yup.string()
-                        .required('Surname is required'),
-                    organization: Yup.string().nullable(),
-                })
-            ).min(1, 'At least one author is required'),
+            authors: Yup.array().of(authorSchema).min(1, 'At least one author is required'),
             series: Yup.string().required('Series is required'),
             abstract: Yup.string().required('Abstract is required'),
             informalname: Yup.string(),
-            links: Yup.array().of(
-                Yup.object().shape({
-                    name: Yup.string().required('Name is required'),
-                    url: Yup.string().url("Must be a valid URL").required('URL is required'),
-                })
-            ),
-            keywords: Yup.array().of(
-                Yup.object().shape({
-                    name: Yup.string().required('Name is required'),
-                    type: Yup.string().required('Type is required'),
-                })
-            ),
+            links: Yup.array().of(linkSchema),
+            keywords: Yup.array().of(keywordSchema),
             license: Yup.object().shape({
                 name: Yup.string(),
                 url: Yup.string().url(),
@@ -424,7 +418,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             <LabeledCheckboxController name={`metadata.private`} label="Private" control={control} errors={errors} size="large" />
                             <br />
 
-                            <MultiManager label="Authors" name="metadata.authors" content={AuthorFields} shape={authorShape} control={control} watch={watch("authors")} errors={errors}/>
+                            <MultiManager label="Authors" name="metadata.authors" content={AuthorFields} shape={authorShape} schema={authorSchema} control={control} watch={watch("metadata.authors")} errors={errors}/>
                             <br />
 
                             <TextFieldController name={`metadata.series`} label="Series" control={control} errors={errors}/>
@@ -485,7 +479,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                         <TextFieldController name={`metadata.informalname`} label="Informal name" control={control} errors={errors}/>
                                         <br />
 
-                                        <MultiManager label="Links" name="metadata.links" content={LinkFields} shape={linkShape} control={control} watch={watch("metadata.links")} errors={errors} optional/> 
+                                        <MultiManager label="Links" name="metadata.links" content={LinkFields} shape={linkShape} schema={linkSchema} control={control} watch={watch("metadata.links")} errors={errors} optional/> 
                                         <br />
 
                                         <TextFieldController name={`metadata.language`} label="Language" control={control} errors={errors}/>
@@ -527,7 +521,7 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
                                     </TabPanel>
                                     <TabPanel value="3">
 
-                                        <MultiManager label="Keywords" name="metadata.keywords" content={KeywordFields} shape={keywordShape} control={control} watch={watch("metadata.keywords")} errors={errors} optional/>
+                                        <MultiManager label="Keywords" name="metadata.keywords" content={KeywordFields} schema={keywordSchema} shape={keywordShape} control={control} watch={watch("metadata.keywords")} errors={errors} optional/>
                                         <br />
 
                                     </TabPanel>
