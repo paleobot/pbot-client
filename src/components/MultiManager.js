@@ -1,12 +1,12 @@
-import React, { useState }from 'react';
+import React from 'react';
 //import { Field, FieldArray } from 'formik';
-import { Box, Button, Divider, Grid, InputLabel, MenuItem, Stack } from '@mui/material';
+import { Box, Button, Divider, Grid, InputLabel } from '@mui/material';
 //import { TextField } from 'formik-mui';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Controller, useFieldArray } from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 
 
-export const MultiManager = ({name, label, content, control, shape, watch, optional, errors, ...props}) => {
+export const MultiManager = ({name, label, content, control, shape, schema, watch, optional, errors, ...props}) => {
     console.log("MultiManager");
     console.log(JSON.parse(JSON.stringify(control._formValues)));
 
@@ -14,6 +14,15 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
         control,
         name: name,
     });    
+
+    const disabled = (schema, values) => {
+        try {
+            schema.validateSync(values, { strict: true });
+        } catch (e) {
+            return true;
+        }
+        return false;
+    }
 
     if (!optional && !fields.length) {
         append({...shape});
@@ -58,25 +67,21 @@ export const MultiManager = ({name, label, content, control, shape, watch, optio
                 </Grid>
             ))}
         </Grid>
+
         <Button
-                type="button"
-                variant="text" 
-                color="primary" 
-                onClick={() => append({...shape}/*shape ? {...shape} : ''*/)}
-                disabled={
-                    //We don't know what is required, but it doesn't make sense to allow creating another unless the user has at least partially filled in the first. So, only enable if first field is not null.
-                    /*props.values[formElementName] && 
-                    props.values[formElementName].length > 0 && 
-                    !props.values[formElementName][props.values[formElementName].length-1][Object.keys(props.shape)[0]]*/
+            type="button"
+            variant="text" 
+            color="primary" 
+            onClick={() => append({...shape}/*shape ? {...shape} : ''*/)}
+            disabled={
+                //It doesn't make sense to allow creating another unless the current one is legal. If a schema was passed, validate with that. If not, check that at least the first field has a value.
+                schema ? 
+                    watch && watch.length > 0 && disabled(schema, watch[watch.length-1]) :
                     watch && watch.length > 0 && 
                     !watch[watch.length-1][Object.keys(shape)[0]]
-                    //(shape ? 
-                    //    watch[watch.length-1][Object.keys(shape)[0]] === "" :
-                    //</div>    watch[watch.length-1]
-                    //)
-                }
-            >
-                Add another
+            }
+        >
+            Add another
         </Button>
     {/*}/div>*/}
     </Box>
