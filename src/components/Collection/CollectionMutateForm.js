@@ -341,14 +341,8 @@ const CollectionMutateForm = ({handleSubmit: hSubmit, mode}) => {
     }
     
     const doSubmit = async (data) => {
-        //e.preventDefault();
         console.log("doSubmit")
         console.log(JSON.parse(JSON.stringify(data)))
-        //Note: Previous does not show the file names.
-        //console.log(data.documentFiles[0].file.name)
-
-        //TODO: Just experimenting here. Any data manipulation and patch generation will be handled in the mutate functions.
-                
         data.mode = mode;
         await hSubmit(data);
         resetForm();
