@@ -1,8 +1,7 @@
-import { Button, InputLabel, Stack, Typography } from "@mui/material"
-import { TextFieldController } from "../util/TextFieldController";
+import { Button, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { MultiManager } from "../MultiManager";
-import { useWatch } from "react-hook-form";
+import { TextFieldController } from "../util/TextFieldController";
 
 
 export const ExistingCollectionManager = ({supersedes, mode, control, reset, watch, errors, ...props}) => {
@@ -80,7 +79,7 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
         return (
             <Stack direction="row" spacing={0} sx={{ marginLeft:"1.5em"}}>
                 <TextFieldController name={`supersedes.${index}.permID`} label="Old collection" control={control} errors={errors} sx={{width:"90%"}}/>
-             </Stack>
+            </Stack>
         )
     }   
 
@@ -115,6 +114,7 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
             {/*<MultiManager label="Replace existing collections" name="oldCollections" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"oldCollections"})#/watch("oldCollections")} errors={errors} optional/>*/}
 
             <MultiManager label="Replace existing collections" name="supersedes" content={ReplaceFields} shape={replaceShape} control={control} watch={/*useWatch({control, name:"supersedes"})*/watch("supersedes")} errors={errors} />
+            <FetchStatus/>
 
             </>
         )
