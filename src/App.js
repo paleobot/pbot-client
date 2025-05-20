@@ -6,7 +6,6 @@ import { AuthProvider } from './components/AuthContext';
 import Footer from "./components/Footer";
 import { GlobalProvider } from './components/GlobalContext';
 import NavBar from './components/NavBar';
-import logo from './PBOT-logo-transparent.png';
 
 function App(props) {
     console.log("----------------App-------------------------");

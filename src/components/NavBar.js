@@ -19,15 +19,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from '../PBOT-logo-transparent.png';
 import { useAuth } from './AuthContext';
-
-const PBOTIcon = ({rotatePBOT}) => {
-    const rotate = rotatePBOT ? "rotateY(180deg)" : "rotateY(0)";
-    return (
-             <img src={logo} style={{ transform: rotate, transition: "all 0.2s linear", height: "50px" }}  />
-      )
-}
 
 export default function NavBar() {
 
