@@ -206,7 +206,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                     control={control} 
                     errors={errors} 
                     disabled={mode === "edit"}
-                    style={{minWidth: "12ch", marginTop: "1em", width:"75%"}} variant="standard"
+                    style={{minWidth: "12ch", marginTop: "1em", width:"70%"}} variant="standard"
                 />
 
                 <TextFieldController type="password" name={`password`} label="Password" control={control} errors={errors}/>
