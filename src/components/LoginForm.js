@@ -14,7 +14,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     const navigate = useNavigate();
     const [search] = useSearchParams();
 
-    const [token, setToken] = useAuth();
+    const {setToken} = useAuth();
 
     const initialValues= {
         userName: '', 

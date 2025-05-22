@@ -26,8 +26,7 @@ export default function NavBar() {
     const [rotatePBOT, setRotatePBOT] = React.useState(true);
     const navigate = useNavigate();
 
-    //const [auth, setAuth] = React.useState(true);
-    const [token, setToken] = useAuth();
+    const {token, setToken} = useAuth();
     const [anchorEl, setAnchorEl] = React.useState(null);
     
     /*

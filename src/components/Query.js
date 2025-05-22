@@ -24,7 +24,7 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
         );    
     }
 
-    const [token, setToken] = useAuth();
+   const {token} = useAuth();
 
     if(!token) {
         return (<p>Explore access requires authentication</p>)

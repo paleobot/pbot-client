@@ -11,7 +11,7 @@ const Mutator = (props) => {
     let [data, setData] = useState(null)
     let [error, setError] = useState(null)
 
-    const [token, setToken] = useAuth();
+    const {token} = useAuth();
 
     useEffect(() => {
 
