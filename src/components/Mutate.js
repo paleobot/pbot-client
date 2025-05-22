@@ -10,6 +10,7 @@ import CollectionMutateForm from './Collection/CollectionMutateForm';
 import PersonMutateForm from './Person/PersonMutateForm';
 
 import { useAuth } from './AuthContext';
+import CollectionGroupMutateForm from './CollectionGroup/CollectionGroupMutateForm';
 
 
 const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
@@ -26,7 +27,7 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                 <FormControl component="fieldset">
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                         <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end" />
-                        <FormControlLabel value="dictionary" control={<Radio />} label="Dictionary" labelPlacement="end" />
+                        <FormControlLabel value="collectionGroup" control={<Radio />} label="Collection group" labelPlacement="end" />
 
                         <Divider />
 
@@ -81,6 +82,8 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                                     <EditIcon />
                                 </Tooltip>
                             </ToggleButton>
+                            {selectedForm !== "collectionGroup" &&
+                            <>
                             <ToggleButton value="replace" aria-label="replace" >
                                 <Tooltip title="Replace">
                                     <LibraryAddIcon />
@@ -91,6 +94,8 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                                     <RemoveIcon />
                                 </Tooltip>
                             </ToggleButton>
+                            </>
+                            }   
                         </ToggleButtonGroup>
                     }
 
@@ -99,8 +104,8 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                         <CollectionMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
-                    {selectedForm === "dictionary" &&
-                        <CollectionMutateForm handleSubmit={handleSubmit} mode={mode}/>
+                    {selectedForm === "collectionGroup" &&
+                        <CollectionGroupMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
                    {selectedForm === "person" &&
