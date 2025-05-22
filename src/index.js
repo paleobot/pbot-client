@@ -98,8 +98,8 @@ const router = createBrowserRouter([
                         element: <Action selectedForm="collectionGroup" />,
                     },
                     {
-                        path: "person",
-                        element: <Action selectedForm="person" />,
+                        path: "user",
+                        element: <Action selectedForm="user" />,
                     },
                 ]
             }
