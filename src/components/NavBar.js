@@ -66,7 +66,14 @@ export default function NavBar() {
             <Toolbar />
             <Divider />
             <List>
-                <ListItem key="Workbench" disablePadding>
+                <ListItem key="Query" disablePadding>
+                    <ListItemButton onClick={() => {handleDrawerToggle(); navigate(`/query`);}}>
+                        <ListItemIcon>
+                            <ManageSearchIcon/>
+                        </ListItemIcon>
+                        <ListItemText primary="Explore" />
+                    </ListItemButton>
+                </ListItem>                <ListItem key="Workbench" disablePadding>
                     <ListItemButton onClick={() => {handleDrawerToggle(); navigate(`/mutate`);}}>
                         <ListItemIcon>
                             <EngineeringIcon/>
