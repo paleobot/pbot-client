@@ -82,21 +82,19 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                                     <EditIcon />
                                 </Tooltip>
                             </ToggleButton>
+                            {(selectedForm !== "collectionGroup" && selectedForm !== "user") &&
+                                <ToggleButton value="replace" aria-label="replace" >
+                                    <Tooltip title="Replace">
+                                        <LibraryAddIcon />
+                                    </Tooltip>
+                                </ToggleButton>
+                            }
                             {selectedForm !== "collectionGroup" &&
-                                <>
-                                {selectedForm !== "user" &&
-                                    <ToggleButton value="replace" aria-label="replace" >
-                                        <Tooltip title="Replace">
-                                            <LibraryAddIcon />
-                                        </Tooltip>
-                                    </ToggleButton>
-                                }
                                 <ToggleButton value="delete" aria-label="delete" disabled={selectedForm === "person"}>
                                     <Tooltip title="Delete">
                                         <RemoveIcon />
                                     </Tooltip>
                                 </ToggleButton>
-                                </>
                             }   
                         </ToggleButtonGroup>
                     }
