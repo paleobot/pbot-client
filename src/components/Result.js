@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import React from 'react';
 import CollectionMutateResults from './Collection/CollectionMutateResults';
-import PersonMutateResults from './Person/PersonMutateResults';
+import UserMutateResults from './User/UserMutateResults';
 
 const Result = ({queryParams, type, queryEntity}) => {
     console.log(">>>>>>>>>>>>>>>>>>>>>>Result<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -14,7 +14,7 @@ const Result = ({queryParams, type, queryEntity}) => {
             <CollectionMutateResults queryParams={queryParams} />
         ) : 
         type === "mutate" && queryEntity === "person" ? (
-            <PersonMutateResults queryParams={queryParams} />
+            <UserMutateResults queryParams={queryParams} />
         ) : 
         'nothing to show';
         
