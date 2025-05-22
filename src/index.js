@@ -68,6 +68,20 @@ const router = createBrowserRouter([
                 element: <HowToUseAzlibAdmin/>
             },
             {
+                path: "query",
+                element: <AZlibAdminInterface formClass="query" />,
+                children: [
+                    { 
+                        index: true, 
+                        element: <Action /> 
+                    },
+                    {
+                        path: "changes",
+                        element: <Action selectedForm="changes" />,
+                    },
+                ]
+            },
+            {
                 path: "mutate",
                 element: <AZlibAdminInterface formClass="mutate" />,
                 children: [
@@ -80,8 +94,8 @@ const router = createBrowserRouter([
                         element: <Action selectedForm="collection" />,
                     },
                     {
-                        path: "dictionary",
-                        element: <Action selectedForm="specimen" />,
+                        path: "collectiongroup",
+                        element: <Action selectedForm="collectionGroup" />,
                     },
                     {
                         path: "person",
