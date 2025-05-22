@@ -7,11 +7,10 @@ import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import CollectionMutateForm from './Collection/CollectionMutateForm';
-import PersonMutateForm from './Person/PersonMutateForm';
+import UserMutateForm from './User/UserMutateForm';
 
 import { useAuth } from './AuthContext';
 import CollectionGroupMutateForm from './CollectionGroup/CollectionGroupMutateForm';
-
 
 const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
     //This annoying bit of razzle-dazzle is to force MUI RadioGroup to reset when the path is just "/mutate".
@@ -31,7 +30,9 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
 
                         <Divider />
 
-                        <FormControlLabel value="person" control={<Radio />} label="Person" labelPlacement="end" />
+                        {user && user.role_id === 1 && //TODO: should be 3 (superuser)
+                            <FormControlLabel value="user" control={<Radio />} label="User" labelPlacement="end" />
+                        }
                     </RadioGroup>
                 </FormControl>
         );    
@@ -41,9 +42,8 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
     
     const [showRegistration, setShowRegistration] = useState(false);
     
-    //const [token, setToken] = useState(localStorage.getItem('PBOTMutationToken'));
-    const [token, setToken] = useAuth();
-    
+    const {token, user} = useAuth();
+     
     const handleModeChange = (event, newMode) => {
         if (newMode !== null) {
             setShowResult(false);
@@ -83,18 +83,20 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                                 </Tooltip>
                             </ToggleButton>
                             {selectedForm !== "collectionGroup" &&
-                            <>
-                            <ToggleButton value="replace" aria-label="replace" >
-                                <Tooltip title="Replace">
-                                    <LibraryAddIcon />
-                                </Tooltip>
-                            </ToggleButton>
-                            <ToggleButton value="delete" aria-label="delete" disabled={selectedForm === "person"}>
-                                <Tooltip title="Delete">
-                                    <RemoveIcon />
-                                </Tooltip>
-                            </ToggleButton>
-                            </>
+                                <>
+                                {selectedForm !== "user" &&
+                                    <ToggleButton value="replace" aria-label="replace" >
+                                        <Tooltip title="Replace">
+                                            <LibraryAddIcon />
+                                        </Tooltip>
+                                    </ToggleButton>
+                                }
+                                <ToggleButton value="delete" aria-label="delete" disabled={selectedForm === "person"}>
+                                    <Tooltip title="Delete">
+                                        <RemoveIcon />
+                                    </Tooltip>
+                                </ToggleButton>
+                                </>
                             }   
                         </ToggleButtonGroup>
                     }
@@ -108,8 +110,8 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                         <CollectionGroupMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
-                   {selectedForm === "person" &&
-                        <PersonMutateForm handleSubmit={handleSubmit} mode={mode}/>
+                   {selectedForm === "user" &&
+                        <UserMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
 
