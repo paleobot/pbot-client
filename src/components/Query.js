@@ -1,5 +1,7 @@
 import { Divider, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
 import React from 'react';
+import About from './About/About';
+import { useAuth } from './AuthContext';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 
 const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
@@ -16,19 +18,18 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
         return (
             <FormControl component="fieldset">
                 <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                <FormControlLabel value="otu" control={<Radio />} label="Taxon (OTU)" labelPlacement="end"/>
-                <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end"/>
-                <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
-                <Divider />
-                <FormControlLabel value="reference" control={<Radio />} label="Reference" labelPlacement="end"/>
-                <FormControlLabel value="schema" control={<Radio />} label="Schema" labelPlacement="end" />
-                <Divider />
-                <FormControlLabel value="person" control={<Radio />} label="Person" labelPlacement="end"/>
+                <FormControlLabel value="changes" control={<Radio />} label="Changes" labelPlacement="end"/>
                 </RadioGroup>
             </FormControl>  
         );    
     }
-    
+
+    const [token, setToken] = useAuth();
+
+    if(!token) {
+        return (<p>Explore access requires authentication</p>)
+    }
+
     return (
         <Grid container spacing={3} style={{marginLeft:"10px", marginTop: "5px"}}>
             <Grid item>
@@ -37,6 +38,13 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
             
             <Grid item xs>
                 {selectedForm && <Typography variant="h5">Search parameters</Typography>}
+
+                {selectedForm === "changes" &&
+                <>
+                    <About />
+                    {/*<ChangeQueryForm handleSubmit={handleSubmit} />*/}
+                </>
+                }
 
                
             </Grid>
