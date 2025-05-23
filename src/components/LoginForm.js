@@ -6,6 +6,7 @@ import { useAuth } from './AuthContext';
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { TextFieldController } from './util/TextFieldController';
+import { jwtDecode } from 'jwt-decode';
 
 const origin = window.location.origin;
 
@@ -14,7 +15,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     const navigate = useNavigate();
     const [search] = useSearchParams();
 
-    const {setToken} = useAuth();
+    const {setToken, setUser} = useAuth();
 
     const initialValues= {
         userName: '', 
@@ -126,6 +127,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
         if (loginResult.ok) {
             localStorage.setItem('AzlibAdminToken', loginResult.token);
             setToken(loginResult.token);
+            setUser(jwtDecode(loginResult.token).aud);
             console.log("navigating to workbench")
             //navigate("/mutate");
             navigate("/");
