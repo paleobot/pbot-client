@@ -1,5 +1,5 @@
 import { Divider, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Tooltip } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,6 +11,7 @@ import UserMutateForm from './User/UserMutateForm';
 
 import { useAuth } from './AuthContext';
 import CollectionGroupMutateForm from './CollectionGroup/CollectionGroupMutateForm';
+import { GlobalContext } from './GlobalContext';
 
 const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
     //This annoying bit of razzle-dazzle is to force MUI RadioGroup to reset when the path is just "/mutate".
@@ -30,7 +31,7 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
 
                         <Divider />
 
-                        {user && user.role_id === 1 && //TODO: should be 3 (superuser)
+                        {user && user.role_id === global.superuserID && //TODO: should be 3 (superuser)
                             <FormControlLabel value="user" control={<Radio />} label="User" labelPlacement="end" />
                         }
                     </RadioGroup>
@@ -42,6 +43,7 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
     
     const [showRegistration, setShowRegistration] = useState(false);
     
+    const global = useContext(GlobalContext);
     const {token, user} = useAuth();
      
     const handleModeChange = (event, newMode) => {
