@@ -14,10 +14,15 @@ const useAuth = () => {
 const AuthProvider = (props) => {
     const [token, setToken] = React.useState(localStorage.getItem('AzlibAdminToken'))
     
-    const decode = token ? jwtDecode(token) : {aud: null}
-    const [user, setUser] = React.useState(decode.aud)
+    //const decode = token ? jwtDecode(token) : {aud: null}
+    const [user, setUser] = React.useState(null/*decode.aud*/)
     
-    const value = {token, setToken, user, setUser}//React.useMemo(() => {return {token, setToken, user}}, [token, user])//React.useMemo(() => [token, setToken], [token])
+    React.useEffect(() => {
+        const user = token ? jwtDecode(token).aud : null
+        setUser(user);
+      }, [token]);
+    
+    const value = {token, setToken, user}//React.useMemo(() => {return {token, setToken, user}}, [token, user])//React.useMemo(() => [token, setToken], [token])
     return <AuthContext.Provider value={value} {...props} />
 }
 
