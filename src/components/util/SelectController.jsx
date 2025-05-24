@@ -1,6 +1,7 @@
 import { MenuItem, TextField, Typography } from "@mui/material";
 import React from "react";
 import { Controller } from "react-hook-form";
+import { useAuth } from "../AuthContext";
 
 
 export const SelectController = ({name, label, options, control, errors, ...props}) => {
@@ -9,6 +10,9 @@ export const SelectController = ({name, label, options, control, errors, ...prop
     const [data, setData] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
+
+    const {token} = useAuth()
+
   
     React.useEffect(() => {
         const fetchData = async () => {
@@ -20,10 +24,19 @@ export const SelectController = ({name, label, options, control, errors, ...prop
             }
 
             //Otherwise, we need to fetch the data. 
-            //TODO: For now, I'm assuming options is a URL. I might change that to expect only the path, and then add the base URL in the fetchData function.
+            setLoading(true);
             try {
                 console.log(`Fetching data from ${process.env.REACT_APP_AZLIB_API_URL}`);
-                const response = await fetch(new URL(options.path, process.env.REACT_APP_AZLIB_API_URL));
+                const response = await fetch(
+                    new URL(options.path, process.env.REACT_APP_AZLIB_API_URL),
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
