@@ -1,4 +1,4 @@
-import React, { useState }from 'react';
+import React, { useContext, useState }from 'react';
 import * as Yup from 'yup';
 import { Grid, Button } from '@mui/material';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { TextFieldController } from '../util/TextFieldController';
 import { SelectController } from '../util/SelectController';
 import { useAuth } from '../AuthContext';
 import { jwtDecode } from "jwt-decode";
+import { GlobalContext } from '../GlobalContext';
 
 const origin = window.location.origin;
 
@@ -15,6 +16,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const [showUseExistingUser, setshowUseExistingUser] = useState(false);
     const navigate = useNavigate();
 
+    const global = useContext(GlobalContext);
     const {user} = useAuth();
 
     const initialValues = {
@@ -137,13 +139,13 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
     return(
         <div>
-            {!user || (user && user.role_id !== 1) &&
+            {!user || (user && user.role_id !== global.superuserID) &&
             <>
             Must be superuser to administer users
             </>
             }
 
-            {user && user.role_id === 1 &&
+            {user && user.role_id === global.superuserID &&
             <form onSubmit={handleSubmit(doSubmit)} >
 
                 <input 
@@ -192,17 +194,18 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 <SelectController 
                     name="role"
                     label="Role" 
-                    /*options={{
-                        //url: "https://data.azgs.arizona.edu/api/v1/dicts/collection_groups",
-                        path: "api/v1/dicts/roles",
+                    options={{
+                        path: "api/v1/users/roles",
                         nameField: "name",
                         valueField: "role_id"
-                    }}*/ 
+                    }} 
+                    /*
                     options={[
                         {name: "Admin", value: 1}, 
                         {name: "End user", value: 2}, 
                         {name: "Superuser", value: 3}
-                    ]}     
+                    ]}
+                    */     
                     control={control} 
                     errors={errors} 
                     disabled={mode === "edit"}
