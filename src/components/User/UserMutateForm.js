@@ -23,6 +23,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         givenName: '',
         surname: '',
         email: '', 
+        role: '',
         password: '', 
         confirmPassword: '',
         useExistingUser: false,
@@ -52,6 +53,12 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         mode: "onBlur",
         trigger: "onBlur",
     });
+
+    const resetForm = (initValues = initialValues, props) => {
+        //Add random value to ensure results are not retained (e.g. useEffect in Mutator is contingent on this value)
+        initValues.random = Math.random();
+        reset(initValues, props);
+    }
 
     //TODO: Move to UserMutateResult
     const registerUser = async (credentials) => {
@@ -210,6 +217,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                     errors={errors} 
                     disabled={mode === "edit"}
                     style={{minWidth: "12ch", marginTop: "1em", width:"70%"}} variant="standard"
+                    includeEmptyOption={true}
                 />
 
                 <TextFieldController type="password" name={`password`} label="Password" control={control} errors={errors}/>
@@ -227,7 +235,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                     <Button type="submit" variant="contained" color="primary">Register</Button>
                     </Grid>
                     <Grid item>
-                    <Button type="button" variant="text" color="secondary" onClick={handleCancel}>Cancel</Button>
+                    <Button type="button" variant="text" color="secondary" onClick={() => {resetForm()}}>Reset</Button>
                     </Grid>
                 </Grid>
             
