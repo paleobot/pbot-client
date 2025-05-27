@@ -67,7 +67,7 @@ export const SelectController = ({name, label, options, control, errors, ...prop
         return <Typography color="error" variant="caption">Error accessing API: {error.message}</Typography>;
     }
 
-  
+    const {includeEmptyOption, ...otherProps} = props;
     return (
         <Controller
             control={control}
@@ -75,17 +75,22 @@ export const SelectController = ({name, label, options, control, errors, ...prop
             render={({ field, fieldState }) => 
                 <TextField
                     {...field}
-                    {...props}
+                    {...otherProps}
                     select
                     sx={[
                         {minWidth: "12ch"},
                         // You cannot spread `sx` directly because `SxProps` (typeof sx) can be an array.
-                        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
+                        ...(Array.isArray(otherProps.sx) ? otherProps.sx : [otherProps.sx]),
                     ]}
                     label={label}
                     error={fieldState.invalid} 
                     helperText={fieldState.error?.message}
                 >
+                    {includeEmptyOption && 
+                        <MenuItem value="">
+                            <em>None</em>
+                        </MenuItem>
+                    }
                     {data.map((option, index) => (
                         <MenuItem value={option.value}>{option.name}</MenuItem>
                     ))}
