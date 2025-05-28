@@ -13,7 +13,7 @@ const Result = ({queryParams, type, queryEntity}) => {
         type === "mutate" && queryEntity === "collection" ? (
             <CollectionMutateResults queryParams={queryParams} />
         ) : 
-        type === "mutate" && queryEntity === "person" ? (
+        type === "mutate" && queryEntity === "user" ? (
             <UserMutateResults queryParams={queryParams} />
         ) : 
         'nothing to show';
