@@ -7,18 +7,21 @@ const UserMutateResults = ({queryParams}) => {
 
     return (
         <Mutator 
-            params={{
-                pbotID: queryParams.person || null,
-                given: queryParams.given || null,
-                middle: queryParams.middle || null,
-                surname: queryParams.surname || null,
+            data={{
+                firstName: queryParams.givenName || null,
+                lastName: queryParams.surname || null,
                 email: queryParams.email || null,
-                orcid: queryParams.orcid || null,
+                desiredRole: queryParams.role || null,
+                password: queryParams.password || null,
+                organization: queryParams.organization || "AZGS",
+                tos: queryParams.tos || true,
             }}
-            entity="Person"
+            entity="users"
             mode={queryParams.mode}
+            random={queryParams.random}
         />
     );
+
 };
 
 export default UserMutateResults;

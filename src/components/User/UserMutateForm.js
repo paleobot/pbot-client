@@ -1,6 +1,6 @@
 import React, { useContext, useState }from 'react';
 import * as Yup from 'yup';
-import { Grid, Button } from '@mui/material';
+import { Grid, Button, Typography } from '@mui/material';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -24,6 +24,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         surname: '',
         email: '', 
         role: '',
+        organization: '',
         password: '', 
         confirmPassword: '',
         useExistingUser: false,
@@ -60,45 +61,18 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         reset(initValues, props);
     }
 
-    //TODO: Move to UserMutateResult
-    const registerUser = async (credentials) => {
-        return fetch(origin + '/api/v1/users?signup=true', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(credentials)
-        })
-        .then(response => {
-            console.log(response);
-            //TODO: there is an "ok" built into the server response. Would be nice to check that here, rather than deferring to the next "then"
-            return response.json()
-        })
-        .then(data => {
-            console.log(data);
-            if (data.msg) {
-                const success = data.msg === "User created";
-                return { ok: success, message: data.msg}
-            } else {
-                throw new Error("Unrecognized message from server");
-            }
-        })
-        .catch(error => {
-            console.log(error);
-            return {ok: false, message: "Network error"}; //Could be anything, really
-        })
-    }
 
     //TODO: Look into pushing previous page in React Router so we can navigate back to there.
-    
-    const handleCancel = () => {       
-        navigate("/login");
-    }
-            
+                
     const [status, setStatus] = useState(null);
-    const doSubmit = async (values) => {
-        console.log(values.givenName);
-        
+    const doSubmit = async (data) => {
+        console.log("doSubmit")
+        console.log(JSON.parse(JSON.stringify(data)))
+        data.mode = mode;
+        await hSubmit(data);
+        resetForm();
+         
+        /*
         const result = await registerUser({firstName: values.givenName, lastName: values.surname, email: values.email, password: values.password, organization: "AZlibrary", tos: true});
         
         if (result.ok) {
@@ -111,6 +85,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
             //    setshowUseExistingUser(true);
             //}
         }
+        */
     }
     
     //TODO: try out styled-components
@@ -132,7 +107,51 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         ) :
         '';
 
-    /*
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const {token} = useAuth();
+
+    const fetchData = async (permID) => {
+        console.log("fetchData");
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(
+                new URL(`api/v1/users/${permID}`, process.env.REACT_APP_AZLIB_API_URL),
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': "Bearer " + token
+                    },
+                }
+            );
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            let json = await response.json();
+            console.log(JSON.parse(JSON.stringify(json)));
+            
+            console.log("data:");
+            console.log(json.data);
+
+            const initValues = {
+                givenName: json.data.first_name,
+                surname: json.data.last_name,
+                email: json.data.email,
+                role: json.data.role_id,
+                organization: json.data.organization,
+                //tos: queryParams.tos
+            }
+
+            reset(initValues, {keepDefaultValues: true});
+            setLoading(false);
+        } catch (e) {
+            setError(e);
+            setLoading(false);
+        }
+    }
+
     const FetchStatus = () => {
         if (loading) {
             return <Typography variant="body1">Loading...</Typography>;
@@ -142,8 +161,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
             return <Typography color="error" variant="caption">Error accessing API: {error.message}</Typography>;
         }
     }
-    */
-
+    
     return(
         <div>
             {!user || (user && user.role_id !== global.superuserID) &&
@@ -169,8 +187,8 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             options={{
                                 //url: "https://data.azgs.arizona.edu/api/v1/users",
                                 path: "api/v1/users",
-                                nameField: "name",
-                                valueField: "id"
+                                nameField: "full_name",
+                                valueField: "user_id"
                             }} 
                             control={control} 
                             errors={errors} 
@@ -182,20 +200,23 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                             }}
                         />
                         <br />
-                        {/*<FetchStatus/>*/}
+                        <FetchStatus/>
 
                         <br />
                         <br />
                     </div>
                 }
 
-                <TextFieldController name={`givenName`} label="Given name" control={control} errors={errors}/>
+                <TextFieldController name={`givenName`} label="Given name" control={control} errors={errors} disabled={mode === "delete"}/>
                 <br />
 
-                <TextFieldController name={`surname`} label="Surname" control={control} errors={errors}/>
+                <TextFieldController name={`surname`} label="Surname" control={control} errors={errors} disabled={mode === "delete"}/>
                 <br />
 
-                <TextFieldController name={`email`} label="Email" control={control} errors={errors}/>
+                <TextFieldController name={`email`} label="Email" control={control} errors={errors} disabled={mode === "delete"}/>
+                <br />
+
+                <TextFieldController name={`organization`} label="Organization" control={control} errors={errors} disabled={mode === "delete"}/>
                 <br />
 
                 <SelectController 
@@ -215,15 +236,15 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                     */     
                     control={control} 
                     errors={errors} 
-                    disabled={mode === "edit"}
+                    disabled={mode === "delete"}
                     style={{minWidth: "12ch", marginTop: "1em", width:"70%"}} variant="standard"
                     includeEmptyOption={true}
                 />
 
-                <TextFieldController type="password" name={`password`} label="Password" control={control} errors={errors}/>
+                <TextFieldController type="password" name={`password`} label="Password" control={control} errors={errors} disabled={mode === "delete"}/>
                 <br />
 
-                <TextFieldController type="password" name={`confirmPassword`} label="Confirm password" control={control} errors={errors}/>
+                <TextFieldController type="password" name={`confirmPassword`} label="Confirm password" control={control} errors={errors} disabled={mode === "delete"}/>
                 <br />
 
                 {existingUserCheckbox}
