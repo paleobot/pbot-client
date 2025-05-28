@@ -5,8 +5,6 @@ const Mutator = (props) => {
     console.log("Mutator");
     console.log(props);
     
-    const entityID="pbotID";
-
     let [loading, setLoading] = useState(false)
     let [data, setData] = useState(null)
     let [error, setError] = useState(null)
@@ -61,18 +59,30 @@ const Mutator = (props) => {
                     );                
                 } else {
                     console.log("POSTing");
-                    
+                    console.log(props.data)
+
                     response = await fetch(
-                        `${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}`,
-                        {
-                            method: 'POST',
-                            headers: {
-                                //'Content-Type': 'multipart/form-data',
-                                'Accept': 'application/json',
-                                'Authorization': "Bearer " + token
-                            },
-                            body: props.data,
-                        }
+                        //API is a little different for user registration
+                        `${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}${props.entity === "users" ? "?signup=true" : ""}`,
+                        data instanceof FormData ?
+                            {
+                                method: 'POST',
+                                headers: {
+                                    //'Content-Type': 'multipart/form-data',
+                                    'Accept': 'application/json',
+                                    'Authorization': "Bearer " + token
+                                },
+                                body: props.data,                           
+                            } :
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'Authorization': "Bearer " + token
+                                },
+                                body: JSON.stringify(props.data)
+                            }
                     );    
                 }
                 console.log("response");
