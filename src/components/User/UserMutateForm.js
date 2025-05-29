@@ -20,6 +20,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const {user} = useAuth();
 
     const initialValues = {
+        person: '',
         givenName: '',
         surname: '',
         email: '', 
@@ -41,12 +42,18 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
             .max(30, 'Must be 30 characters or less')
             .email("Must be a valid email address"),
         password: Yup.string()
-            .required("Password is required")
-            .min(6, "Passwords must contain at least six characters")
-            .max(30, 'Must be 30 characters or less'),
+            .test('isRequired', 'Password is required for new users', (value) => {return mode === "create" ? !!value : true})
+            .test('isShort', 'Passwords must contain at least six characters', (value) => {return mode === "create" ? value && value.length > 6 : true})
+            .test('isLong', 'Must be 30 characters or less', (value) => {return mode === "create" ? value && value.length < 30 : true}),
         confirmPassword: Yup.string()
             .oneOf([Yup.ref('password'), null], 'Passwords must match'),
     })
+
+    //To clear form when mode changes 
+    React.useEffect(() => {
+            resetForm();
+    },[mode]);
+    
 
     const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
         defaultValues: initialValues,
@@ -70,22 +77,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         console.log(JSON.parse(JSON.stringify(data)))
         data.mode = mode;
         await hSubmit(data);
-        resetForm();
-         
-        /*
-        const result = await registerUser({firstName: values.givenName, lastName: values.surname, email: values.email, password: values.password, organization: "AZlibrary", tos: true});
-        
-        if (result.ok) {
-            navigate("/login?newReg=true");
-        } else {
-            setStatus({error: result.message});
-
-            //TODO: Not sure if we will provide use existing user functionality. If we do, we need to set the checkbox.
-            //if (result.message === "Unregistered user with that email found") {
-            //    setshowUseExistingUser(true);
-            //}
-        }
-        */
+        resetForm();         
     }
     
     //TODO: try out styled-components
@@ -136,11 +128,13 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
             console.log(json.data);
 
             const initValues = {
+                person: permID,
                 givenName: json.data.first_name,
                 surname: json.data.last_name,
                 email: json.data.email,
                 role: json.data.role_id,
                 organization: json.data.organization,
+                random: Math.random()
                 //tos: queryParams.tos
             }
 
@@ -253,7 +247,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
 
                 <Grid container spacing={1} style={{justifyContent: "center", align: "center"}}>
                     <Grid item>
-                    <Button type="submit" variant="contained" color="primary">Register</Button>
+                    <Button type="submit" variant="contained" color="primary">Submit</Button>
                     </Grid>
                     <Grid item>
                     <Button type="button" variant="text" color="secondary" onClick={() => {resetForm()}}>Reset</Button>
