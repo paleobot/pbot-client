@@ -35,15 +35,25 @@ const Mutator = (props) => {
                     console.log("PATCHing");
                     response = await fetch(
                         `${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}/${props.id}`,
-                        {
-                            method: 'PATCH',
-                            headers: {
-                                //'Content-Type': 'multipart/form-data', let the browser set this
-                                'Accept': 'application/json',
-                                'Authorization': "Bearer " + token
-                            },
-                            body: props.data,
-                        }
+                        props.data instanceof FormData ?
+                            {
+                                method: 'PATCH',
+                                headers: {
+                                    //'Content-Type': 'multipart/form-data',
+                                    'Accept': 'application/json',
+                                    'Authorization': "Bearer " + token
+                                },
+                                body: props.data,                           
+                            } :
+                            {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'Authorization': "Bearer " + token
+                                },
+                                body: JSON.stringify(props.data)
+                            }
                     );                
                 } else if (props.mode === "delete") {
                     console.log("DELETing");
@@ -64,7 +74,7 @@ const Mutator = (props) => {
                     response = await fetch(
                         //API is a little different for user registration
                         `${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}${props.entity === "users" ? "?signup=true" : ""}`,
-                        data instanceof FormData ?
+                        props.data instanceof FormData ?
                             {
                                 method: 'POST',
                                 headers: {
