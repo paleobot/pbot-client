@@ -17,6 +17,7 @@ const UserMutateResults = ({queryParams}) => {
                 tos: queryParams.tos || true,
             }}
             entity="users"
+            id={queryParams.person}
             mode={queryParams.mode}
             random={queryParams.random}
         />
