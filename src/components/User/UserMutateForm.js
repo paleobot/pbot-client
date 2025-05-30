@@ -1,19 +1,18 @@
-import React, { useContext, useState }from 'react';
-import * as Yup from 'yup';
-import { Grid, Button, Typography } from '@mui/material';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { TextFieldController } from '../util/TextFieldController';
-import { SelectController } from '../util/SelectController';
+import { Button, Grid, Stack, Typography } from '@mui/material';
+import React, { useContext, useState } from 'react';
+import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
 import { useAuth } from '../AuthContext';
-import { jwtDecode } from "jwt-decode";
 import { GlobalContext } from '../GlobalContext';
+import { LabeledCheckboxController } from '../util/LabeledCheckboxController';
+import { SelectController } from '../util/SelectController';
+import { TextFieldController } from '../util/TextFieldController';
 
 const origin = window.location.origin;
 
 const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
-    const [showUseExistingUser, setshowUseExistingUser] = useState(false);
     const navigate = useNavigate();
 
     const global = useContext(GlobalContext);
@@ -28,7 +27,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         organization: '',
         password: '', 
         confirmPassword: '',
-        useExistingUser: false,
+        includeRemoved: false,
     }
     const validationSchema= Yup.object().shape({
         givenName: Yup.string()
@@ -55,7 +54,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
     },[mode]);
     
 
-    const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
+    const { handleSubmit, reset, control, watch, useWatch, getValues, formState: {errors} } = useForm({
         defaultValues: initialValues,
         resolver: yupResolver(validationSchema),
         mode: "onBlur",
@@ -85,31 +84,19 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         color: 'red'
     };
     
-    let existingUserCheckbox = showUseExistingUser ? (
-            <div>
-                <Field 
-                    component={CheckboxWithLabel}
-                    name="useExistingUser" 
-                    type="checkbox"
-                    Label={{label:"Use existing user"}}
-                    disabled={false}
-                />
-                <br />
-            </div>
-        ) :
-        '';
+    const watchIncludeRemoved = watch("includeRemoved");
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const {token} = useAuth();
 
-    const fetchData = async (permID) => {
+    const fetchData = async (permID, includeRemoved) => {
         console.log("fetchData");
         setLoading(true);
         setError(null);
         try {
             const response = await fetch(
-                new URL(`api/v1/users/${permID}`, process.env.REACT_APP_AZLIB_API_URL),
+                new URL(`api/v1/users/${permID}${includeRemoved ? '?includeRemoved=true' : ''}`, process.env.REACT_APP_AZLIB_API_URL),
                 {
                     method: 'GET',
                     headers: {
@@ -134,7 +121,8 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 email: json.data.email,
                 role: json.data.role_id,
                 organization: json.data.organization,
-                random: Math.random()
+                random: Math.random(),
+                includeRemoved: includeRemoved,
                 //tos: queryParams.tos
             }
 
@@ -175,24 +163,55 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
             
                 {(mode === "edit" || mode === "delete") &&
                     <div>
+                        <Stack direction="row" spacing={1} sx={{marginBottom: "1em"}}>
+                        {/*userSelect*/}
+                        
+                        {watchIncludeRemoved && 
                         <SelectController 
                             name="person"
-                            label="Existing person" 
+                            label="Existing person"
                             options={{
                                 //url: "https://data.azgs.arizona.edu/api/v1/users",
-                                path: "api/v1/users",
+                                path: `api/v1/users?includeRemoved=true`,
                                 nameField: "full_name",
                                 valueField: "user_id"
-                            }} 
+                            }}
                             control={control} 
                             errors={errors} 
                             style={{minWidth: "12ch", marginTop: "1em", width:"75%"}} variant="standard"
                             onChange={(e) => {
                                 console.log("onChange")
                                 console.log(e)
-                                fetchData(e.target.value);
+                                fetchData(e.target.value, getValues("includeRemoved"));
                             }}
                         />
+                        }
+                        {!watchIncludeRemoved && 
+                        <SelectController 
+                            name="person"
+                            label="Existing person"
+                            options={{
+                                //url: "https://data.azgs.arizona.edu/api/v1/users",
+                                path: `api/v1/users`,
+                                nameField: "full_name",
+                                valueField: "user_id"
+                            }}
+                            control={control} 
+                            errors={errors} 
+                            style={{minWidth: "12ch", marginTop: "1em", width:"75%"}} variant="standard"
+                            onChange={(e) => {
+                                console.log("onChange")
+                                console.log(e)
+                                fetchData(e.target.value, getValues("includeRemoved"));
+                            }}
+                        />
+                        }
+                        
+                        
+                        {mode === "edit" &&
+                            <LabeledCheckboxController name="includeRemoved" label="Include removed users" control={control} errors={errors}/>
+                        }
+                        </Stack>
                         <br />
                         <FetchStatus/>
 
@@ -241,7 +260,6 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 <TextFieldController type="password" name={`confirmPassword`} label="Confirm password" control={control} errors={errors} disabled={mode === "delete"}/>
                 <br />
 
-                {existingUserCheckbox}
                 <br />
                 <br />
 
