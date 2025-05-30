@@ -30,12 +30,23 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
         includeRemoved: false,
     }
     const validationSchema= Yup.object().shape({
-        givenName: Yup.string()
-            .required("Given Name is required")
-            .max(30, 'Must be 30 characters or less'),
+        givenName: Yup.string(),
         surname: Yup.string()
-            .required("Surname is required")
-            .max(30, 'Must be 30 characters or less'),
+            .when(
+                "organization", {
+                    is: (organization) => !organization,
+                    then: (schema) => schema.required("Either Surname or Organization is required"),
+                    otherwise: (schema) => schema.notRequired()
+                }
+            ),
+        organization: Yup.string()
+            .when(
+                "surname", {
+                    is: (surname) => !surname,
+                    then: (schema) => schema.required("Either Organization or Surname is required"),
+                    otherwise: (schema) => schema.notRequired()
+                }
+            ),
         email: Yup.string()
             .required("Email is required")
             .max(30, 'Must be 30 characters or less')
@@ -46,7 +57,7 @@ const UserMutateForm = ({handleSubmit: hSubmit, mode}) => {
             .test('isLong', 'Must be 30 characters or less', (value) => {return mode === "create" ? value && value.length < 30 : true}),
         confirmPassword: Yup.string()
             .oneOf([Yup.ref('password'), null], 'Passwords must match'),
-    })
+    }, [['surname', 'organization']]); //Weird Yup way to ensure that either surname or organization is required, but not both. See https://github.com/jquense/yup/issues/720 regarding noSortEdges.
 
     //To clear form when mode changes 
     React.useEffect(() => {
