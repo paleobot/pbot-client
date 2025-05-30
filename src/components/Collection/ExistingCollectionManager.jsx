@@ -2,6 +2,7 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { MultiManager } from "../MultiManager";
 import { TextFieldController } from "../util/TextFieldController";
+import { useAuth } from "../AuthContext";
 
 
 export const ExistingCollectionManager = ({supersedes, mode, control, reset, watch, errors, ...props}) => {
@@ -10,13 +11,24 @@ export const ExistingCollectionManager = ({supersedes, mode, control, reset, wat
     //const [data, setData] = useState(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const {token} = useAuth();
 
     const fetchData = async (permID) => {
         console.log("fetchData");
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(new URL(`api/v1/metadata/${permID}`, process.env.REACT_APP_AZLIB_API_URL));
+            const response = await fetch(
+                new URL(`api/v1/metadata/${permID}`, process.env.REACT_APP_AZLIB_API_URL),
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': "Bearer " + token
+                    },
+                }
+
+            );
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
