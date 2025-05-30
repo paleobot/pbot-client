@@ -45,7 +45,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
         console.log("loginUser")
             //return { ok: true, token: "Hi there", pbotID: "none"}
 
-        return fetch(origin + '/api/v1/users', {
+        return fetch(origin + '/api/v1/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -179,9 +179,11 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
                     <div style={apiErrorStyle}>{status.error}</div>
                 )}
             </form>        
+            {/*
             <Button variant="text" color="secondary" onClick={() => {navigate(`/register`);}}>Register</Button>
             <br />
             {resetPW}
+            */}
         </div>
     );
 };
