@@ -33,6 +33,7 @@ const CollectionGroupMutateForm = ({handleSubmit: hSubmit, mode}) => {
                 desc: json.data.desc,
                 abbrv: json.data.abbrv,
                 mode: mode,
+                random: Math.random(),
             }
 
             reset(initValues, {keepDefaultValues: true});
