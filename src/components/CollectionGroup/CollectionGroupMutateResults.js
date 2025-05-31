@@ -2,22 +2,24 @@ import React, { useEffect } from 'react';
 import Mutator from '../Mutator';
 
 const CollectionGroupMutateResults = ({queryParams}) => {
-    console.log("OrganMutateResults");
+    console.log("CollectionGroupMutateResults");
     console.log(queryParams);
 
     return (
         <>
-        <p>Not yet implemented</p>
-        {/*}
+        
         <Mutator
-            params={{
-                pbotID: queryParams.organ || null,
-                type: queryParams.type || null,
+            data={{
+                collection_group_name: queryParams.name || null,
+                collection_group_desc: queryParams.desc || null,
+                collection_group_abbrv: queryParams.abbrv || null,
             }}
-            entity="Organ"
+            entity="dicts/collection_groups"
+            id={queryParams.cg || null}
             mode={queryParams.mode}
+            random={queryParams.random}
         />
-        */}
+        
         </>
     );
 };
