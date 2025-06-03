@@ -76,8 +76,8 @@ const router = createBrowserRouter([
                         element: <Action /> 
                     },
                     {
-                        path: "changes",
-                        element: <Action selectedForm="changes" />,
+                        path: "change",
+                        element: <Action selectedForm="change" />,
                     },
                 ]
             },

@@ -2,6 +2,7 @@ import { Divider, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typogr
 import React from 'react';
 import About from './About/About';
 import { useAuth } from './AuthContext';
+import ChangeQueryForm from './Change/ChangeQueryForm';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
 
 const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
@@ -18,7 +19,7 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
         return (
             <FormControl component="fieldset">
                 <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                <FormControlLabel value="changes" control={<Radio />} label="Changes" labelPlacement="end"/>
+                <FormControlLabel value="change" control={<Radio />} label="Change" labelPlacement="end"/>
                 </RadioGroup>
             </FormControl>  
         );    
@@ -39,10 +40,9 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
             <Grid item xs>
                 {selectedForm && <Typography variant="h5">Search parameters</Typography>}
 
-                {selectedForm === "changes" &&
+                {selectedForm === "change" &&
                 <>
-                    <About />
-                    {/*<ChangeQueryForm handleSubmit={handleSubmit} />*/}
+                    <ChangeQueryForm handleSubmit={handleSubmit} />
                 </>
                 }
 

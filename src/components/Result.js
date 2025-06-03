@@ -3,6 +3,7 @@ import React from 'react';
 import CollectionMutateResults from './Collection/CollectionMutateResults';
 import UserMutateResults from './User/UserMutateResults';
 import CollectionGroupMutateResults from './CollectionGroup/CollectionGroupMutateResults';
+import ChangeQueryResults from './Change/ChangeQueryResults';
 
 const Result = ({queryParams, type, queryEntity}) => {
     console.log(">>>>>>>>>>>>>>>>>>>>>>Result<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -19,6 +20,9 @@ const Result = ({queryParams, type, queryEntity}) => {
         ) : 
         type === "mutate" && queryEntity === "user" ? (
             <UserMutateResults queryParams={queryParams} />
+        ) : 
+        type === "query" && queryEntity === "change" ? (
+            <ChangeQueryResults queryParams={queryParams} />
         ) : 
         'nothing to show';
         
