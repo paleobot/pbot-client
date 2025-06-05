@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 
 const AZlibAdminInterface = (props) => {
-    console.log("----------PBOTInterface--------------");
+    console.log("----------AZlibAdminInterface--------------");
     console.log(props);
     const navigate = useNavigate();
 
