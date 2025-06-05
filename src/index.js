@@ -12,7 +12,6 @@ import Action from './components/Action';
 import Home from './components/Home';
 import LoginForm from './components/LoginForm';
 import AZlibAdminInterface from './components/AZlibAdminInterface';
-import RegisterForm from './components/RegisterForm';
 import './index.css';
 import About from './components/About/About';
 import HowToUseAzlibAdmin from './components/HowToUseAzlibAdmin/HowToUseAzlibAdmin';
@@ -55,12 +54,6 @@ const router = createBrowserRouter([
                 path: "login",
                 element: <LoginForm/>
             },
-            /*
-            {
-                path: "register",
-                element: <RegisterForm/>
-            },
-            */
             {
                 path: "about",
                 element: <About/>
