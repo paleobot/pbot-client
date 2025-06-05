@@ -70,7 +70,7 @@ const CollectionGroupMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
         defaultValues: initValues,
         //resolver: yupResolver(validationSchema),
-        resolver: mode === "delete" ? yupResolver(deleteValidationSchema) : yupResolver(validationSchema),
+        resolver: yupResolver(validationSchema),
         mode: "onBlur",
         trigger: "onBlur",
       });
