@@ -7,7 +7,8 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { TextFieldController } from './util/TextFieldController';
 
-const origin = window.location.origin;
+//const origin = window.location.origin;
+const origin = process.env.REACT_APP_AZLIB_API_URL
 
 const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
 
