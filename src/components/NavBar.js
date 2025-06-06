@@ -72,7 +72,8 @@ export default function NavBar() {
                         </ListItemIcon>
                         <ListItemText primary="Explore" />
                     </ListItemButton>
-                </ListItem>                <ListItem key="Workbench" disablePadding>
+                </ListItem>                
+                <ListItem key="Workbench" disablePadding>
                     <ListItemButton onClick={() => {handleDrawerToggle(); navigate(`/mutate`);}}>
                         <ListItemIcon>
                             <EngineeringIcon/>
@@ -134,7 +135,8 @@ export default function NavBar() {
                                 onClick={handleMenu}
                                 color="inherit"
                             >
-                                <AccountCircle fontSize='large' color='primary'/>
+                                <AccountCircle fontSize='large'                                 color={"Workbench" === location ? "primary":"secondary"}
+                                />
                             </IconButton>
                             <Menu
                                 id="menu-appbar"
