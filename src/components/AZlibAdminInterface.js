@@ -52,7 +52,7 @@ const AZlibAdminInterface = (props) => {
         setSelectedTab(1);
 
         //push another frame on history in case user uses Back button to get back to Actions tab
-        navigate(`${window.location.pathname}`); 
+        navigate(`${window.location.pathname.replace('/admin', '')}`); 
     };
         
     //Figure out what we're doing from the path, massage it, and send to Result as queryEntity
