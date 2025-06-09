@@ -1,4 +1,4 @@
-import React, { useState }from 'react';
+import React, { useContext, useState }from 'react';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Typography, Stack } from '@mui/material';
 import { alphabetize } from '../../util.js';
@@ -7,8 +7,13 @@ import { Controller, useForm } from "react-hook-form";
 import { TextFieldController } from '../util/TextFieldController';
 import { SelectController } from '../util/SelectController.jsx';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useAuth } from '../AuthContext.js';
+import { GlobalContext } from '../GlobalContext.js';
 
 const CollectionGroupMutateForm = ({handleSubmit: hSubmit, mode}) => {
+
+    const global = useContext(GlobalContext);
+    const {user} = useAuth();
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -97,7 +102,14 @@ const CollectionGroupMutateForm = ({handleSubmit: hSubmit, mode}) => {
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     const accstyle = {textAlign: "left", width: "100%"}
     return (
-       
+        <>
+        {!user || (user && user.role_id !== global.superuserID) &&
+            <>
+            Must be superuser to administer collection groups
+            </>
+        }
+
+        {user && user.role_id === global.superuserID &&
         <form onSubmit={handleSubmit(doSubmit)} >
             <input 
                 name="mode" 
@@ -169,7 +181,8 @@ const CollectionGroupMutateForm = ({handleSubmit: hSubmit, mode}) => {
             <br />
             
         </form>
-    
+        }
+        </>
     );
 };
 

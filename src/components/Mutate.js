@@ -27,12 +27,14 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                 <FormControl component="fieldset">
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
                         <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end" />
-                        <FormControlLabel value="collectionGroup" control={<Radio />} label="Collection group" labelPlacement="end" />
 
                         <Divider />
 
-                        {user && user.role_id === global.superuserID && //TODO: should be 3 (superuser)
+                        {user && user.role_id === global.superuserID && 
+                        <>
+                            <FormControlLabel value="collectionGroup" control={<Radio />} label="Collection group" labelPlacement="end" />
                             <FormControlLabel value="user" control={<Radio />} label="User" labelPlacement="end" />
+                        </>
                         }
                     </RadioGroup>
                 </FormControl>
