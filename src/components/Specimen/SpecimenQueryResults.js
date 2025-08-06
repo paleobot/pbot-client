@@ -529,7 +529,7 @@ function Specimens(props) {
 
                                 <Box sx={boxedDisplay}>
                                     <Typography variant="caption">Collection</Typography><br />
-                                    <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/collection/" + s.collection.pbotID).toString()}  target="_blank">{s.collection.name}</Link>
+                                    <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/collection/" + s.collection.pbotID + "?includeSpecimens=true").toString()}  target="_blank">{s.collection.name}</Link>
                                 </Box>
                                 <br />
                                 <Box sx={boxedDisplay}><Typography variant="caption">Country</Typography><br />{s.collection.country ? 
@@ -569,7 +569,7 @@ function Specimens(props) {
                                                         <AlternatingTableRow key={otu.OTU.pbotID}>
                                                             <TableCell align="left" sx={{fontSize: "1rem"}}>
                                                                 <Box sx={boxedDisplay}><Typography variant="caption">Example of taxon/OTU</Typography><br />
-                                                                    <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/otu/" + otu.OTU.pbotID).toString()}  target="_blank">{otu.OTU.name}</Link>
+                                                                    <Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/otu/" + otu.OTU.pbotID + "?includeHolotypeDescription=true&includeMergedDescription=true").toString()}  target="_blank">{otu.OTU.name}</Link>
                                                                 </Box>
 
                                                                 <Box sx={boxedDisplay}><Typography variant="caption">Exemplar specimen type</Typography><br />{

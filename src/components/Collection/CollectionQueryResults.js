@@ -18,7 +18,7 @@ function Specimens(props) { //TODO: move this to standalone file in Specimens fo
     const style = props.top ? {marginLeft:"4em"} : {marginLeft:"2em"};
     console.log(style);
     return specimens.map(({pbotID, name}) => {
-        const directURL = new URL(window.location.origin + "/query/specimen/" + pbotID);
+        const directURL = new URL(window.location.origin + "/query/specimen/" + pbotID + "?includeImages=true&includeDescriptions=true&includeOTUs=true");
         return (
             <>
             <Link key={pbotID}  color="success.main" underline="hover" href={directURL}  target="_blank">{name}</Link><br />
