@@ -259,8 +259,11 @@ export const CollectionSelect = (props) => {
             formikProps.setFieldValue("numericagemaxtype", collection.numericAgeMaxType || '');
             formikProps.setFieldValue("agecomments", collection.ageComments || '');
             formikProps.setFieldValue("preservationmodes", collection.preservationModes ? collection.preservationModes.map(preservationMode => preservationMode.pbotID) : []);
-            formikProps.setFieldValue("public", collection.elementOf && collection.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false));
-            formikProps.setFieldValue("origPublic", formikProps.values.public);
+
+            const isPublic = collection.elementOf && collection.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false)
+            formikProps.setFieldValue("public", isPublic);
+            formikProps.setFieldValue("origPublic", isPublic);
+            
             formikProps.setFieldValue("groups", groups || []);
             formikProps.setFieldValue("specimens", collection.specimens ? collection.specimens.map(specimen => specimen.pbotID) : []);
             formikProps.setFieldValue("references", collection.references ? collection.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) : []);
