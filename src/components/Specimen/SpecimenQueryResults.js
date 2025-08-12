@@ -45,6 +45,7 @@ function Specimens(props) {
         `
             pbotID
             name
+            specimenNumber
             collection {
                 pbotID
                 name
@@ -742,7 +743,7 @@ function Specimens(props) {
                 <Table sx={{ minWidth: 700 }} aria-label="specimens table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Name</TableCell>
+                            <TableCell>Specimen number</TableCell>
                             <TableCell>Parts preserved</TableCell>
                             <TableCell>Min age</TableCell>
                             <TableCell>Max age</TableCell>
