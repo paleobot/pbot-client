@@ -16,8 +16,12 @@ const CollectionMutateResults = ({queryParams}) => {
                 pbotID: queryParams.collection || null,
                 name: queryParams.name || null,
                 timescale: queryParams.timescale || null,
-                mininterval: queryParams.mininterval || queryParams.maxinterval,
-                maxinterval: queryParams.maxinterval || null,
+                mininterval: queryParams.mininterval ? 
+                    JSON.parse(queryParams.mininterval).name :
+                    queryParams.maxinterval ? 
+                        JSON.parse(queryParams.maxinterval).name : 
+                        null,
+                maxinterval: queryParams.maxinterval ? JSON.parse(queryParams.maxinterval).name : null,
                 collectionType: queryParams.collectiontype || null,
                 sizeClasses: queryParams.sizeclasses || null,
                 lithology: queryParams.lithology || null,
