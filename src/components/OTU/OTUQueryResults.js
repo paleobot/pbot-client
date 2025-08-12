@@ -157,6 +157,7 @@ function OTUList(props) {
                                 pbotID
                                 character {
                                     name
+                                    deepOrder
                                 }
                                 state {
                                     State {

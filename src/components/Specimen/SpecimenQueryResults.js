@@ -119,6 +119,7 @@ function Specimens(props) {
                         pbotID
                         character {
                             name
+                            deepOrder
                         }
                         state {
                             State {
