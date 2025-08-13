@@ -124,6 +124,7 @@ function Specimens(props) {
                         state {
                             State {
                                 name
+                                deepOrder
                             }
                             value
                         }

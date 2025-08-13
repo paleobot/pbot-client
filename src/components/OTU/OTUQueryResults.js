@@ -162,6 +162,7 @@ function OTUList(props) {
                                 state {
                                     State {
                                         name
+                                        deepOrder
                                     }
                                     order
                                     value

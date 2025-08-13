@@ -3,7 +3,7 @@ import { sort } from '../../util.js';
 
 const massage = cI => {
     cI.sortName = `${cI.character.name}${cI.state.value !== null ? cI.state.value : cI.state.State.name}`.toUpperCase();
-    cI.deepOrder = cI.character.deepOrder || '';
+    cI.deepOrder = `${cI.character.deepOrder}.${cI.state.State.deepOrder}` || '';
     console.log(`cI.deepOrder for ${cI.character.name} = ${cI.deepOrder}`);
 return cI
 };
