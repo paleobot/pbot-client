@@ -19,6 +19,7 @@ const CollectionDirectQueryResults = () => {
             collectionID: collectionid ? collectionid.split(',') : null,
             groups: [], 
             includeSpecimens: "true" === search.get("includeSpecimens"),
+            includeOTUs: "true" === search.get("includeOTUs"),
             standAlone: true,
             format: search.get("format"),
         };

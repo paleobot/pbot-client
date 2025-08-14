@@ -10,6 +10,37 @@ import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+function aggregateOTUs(collection) {
+    const identifiedAsOTUs = [];
+    const typeOfOTUs = [];
+    const holotypeOfOTUs = [];
+
+    if (!collection.specimens) return { identifiedAsOTUs, typeOfOTUs, holotypeOfOTUs };
+
+    collection.specimens.forEach(specimen => {
+        // identifiedAs
+        if (specimen.identifiedAs && Array.isArray(specimen.identifiedAs)) {
+            specimen.identifiedAs.forEach(rel => {
+                if (rel.OTU) identifiedAsOTUs.push(rel.OTU);
+            });
+        }
+        // typeOf
+        if (specimen.typeOf && Array.isArray(specimen.typeOf)) {
+            specimen.typeOf.forEach(rel => {
+                if (rel.OTU) typeOfOTUs.push(rel.OTU);
+            });
+        }
+        // holotypeOf
+        if (specimen.holotypeOf && Array.isArray(specimen.holotypeOf)) {
+            specimen.holotypeOf.forEach(rel => {
+                if (rel.OTU) holotypeOfOTUs.push(rel.OTU);
+            });
+        }
+    });
+
+    return { identifiedAsOTUs, typeOfOTUs, holotypeOfOTUs };
+}
+
 function Specimens(props) { //TODO: move this to standalone file in Specimens folder?
     console.log("Specimens");
     if (!props.specimens) return ''; //TODO: is this the best place to handle this?
@@ -21,10 +52,45 @@ function Specimens(props) { //TODO: move this to standalone file in Specimens fo
         const directURL = new URL(window.location.origin + "/query/specimen/" + pbotID + "?includeImages=true&includeDescriptions=true&includeOTUs=true");
         return (
             <>
-            <Link key={pbotID}  color="success.main" underline="hover" href={directURL}  target="_blank">{name}</Link><br />
+            <Link key={pbotID}  style={style} color="success.main" underline="hover" href={directURL}  target="_blank">{name}</Link><br />
             </>
         )
     });
+}
+
+function OTUs(props) {
+    // props.collection should be a Collection object
+    const style = props.top ? {marginLeft:"4em"} : {marginLeft:"2em"};
+    const { identifiedAsOTUs, typeOfOTUs, holotypeOfOTUs } = aggregateOTUs(props.collection);
+    const renderOTUs = (otus) => {
+        if (!otus || otus.length === 0) return <span style={{marginLeft:"1em"}}>(none)</span>;
+        return otus.map(otu => {
+            const directURL = new URL(window.location.origin + "/query/otu/" + otu.pbotID + "?includeHolotypeDescription=true&includeMergedDescription=true");
+            return (
+                <span key={otu.pbotID}>
+                    <Link color="success.main" underline="hover" href={directURL} target="_blank">{otu.name || otu.pbotID}</Link>
+                    <br />
+                </span>
+            );
+        });
+    };
+
+    return (
+        <div style={style}>
+            <div>
+                <b>Identified As</b><br />
+                {renderOTUs(identifiedAsOTUs)}
+            </div>
+            <div style={{marginTop:"1em"}}>
+                <b>Type Of</b><br />
+                {renderOTUs(typeOfOTUs)}
+            </div>
+            <div style={{marginTop:"1em"}}>
+                <b>Holotype Of</b><br />
+                {renderOTUs(holotypeOfOTUs)}
+            </div>
+        </div>
+    );
 }
 
 
@@ -265,8 +331,26 @@ function Collections(props) {
                 order
             }
             specimens @include(if: $includeSpecimens) {
-                    pbotID
-                    name
+                pbotID
+                name
+                identifiedAs @include(if: $includeOTUs){
+                    OTU {
+                        pbotID
+                        name
+                    }
+                }
+                typeOf @include(if: $includeOTUs){
+                    OTU {
+                        pbotID
+                        name
+                    }
+                }
+                holotypeOf @include(if: $includeOTUs){
+                    OTU {
+                        pbotID
+                        name
+                    }
+                }
             }
         `
         : props.handleSelect ?
@@ -406,6 +490,7 @@ function Collections(props) {
                 $collectionType: String, 
                 ${groups} 
                 $includeSpecimens: Boolean! 
+                $includeOTUs: Boolean! 
                 ${filters.collection ? ", $collection: ID" : ""}) {
                 Collection (
                     ${filters.pbotID && !Array.isArray(filters.pbotID) ?
@@ -425,6 +510,7 @@ function Collections(props) {
         variables: {
             ...filters,
             includeSpecimens: props.includeSpecimens,
+            includeOTUs: props.includeOTUs,
         },
         fetchPolicy: "cache-and-network"
     });
@@ -466,6 +552,9 @@ function Collections(props) {
     if (props.includeSpecimens) {
         directQParams.push("includeSpecimens");
     }
+    if (props.includeOTUs) {
+        directQParams.push("includeOTUs");
+    }
 
     const jsonDirectQParams = directQParams.concat(["format=json"])
 
@@ -485,6 +574,9 @@ function Collections(props) {
                 const directURL = new URL(window.location.origin + "/query/collection/" + collection.pbotID);
                 if (props.includeSpecimens) {
                     directURL.searchParams.append("includeSpecimens", "true");
+                }
+                if (props.includeOTUs) {
+                    directURL.searchParams.append("includeOTUs", "true");
                 }
                     
                 return (
@@ -785,6 +877,19 @@ function Collections(props) {
                                 </AccordionDetails>
                             </Accordion>
 
+                            <Accordion style={accstyle} defaultExpanded={false}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="otus-content"
+                                    id="otus-header"
+                                >
+                                    OTUs
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <OTUs collection={collection} top={true} />
+                                </AccordionDetails>
+                            </Accordion>
+
                             </>
                         }
                     </div>
@@ -812,6 +917,9 @@ function Collections(props) {
                             const directURL = new URL(window.location.origin + "/query/collection/" + collection.pbotID);
                             if (props.includeSpecimens) {
                                 directURL.searchParams.append("includeSpecimens", "true");
+                            }
+                            if (props.includeOTUs) {
+                                directURL.searchParams.append("includeOTUs", "true");
                             }
                             return (
                                 <AlternatingTableRow key={collection.pbotID}>
@@ -909,6 +1017,7 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
             includeSpecimens={queryParams.includeSpecimens} 
+            includeOTUs={queryParams.includeOTUs} 
             includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
             standAlone={queryParams.standAlone} 
             handleSelect={handleSelect}
