@@ -63,6 +63,14 @@ function OTUList(props) {
                 }
             }
             synonyms @include(if: $includeSynonyms) {
+                explanation
+                references {
+                    Reference {
+                        pbotID
+                        title
+                    }
+                    order
+                }
                 otus {
                     name
                     pbotID
@@ -148,6 +156,7 @@ function OTUList(props) {
                         Description {
                             pbotID
                             name
+                            writtenDescription
                             notes
                             schema {
                                 pbotID

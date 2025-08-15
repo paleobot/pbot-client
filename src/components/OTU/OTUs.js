@@ -423,7 +423,12 @@ function OTUs(props) {
                                                         <AlternatingTableRow key={d.Description.pbotID}>
                                                             <TableCell align="left" sx={{fontSize: "1rem"}}>
                                                                 <div ><b>From schema "{d.Description.schema.title}":</b></div>
+                                                                { d.Description.schema.description &&
+                                                                <div style={indent}><b>written description:</b> {d.Description.writtenDescription}</div>
+                                                                }   
+                                                                {d.Description.notes &&
                                                                 <div style={indent}><b>notes:</b> {d.Description.notes}</div>
+                                                                }   
                                                                 <div style={indent}><b>character states:</b></div>
                                                                 <CharacterInstances style={indent2} characterInstances={d.Description.characterInstances} />
                                                                 </TableCell>
@@ -661,17 +666,39 @@ function OTUs(props) {
                                     <Table sx={{width:"100%", mr:"10px"}} aria-label="synonym table">
                                         <TableBody>
                                             {synonyms.map((synonym, i) => {
-                                                const synOTU=synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
+                                                const synOTU = synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
                                                 return (
                                                     <AlternatingTableRow key={synOTU.pbotID}>
                                                         <TableCell align="left">
-
                                                             <DirectQueryLink type="otu" pbotID={synOTU.pbotID} params={directQParams} >
                                                                 {synOTU.name}
                                                             </DirectQueryLink>
+                                                            {synonym.explanation &&
+                                                                <Box sx={boxedDisplay}>
+                                                                    <Typography variant="caption">Explanation</Typography><br />
+                                                                    {synonym.explanation}
+                                                                </Box>
+                                                            }
+                                                            {synonym.references && synonym.references.length > 0 &&
+                                                                <Box sx={boxedDisplay}>
+                                                                    <Typography variant="caption">References</Typography><br />
+                                                                    {sort([...synonym.references], "order").map((ref, idx, arr) => (
+                                                                        <span key={ref.Reference.pbotID}>
+                                                                            <DirectQueryLink type="reference" pbotID={ref.Reference.pbotID} text={ref.Reference.title} />
+                                                                            {idx < arr.length - 1 ? ', ' : ''}
+                                                                        </span>
+                                                                    ))}
+                                                                </Box>
+                                                            }
+                                                            {synOTU.family &&
                                                             <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br />{synOTU.family}</Box>
+                                                            }
+                                                            {synOTU.genus &&
                                                             <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br />{synOTU.genus}</Box>
+                                                            }
+                                                            {synOTU.species &&
                                                             <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br />{synOTU.species}</Box>
+                                                            }
                                                             {synonym.comments && synonym.comments.length > 0 &&
                                                                 <Box sx={boxedDisplay}>
                                                                     <Typography variant="caption">Comments</Typography><br />
