@@ -503,29 +503,15 @@ function OTUs(props) {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     {holotypeSpecimen && (
-                                        <>
-                                            <div style={indent}><b>Holotype specimen</b></div>
-                                            <DirectQueryLink type="specimen" pbotID={holotypeSpecimen.Specimen.pbotID} params={specimenDirectQParams} style={indent2}>
-                                                {holotypeSpecimen.Specimen.name}
-                                            </DirectQueryLink><div>&nbsp;</div>
-                                        </>
+                                    <>
+                                        <SpecimenTable title="Holotype specimen" specimens={[holotypeSpecimen]}/>
+                                    </>
                                     )}
                                     {typeSpecimens && typeSpecimens.length > 0 &&
-                                        <>
-                                            <div style={indent}><b>Other type specimens</b></div>
-                                            {typeSpecimens.map(s => (
-                                                <div key={s.Specimen.pbotID}>
-                                                    {s.Specimen && s.Specimen.name &&
-                                                        <>
-                                                        <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={specimenDirectQParams} style={indent2}>
-                                                            {s.Specimen.name}
-                                                        </DirectQueryLink><br />
-                                                        </>
-                                                    }
-                                                </div>
-                                            ))
-                                            }
-                                        </>
+                                    <>
+                                        <br />
+                                        <SpecimenTable title="Other type specimens" specimens={typeSpecimens}/>
+                                    </>
                                     }
 
                                     {(!holotypeSpecimen && (!typeSpecimens || typeSpecimens.length === 0)) &&
@@ -545,20 +531,9 @@ function OTUs(props) {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     {identifiedSpecimens && identifiedSpecimens.length > 0 &&
-                                        <>
-                                            {identifiedSpecimens.map(s => (
-                                                <div key={s.Specimen.pbotID}>
-                                                    {s.Specimen && s.Specimen.name &&
-                                                        <>
-                                                        <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={specimenDirectQParams} style={indent2}>
-                                                            {s.Specimen.name}
-                                                        </DirectQueryLink><br />
-                                                        </>
-                                                    }
-                                                </div>
-                                            ))
-                                            }
-                                        </>
+                                    <>
+                                        <SpecimenTable title="Additional specimens" specimens={identifiedSpecimens}/>
+                                    </>
                                     }
                                     {(!identifiedSpecimens || identifiedSpecimens.length === 0) &&
                                         <div style={indent}>No identified specimens available</div>
@@ -785,6 +760,62 @@ function OTUs(props) {
             </>
         )
     }
+}
+
+// SpecimenTable: reusable table for holotype, other type specimens, and additional specimens
+function SpecimenTable({ title, specimens }) {
+    const specimenDirectQParams = ["includeImages", "includeDescriptions", "includeOTUs"];
+    const indent = { marginLeft: "2em" };
+    return (
+        <>
+            <div style={indent}><b>{title}</b></div>
+            <Box sx={{ overflowX: 'auto', maxWidth: '90%' }}>
+                <TableContainer component={Paper} style={{ marginLeft: '2em', marginBottom: '1em', minWidth: 600, maxWidth: '90%'}}>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Specimen name</TableCell>
+                                <TableCell>Collection name</TableCell>
+                                <TableCell>Country</TableCell>
+                                <TableCell>Min interval</TableCell>
+                                <TableCell>Max interval</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {specimens
+                                .filter(s => s.Specimen && s.Specimen.collection)
+                                .sort((a, b) => {
+                                    const nameA = a.Specimen.collection.name || '';
+                                    const nameB = b.Specimen.collection.name || '';
+                                    return nameA.localeCompare(nameB);
+                                })
+                                .map(s => (
+                                    <TableRow key={s.Specimen.pbotID}>
+                                        <TableCell>
+                                            <DirectQueryLink type="specimen" pbotID={s.Specimen.pbotID} params={specimenDirectQParams}>
+                                                {s.Specimen.name}
+                                            </DirectQueryLink>
+                                        </TableCell>
+                                        <TableCell>
+                                            <DirectQueryLink
+                                                type="collection"
+                                                pbotID={s.Specimen.collection.pbotID}
+                                                params={["includeSpecimens", "includeOTUs"]}
+                                            >
+                                                {s.Specimen.collection.name}
+                                            </DirectQueryLink>
+                                        </TableCell>
+                                        <TableCell>{s.Specimen.collection.country}</TableCell>
+                                        <TableCell>{s.Specimen.collection.mininterval}</TableCell>
+                                        <TableCell>{s.Specimen.collection.maxinterval}</TableCell>
+                                    </TableRow>
+                                ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
+        </>
+    );
 }
 
 export default OTUs;

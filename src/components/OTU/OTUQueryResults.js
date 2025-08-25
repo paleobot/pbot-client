@@ -141,6 +141,8 @@ function OTUList(props) {
                         caption
                     }
                     collection {
+                        pbotID
+                        name
                         mininterval
                         maxinterval
                         stratigraphicGroup
@@ -191,6 +193,8 @@ function OTUList(props) {
                         caption
                     }
                     collection {
+                        pbotID
+                        name
                         mininterval
                         maxinterval
                         stratigraphicGroup
@@ -214,6 +218,8 @@ function OTUList(props) {
                         caption
                     }
                     collection {
+                        pbotID
+                        name
                         mininterval
                         maxinterval
                         stratigraphicGroup
@@ -223,7 +229,7 @@ function OTUList(props) {
                         lat
                         lon
                         country
-                        state                    
+                        state                   
                     }
                 }
             }
