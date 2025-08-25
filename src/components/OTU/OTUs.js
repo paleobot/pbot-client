@@ -541,6 +541,7 @@ function OTUs(props) {
                                 </AccordionDetails>
                             </Accordion>
 
+{/*
                             <Accordion style={accstyle} defaultExpanded={false}>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
@@ -579,6 +580,7 @@ function OTUs(props) {
  
                                 </AccordionDetails>
                             </Accordion>
+*/}
 
                             <Accordion style={accstyle} defaultExpanded={false}>
                             <AccordionSummary
