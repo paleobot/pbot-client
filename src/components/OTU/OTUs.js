@@ -12,6 +12,8 @@ import { Country, State }  from 'country-state-city';
 import { Comments } from '../Comment/Comments';
 
 
+import { OTUpdf } from './OTUpdf';
+
 const ImageTabs = ({holotypeImages, typeImages, identifiedImages}) => {
     const [value, setValue] = React.useState(
         holotypeImages && holotypeImages.length > 0 ? '1' :
@@ -165,6 +167,10 @@ function OTUs(props) {
             return (
                 <><pre>{JSON.stringify(props.data, null, 2)}</pre></>
             )
+        }
+
+        if (props.format && "PDF" === props.format.toUpperCase()) {
+            return <OTUpdf data={props.data} />;
         }
 
         const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
