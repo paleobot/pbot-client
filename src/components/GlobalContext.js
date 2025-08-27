@@ -1,6 +1,4 @@
-import { gql, useQuery } from '@apollo/client'
-import * as React from 'react'
-import { useEffect } from 'react';
+import * as React from 'react';
 import { useState } from 'react';
 
 
@@ -9,80 +7,61 @@ const GlobalContext = React.createContext()
 const GlobalProvider = (props) => {
     console.log("GlobalProvider"); 
 
-    const [publicGroupID, setPublicGroupID] = useState(null)
-    //const value = React.useMemo(() => [publicGroupID, setPublicGroupID], [publicGroupID])
-
-    /*
-    const gQL = gql`
-            query ($name: String) {
-                Group (name: $name) {
-                    pbotID
-                }            
-            }
-        `;
-
-    console.log("executing query")
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {
-        variables: {
-            name: "public"
-        },        
-        fetchPolicy: "cache-and-network"
-    });
+    const publicGroupID = null; //TODO: Remove when codebase is cleaned of PBOT
     
-    React.useEffect(() => {
-        if(data) {
-            console.log("data loaded : ", data)
-            const group = data.Group;
-            setPublicGroupID(group[0].pbotID)
-        }
-    }, [data])
-    */
-
+    const superuserID = 73
+ 
+    //TODO: Might be nice to get superuserID from the API. Unfortunately, the code below does not work because token is not yet defined. Figure out later. Maybe.
+    /*
+    const [superuserID, setSuperuserID] = useState(null)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [data, setData] = useState(null);
 
-    /* Note: I'm going at the graphql server via fetch here because I couldn't figure out how to use Apollo client to load a value from the server one time; it kept loading on every render (leaving the Apollo version ghosted above for possible tinkering later). Also, this lets me use this context at the App level, outside of the ApolloProvider (this actually isn't a big deal; I could have put it in PBOTInterface.js; but I prefer it in App.js)
-    */
-    const gQL = `
-            {
-                Group (name: "public") {
-                    pbotID
+    React.useEffect(() => {
+        console.log("GlobalProvider useEffect on data");
+        console.log(data);
+        if (data) {
+            setSuperuserID(data.filter((item) => item.name === "superuser")[0]?.value);
+        }
+    }, [data]);
+
+    React.useEffect(() => {
+        console.log("GlobalProvider useEffect to get roles");
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                console.log(`Fetching data from ${process.env.REACT_APP_AZLIB_API_URL}`);
+                const response = await fetch(
+                    new URL("api/v1/users/roles", process.env.REACT_APP_AZLIB_API_URL),
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            }            
-        `;
-
-    useEffect(() => {
-        //if (props.country === '') return
-        setLoading(true);
-        fetch(`/graphql`, {
-            method: "POST", 
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ query: gQL }),
-        })
-        .then(res => res.json())
-        .then(
-            (response) => {
+                let json = await response.json();
+                console.log(json)
+                setData(json.data);
                 setLoading(false);
-                if (response.status_code) {
-                    throw new Error (response.errors[0]);
-                }
-                console.log("public group id response")
-                console.log(response)
-                setPublicGroupID(response.data.Group[0].pbotID);
+            } catch (e) {
+                console.error(e);
+                setError(e);
+                setLoading(false);
             }
-        ).catch (
-            (error) => {
-                console.log("error!")
-                console.log(error)
-                setError(error)
-            }
-        )
+        }
+
+        fetchData();
     }, [])
+    */
 
-
-    return <GlobalContext.Provider value={{publicGroupID: publicGroupID}} {...props}/>
+    //TODO: Remove publicGroupID when the codebase is cleaned of PBOT
+    return <GlobalContext.Provider value={{publicGroupID: publicGroupID, superuserID}} {...props}/>
 }
 
-export {GlobalContext, GlobalProvider}
+export { GlobalContext, GlobalProvider };

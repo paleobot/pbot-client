@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, Link } from "react-router-dom";
 import { Tabs, Tab, Box } from '@mui/material';
-import MDElement from '../MDElement';
+//import MDElement from '../MDElement';
 
 const About = () => {
     const [selectedTab, setSelectedTab] = React.useState(0);
@@ -11,11 +11,13 @@ const About = () => {
         setSelectedTab(newTab);
     };
 
-    const style = {textAlign: "left"}
+    const style = {textAlign: "center"}
     //Note: The use of hidden for display of result is critical for avoiding repeat executions of that code.
     return (
         <>
         <div style={style}>
+            About not yet implemented.
+            {/*
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={selectedTab} onChange={handleTabChange} textColor="secondary" indicatorColor="secondary">
                 <Tab label="Overview" />
@@ -39,6 +41,7 @@ const About = () => {
                     <MDElement path="About/Contact/Contact.md" />
                 </div>
             </div>
+            */}
         </div>
         </>
     )

@@ -1,31 +1,17 @@
-import React, { useState }from 'react';
-import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Button, Divider, Typography, Tooltip} from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Tooltip } from '@mui/material';
+import React, { useContext, useState } from 'react';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
-import DescriptionMutateForm from './Description/DescriptionMutateForm';
-import OTUMutateForm from './OTU/OTUMutateForm';
-import SynonymMutateForm from './Synonym/SynonymMutateForm';
-import CommentMutateForm from './Comment/CommentMutateForm';
-import CharacterInstanceMutateForm from './CharacterInstance/CharacterInstanceMutateForm';
-import SpecimenMutateForm from './Specimen/SpecimenMutateForm';
-import ReferenceMutateForm from './Reference/ReferenceMutateForm';
-import SchemaMutateForm from './Schema/SchemaMutateForm';
-import CharacterMutateForm from './Character/CharacterMutateForm';
-import StateMutateForm from './State/StateMutateForm';
-import PersonMutateForm from './Person/PersonMutateForm';
-import GroupMutateForm from './Group/GroupMutateForm';
-import CollectionMutateForm from './Collection/CollectionMutateForm';
-import ImageMutateForm from './Image/ImageMutateForm';
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
-import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { ToggleButtonGroup } from '@mui/material';
-import { ToggleButton } from '@mui/material';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import CollectionMutateForm from './Collection/CollectionMutateForm';
+import UserMutateForm from './User/UserMutateForm';
 
-import FileUpload from './FileUpload';
 import { useAuth } from './AuthContext';
-
+import CollectionGroupMutateForm from './CollectionGroup/CollectionGroupMutateForm';
+import { GlobalContext } from './GlobalContext';
 
 const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
     //This annoying bit of razzle-dazzle is to force MUI RadioGroup to reset when the path is just "/mutate".
@@ -40,28 +26,16 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
         return (
                 <FormControl component="fieldset">
                     <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                        <FormControlLabel value="otu" control={<Radio />} label="Taxon (OTU)" labelPlacement="end"/>
-                        <FormControlLabel value="description" control={<Radio />} label="Description" labelPlacement="end"/>
                         <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end" />
-                        <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end" />
-                        <FormControlLabel value="image" control={<Radio />} label="Image" labelPlacement="end" />
 
                         <Divider />
 
-                        <FormControlLabel value="person" control={<Radio />} label="Person" labelPlacement="end" />
-                        <FormControlLabel value="reference" control={<Radio />} label="Reference" labelPlacement="end" />
-                        <FormControlLabel value="group" control={<Radio />} label="Group" labelPlacement="end" />
-
-                        <Divider />
-
-                        <FormControlLabel value="schema" control={<Radio />} label="Schema" labelPlacement="end" />
-                        <FormControlLabel value="character" control={<Radio />} label="Character" labelPlacement="end" />
-                        <FormControlLabel value="state" control={<Radio />} label="State" labelPlacement="end" />
-
-                        <Divider />
-                        
-                        <FormControlLabel value="synonym" control={<Radio />} label="Synonym" labelPlacement="end"/>
-                        <FormControlLabel value="comment" control={<Radio />} label="Comment" labelPlacement="end"/>
+                        {user && user.role_id === global.superuserID && 
+                        <>
+                            <FormControlLabel value="collectionGroup" control={<Radio />} label="Collection group" labelPlacement="end" />
+                            <FormControlLabel value="user" control={<Radio />} label="User" labelPlacement="end" />
+                        </>
+                        }
                     </RadioGroup>
                 </FormControl>
         );    
@@ -71,9 +45,9 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
     
     const [showRegistration, setShowRegistration] = useState(false);
     
-    //const [token, setToken] = useState(localStorage.getItem('PBOTMutationToken'));
-    const [token, setToken] = useAuth();
-    
+    const global = useContext(GlobalContext);
+    const {token, user} = useAuth();
+     
     const handleModeChange = (event, newMode) => {
         if (newMode !== null) {
             setShowResult(false);
@@ -88,11 +62,11 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
     return (
         <div>
             <Grid container spacing={3} style={{marginLeft:"10px"}}>
-                <Grid item >
+                <Grid item size={2}>
                     <FormSelector form={selectedForm} reset={forceUpdate} />
                 </Grid>
             
-                <Grid item alignItems="right" xs>
+                <Grid item alignItems="right" size={6}>
                     {selectedForm && 
                         <ToggleButtonGroup sx={{marginTop: "5px", marginBottom:"10px"}} 
                             value={mode}
@@ -112,65 +86,36 @@ const Mutate = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =
                                     <EditIcon />
                                 </Tooltip>
                             </ToggleButton>
-                            <ToggleButton value="delete" aria-label="delete" disabled={selectedForm === "person"}>
-                                <Tooltip title="Delete">
-                                    <RemoveIcon />
-                                </Tooltip>
-                            </ToggleButton>
+                            {(selectedForm !== "collectionGroup" && selectedForm !== "user") &&
+                                <ToggleButton value="replace" aria-label="replace" >
+                                    <Tooltip title="Replace">
+                                        <LibraryAddIcon />
+                                    </Tooltip>
+                                </ToggleButton>
+                            }
+                            {selectedForm !== "collectionGroup" &&
+                                <ToggleButton value="delete" aria-label="delete" disabled={selectedForm === "person"}>
+                                    <Tooltip title="Delete">
+                                        <RemoveIcon />
+                                    </Tooltip>
+                                </ToggleButton>
+                            }   
                         </ToggleButtonGroup>
                     }
 
-                    {selectedForm === "otu" &&
-                        <OTUMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-
-                    {selectedForm === "synonym" &&
-                        <SynonymMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-
-                    {selectedForm === "comment" &&
-                        <CommentMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-
-                    {selectedForm === "description" &&
-                        <DescriptionMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-
-                    {selectedForm === "specimen" &&
-                        <SpecimenMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
 
                     {selectedForm === "collection" &&
                         <CollectionMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
-                    {selectedForm === "reference" &&
-                        <ReferenceMutateForm handleSubmit={handleSubmit} mode={mode}/>
+                    {selectedForm === "collectionGroup" &&
+                        <CollectionGroupMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
-                    {selectedForm === "schema" &&
-                        <SchemaMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-                    
-                    {selectedForm === "character" &&
-                        <CharacterMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-                    
-                    {selectedForm === "state" &&
-                        <StateMutateForm handleSubmit={handleSubmit} mode={mode}/>
+                   {selectedForm === "user" &&
+                        <UserMutateForm handleSubmit={handleSubmit} mode={mode}/>
                     }
 
-                    {selectedForm === "group" &&
-                        <GroupMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-                    
-                   {selectedForm === "person" &&
-                        <PersonMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
-
-                    {selectedForm === "image" &&
-                        <ImageMutateForm handleSubmit={handleSubmit} mode={mode}/>
-                    }
 
                 </Grid>
             </Grid>
