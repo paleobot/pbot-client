@@ -1,9 +1,12 @@
-import { Divider, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
-import React from 'react';
-import About from './About/About';
-import { useAuth } from './AuthContext';
-import ChangeQueryForm from './Change/ChangeQueryForm';
+import React, { useState } from 'react';
+import { Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, Grid, Divider, Typography } from '@mui/material';
 //import { TextField, CheckboxWithLabel } from 'formik-material-ui';
+import OTUQueryForm from './OTU/OTUQueryForm';
+import SpecimenQueryForm from './Specimen/SpecimenQueryForm';
+import ReferenceQueryForm from './Reference/ReferenceQueryForm';
+import SchemaQueryForm from './Schema/SchemaQueryForm';
+import PersonQueryForm from './Person/PersonQueryForm';
+import CollectionQueryForm from './Collection/CollectionQueryForm';
 
 const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) => {
 
@@ -19,18 +22,19 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
         return (
             <FormControl component="fieldset">
                 <RadioGroup aria-label="form" name="form1" value={selectedForm} onChange={handleFormChange}>
-                <FormControlLabel value="change" control={<Radio />} label="Change" labelPlacement="end"/>
+                <FormControlLabel value="otu" control={<Radio />} label="Taxon (OTU)" labelPlacement="end"/>
+                <FormControlLabel value="collection" control={<Radio />} label="Collection" labelPlacement="end"/>
+                <FormControlLabel value="specimen" control={<Radio />} label="Specimen" labelPlacement="end"/>
+                <Divider />
+                <FormControlLabel value="reference" control={<Radio />} label="Reference" labelPlacement="end"/>
+                <FormControlLabel value="schema" control={<Radio />} label="Schema" labelPlacement="end" />
+                <Divider />
+                <FormControlLabel value="person" control={<Radio />} label="Person" labelPlacement="end"/>
                 </RadioGroup>
             </FormControl>  
         );    
     }
-
-   const {token} = useAuth();
-
-    if(!token) {
-        return (<p>Explore access requires authentication</p>)
-    }
-
+    
     return (
         <Grid container spacing={3} style={{marginLeft:"10px", marginTop: "5px"}}>
             <Grid item>
@@ -40,13 +44,30 @@ const Query = ({handleSubmit, selectedForm, handleFormChange, setShowResult}) =>
             <Grid item xs>
                 {selectedForm && <Typography variant="h5">Search parameters</Typography>}
 
-                {selectedForm === "change" &&
-                <>
-                    <ChangeQueryForm handleSubmit={handleSubmit} />
-                </>
+                {selectedForm === "otu" &&
+                    <OTUQueryForm handleSubmit={handleSubmit} />
+                }
+                    
+                {selectedForm === "collection" &&
+                    <CollectionQueryForm handleSubmit={handleSubmit} />
                 }
 
-               
+                {selectedForm === "specimen" &&
+                    <SpecimenQueryForm handleSubmit={handleSubmit} />
+                }
+
+                {selectedForm === "reference" &&
+                    <ReferenceQueryForm handleSubmit={handleSubmit} />
+                }
+
+                {selectedForm === "schema" &&
+                    <SchemaQueryForm handleSubmit={handleSubmit} />
+                }
+
+                {selectedForm === "person" &&
+                    <PersonQueryForm handleSubmit={handleSubmit} />
+                }
+                
             </Grid>
         </Grid>
   );
