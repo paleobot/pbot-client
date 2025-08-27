@@ -1,52 +1,25 @@
 import React, { useState, useRef }from 'react';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Box } from '@mui/material';
+import { TextField } from 'formik-mui';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { TextFieldController } from './util/TextFieldController';
 
-//const origin = window.location.origin;
-const origin = process.env.REACT_APP_AZLIB_API_URL
+const origin = window.location.origin;
 
 const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
+    //const [username, setUserName] = useState();
+    //const [password, setPassword] = useState();
 
     const navigate = useNavigate();
     const [search] = useSearchParams();
 
-    const {setToken} = useAuth();
-
-    const initialValues= {
-        userName: '', 
-        password: '', 
-    }
-
-    const validationSchema= Yup.object().shape({
-        userName: Yup.string()
-            .required("User Name is required")
-            .max(30, 'Must be 30 characters or less'),
-        password: Yup.string()
-            .required("Password is required")
-            .min(6, "Passwords must contain at least six characters")
-            .max(30, 'Must be 30 characters or less'),
-        confirmPassword: Yup.string()
-            .oneOf([Yup.ref('password'), null], 'Passwords must match')
-    })
-
-    const { handleSubmit, reset, control, watch, formState: {errors} } = useForm({
-        defaultValues: initialValues,
-        resolver: yupResolver(validationSchema),
-        mode: "onBlur",
-        trigger: "onBlur",
-    });
-
+    const [token, setToken] = useAuth();
 
     const loginUser = async (credentials) => {
         console.log("loginUser")
-            //return { ok: true, token: "Hi there", pbotID: "none"}
-
-        return fetch(origin + '/api/v1/login', {
+        return fetch(origin + '/user/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -61,7 +34,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
         .then(data => {
             console.log(data);
             if (data.token) {
-                return { ok: true, token: data.token}
+                return { ok: true, token: data.token, pbotID: data.pbotID}
             } else if (data.msg) {
                 return { ok: false, message: data.msg}
             } else {
@@ -109,28 +82,21 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
         })
     }
     
-    const [status, setStatus] = useState(null);
-    const doSubmit = async (values) => {
+    const handleSubmit = async (values, {setStatus}) => {
         console.log(values.userName);
         
         const loginResult = await loginUser({
-            email: values.userName,
+            username: values.userName,
             password: values.password
         });
-
-        //const loginResult = {
-        //    ok: true,
-        //    token: "Hi there",
-        //    pbotID: "none"
-        //}
         
         if (loginResult.ok) {
-            localStorage.setItem('AzlibAdminToken', loginResult.token);
+            localStorage.setItem('PBOTMutationToken', loginResult.token);
             setToken(loginResult.token);
-
+            //localStorage.setItem('PBOTMe', values.userName);
+            localStorage.setItem('PBOTMe', loginResult.pbotID);
             console.log("navigating to workbench")
-            //navigate("/mutate");
-            navigate("/");
+            navigate("/mutate");
         } else {
             console.log("else");
             setStatus({error: loginResult.message}); //TODO: figure out how Formik setStatus works
@@ -144,14 +110,14 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     
     const ref = useRef(null);
 
-    let resetPW = 
+    let reset = 
         <Button variant="text" color="secondary" onClick={() => {resetPassword({username: ref.current.values.userName});}}>Reset Password</Button>;
     if (resetStatus) {
         if (resetStatus.ok) {
-            resetPW = 
+            reset = 
                 <div>{resetStatus.message}</div>
         } else {
-            resetPW = 
+            reset = 
                 <div>
                 <Button variant="text" color="secondary" onClick={() => {resetPassword({username: ref.current.values.userName});}}>Reset Password</Button>
                 <div style={apiErrorStyle}>{resetStatus.message}</div>
@@ -161,14 +127,51 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
     
     return(
         <div>
-            {search.get("newReg") &&
-                <h2>Registration Successful. Please login.</h2>
-            }
-            <form onSubmit={handleSubmit(doSubmit)} >
-                <TextFieldController name={`userName`} label="Email" control={control} errors={errors}/>
+        {search.get("newReg") &&
+            <h2>Registration Successful. Please login.</h2>
+        }
+        <Formik
+            innerRef= {ref}
+            initialValues={{
+                userName: '', 
+                password: '', 
+            }}
+            validationSchema={Yup.object({
+                userName: Yup.string()
+                    .required("User Name is required")
+                    .max(30, 'Must be 30 characters or less'),
+                password: Yup.string()
+                    .required("Password is required")
+                    .min(6, "Passwords must contain at least six characters")
+                    .max(30, 'Must be 30 characters or less'),
+                confirmPassword: Yup.string()
+                    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+            })}
+            onSubmit={handleSubmit}/*({values => {
+                //alert(JSON.stringify(values, null, 2));
+                //setValues(values);
+                handleSubmit(values);
+                setStatus("Oh no!");
+            }}*/
+        >
+        {({ status }) => (
+        <Form>
+                <Field 
+                    component={TextField}
+                    name="userName" 
+                    type="text"
+                    label="Email"
+                    disabled={false}
+                />
                 <br />
                 
-                <TextFieldController type="password" name={`password`} label="Password" control={control} errors={errors}/>
+                <Field 
+                    component={TextField}
+                    name="password" 
+                    type="password" 
+                    label="Password"
+                    disabled={false}
+                />
                 <br />
                 <br />
                 <br />
@@ -179,12 +182,13 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
                 {status && status.error && (
                     <div style={apiErrorStyle}>{status.error}</div>
                 )}
-            </form>        
-            {/*
-            <Button variant="text" color="secondary" onClick={() => {navigate(`/register`);}}>Register</Button>
-            <br />
-            {resetPW}
-            */}
+            </Form>
+            )}
+        </Formik>
+        {/*<Button variant="text" color="secondary" onClick={() => {setShowRegistration(true);}}>Register</Button>*/}
+        <Button variant="text" color="secondary" onClick={() => {navigate(`/register`);}}>Register</Button>
+        <br />
+        {reset}
         </div>
     );
 };

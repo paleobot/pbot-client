@@ -1,120 +1,68 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from './AuthContext';
+import React, { useEffect } from 'react';
+
+
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+  useQuery,
+  useMutation,
+  gql,
+  useApolloClient
+} from "@apollo/client";
 
 const Mutator = (props) => {
+//function Mutater(props) {
     console.log("Mutator");
     console.log(props);
     
-    let [loading, setLoading] = useState(false)
-    let [data, setData] = useState(null)
-    let [error, setError] = useState(null)
+    const client = useApolloClient();
+    
+    //const entityID=`${props.entity[0].toLowerCase()}${props.entity.slice(1)}ID`;
+    const entityID="pbotID";
 
-    const {token} = useAuth();
+    let gQL;
+    gQL = props.mode === "edit" ?
+        gql`
+            mutation ($data: ${props.entity}Input!) {
+                Update${props.entity}(data: $data) {
+                    ${entityID}
+                }      
+            }
+        ` :
+        props.mode === "create" ?
+        gql`
+            mutation ($data: ${props.entity}Input!) {
+                Create${props.entity}(data: $data) {
+                    ${entityID}
+                }      
+            }
+        ` :
+        props.mode === "delete" ?
+        gql`
+            mutation ($data: ${props.entity}Input!) {
+                Delete${props.entity}(data: $data) {
+                    ${entityID}
+                }      
+            }
+        ` :
+        '';
 
+    const [mutateNode, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}});
+
+    //Apollo client mutations are a little weird. Rather than executing automatically on render, 
+    //the hook returns a function we have to manually execute, in this case addDescription.
+    //The idea is that this would be attached to a submit event, I guess, but that's not 
+    //how this current architecture works. Instead, I'm using the useEffect hook with the empty 
+    //array option that causes it to only execute once.
     useEffect(() => {
-
-        async function fetchData () {
-            setLoading(true)
-            try {
-                let response
-                if (props.mode === "replace") {
-                    console.log("PUTing");
-                    response = await fetch(
-                        `${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}/${props.id}`,
-                        {
-                            method: 'PUT',
-                            headers: {
-                                //'Content-Type': 'multipart/form-data',
-                                'Accept': 'application/json',
-                                'Authorization': "Bearer " + token
-                            },
-                            body: props.data,
-                        }
-                    );                
-                } else if (props.mode === "edit") {
-                    console.log("PATCHing");
-                    response = await fetch(
-                        `${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}/${props.id}`,
-                        props.data instanceof FormData ?
-                            {
-                                method: 'PATCH',
-                                headers: {
-                                    //'Content-Type': 'multipart/form-data',
-                                    'Accept': 'application/json',
-                                    'Authorization': "Bearer " + token
-                                },
-                                body: props.data,                           
-                            } :
-                            {
-                                method: 'PATCH',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                    'Authorization': "Bearer " + token
-                                },
-                                body: JSON.stringify(props.data)
-                            }
-                    );                
-                } else if (props.mode === "delete") {
-                    console.log("DELETing");
-                    response = await fetch(
-                        `${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}/${props.id}`,
-                        {
-                            method: 'DELETE',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Authorization': "Bearer " + token
-                            },
-                        }
-                    );                
-                } else {
-                    console.log("POSTing");
-                    console.log(props.data)
-
-                    response = await fetch(
-                        //API is a little different for user registration
-                        `${process.env.REACT_APP_AZLIB_API_URL}/api/v1/${props.entity}${props.entity === "users" ? "?signup=true" : ""}`,
-                        props.data instanceof FormData ?
-                            {
-                                method: 'POST',
-                                headers: {
-                                    //'Content-Type': 'multipart/form-data',
-                                    'Accept': 'application/json',
-                                    'Authorization': "Bearer " + token
-                                },
-                                body: props.data,                           
-                            } :
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                    'Authorization': "Bearer " + token
-                                },
-                                body: JSON.stringify(props.data)
-                            }
-                    );    
-                }
-                console.log("response");
-                
-                //TODO: I'm thinking now that we don't need to check for ok. Just pass the error on through and let it display.
-                /*
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                */
-
-                const json = await response.json();
-                console.log(json);
-                setLoading(false)
-                console.log("setting data")
-                setData(json)
-            } catch (error) {
-                console.error(error.message);
-            }   
-        }
-        fetchData()     
-    }, [props.random]);
+            mutateNode().catch((err) => {
+                //Just eat it. The UI will get what it needs below through the error field defined on the hook.
+                console.log("catch");
+                console.log(err);
+            });
+    }, []);
 
     if (loading) {
         return <p>Loading...</p>;
@@ -123,56 +71,41 @@ const Mutator = (props) => {
         console.log(error);
         return <p>Error: {error.message}</p>;
     } else if (data) {
-        console.log("have data")
         console.log(data);
         
-         //If handleClose is present, caller was a dialog. Just close it and return
+        //Force reload of cache
+        client.resetStore();
+
+        //If handleClose is present, caller was a dialog. Just close it and return
         if (props.handleClose) {
             props.handleClose();
             return null;
         }
 
         const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"};
-        return (
-            <div>
-                <pre>{JSON.stringify(data, null, 4)}</pre>
-            </div>
-        )
-
-        /*
         return props.mode === "edit" ?
         (
-            <div>
-                <pre>{JSON.stringify(data, null, 4)}</pre>
+            <div key={data[`Update${props.entity}`][`${entityID}`]} style={style}>
+                {data[`Update${props.entity}`][`${entityID}`]} updated<br />
+                <br />
             </div>
-            //<div key={data[`Update${props.entity}`][`${entityID}`]} style={style}>
-            //    {data[`Update${props.entity}`][`${entityID}`]} updated<br />
-            //    <br />
-            //</div>
         ) :
         props.mode === "create" ?
         (
-            <div>
-                <pre>{JSON.stringify(data, null, 4)}</pre>
+            <div key={data[`Create${props.entity}`][`${entityID}`]} style={style}>
+                {data[`Create${props.entity}`][`${entityID}`]} created<br />
+                <br />
             </div>
-            //<div key={data[`Create${props.entity}`][`${entityID}`]} style={style}>
-            //    {data[`Create${props.entity}`][`${entityID}`]} created<br />
-            //    <br />
-            //</div>
         ) :
         props.mode === "delete" ?
         (
-            <div>
-                <pre>{JSON.stringify(data, null, 4)}</pre>
+            <div key={data[`Delete${props.entity}`][`${entityID}`]} style={style}>
+                {data[`Delete${props.entity}`][`${entityID}`]} deleted<br />
+                <br />
             </div>
-            //<div key={data[`Delete${props.entity}`][`${entityID}`]} style={style}>
-            //    {data[`Delete${props.entity}`][`${entityID}`]} deleted<br />
-            //    <br />
-            //</div>
         ) :
         '';
-        */
-
+                
     } else {
         return (<div></div>); //gotta return something until addDescription runs
     }
