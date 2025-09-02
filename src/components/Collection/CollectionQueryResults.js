@@ -78,15 +78,15 @@ function OTUs(props) {
     return (
         <div style={style}>
             <div>
-                <b>Identified As</b><br />
+                <b>Identified</b><br />
                 {renderOTUs(identifiedAsOTUs)}
             </div>
             <div style={{marginTop:"1em"}}>
-                <b>Type Of</b><br />
+                <b>Types</b><br />
                 {renderOTUs(typeOfOTUs)}
             </div>
             <div style={{marginTop:"1em"}}>
-                <b>Holotype Of</b><br />
+                <b>Holotypes</b><br />
                 {renderOTUs(holotypeOfOTUs)}
             </div>
         </div>
