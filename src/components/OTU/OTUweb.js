@@ -315,7 +315,7 @@ export const OTUweb = (props) => {
                                             <AlternatingTableRow key={d.Description.pbotID}>
                                                 <TableCell align="left" sx={{fontSize: "1rem"}}>
                                                     <div ><b>From schema "{d.Description.schema.title}":</b></div>
-                                                    { d.Description.schema.writtenDescription &&
+                                                    { d.Description.writtenDescription &&
                                                     <div style={indent}><b>written description:</b> {d.Description.writtenDescription}</div>
                                                     }   
                                                     {d.Description.notes &&
@@ -567,6 +567,9 @@ export const OTUweb = (props) => {
                                                 }
                                                 {synOTU.species &&
                                                 <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br />{synOTU.species}</Box>
+                                                }
+                                                {synOTU.identifiedSpecimens &&
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Number of identified specimens</Typography><br />{synOTU.identifiedSpecimens.length}</Box>
                                                 }
                                                 {synonym.comments && synonym.comments.length > 0 &&
                                                     <Box sx={boxedDisplay}>

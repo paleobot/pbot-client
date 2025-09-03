@@ -77,6 +77,12 @@ function OTUList(props) {
                     family
                     genus
                     species
+                    identifiedSpecimens {
+                        Specimen {
+                            name
+                            pbotID
+                        }
+                    }
                 }
                 comments  @include(if: $includeComments) {
                     enteredBy {
