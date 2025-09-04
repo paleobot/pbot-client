@@ -10,7 +10,7 @@
     "@mui/lab": "^5.0.0-alpha.79",
     "@mui/material": "^5.11.8",
     "@mui/system": "^5.15.20",
-    "@react-pdf/renderer": "^3.1.14",
+    "@react-pdf/renderer": "3.1.14",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -34,7 +34,7 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start",
     "//":" for localhost testing only start: react-scripts --openssl-legacy-provider start",
     "build": "react-scripts build",
     "test": "react-scripts test",
