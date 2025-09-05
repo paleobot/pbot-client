@@ -63,12 +63,26 @@ function OTUList(props) {
                 }
             }
             synonyms @include(if: $includeSynonyms) {
+                explanation
+                references {
+                    Reference {
+                        pbotID
+                        title
+                    }
+                    order
+                }
                 otus {
                     name
                     pbotID
                     family
                     genus
                     species
+                    identifiedSpecimens {
+                        Specimen {
+                            name
+                            pbotID
+                        }
+                    }
                 }
                 comments  @include(if: $includeComments) {
                     enteredBy {
@@ -133,6 +147,8 @@ function OTUList(props) {
                         caption
                     }
                     collection {
+                        pbotID
+                        name
                         mininterval
                         maxinterval
                         stratigraphicGroup
@@ -148,6 +164,7 @@ function OTUList(props) {
                         Description {
                             pbotID
                             name
+                            writtenDescription
                             notes
                             schema {
                                 pbotID
@@ -157,10 +174,12 @@ function OTUList(props) {
                                 pbotID
                                 character {
                                     name
+                                    deepOrder
                                 }
                                 state {
                                     State {
                                         name
+                                        deepOrder
                                     }
                                     order
                                     value
@@ -180,6 +199,8 @@ function OTUList(props) {
                         caption
                     }
                     collection {
+                        pbotID
+                        name
                         mininterval
                         maxinterval
                         stratigraphicGroup
@@ -203,6 +224,8 @@ function OTUList(props) {
                         caption
                     }
                     collection {
+                        pbotID
+                        name
                         mininterval
                         maxinterval
                         stratigraphicGroup
@@ -212,7 +235,7 @@ function OTUList(props) {
                         lat
                         lon
                         country
-                        state                    
+                        state                   
                     }
                 }
             }

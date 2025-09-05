@@ -368,7 +368,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                                 component={SensibleTextField}
                                 type="text"
                                 name="name"
-                                label="Name"
+                                label="Specimen number"
                                 fullWidth 
                                 disabled={false}
                             >

@@ -55,6 +55,7 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
         enterers: [],
         groups: [],
         includeSpecimens: true,
+        includeOTUs: true,
         includeOverlappingIntervals: false
     };
     

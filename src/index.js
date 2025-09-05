@@ -1,4 +1,5 @@
 import React from 'react';
+import './polyfills';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
@@ -18,8 +19,7 @@ import PBOTInterface from './components/PBOTInterface';
 import Action from './components/Action';
 import About from './components/About/About';
 import HowToUsePbot from './components/HowToUsePbot/HowToUsePbot';
-import Resources from './components/Resources';
-import GoToEducationOutreachHub from './components/GoToEducationOutreachHub';
+import Resources from './components/Resources/Resources';
 import Profile from './components/Profile';
 import Account from './components/Account';
 import Logout from './components/Logout';
@@ -28,6 +28,7 @@ import RegisterForm from './components/RegisterForm';
 import Home from './components/Home';
 import ReferenceDirectQueryResults from './components/Reference/ReferenceDirectQueryResults';
 import MDElement from './components/MDElement';
+import Education from './components/Education/Education';
 
 //import '@fontsource/roboto/300.css';
 //import '@fontsource/roboto/400.css';
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "education",
-                element: <GoToEducationOutreachHub/>
+                element: <Education/>
             },
             {
                 path: "profile",

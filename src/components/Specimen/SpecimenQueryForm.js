@@ -115,7 +115,7 @@ const SpecimenQueryForm = ({handleSubmit, select}) => {
                     component={SensibleTextField}
                     name="name" 
                     type="text" 
-                    label="Name"
+                    label="Specimen number"
                     disabled={false}
                 />
                 <br />

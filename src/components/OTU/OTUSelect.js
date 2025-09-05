@@ -227,8 +227,11 @@ export const OTUSelect = (props) => {
             formikProps.setFieldValue("holotypeSpecimen", otu.holotypeSpecimen ? otu.holotypeSpecimen.Specimen.pbotID : '');
 
             formikProps.setFieldValue("references", otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) || null);
-            formikProps.setFieldValue("public", otu.elementOf && otu.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false));
-            formikProps.setFieldValue("origPublic", formikProps.values.public);
+
+            const isPublic = otu.elementOf && otu.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false)
+            formikProps.setFieldValue("public", isPublic);
+            formikProps.setFieldValue("origPublic", isPublic);
+
             formikProps.setFieldValue("groups", groups || []);
 
             console.log(formikProps.values)
