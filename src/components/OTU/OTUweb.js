@@ -157,7 +157,7 @@ function SpecimenTable({ title, specimens }) {
 
 export const OTUweb = (props) => {
 
-    let { pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy, directQParams, jsonDirectQParams, history, holotypeImages, typeImages, identifiedImages, minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations, stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon, countries, states} = props.otu;
+    let { pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy, directQParams, jsonDirectQParams, history, holotypeImages, typeImages, identifiedImages, minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations, stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon, countries, states, exclusiveTypeSpecimens, exclusiveIdentifiedSpecimens} = props.otu;
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -170,6 +170,8 @@ export const OTUweb = (props) => {
     const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
     const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
 
+    /*
+    Moving to OTUs.js
     //Private group membership of Specimens can cause empty values. 
     //Here we clean that up 
     if (holotypeSpecimen && !holotypeSpecimen.Specimen) {
@@ -183,7 +185,7 @@ export const OTUweb = (props) => {
     if (identifiedSpecimens) {
         identifiedSpecimens = identifiedSpecimens.filter(iS => iS.Specimen)
     }
-    
+    */
 
     const header1 = {marginLeft:"2em", marginTop:"10px"}
     return (
@@ -399,10 +401,10 @@ export const OTUweb = (props) => {
                             <SpecimenTable title="Holotype specimen" specimens={[holotypeSpecimen]}/>
                         </>
                         )}
-                        {typeSpecimens && typeSpecimens.length > 0 &&
+                        {exclusiveTypeSpecimens && exclusiveTypeSpecimens.length > 0 &&
                         <>
                             <br />
-                            <SpecimenTable title="Other type specimens" specimens={typeSpecimens}/>
+                            <SpecimenTable title="Other type specimens" specimens={exclusiveTypeSpecimens}/>
                         </>
                         }
 
@@ -422,13 +424,13 @@ export const OTUweb = (props) => {
                         Additional specimens 
                     </AccordionSummary>
                     <AccordionDetails>
-                        {identifiedSpecimens && identifiedSpecimens.length > 0 &&
+                        {exclusiveIdentifiedSpecimens && exclusiveIdentifiedSpecimens.length > 0 &&
                         <>
-                            <SpecimenTable title="Additional specimens" specimens={identifiedSpecimens}/>
+                            <SpecimenTable title="Additional specimens" specimens={exclusiveIdentifiedSpecimens}/>
                         </>
                         }
-                        {(!identifiedSpecimens || identifiedSpecimens.length === 0) &&
-                            <div style={indent}>No identified specimens available</div>
+                        {(!exclusiveIdentifiedSpecimens || exclusiveIdentifiedSpecimens.length === 0) &&
+                            <div style={indent}>No additional specimens available</div>
                         }
                     </AccordionDetails>
                 </Accordion>

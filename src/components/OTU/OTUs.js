@@ -29,6 +29,34 @@ const massageOTU = (o, directQParams, jsonDirectQParams) => {
         }
     }), "timestamp");
 
+    //Private group membership of Specimens can cause empty values. 
+    //Here we clean that up 
+    if (otu.holotypeSpecimen && !otu.holotypeSpecimen.Specimen) {
+        otu.holotypeSpecimen = null;
+    }
+    if (otu.typeSpecimens) {
+        otu.typeSpecimens = otu.typeSpecimens.filter(tS => tS.Specimen)
+        console.log("typeSpecimens0")
+        console.log(otu.typeSpecimens)
+    }
+    if (otu.identifiedSpecimens) {
+        otu.identifiedSpecimens = otu.identifiedSpecimens.filter(iS => iS.Specimen)
+    }
+
+    //For display purposes, we want to clear the holotype from the type specimens list and type specimens from the identified specimens list. We put these in new fields in case we need the full lists later.
+    otu.exclusiveTypeSpecimens = otu.typeSpecimens.filter(tS => 
+        otu.holotypeSpecimen ? 
+            tS.Specimen.pbotID !== otu.holotypeSpecimen.Specimen.pbotID :
+            true
+    );
+
+    const typeIDSet = new Set(otu.typeSpecimens.map(tS => tS.Specimen.pbotID));
+    otu.exclusiveIdentifiedSpecimens = otu.identifiedSpecimens.filter(tS => {
+        const typeIDSet = new Set(otu.typeSpecimens.map(tS => tS.Specimen.pbotID));
+        return !typeIDSet.has(tS.Specimen.pbotID)
+    });
+
+    //Gather images for holotype, type specimens, and identified specimens
     const holotypeSpecimen = otu.holotypeSpecimen
     otu.holotypeImages = (holotypeSpecimen && holotypeSpecimen.Specimen && holotypeSpecimen.Specimen.images && holotypeSpecimen.Specimen.images.length > 0) ?
         holotypeSpecimen.Specimen.images.reduce((acc, i) => {
@@ -39,13 +67,8 @@ const massageOTU = (o, directQParams, jsonDirectQParams) => {
             return acc
         }, []) : []; 
 
-    const typeSpecimens = otu.typeSpecimens
     let typeImages = [];
-    typeSpecimens.filter(tS =>  
-        holotypeSpecimen ? 
-            tS.Specimen.pbotID !== holotypeSpecimen.Specimen.pbotID :
-            true
-    ).forEach(tS => {
+    otu.exclusiveTypeSpecimens.forEach(tS => {
         if (tS.Specimen && tS.Specimen.images) typeImages = typeImages.concat(
             tS.Specimen.images.reduce((acc, i) => {
                 acc.push({
@@ -58,10 +81,8 @@ const massageOTU = (o, directQParams, jsonDirectQParams) => {
     });
     otu.typeImages = typeImages;
 
-    const identifiedSpecimens = otu.identifiedSpecimens
     let identifiedImages = [];
-    const typeIDSet = new Set(typeSpecimens.map(tS => tS.Specimen.pbotID));
-    identifiedSpecimens.filter(tS => !typeIDSet.has(tS.Specimen.pbotID)).forEach(tS => {
+    otu.exclusiveIdentifiedSpecimens.forEach(tS => {
         if (tS.Specimen && tS.Specimen.images) identifiedImages = identifiedImages.concat(
             tS.Specimen.images.reduce((acc, i) => {
                 acc.push({
@@ -74,6 +95,7 @@ const massageOTU = (o, directQParams, jsonDirectQParams) => {
     });
     otu.identifiedImages = identifiedImages;
 
+    //TODO: We no longer use these interval/stratigraphy/geography aggregates, but leaving this here for now in case we want to bring it back
     const minIntervals = new Set();
     const maxIntervals = new Set();
     const stratigraphicGroups = new Set();
@@ -86,7 +108,7 @@ const massageOTU = (o, directQParams, jsonDirectQParams) => {
     let maxLon
     const countries = new Set();
     const states = new Set();
-    typeSpecimens.forEach(tS => {
+    otu.typeSpecimens.forEach(tS => {
         minIntervals.add(tS.Specimen.collection.mininterval);
         maxIntervals.add(tS.Specimen.collection.maxinterval);
         stratigraphicGroups.add(tS.Specimen.collection.stratigraphicGroup);
