@@ -136,6 +136,7 @@ function OTUList(props) {
                 stateName
                 stateValue
                 stateOrder
+                characterDeepOrder
             }
             holotypeSpecimen @include(if: $includeHolotypeDescription) {
                 Specimen {

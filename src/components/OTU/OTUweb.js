@@ -366,7 +366,7 @@ export const OTUweb = (props) => {
                                                 <TableCell align="left" sx={{fontSize: "1rem"}}>
                                                         <div><b>From schema "{s}":</b></div>
                                                         <div style={indent}><b>character states:</b></div>
-                                                        {alphabetize(mergedDescription.filter(ci => ci.schema === s), "characterName").map ((ci, i) =>  (
+                                                        {sort(mergedDescription.filter(ci => ci.schema === s), "characterDeepOrder", "stateName").map ((ci, i) =>  (
                                                             <div style={indent2} key={i}>{ci.characterName}:{"quantity" === ci.stateName ? ci.stateValue : ci.stateName}{ci.stateOrder  ? ', order:' + ci.stateOrder : ''}</div>
                                                         ))}
                                                 </TableCell>
