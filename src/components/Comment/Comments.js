@@ -5,24 +5,55 @@ import { sort } from '../../util.js';
 export function Comments(props) {
     console.log("Comments");
     if (!props.comments) return ''; //TODO: is this the best place to handle this?
+
+    if ('pdf' === props.format) {
+    
+        const style1 = {
+            marginLeft:`${(props.level * 2)}em`,
+            fontSize: 10,
+        }
+        const style2 = {
+            marginLeft:`${(props.level * 2) + 2}em`,
+            fontSize: 10,
+        }
+
+        console.log(style1)
+        console.log(style2)
+
+        return (
+            <>
+                {props.comments.map((comment, i) => (
+                    <>
+                        <Text style={style1}>
+                            <b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b>
+                        </Text>
+                        <Text style={style2}>{comment.content}</Text>
+                        <Comments comments={comment.comments} level={props.level + 1} format={props.format}/>
+                    </>
+                ))}
+            </>
+        )
+       
+    } else {
    
-   const style1 = {marginLeft:`${(props.level * 2)}em`}
-   const style2 = {marginLeft:`${(props.level * 2) + 2}em`}
+        const style1 = {marginLeft:`${(props.level * 2)}em`}
+        const style2 = {marginLeft:`${(props.level * 2) + 2}em`}
 
-   console.log(style1)
-   console.log(style2)
+        console.log(style1)
+        console.log(style2)
 
-    return (
-        <>
-            {props.comments.map((comment, i) => (
-                <div key={i}>
-                    <div style={style1}>
-                        <b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b>
+        return (
+            <>
+                {props.comments.map((comment, i) => (
+                    <div key={i}>
+                        <div style={style1}>
+                            <b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b>
+                        </div>
+                        <div style={style2}>{comment.content}</div>
+                        <Comments comments={comment.comments} level={props.level + 1}/>
                     </div>
-                    <div style={style2}>{comment.content}</div>
-                    <Comments comments={comment.comments} level={props.level + 1}/>
-                </div>
-            ))}
-        </>
-    )
+                ))}
+            </>
+        )
+    }
 }
