@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { Document, Image as PDFImage, Page, PDFViewer, StyleSheet, Text, View } from '@react-pdf/renderer';
-import { alphabetize } from '../../util.js';
+import { alphabetize, sort } from '../../util.js';
 import CharacterInstances from '../CharacterInstance/CharacterInstances.js';
+import {Table, TableRow, TableHeader as TableHead, TableCell} from '@ag-media/react-pdf-table';
+import { Comments } from '../Comment/Comments.js';
 
 // Create styles for PDF layout
 const styles = StyleSheet.create({
@@ -131,6 +133,46 @@ const styles = StyleSheet.create({
 
 });
 
+
+// SpecimenTable: reusable table for holotype, other type specimens, and additional specimens
+function SpecimenTable({ title, specimens }) {
+    const specimenDirectQParams = ["includeImages", "includeDescriptions", "includeOTUs"];
+    const indent = { marginLeft: "2em" };
+    return (
+        <>
+        <Text style={[styles.fieldLabel, {marginTop: 10}]}>{title}</Text>
+        <Table               
+            tdStyle={{padding: 5, borderBottomWidth: 1, fontSize: 10}}
+        >
+            <TableHead>
+                <TableCell style={{backgroundColor: '#e0e0e0'}}>Specimen name</TableCell>
+                <TableCell style={{backgroundColor: '#e0e0e0'}}>Collection name</TableCell>
+                <TableCell style={{backgroundColor: '#e0e0e0'}}>Country</TableCell>
+                <TableCell style={{backgroundColor: '#e0e0e0'}}>Min interval</TableCell>
+                <TableCell style={{backgroundColor: '#e0e0e0'}}>Max interval</TableCell>
+            </TableHead>
+                {specimens
+                    .filter(s => s.Specimen && s.Specimen.collection)
+                    .sort((a, b) => {
+                        const nameA = a.Specimen.collection.name || '';
+                        const nameB = b.Specimen.collection.name || '';
+                        return nameA.localeCompare(nameB);
+                    })
+                    .map((s, i) => (
+                        <TableRow key={s.Specimen.pbotID} style={{backgroundColor: i % 2 === 0 ? '#F0F0F0' : '#FFFFFF'}}>
+                            <TableCell>{s.Specimen.name}</TableCell>
+                            <TableCell>{s.Specimen.collection.name}</TableCell>
+                            <TableCell>{s.Specimen.collection.country}</TableCell>
+                            <TableCell>{s.Specimen.collection.mininterval}</TableCell>
+                            <TableCell>{s.Specimen.collection.maxinterval}</TableCell>
+                        </TableRow>
+                    ))}
+        </Table>
+        </>
+    );
+}
+
+
 export const OTUpdf = (props) => {
     // Destructure all props from the otu object
     const { 
@@ -142,7 +184,7 @@ export const OTUpdf = (props) => {
         history, holotypeImages, typeImages, identifiedImages,
         minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations,
         stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon,
-        countries, states
+        countries, states, exclusiveTypeSpecimens, exclusiveIdentifiedSpecimens
     } = props.otu;
 
     // Helper to render a field if it exists
@@ -296,6 +338,163 @@ export const OTUpdf = (props) => {
                     <Text style={styles.paragraph}>No merged descriptions available</Text>
                 }
             </View>
+
+            {/* Exemplar Specimens Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>Exemplar Specimens</Text>
+                {holotypeSpecimen && (
+                <>
+                    <SpecimenTable title="Holotype specimen" specimens={[holotypeSpecimen]}/>
+                </>
+                )}
+                {exclusiveTypeSpecimens && exclusiveTypeSpecimens.length > 0 &&
+                <>
+                    <SpecimenTable title="Other type specimens" specimens={exclusiveTypeSpecimens}/>
+                </>
+                }
+
+                {(!holotypeSpecimen && (!typeSpecimens || typeSpecimens.length === 0)) &&
+                    <Text style={styles.paragraph}>No type specimens available</Text>
+                }
+
+            </View>
+
+            {/* Additional Specimens Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>Additional Specimens</Text>
+                    {exclusiveIdentifiedSpecimens && exclusiveIdentifiedSpecimens.length > 0 &&
+                    <>
+                        <SpecimenTable title="Additional specimens" specimens={exclusiveIdentifiedSpecimens}/>
+                    </>
+                    }
+                    {(!exclusiveIdentifiedSpecimens || exclusiveIdentifiedSpecimens.length === 0) &&
+                        <Text style={styles.paragraph}>No additional specimens available</Text>
+                    }
+            </View>
+
+            {/* History Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>History</Text>
+                {history && history.length > 0 &&
+                    <>
+                    <Table               
+                        tdStyle={{padding: 5, borderBottomWidth: 1, fontSize: 10}}
+                    >
+                        {history.map((eb, i) => {
+                            const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
+                            return (
+                                <TableRow key={eb.timestamp} style={{backgroundColor: bgColor}}>
+                                    <TableCell>{eb.timestamp}</TableCell>
+                                    <TableCell>{eb.type}</TableCell>
+                                    <TableCell>{eb.person}</TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </Table>
+                    </>
+                }
+                {(!history || history.length === 0) &&
+                    <Text style={styles.paragraph}>No history available</Text>
+                }
+            </View>
+
+            {/* Notes Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>Notes</Text>
+                {notes && 
+                    <Text style={styles.paragraph}>{notes}</Text>
+                }
+                {(!notes || notes.length === 0) &&
+                    <Text style={styles.paragraph}>No notes available</Text>
+                }
+            </View>
+
+            {/* Synonyms Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>Synonyms</Text>
+                {synonyms && synonyms.length > 0 &&
+                    <>
+                    <Table               
+                        tdStyle={{padding: 5, borderBottomWidth: 1, fontSize: 10}}
+                    >
+                        {synonyms.map((synonym, i) => {
+                            const synOTU = synonym.otus.filter(synOtu => synOtu.pbotID !== pbotID)[0];
+                            const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
+                            return (
+                                <View key={i} style={{backgroundColor: bgColor}}>
+                                        <View>
+                                            <Text style={styles.paragraph}>{synOTU.name}</Text>
+                                        </View>
+                                        {synonym.explanation &&
+                                        <>
+                                        <View>
+                                            <Text style={styles.fieldLabel}>Explanation</Text>
+                                            <Text style={styles.paragraph}>{synonym.explanation}</Text>
+                                        </View>
+                                        </>
+                                        }
+                                        {synonym.references && synonym.references.length > 0 &&
+                                            <>
+                                            <View>
+                                                <Text style={styles.fieldLabel}>References</Text>
+                                                {sort([...synonym.references], "order").map((ref, idx) => (
+                                                    <Text key={idx} style={styles.paragraph}>{ref.Reference.title}</Text>
+                                                ))}
+                                            </View>
+                                            </>
+                                        }
+                                        {synOTU.family &&
+                                        <>
+                                        <View>
+                                            <Text style={styles.fieldLabel}>Family</Text>
+                                            <Text style={styles.paragraph}>{synOTU.family}</Text>
+                                        </View>
+                                        </>
+                                        }
+                                        {synOTU.genus &&
+                                        <>
+                                        <View>
+                                            <Text style={styles.fieldLabel}>Genus</Text>
+                                            <Text style={styles.paragraph}>{synOTU.genus}</Text>
+                                        </View>
+                                        </>
+                                        }
+                                        {synOTU.species &&
+                                        <>
+                                        <View>
+                                            <Text style={styles.fieldLabel}>Specific epithet</Text>
+                                            <Text style={styles.paragraph}>{synOTU.species}</Text>
+                                        </View>
+                                        </>
+                                        }
+                                        {synOTU.identifiedSpecimens &&
+                                        <>
+                                        <View>
+                                            <Text style={styles.fieldLabel}>Number of identified specimens</Text>
+                                            <Text style={styles.paragraph}>{synOTU.identifiedSpecimens.length}</Text>
+                                        </View>
+                                        </>
+                                        }
+                                        {synonym.comments && synonym.comments.length > 0 &&
+                                            <>
+                                            <View>
+                                                <Text style={styles.fieldLabel}>Comments</Text><br />
+                                                <Comments comments={synonym.comments} level={1} format="pdf"/>
+                                            </View>
+                                            </>
+                                        }
+
+                                </View>
+                            )
+                        })}
+                    </Table>
+                    </>
+                }
+                {(!synonyms || synonyms.length === 0) &&
+                    <Text style={styles.paragraph}>No proposed synonyms</Text>
+                }
+            </View>
+
 
         </Page>
         </>
