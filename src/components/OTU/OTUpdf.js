@@ -325,7 +325,15 @@ export const OTUpdf = (props) => {
                             <View key={i} style={{marginBottom: 10, backgroundColor: bgColor, padding: 5}}>
                                 <Text style={styles.subheading}>From schema "{s}"</Text>
                                 <Text style={styles.fieldLabel}>Character States:</Text>                                
-                                    {alphabetize(mergedDescription.filter(ci => ci.schema === s), "characterDeepOrder").map ((ci, i) =>  (
+                                    {sort(mergedDescription.reduce((acc, ci) => {
+                                        if (ci.schema === s) {
+                                            acc.push({
+                                                ...ci,
+                                                deepOrder: `${ci.characterDeepOrder}.${ci.stateDeepOrder}`
+                                            });
+                                        }
+                                        return acc;
+                                    }, []), "deepOrder").map ((ci, i) =>  (
                                         <Text style={styles.singleSpacedLine} key={i}>{ci.characterName}:{"quantity" === ci.stateName ? ci.stateValue : ci.stateName}{ci.stateOrder  ? ', order:' + ci.stateOrder : ''}</Text>
                                     ))}
                             </View>
