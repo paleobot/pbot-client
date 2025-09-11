@@ -447,10 +447,10 @@ export const OTUpdf = (props) => {
                                         }
                                         {synonym.references && synonym.references.length > 0 &&
                                             <>
-                                            <View>
+                                            <View style={{marginBottom: 5}}>
                                                 <Text style={styles.fieldLabel}>References:</Text>
                                                 {sort([...synonym.references], "order").map((ref, idx) => (
-                                                    <Text key={idx} style={styles.paragraph}>{ref.Reference.title}</Text>
+                                                    <Text key={idx} style={[styles.singleSpacedLine, {marginLeft: 10}]}>{ref.Reference.title}</Text>
                                                 ))}
                                             </View>
                                             </>
