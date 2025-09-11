@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { sort } from '../../util.js';
+import { Text } from '@react-pdf/renderer';
 
 export function Comments(props) {
     console.log("Comments");
