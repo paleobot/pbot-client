@@ -305,10 +305,10 @@ export const OTUpdf = (props) => {
                                 {renderField("Written Description", d.Description.writtenDescription)}
                                 {renderField("Notes", d.Description.notes)}
                                 <Text style={styles.fieldLabel}>Character States:</Text>                                
-                                <CharacterInstances format="pdf" style={styles.singleSpacedLine} characterInstances={d.Description.characterInstances} />
-                                
+                                <CharacterInstances format="pdf" style={styles.singleSpacedLine} characterInstances={d.Description.characterInstances} />                                
                             </View>
-                    )})}
+                        )
+                    })}
                     </>
 
                 }
