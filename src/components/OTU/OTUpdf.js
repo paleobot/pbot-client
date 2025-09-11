@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Document, Image as PDFImage, Page, PDFViewer, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Page, PDFViewer, StyleSheet, Text, View, Image } from '@react-pdf/renderer';
 import { alphabetize, sort } from '../../util.js';
 import CharacterInstances from '../CharacterInstance/CharacterInstances.js';
 import {Table, TableRow, TableHeader as TableHead, TableCell} from '@ag-media/react-pdf-table';
@@ -79,15 +79,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#F9F9F9',
     },
     image: {
-        marginBottom: 10,
-        maxWidth: '100%',
+        //marginBottom: 5,
+        maxWidth: '50%',
         height: 'auto',
     },
     imageCaption: {
         fontSize: 8,
         fontStyle: 'italic',
-        textAlign: 'center',
-        marginBottom: 5,
+        textAlign: 'left',
+        marginBottom: 10,
     },
     table: {
         display: 'table',
@@ -211,6 +211,13 @@ export const OTUpdf = (props) => {
         
         return renderField(label, displayValue);
     };
+
+    const RenderImage = ({ image }) => (
+        <View key={image.pbotID} style={styles.imageContainer}>
+            <Image source={{ uri: image.link }} style={styles.image} />
+            <Text style={styles.imageCaption}>{image.caption}</Text>
+        </View>
+    );
 
     // Get workspace name (public or other)
     const isPublic = elementOf && elementOf.some(group => group.name === "public");
@@ -435,16 +442,13 @@ export const OTUpdf = (props) => {
                                         </View>
                                         {synonym.explanation &&
                                         <>
-                                        <View>
-                                            <Text style={styles.fieldLabel}>Explanation</Text>
-                                            <Text style={styles.paragraph}>{synonym.explanation}</Text>
-                                        </View>
+                                        {renderField("Explanation", synonym.explanation)}
                                         </>
                                         }
                                         {synonym.references && synonym.references.length > 0 &&
                                             <>
                                             <View>
-                                                <Text style={styles.fieldLabel}>References</Text>
+                                                <Text style={styles.fieldLabel}>References:</Text>
                                                 {sort([...synonym.references], "order").map((ref, idx) => (
                                                     <Text key={idx} style={styles.paragraph}>{ref.Reference.title}</Text>
                                                 ))}
@@ -453,40 +457,28 @@ export const OTUpdf = (props) => {
                                         }
                                         {synOTU.family &&
                                         <>
-                                        <View>
-                                            <Text style={styles.fieldLabel}>Family</Text>
-                                            <Text style={styles.paragraph}>{synOTU.family}</Text>
-                                        </View>
+                                        {renderField("Family", synOTU.family)}
                                         </>
                                         }
                                         {synOTU.genus &&
                                         <>
-                                        <View>
-                                            <Text style={styles.fieldLabel}>Genus</Text>
-                                            <Text style={styles.paragraph}>{synOTU.genus}</Text>
-                                        </View>
+                                        {renderField("Genus", synOTU.genus)}
                                         </>
                                         }
                                         {synOTU.species &&
                                         <>
-                                        <View>
-                                            <Text style={styles.fieldLabel}>Specific epithet</Text>
-                                            <Text style={styles.paragraph}>{synOTU.species}</Text>
-                                        </View>
+                                        {renderField("Specific epithet", synOTU.species)}
                                         </>
                                         }
                                         {synOTU.identifiedSpecimens &&
                                         <>
-                                        <View>
-                                            <Text style={styles.fieldLabel}>Number of identified specimens</Text>
-                                            <Text style={styles.paragraph}>{synOTU.identifiedSpecimens.length}</Text>
-                                        </View>
+                                        {renderField("Number of identified specimens", synOTU.identifiedSpecimens.length)}
                                         </>
                                         }
                                         {synonym.comments && synonym.comments.length > 0 &&
                                             <>
                                             <View>
-                                                <Text style={styles.fieldLabel}>Comments</Text><br />
+                                                <Text style={styles.fieldLabel}>Comments:</Text><br />
                                                 <Comments comments={synonym.comments} level={1} format="pdf"/>
                                             </View>
                                             </>
@@ -503,8 +495,35 @@ export const OTUpdf = (props) => {
                 }
             </View>
 
+            {holotypeImages && holotypeImages.length > 0 &&
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.subheading}>Holotype Images</Text>
+                    {holotypeImages.map((image, i) => (
+                        <RenderImage key={i} image={image} />
+                    ))}
+                </View>
+            }
+
+            {typeImages && typeImages.length > 0 &&
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.subheading}>Other type Images</Text>
+                    {typeImages.map((image, i) => (
+                        <RenderImage key={i} image={image} />
+                    ))}
+                </View>
+            }
+
+            {identifiedImages && identifiedImages.length > 0 &&
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.subheading}>Identified Specimen Images</Text>
+                    {identifiedImages.map((image, i) => (
+                        <RenderImage key={i} image={image} />
+                    ))}
+                </View>
+            }
 
         </Page>
+
         </>
     );
 };
