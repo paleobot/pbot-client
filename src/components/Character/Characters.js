@@ -28,10 +28,13 @@ function Characters(props) {
     const pdfStyle = {marginLeft: level * 6};
 
     console.log(style);
-    return characters.map(({pbotID, name, definition, states, characters}) => (
+    return characters.map(({pbotID, name, definition, states, characters}, i) => {
+        const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
+
+        return (
         <>
         {"pdf" === props.format &&
-        <View key={pbotID}  style={[props.style || pdfStyle, {marginBottom: "10"}]}>
+        <View key={pbotID}  style={[props.style || pdfStyle, {marginBottom: "10", backgroundColor: bgColor}]}>
             <Text>{name}{definition ? `, ${definition}` : ''}</Text>
             <States states={states} format="pdf" style={pdfStyle}/>
             <Characters characters={characters} format="pdf" level={level}/>
@@ -45,7 +48,7 @@ function Characters(props) {
         </div>
         }
         </>
-    ));
+    )});
 }
 
 export default Characters;
