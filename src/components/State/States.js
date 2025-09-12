@@ -20,15 +20,18 @@ function States(props) {
     */
     const states = sort([...props.states], "#order", "name");
 
+    const level = (props.level || 0) + 1;
+    const style = {marginLeft: level * 6};
+
     const myUL = {marginTop:"0", marginBottom:"0"}
     return (
         <>
         {"pdf" === props.format &&
             <>
             {states.map(({pbotID, name, definition, states}) => (
-                <View key={pbotID}  style={props.style}>
+                <View key={pbotID}  style={props.style || style}>
                     <Text>{name}{definition ? `, ${definition}` : ''}</Text>
-                    <States states={states} format="pdf"/>
+                    <States states={states} format="pdf" level={level} />
                 </View>
             ))}
             </>

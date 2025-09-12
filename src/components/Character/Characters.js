@@ -20,18 +20,21 @@ function Characters(props) {
         return 0;
     });
     */
-   const characters = sort([...props.characters], "#order", "name");
+    const characters = sort([...props.characters], "#order", "name");
 
-    
     const style = props.top ? {marginLeft:"0em"} : {marginLeft:"2em"};
+
+    const level = (props.level || 0) + 1;
+    const pdfStyle = {marginLeft: level * 6};
+
     console.log(style);
     return characters.map(({pbotID, name, definition, states, characters}) => (
         <>
         {"pdf" === props.format &&
-        <View key={pbotID}  style={props.style || style}>
+        <View key={pbotID}  style={[props.style || pdfStyle, {marginBottom: "10"}]}>
             <Text>{name}{definition ? `, ${definition}` : ''}</Text>
-            <States states={states} format="pdf" style={props.style || style}/>
-            <Characters characters={characters} format="pdf" style={props.style || style}/>
+            <States states={states} format="pdf" style={pdfStyle}/>
+            <Characters characters={characters} format="pdf" level={level}/>
         </View>
         }
         {"pdf" !== props.format &&
