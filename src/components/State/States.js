@@ -1,5 +1,6 @@
 import React from 'react';
 import { sort } from '../../util.js';
+import { Text, View } from '@react-pdf/renderer';
 
 function States(props) {
     console.log("States");
@@ -21,14 +22,28 @@ function States(props) {
 
     const myUL = {marginTop:"0", marginBottom:"0"}
     return (
-        <ul style={myUL}>
-        {states.map(({pbotID, name, definition, states}) => (
-            <li key={pbotID}>
-                {name}{definition ? `, ${definition}` : ''}
-                <States states={states} />
-            </li>
-        ))}
-        </ul>
+        <>
+        {"pdf" === props.format &&
+            <>
+            {states.map(({pbotID, name, definition, states}) => (
+                <View key={pbotID}  style={props.style}>
+                    <Text>{name}{definition ? `, ${definition}` : ''}</Text>
+                    <States states={states} format="pdf"/>
+                </View>
+            ))}
+            </>
+            }
+        {"pdf" !== props.format &&
+            <ul style={myUL}>
+            {states.map(({pbotID, name, definition, states}) => (
+                <li key={pbotID}>
+                    {name}{definition ? `, ${definition}` : ''}
+                    <States states={states} />
+                </li>
+            ))}
+            </ul>
+        }
+        </>
     )
     
 }
