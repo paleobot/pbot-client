@@ -8,6 +8,8 @@ import { alphabetize, AlternatingTableRow, DirectQueryLink, sort, useFetchInterv
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 import { CollectionWeb } from './CollectionWeb.js';
+import { CollectionPDF } from './CollectionPDF.js';
+import { Document, PDFViewer } from '@react-pdf/renderer';
 
 function Collections(props) {
     console.log(props);
@@ -507,7 +509,11 @@ function Collections(props) {
         if (isPDF) {
             return (
                 <>
-                Hi There
+                <PDFViewer style={{ width: '100%', height: '100vh' }}>
+                    <Document>
+                        <CollectionPDF collection={massageCollection(collections[0])} />
+                    </Document>
+                </PDFViewer>
                 </>
             )
         } else {
