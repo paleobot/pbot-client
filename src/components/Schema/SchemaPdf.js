@@ -81,6 +81,25 @@ export const SchemaPdf = (props) => {
                 {renderField("Authors", sort([...s.authoredBy], "#order").map(author => `${author.Person.given} ${author.Person.surname}`).join(', '))}
             </View>
 
+            <Text
+                style={styles.pageNumberBottom}
+                render={({ pageNumber, totalPages }) => (
+                `${pageNumber} / ${totalPages}`
+                )}
+                fixed
+            />        
+
+        </Page>
+
+        <Page size="A4" style={styles.page} wrap>
+            <Text
+                style={styles.pageNumberTop}
+                render={({ pageNumber, totalPages }) => (
+                `${pageNumber} / ${totalPages}`
+                )}
+                fixed
+            />        
+
             {/* Characters Section */}
             <View style={styles.sectionContainer}>
                 <Text style={styles.subheading}>Characters</Text>

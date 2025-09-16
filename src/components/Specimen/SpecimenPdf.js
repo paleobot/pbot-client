@@ -115,6 +115,15 @@ export const SpecimenPdf = (props) => {
                 {s.collection && renderField("Maximum Time Interval", s.collection.maxinterval)}
                 {s.collection && renderField("Minimum Time Interval", s.collection.mininterval)}
             </View>
+
+            <Text
+                style={styles.pageNumberBottom}
+                render={({ pageNumber, totalPages }) => (
+                `${pageNumber} / ${totalPages}`
+                )}
+                fixed
+            />        
+
         </Page>
 
         <Page size="A4" style={styles.page} wrap>

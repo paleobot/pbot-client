@@ -144,6 +144,7 @@ export const CollectionPDF = (props) => {
 
     // Component to be used for direct PDF viewing
     return (
+        <>
         <Page size="A4" style={styles.page} wrap>
 
             {/* Title section */}
@@ -204,6 +205,25 @@ export const CollectionPDF = (props) => {
                 {renderField("Notes on Age Information", collection.ageComments)}
             </View>
 
+            <Text
+                style={styles.pageNumberBottom}
+                render={({ pageNumber, totalPages }) => (
+                `${pageNumber} / ${totalPages}`
+                )}
+                fixed
+            />        
+
+        </Page>
+
+        <Page size="A4" style={styles.page} wrap>
+            <Text
+                style={styles.pageNumberTop}
+                render={({ pageNumber, totalPages }) => (
+                `${pageNumber} / ${totalPages}`
+                )}
+                fixed
+            />        
+
             {/* Geologic Section */}
             <View style={styles.sectionContainer}>
             <Text style={styles.subheading}>Geologic</Text>
@@ -250,5 +270,6 @@ export const CollectionPDF = (props) => {
             <OTUsPDF collection={collection} />
             </View>
         </Page>
+        </>
   );
 };
