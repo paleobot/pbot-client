@@ -157,7 +157,7 @@ function SpecimenTable({ title, specimens }) {
 
 export const OTUweb = (props) => {
 
-    let { pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy, directQParams, jsonDirectQParams, history, holotypeImages, typeImages, identifiedImages, minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations, stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon, countries, states, exclusiveTypeSpecimens, exclusiveIdentifiedSpecimens} = props.otu;
+    let { pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy, directQParams, jsonDirectQParams, pdfDirectQParams, history, holotypeImages, typeImages, identifiedImages, minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations, stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon, countries, states, exclusiveTypeSpecimens, exclusiveIdentifiedSpecimens} = props.otu;
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -230,6 +230,9 @@ export const OTUweb = (props) => {
                     </Box>
                     <Box sx={boxedDisplay}>
                         <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="otu" pbotID={pbotID} params={jsonDirectQParams} />
+                    </Box>
+                    <Box sx={boxedDisplay}>
+                        <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><DirectQueryLink type="otu" pbotID={pbotID} params={pdfDirectQParams} />
                     </Box>
                     <br />
                     <Box sx={boxedDisplay}>
@@ -571,13 +574,13 @@ export const OTUweb = (props) => {
                                                     </Box>
                                                 }
                                                 {synOTU.family &&
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br />{synOTU.family}</Box>
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br /><i>{synOTU.family}</i></Box>
                                                 }
                                                 {synOTU.genus &&
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br />{synOTU.genus}</Box>
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br /><i>{synOTU.genus}</i></Box>
                                                 }
                                                 {synOTU.species &&
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br />{synOTU.species}</Box>
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br /><i>{synOTU.species}</i></Box>
                                                 }
                                                 {synOTU.identifiedSpecimens &&
                                                 <Box sx={boxedDisplay}><Typography variant="caption">Number of identified specimens</Typography><br />{synOTU.identifiedSpecimens.length}</Box>
