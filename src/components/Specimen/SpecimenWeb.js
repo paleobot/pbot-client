@@ -69,6 +69,9 @@ export const SpecimenWeb = (props) => {
                 <Box sx={boxedDisplay}>
                 <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={s.jsonURL} target="_blank">{s.jsonURL.toString()}</Link>
                 </Box>
+                <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><Link color="success.main" underline="hover" href={s.pdfURL} target="_blank">{s.pdfURL.toString()}</Link>
+                </Box>
                 <br />
                 <Box sx={boxedDisplay}>
                 <Typography variant="caption">Repository</Typography><br />{s.repository}

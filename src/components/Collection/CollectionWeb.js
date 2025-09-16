@@ -142,6 +142,9 @@ export const CollectionWeb = (props) => {
                     <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={collection.jsonURL} target="_blank">{collection.jsonURL.toString()}</Link>
                 </Box>
                 <Box sx={boxedDisplay}>
+                    <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><Link color="success.main" underline="hover" href={collection.pdfURL} target="_blank">{collection.pdfURL.toString()}</Link>
+                </Box>
+                <Box sx={boxedDisplay}>
                     <Typography variant="caption" sx={{lineHeight:0}}>PBDB ID</Typography><br />{collection.pbdbid}
                 </Box>
             </Paper>

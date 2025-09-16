@@ -60,6 +60,9 @@ export const SchemaWeb = (props) => {
                     <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={schema.jsonURL} target="_blank">{schema.jsonURL.toString()}</Link>
                 </Box>
                 <Box sx={boxedDisplay}>
+                    <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><Link color="success.main" underline="hover" href={schema.pdfURL} target="_blank">{schema.pdfURL.toString()}</Link>
+                </Box>
+                <Box sx={boxedDisplay}>
                     <Typography variant="caption" sx={{lineHeight:0}}>Year</Typography><br />{schema.year}
                 </Box>
                 <Box sx={boxedDisplay}>
