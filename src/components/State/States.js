@@ -24,13 +24,14 @@ function States(props) {
     const style = {marginLeft: level * 6};
 
     const myUL = {marginTop:"0", marginBottom:"0"}
+    //NOTE: react-pdf has problems with fontWeight: "bold" inside Text, so we have to use fontFamily instead below.
     return (
         <>
         {"pdf" === props.format &&
             <>
             {states.map(({pbotID, name, definition, states}) => (
                 <View key={pbotID}  style={props.style || style}>
-                    <Text>{name}{definition ? `, ${definition}` : ''}</Text>
+                    <Text style={{fontFamily: 'Helvetica-Bold'}}>{name}<Text style={{fontFamily: 'Helvetica'}}>{definition ? `, ${definition}` : ''}</Text></Text>
                     <States states={states} format="pdf" level={level} />
                 </View>
             ))}
