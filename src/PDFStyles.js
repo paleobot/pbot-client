@@ -99,6 +99,11 @@ export const styles = StyleSheet.create({
         fontSize: 10,
         width: '80%',
     },
+    fieldValueItalic: {
+        fontSize: 10,
+        width: '80%',
+        fontFamily: 'Helvetica-Oblique',
+    },
     paragraph: {
         fontSize: 10,
         lineHeight: 1.5,
