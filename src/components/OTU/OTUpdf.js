@@ -5,133 +5,8 @@ import { alphabetize, sort } from '../../util.js';
 import CharacterInstances from '../CharacterInstance/CharacterInstances.js';
 import {Table, TableRow, TableHeader as TableHead, TableCell} from '@ag-media/react-pdf-table';
 import { Comments } from '../Comment/Comments.js';
-
-// Create styles for PDF layout
-const styles = StyleSheet.create({
-    page: {
-        flexDirection: 'column',
-        backgroundColor: '#FFFFFF',
-        padding: 30,
-    },
-    titleContainer: {
-        marginBottom: 20,
-        paddingBottom: 10,
-        borderBottom: '2px solid #000000',
-    },
-    sectionContainer: {
-        marginTop: 15,
-        marginBottom: 15,
-        paddingTop: 10,
-        paddingBottom: 10,
-        paddingLeft: 10,
-        paddingRight: 10,
-        border: '1px solid #CCCCCC',
-    },
-    heading: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-    titleSubheading: {
-        fontSize: 12,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        textAlign: 'right',
-    },
-    subheading: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        borderBottom: '1px solid #CCCCCC',
-        paddingBottom: 3,
-    },
-    fieldRow: {
-        flexDirection: 'row',
-        marginBottom: 5,
-    },
-    fieldLabel: {
-        fontSize: 10,
-        fontWeight: 'bold',
-        width: '20%',
-    },
-    fieldValue: {
-        fontSize: 10,
-        width: '80%',
-    },
-    paragraph: {
-        fontSize: 10,
-        lineHeight: 1.5,
-        marginBottom: 8,
-    },
-    singleSpacedLine: {
-        fontSize: 10,
-        lineHeight: 1,
-        paddingLeft: 10,
-    },
-    spacer: {
-        height: 15,
-    },
-    infoBox: {
-        border: '1px solid #DDDDDD',
-        padding: 8,
-        marginBottom: 10,
-        backgroundColor: '#F9F9F9',
-    },
-    image: {
-        //marginBottom: 5,
-        maxWidth: '50%',
-        height: 'auto',
-    },
-    imageCaption: {
-        fontSize: 8,
-        fontStyle: 'italic',
-        textAlign: 'left',
-        marginBottom: 10,
-    },
-    table: {
-        display: 'table',
-        width: 'auto',
-        marginVertical: 10,
-    },
-    tableRow: {
-        flexDirection: 'row',
-    },
-    tableHeaderCell: {
-        backgroundColor: '#EEEEEE',
-        fontSize: 10,
-        fontWeight: 'bold',
-        padding: 4,
-        borderBottom: '1px solid #CCCCCC',
-    },
-    tableCell: {
-        fontSize: 9,
-        padding: 4,
-        borderBottom: '1px solid #EEEEEE',
-    },
-    synonymRow: {
-        marginBottom: 5,
-    },
-    pageNumberBottom: {
-        position: 'absolute',
-        fontSize: 10,
-        bottom: 30,
-        left: 0,
-        right: 0,
-        textAlign: 'center',
-        color: 'grey',
-    },
-    pageNumberTop: {
-        position: 'relative',
-        fontSize: 10,
-        float: 'right',
-        left: 0,
-        right: 0,
-        textAlign: 'right',
-        color: 'grey',
-    },
-
-});
+import logo from '../../PBOT-logo-transparent.png';
+import { styles } from '../../PDFStyles.js';
 
 
 // SpecimenTable: reusable table for holotype, other type specimens, and additional specimens
@@ -188,12 +63,12 @@ export const OTUpdf = (props) => {
     } = props.otu;
 
     // Helper to render a field if it exists
-    const renderField = (label, value) => {
+    const renderField = (label, value, italic = false) => {
         if (!value && value !== 0) return null;
         return (
         <View style={styles.fieldRow}>
             <Text style={styles.fieldLabel}>{label}:</Text>
-            <Text style={styles.fieldValue}>{value}</Text>
+            <Text style={italic ? styles.fieldValueItalic : styles.fieldValue}>{value}</Text>
         </View>
         );
     };
@@ -231,10 +106,22 @@ export const OTUpdf = (props) => {
     return (
         <>
         <Page size="A4" style={styles.page} wrap>
+
             {/* Title section */}
-            <View style={styles.titleContainer}>
-            <Text style={styles.heading}>{name}</Text>
-            <Text style={styles.titleSubheading}>Workspace: {workspaceName}</Text>
+            <View style={styles.header}>
+                <View style={styles.headerLeft}>
+                <Image src={logo} style={styles.logo} />
+                <Text style={styles.pbotHeading}>PBot</Text>
+                </View>
+                <View style={styles.headerCenter}>
+                <Text style={styles.heading}>Taxon (OTU)</Text>
+                <Text style={styles.headerSubheading}>{name}</Text>
+                </View>
+                <View style={styles.headerRight}>
+                <Text style={styles.paragraph}>
+                    Workspace: {workspaceName}
+                </Text>
+                </View>
             </View>
 
             {/* Key Information Section */}
@@ -457,17 +344,17 @@ export const OTUpdf = (props) => {
                                         }
                                         {synOTU.family &&
                                         <>
-                                        {renderField("Family", synOTU.family)}
+                                        {renderField("Family", synOTU.family, true)}
                                         </>
                                         }
                                         {synOTU.genus &&
                                         <>
-                                        {renderField("Genus", synOTU.genus)}
+                                        {renderField("Genus", synOTU.genus, true)}
                                         </>
                                         }
                                         {synOTU.species &&
                                         <>
-                                        {renderField("Specific epithet", synOTU.species)}
+                                        {renderField("Specific epithet", synOTU.species, true)}
                                         </>
                                         }
                                         {synOTU.identifiedSpecimens &&
