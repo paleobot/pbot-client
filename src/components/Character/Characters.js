@@ -29,13 +29,12 @@ function Characters(props) {
 
     console.log(style);
     return characters.map(({pbotID, name, definition, states, characters}, i) => {
-        const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
-
+        //NOTE: react-pdf has problems with fontWeight: "bold" inside Text, so we have to use fontFamily instead below.
         return (
         <>
         {"pdf" === props.format &&
-        <View key={pbotID}  style={[props.style || pdfStyle, {marginBottom: "10", backgroundColor: bgColor}]}>
-            <Text>{name}{definition ? `, ${definition}` : ''}</Text>
+        <View key={pbotID}  style={[props.style || pdfStyle, {marginBottom: "10"}]}>
+            <Text style={{fontFamily: 'Helvetica-Bold'}}>{name}<Text style={{fontFamily: 'Helvetica'}}>{definition ? `, ${definition}` : ''}</Text></Text>
             <States states={states} format="pdf" style={pdfStyle}/>
             <Characters characters={characters} format="pdf" level={level}/>
         </View>
