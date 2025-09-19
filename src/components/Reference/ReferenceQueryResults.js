@@ -10,6 +10,9 @@ import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReferenceSet from 'yup/lib/util/ReferenceSet.js';
+import { ReferenceWeb } from './ReferenceWeb.js';
+import { ReferencePDF } from './ReferencePDF.js';
+import { Document, PDFViewer } from '@react-pdf/renderer';
 
 function References(props) {
     console.log("References")
@@ -175,6 +178,7 @@ function References(props) {
     const directQParams = [];
 
     const jsonDirectQParams = directQParams.concat(["format=json"])
+    const pdfDirectQParams = directQParams.concat(["format=pdf"])
 
     if (props.standAlone) {
 
@@ -184,134 +188,44 @@ function References(props) {
             )
         }
 
-        const boxedDisplay = {wordWrap: "break-word", border: 0, margin:"4px",  paddingLeft:"2px"};
-        const accstyle = {textAlign: "left", marginLeft:"10px", marginRight:"10px" /*width: "95%",  marginLeft:"8px"*/}
+        const massageReference = (r) => {
+            const reference = {...r}
+            reference.directURL = new URL(window.location.origin + "/query/reference/" + reference.pbotID);
+                
+            reference.jsonURL = new URL(reference.directURL.toString());
+            reference.jsonURL.searchParams.append("format", "json")
 
-        return ( 
-            references.map((reference) => {
-                console.log("*********************************")
-                console.log(reference.pbotID);
-                const directURL = new URL(window.location.origin + "/query/reference/" + reference.pbotID);
-                console.log(directURL);
-                console.log("*********************************")
+            reference.pdfURL = new URL(reference.directURL.toString());
+            reference.pdfURL.searchParams.append("format", "pdf")
 
-                const listIndent = {marginLeft:"2em"}
-                const header1 = {marginLeft:"2em", marginTop:"10px"}
-                return (
-                <div key={reference.pbotID} style={style}>
-                    <Grid container sx={{
-                        width: "100%",
-                        minHeight: "50px",
-                        backgroundColor: 'primary.main',
-                    }}>
-                        <Grid container item xs={4} sx={{ display: "flex", alignItems: "center" }}>
-                            <Grid item sx={{ display: "flex", alignItems: "center" }}>
-                                <img src={logo} style={{ height: "45px" }} />
-                            </Grid>
-                            <Grid item sx={{ display: "flex", alignItems: "center" }} >                  
-                                <Typography variant="h5">
-                                    Pbot
-                                </Typography>
-                            </Grid>                 
-                        </Grid>
-                        <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
-                            <Typography variant="h5">
-                                Reference
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={4} sx={{ display: "flex", alignItems: "center", justifyContent:"flex-end"}}  >
-                            <Typography variant="h5" sx={{marginRight: "10px"}}>
-                                Workspace: {reference.elementOf[0].name}
-                            </Typography>
-                        </Grid>
-                    </Grid>
+            return reference
+        }
 
-                    <Paper elevation={0} sx={{padding:"2px", margin:"10px", marginTop:"15px", background:"#d0d0d0"}}>
-                        <Box sx={boxedDisplay}>
-                            <b>{reference.title}</b>
-                        </Box>
-                        <Box sx={boxedDisplay}>
-                            <Typography variant="caption" sx={{lineHeight:0}}>PBot ID</Typography><br />{reference.pbotID}
-                        </Box>
-                        <Box sx={boxedDisplay}>
-                            <Typography variant="caption" sx={{lineHeight:0}}>Direct link</Typography><br /><DirectQueryLink type="reference" pbotID={reference.pbotID} params={directQParams} />
-                        </Box>
-                        <Box sx={boxedDisplay}>
-                            <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="reference" pbotID={reference.pbotID} params={jsonDirectQParams} />
-                        </Box>
-                        <Box sx={boxedDisplay}>
-                            <Typography variant="caption" sx={{lineHeight:0}}>PBDB ID</Typography><br />{reference.pbdbid}
-                        </Box>
-                        {reference.doi &&
-                        <Box sx={boxedDisplay}>
-                            <Typography variant="caption" sx={{lineHeight:0}}>DOI</Typography><br />{reference.doi}
-                        </Box>}
-                    </Paper>
 
-                    <Accordion style={accstyle} defaultExpanded={false}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="required-content"
-                            id="required-header"                        
-                        >
-                            Publication details
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Authors</Typography>
-                                {sort([...reference.authoredBy], "#order").map(author => (
-                                <div key={author.Person.pbotID} >{author.Person.given} {author.Person.surname}</div>
-                                ))}
-                            </Box>
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Year</Typography><br />{reference.year}
-                            </Box>
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Publication type</Typography><br />{reference.publicationType}
-                            </Box>
-                            {reference.journal &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Journal</Typography><br />{reference.journal}
-                            </Box>}
-                            {reference.publicationVolume &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Publication volume</Typography><br />{reference.publicationVolume}
-                            </Box>}
-                            {reference.publicationVolume &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Publication volume</Typography><br />{reference.publicationVolume}
-                            </Box>}
-                            {reference.publicationNumber &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Publication number</Typography><br />{reference.publicationNumber}
-                            </Box>}
-                            {reference.bookTitle &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Book title</Typography><br />{reference.bookTitle}
-                            </Box>}
-                            {reference.bookType &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Book type</Typography><br />{reference.bookType}
-                            </Box>}
-                            {reference.publisher &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Publisher</Typography><br />{reference.publisher}
-                            </Box>}
-                            {reference.firstPage &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>First page</Typography><br />{reference.firstPage}
-                            </Box>}
-                            {reference.lastPage &&
-                            <Box sx={boxedDisplay}>
-                                <Typography variant="caption" sx={{lineHeight:0}}>Last page</Typography><br />{reference.lastPage}
-                            </Box>}
+        const isPDF = props.format && "PDF" === props.format.toUpperCase()
 
-                        </AccordionDetails>
-                    </Accordion>
-                </div>
-                )
-            })
-        )
+        if (isPDF) {
+            return (
+                <>
+                <PDFViewer style={{ width: '100%', height: '100vh' }}>
+                    <Document>
+                        {references.map((reference) => (
+                            <ReferencePDF key={reference.pbotID} reference={massageReference(reference)} />
+                        ))}
+                    </Document>
+                </PDFViewer>
+                </>
+            )
+        } else {
+            return (
+                references.map((reference) => {
+                    return (
+                        <ReferenceWeb key={reference.pbotID} reference={massageReference(reference)} />
+                    )
+                })
+            )       
+        }    
+
     }
 
     if (!props.standAlone) {
@@ -347,6 +261,10 @@ function References(props) {
 
             <Box sx={boxedDisplay}>
                 <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="reference" pbotID={references} params={jsonDirectQParams} />
+            </Box>
+
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><DirectQueryLink type="reference" pbotID={references} params={pdfDirectQParams} />
             </Box>
 
             </>
