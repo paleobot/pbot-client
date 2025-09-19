@@ -511,7 +511,10 @@ function Collections(props) {
                 <>
                 <PDFViewer style={{ width: '100%', height: '100vh' }}>
                     <Document>
-                        <CollectionPDF collection={massageCollection(collections[0])} />
+                        {collections.map((collection) => (
+                            <CollectionPDF key={collection.pbotID} collection={massageCollection(collection)} />
+                            
+                        ))}
                     </Document>
                 </PDFViewer>
                 </>
