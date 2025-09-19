@@ -294,6 +294,7 @@ function Schemas(props) {
     }
 
     const jsonDirectQParams = directQParams.concat(["format=json"])
+    const pdfDirectQParams = directQParams.concat(["format=pdf"])
 
     if (props.standAlone) {
 
@@ -373,6 +374,9 @@ function Schemas(props) {
 
             <Box sx={boxedDisplay}>
                 <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="schema" pbotID={schemas} params={jsonDirectQParams} />
+            </Box>
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><DirectQueryLink type="schema" pbotID={schemas} params={pdfDirectQParams} />
             </Box>
 
             </>

@@ -311,6 +311,9 @@ function OTUs(props) {
             <Box sx={boxedDisplay}>
                 <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="otu" pbotID={otus} params={jsonDirectQParams} />
             </Box>
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><DirectQueryLink type="otu" pbotID={otus} params={pdfDirectQParams} />
+            </Box>
 
             </>
         )

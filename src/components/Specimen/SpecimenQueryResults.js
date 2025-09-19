@@ -457,7 +457,9 @@ function Specimens(props) {
         if (props.includeOTUs) {
             jsonURL.searchParams.append("includeOTUs", "true");
         }
+        const pdfURL = new URL(jsonURL.toString());
         jsonURL.searchParams.append("format", "json")
+        pdfURL.searchParams.append("format", "pdf")
 
         const boxedDisplay = {wordWrap: "break-word", border: 0, mt: "10px", paddingLeft:"2px"};
 
@@ -531,11 +533,11 @@ function Specimens(props) {
                 </Table>
             </TableContainer>
             
-            {/*
-            <Button sx={{mb:"10px"}} size="small" color="secondary" variant="outlined" onClick={() => {}}>View raw JSON</Button>
-            */}
             <Box sx={boxedDisplay}>
-            <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={jsonURL} target="_blank">{jsonURL.toString()}</Link>
+                <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><Link color="success.main" underline="hover" href={jsonURL} target="_blank">{jsonURL.toString()}</Link>
+            </Box>
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><Link color="success.main" underline="hover" href={pdfURL} target="_blank">{pdfURL.toString()}</Link>
             </Box>
 
         </>

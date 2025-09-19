@@ -474,7 +474,7 @@ function Collections(props) {
     }
 
     const jsonDirectQParams = directQParams.concat(["format=json"])
-
+    const pdfDirectQParams = directQParams.concat(["format=pdf"])
 
     if (props.standAlone) {
         if (props.format && "JSON" === props.format.toUpperCase()) {
@@ -577,6 +577,9 @@ function Collections(props) {
 
             <Box sx={boxedDisplay}>
                 <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="collection" pbotID={collections} params={jsonDirectQParams} />
+            </Box>
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><DirectQueryLink type="collection" pbotID={collections} params={pdfDirectQParams} />
             </Box>
 
             </>
