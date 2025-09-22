@@ -5,6 +5,8 @@ import { TextField } from 'formik-mui';
 import {SpecimenSelect} from '../Specimen/SpecimenSelect.js';
 import ClearIcon from '@mui/icons-material/Clear';
 
+//TODO: Consider fetching Specimens here rather than in SpecimenSelect, to avoid multiple fetches when multiple SpecimenSelects are present. One way to fetch the specimens here might be via useEffect on changes to the FieldArray values. If we pass specimens to SpecimenSelect, we'd probably want to make fetching them conditional there, since SpecimenSelect is also used on its own in other places. Also, need to make sure we can display a Loading indicator when appropriate. Alternatively, we could just lose the dropdown selection in SpecimenSelect and always use the dialog search, which would simplify things a lot. The dropdown is not very useful when there are a lot of specimens.
+
 export const SpecimenManager = (props) => {
     //console.log("SpecimenManager")
 
