@@ -1,5 +1,6 @@
 import React from 'react';
 import { sort } from '../../util.js';
+import { Text, View } from '@react-pdf/renderer';
 
 function States(props) {
     console.log("States");
@@ -19,16 +20,34 @@ function States(props) {
     */
     const states = sort([...props.states], "#order", "name");
 
+    const level = (props.level || 0) + 1;
+    const style = {marginLeft: level * 6};
+
     const myUL = {marginTop:"0", marginBottom:"0"}
+    //NOTE: react-pdf has problems with fontWeight: "bold" inside Text, so we have to use fontFamily instead below.
     return (
-        <ul style={myUL}>
-        {states.map(({pbotID, name, definition, states}) => (
-            <li key={pbotID}>
-                {name}{definition ? `, ${definition}` : ''}
-                <States states={states} />
-            </li>
-        ))}
-        </ul>
+        <>
+        {"pdf" === props.format &&
+            <>
+            {states.map(({pbotID, name, definition, states}) => (
+                <View key={pbotID}  style={props.style || style}>
+                    <Text style={{fontFamily: 'Helvetica-Bold'}}>{name}<Text style={{fontFamily: 'Helvetica'}}>{definition ? `, ${definition}` : ''}</Text></Text>
+                    <States states={states} format="pdf" level={level} />
+                </View>
+            ))}
+            </>
+            }
+        {"pdf" !== props.format &&
+            <ul style={myUL}>
+            {states.map(({pbotID, name, definition, states}) => (
+                <li key={pbotID}>
+                    {name}{definition ? `, ${definition}` : ''}
+                    <States states={states} />
+                </li>
+            ))}
+            </ul>
+        }
+        </>
     )
     
 }

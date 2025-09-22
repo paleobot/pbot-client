@@ -157,7 +157,7 @@ function SpecimenTable({ title, specimens }) {
 
 export const OTUweb = (props) => {
 
-    let { pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy, directQParams, jsonDirectQParams, history, holotypeImages, typeImages, identifiedImages, minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations, stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon, countries, states, exclusiveTypeSpecimens, exclusiveIdentifiedSpecimens} = props.otu;
+    let { pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy, directQParams, jsonDirectQParams, pdfDirectQParams, history, holotypeImages, typeImages, identifiedImages, minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations, stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon, countries, states, exclusiveTypeSpecimens, exclusiveIdentifiedSpecimens} = props.otu;
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -230,6 +230,9 @@ export const OTUweb = (props) => {
                     </Box>
                     <Box sx={boxedDisplay}>
                         <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="otu" pbotID={pbotID} params={jsonDirectQParams} />
+                    </Box>
+                    <Box sx={boxedDisplay}>
+                        <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><DirectQueryLink type="otu" pbotID={pbotID} params={pdfDirectQParams} />
                     </Box>
                     <br />
                     <Box sx={boxedDisplay}>
@@ -366,9 +369,18 @@ export const OTUweb = (props) => {
                                                 <TableCell align="left" sx={{fontSize: "1rem"}}>
                                                         <div><b>From schema "{s}":</b></div>
                                                         <div style={indent}><b>character states:</b></div>
-                                                        {alphabetize(mergedDescription.filter(ci => ci.schema === s), "characterName").map ((ci, i) =>  (
+                                                        {sort(mergedDescription.reduce((acc, ci) => {
+                                                            if (ci.schema === s) {
+                                                                acc.push({
+                                                                    ...ci,
+                                                                    deepOrder: `${ci.characterDeepOrder}.${ci.stateDeepOrder}`
+                                                                });
+                                                            }
+                                                            return acc;
+                                                        }, []), "deepOrder").map ((ci, i) =>  (
                                                             <div style={indent2} key={i}>{ci.characterName}:{"quantity" === ci.stateName ? ci.stateValue : ci.stateName}{ci.stateOrder  ? ', order:' + ci.stateOrder : ''}</div>
                                                         ))}
+
                                                 </TableCell>
                                             </AlternatingTableRow>
                                         )
@@ -562,13 +574,13 @@ export const OTUweb = (props) => {
                                                     </Box>
                                                 }
                                                 {synOTU.family &&
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br />{synOTU.family}</Box>
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br /><i>{synOTU.family}</i></Box>
                                                 }
                                                 {synOTU.genus &&
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br />{synOTU.genus}</Box>
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br /><i>{synOTU.genus}</i></Box>
                                                 }
                                                 {synOTU.species &&
-                                                <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br />{synOTU.species}</Box>
+                                                <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br /><i>{synOTU.species}</i></Box>
                                                 }
                                                 {synOTU.identifiedSpecimens &&
                                                 <Box sx={boxedDisplay}><Typography variant="caption">Number of identified specimens</Typography><br />{synOTU.identifiedSpecimens.length}</Box>

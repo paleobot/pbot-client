@@ -13,6 +13,8 @@ import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 import SpecimenQueryResults from './SpecimenQueryResults.js';
 
+//TODO: Consider dropping InnerSpecimenSelect and just using SpecimenDialog. We have a lot of Specimens, so the dropdown is not very useful.
+
 export const InnerSpecimenSelect = (props) => {
     console.log("InnerSpecimenSelect");
     console.log(props);

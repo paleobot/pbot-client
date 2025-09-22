@@ -1,5 +1,6 @@
 import React from 'react';
 import { sort } from '../../util.js';
+import { Text, View } from '@react-pdf/renderer';
 
 const massage = cI => {
     cI.sortName = `${cI.character.name}${cI.state.value !== null ? cI.state.value : cI.state.State.name}`.toUpperCase();
@@ -19,9 +20,18 @@ function CharacterInstances(props) {
 
     const style = {marginLeft:"4em"}
     return characterInstances.map(({pbotID, character, state}) => (
+        <>
+        {"pdf" === props.format &&
+        <View key={pbotID}  style={props.style || style}>
+            <Text>{character.name}: {(state.value !== null && state.value !== '') ? `${state.value}` : `${state.State.name}`}{state.order ? `, order: ${state.order}` : ``}</Text>
+        </View>
+        }
+        {"pdf" !== props.format &&
         <div key={pbotID}  style={props.style || style}>
             {character.name}: {(state.value !== null && state.value !== '') ? `${state.value}` : `${state.State.name}`}{state.order ? `, order: ${state.order}` : ``}<br />
         </div>
+        }
+        </>
     ));
 }
 

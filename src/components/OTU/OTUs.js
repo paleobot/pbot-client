@@ -16,10 +16,11 @@ import { Document, Image, Page, PDFViewer, StyleSheet, Text, View } from '@react
 
 
 
-const massageOTU = (o, directQParams, jsonDirectQParams) => {
+const massageOTU = (o, directQParams, jsonDirectQParams, pdfDirectQParams) => {
     const otu = {...o};
     otu.directQParams = directQParams;
     otu.jsonDirectQParams = jsonDirectQParams;
+    otu.pdfDirectQParams = pdfDirectQParams;
 
     otu.history = sort(otu.enteredBy.map(e => { 
         return {
@@ -213,6 +214,7 @@ function OTUs(props) {
     }
 
     const jsonDirectQParams = directQParams.concat(["format=json"])
+    const pdfDirectQParams = directQParams.concat(["format=pdf"])
 
     if (props.standalone) {
     //TODO:Figure out a more modular way to handle nested comments query and presentation  
@@ -238,7 +240,7 @@ function OTUs(props) {
                 <PDFViewer style={{ width: '100%', height: '100vh' }}>
                     <Document>
                         {otus.map((o) => {
-                            const otu = massageOTU(o, directQParams, jsonDirectQParams);
+                            const otu = massageOTU(o, directQParams, jsonDirectQParams, pdfDirectQParams);
                             return (<OTUpdf key={otu.pbotID} otu={otu} />);
                         })}
                     </Document>
@@ -248,7 +250,7 @@ function OTUs(props) {
             return (
                 <>
                 {otus.map((o) => {
-                    const otu = massageOTU(o, directQParams, jsonDirectQParams);
+                    const otu = massageOTU(o, directQParams, jsonDirectQParams, pdfDirectQParams);
                     return (<OTUweb key={otu.pbotID} otu={otu} />);
                 })}
                 </>
@@ -308,6 +310,9 @@ function OTUs(props) {
 
             <Box sx={boxedDisplay}>
                 <Typography variant="caption" sx={{lineHeight:0}}>JSON link</Typography><br /><DirectQueryLink type="otu" pbotID={otus} params={jsonDirectQParams} />
+            </Box>
+            <Box sx={boxedDisplay}>
+                <Typography variant="caption" sx={{lineHeight:0}}>PDF link</Typography><br /><DirectQueryLink type="otu" pbotID={otus} params={pdfDirectQParams} />
             </Box>
 
             </>
