@@ -179,10 +179,7 @@ export const OTUpdf = (props) => {
             {/* Holotype Descriptions Section */}
             <View style={styles.sectionContainer}>
                 <Text style={styles.subheading}>Holotype Descriptions</Text>
-                {holotypeSpecimen && 
-                    holotypeSpecimen.Specimen.describedBy && 
-                    holotypeSpecimen.Specimen.describedBy[0] &&
-                    holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 && 
+                {(holotypeSpecimen && holotypeSpecimen.Specimen.describedBy)  && 
                     <>
                     {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => {
                         const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
@@ -191,19 +188,19 @@ export const OTUpdf = (props) => {
                                 <Text style={styles.subheading}>From schema "{d.Description.schema.title}"</Text>
                                 {renderField("Written Description", d.Description.writtenDescription)}
                                 {renderField("Notes", d.Description.notes)}
-                                <Text style={styles.fieldLabel}>Character States:</Text>                                
-                                <CharacterInstances format="pdf" style={styles.singleSpacedLine} characterInstances={d.Description.characterInstances} />                                
+                                {d.Description.characterInstances && d.Description.characterInstances.length > 0 &&
+                                <>
+                                    <Text style={styles.fieldLabel}>Character States:</Text>                                
+                                    <CharacterInstances format="pdf" style={styles.singleSpacedLine} characterInstances={d.Description.characterInstances} />
+                                </>
+                                }                                
                             </View>
                         )
                     })}
                     </>
 
                 }
-                {(!holotypeSpecimen || 
-                    !holotypeSpecimen.Specimen.describedBy || 
-                    !holotypeSpecimen.Specimen.describedBy[0] ||
-                    !holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances || 
-                    !holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0) &&
+                {(!holotypeSpecimen || !holotypeSpecimen.Specimen.describedBy) &&
                     <Text style={styles.paragraph}>No holotype descriptions available</Text>
                 }
             </View>

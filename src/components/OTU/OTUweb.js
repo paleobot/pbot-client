@@ -308,10 +308,7 @@ export const OTUweb = (props) => {
                         Holotype descriptions
                     </AccordionSummary>
                     <AccordionDetails>
-                        {holotypeSpecimen && 
-                            holotypeSpecimen.Specimen.describedBy && 
-                            holotypeSpecimen.Specimen.describedBy[0] &&
-                            holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances && holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0 &&            
+                        {(holotypeSpecimen && holotypeSpecimen.Specimen.describedBy)  &&            
                             <> 
                             <TableContainer component={Paper}>
                             <Table sx={{width:"100%", mr:"10px"}} aria-label="description table">
@@ -321,13 +318,17 @@ export const OTUweb = (props) => {
                                                 <TableCell align="left" sx={{fontSize: "1rem"}}>
                                                     <div ><b>From schema "{d.Description.schema.title}":</b></div>
                                                     { d.Description.writtenDescription &&
-                                                    <div style={indent}><b>written description:</b> {d.Description.writtenDescription}</div>
+                                                        <div style={indent}><b>written description:</b> {d.Description.writtenDescription}</div>
                                                     }   
                                                     {d.Description.notes &&
-                                                    <div style={indent}><b>notes:</b> {d.Description.notes}</div>
+                                                        <div style={indent}><b>notes:</b> {d.Description.notes}</div>
                                                     }   
-                                                    <div style={indent}><b>character states:</b></div>
-                                                    <CharacterInstances style={indent2} characterInstances={d.Description.characterInstances} />
+                                                    {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&   
+                                                        <>
+                                                        <div style={indent}><b>character states:</b></div>
+                                                        <CharacterInstances style={indent2} characterInstances={d.Description.characterInstances} />
+                                                    </>
+                                                    }
                                                     </TableCell>
                                             </AlternatingTableRow>    
                                         ))}
@@ -337,11 +338,7 @@ export const OTUweb = (props) => {
                             </>
                         }
 
-                        {(!holotypeSpecimen || 
-                            !holotypeSpecimen.Specimen.describedBy || 
-                            !holotypeSpecimen.Specimen.describedBy[0] ||
-                            !holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances || 
-                            !holotypeSpecimen.Specimen.describedBy[0].Description.characterInstances.length > 0) &&
+                        {(!holotypeSpecimen || !holotypeSpecimen.Specimen.describedBy) &&
                             <div style={indent}>No holotype descriptions available</div>
                         }
 
