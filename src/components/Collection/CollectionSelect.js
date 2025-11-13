@@ -11,6 +11,7 @@ import { GlobalContext } from '../GlobalContext.js';
 import SearchIcon from '@mui/icons-material/Search';
 import CollectionQueryForm from './CollectionQueryForm.js';
 import CollectionQueryResults from './CollectionQueryResults.js';
+import { IntervalMap } from './CollectionUtil.js';
 
 export const InnerCollectionSelect = (props) => {
     console.log("InnerCollectionSelect");
@@ -206,19 +207,25 @@ export const CollectionSelect = (props) => {
     const formikProps = useFormikContext()
 
     const [open, setOpen] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     
     const handleClose = () => {
         setOpen(false);
     };
 
-    const handleSelect = (collection) => {
+    const handleSelect = async (collection) => {
         console.log("handleSelect")
+
+        setLoading(true);
 
         formikProps.setFieldValue(props.name, collection.pbotID);
 
         if ("full" === props.populateMode) { 
             const groups = collection.elementOf ? collection.elementOf.map(group => {return group.pbotID}) : [];
             console.log(groups)
+
+            const intervals = await IntervalMap(collection.timescale, [collection.maxinterval, collection.mininterval]);
+            console.log(intervals);
 
             formikProps.setFieldValue("name", collection.name || '');
 
@@ -233,8 +240,8 @@ export const CollectionSelect = (props) => {
             formikProps.setFieldValue("country", collection.country || '');
             formikProps.setFieldValue("state", collection.state || '');
             formikProps.setFieldValue("timescale", collection.timescale || '');
-            formikProps.setFieldValue("maxinterval", collection.maxinterval || '');
-            formikProps.setFieldValue("mininterval", collection.mininterval || '');
+            formikProps.setFieldValue("maxinterval", intervals.length > 0 ? JSON.stringify(intervals[0]) : '');
+            formikProps.setFieldValue("mininterval", intervals.length > 1 ? JSON.stringify(intervals[1]) : '');
             formikProps.setFieldValue("lithology", collection.lithology || '');
             formikProps.setFieldValue("additionallithology", collection.additionalLithology || '');
             formikProps.setFieldValue("stratigraphicgroup", collection.stratigraphicGroup || '');
@@ -270,10 +277,12 @@ export const CollectionSelect = (props) => {
 
         }
 
+        setLoading(false);
         setOpen(false);
     };
 
     return (
+        <>
         <Stack direction="row" key={props.name}>
             <InnerCollectionSelect name={props.name}  label={props.label} handleSelect={handleSelect} populateMode={props.populateMode}/>
             <Tooltip title="Search using a query form"><span>
@@ -290,5 +299,7 @@ export const CollectionSelect = (props) => {
                 <CollectionDialog open={open} handleClose={handleClose} handleSelect={handleSelect} />
             }
         </Stack>
+        {loading && <p>Loading...</p>}
+        </>
     );
 }
