@@ -180,6 +180,39 @@ export const TimescaleSelect = (props) => {
     )
 }
 
+export const IntervalMap = async (timescale, intervalNames) => {
+    if (!timescale) return;
+
+    const intervals = [];
+   
+    await fetch(`https://macrostrat.org/api/v2/defs/intervals?timescale=${timescale}`)
+    .then(res => res.json())
+    .then(
+        (response) => {
+            if (response.status_code) {
+                throw new Error (response.errors[0]);
+            }
+            intervals.push(...response.success.data.map(int => { 
+                return {
+                    name: int.name,
+                    maxAge: int.b_age,
+                    minAge: int.t_age
+                }
+            }));
+        }
+    ).catch (
+        (error) => {
+            console.log("error!")
+            console.log(error)
+        }
+    )
+
+    return intervalNames.map(intervalName => {
+        return intervals.find(int => int.name === intervalName)
+    })
+
+}
+
 export const IntervalSelect = (props) => {
     const [intervals, setIntervals] = useState([]);
     const [loading, setLoading] = useState(false);
