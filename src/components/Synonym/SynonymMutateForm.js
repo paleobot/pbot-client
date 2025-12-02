@@ -238,6 +238,7 @@ const SynonymMutateForm = ({handleSubmit, mode}) => {
                             name="explanation" 
                             type="text" 
                             label="Explanation"
+                            multiline
                             fullWidth
                             disabled={false}
                         />

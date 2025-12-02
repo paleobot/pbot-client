@@ -247,6 +247,7 @@ const CommentMutateForm = ({handleSubmit, mode}) => {
                                 type="text"
                                 name="content"
                                 label="Comment"
+                                multiline
                                 fullWidth 
                                 disabled={false}
                             />

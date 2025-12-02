@@ -365,6 +365,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                             name="writtenDescription" 
                             type="text" 
                             label="Written description"
+                            multiline
                             fullWidth
                             disabled={false}
                         />
@@ -375,6 +376,7 @@ const DescriptionMutateForm = ({handleSubmit, mode}) => {
                             name="notes" 
                             type="text" 
                             label="Notes"
+                            multiline
                             fullWidth
                             disabled={false}
                         />
