@@ -359,6 +359,7 @@ const StateMutateForm = ({handleSubmit, mode}) => {
                                 type="text"
                                 name="definition"
                                 label="Definition"
+                                multiline
                                 fullWidth 
                                 disabled={false}
                             />

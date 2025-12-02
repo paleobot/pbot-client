@@ -221,6 +221,7 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
                                 type="text"
                                 name="purpose"
                                 label="Purpose"
+                                multiline
                                 fullWidth 
                                 disabled={false}
                             />
@@ -267,6 +268,7 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
                                 type="text"
                                 name="acknowledgments"
                                 label="Acknowledgments"
+                                multiline
                                 fullWidth 
                                 disabled={false}
                             />
