@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Field, useFormikContext } from 'formik';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack, Tooltip } from '@mui/material';
-import { TextField } from 'formik-mui';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Stack, Tooltip, TextField as MuiTextField } from '@mui/material';
+import { Autocomplete, TextField } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {
   useQuery,
@@ -12,6 +12,7 @@ import DescriptionQueryForm from './DescriptionQueryForm.js';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 import DescriptionQueryResults from './DescriptionQueryResults.js';
+import { SensibleAutocomplete } from '../SensibleAutocomplete.js';
 
 export const InnerDescriptionSelect = (props) => {
     console.log("InnerDescriptionSelect");
@@ -82,29 +83,36 @@ export const InnerDescriptionSelect = (props) => {
         //return "specimen" === props.name ? //This is a standalone SpecimenSelect for Specimen edit/delete
         return ["full", "simple"].includes(props.populateMode) ? 
             (
-                <Field
-                    style={style}
-                    component={TextField}
-                    type="text"
-                    name="description"
+        <Field
+            name="description"
+            component={SensibleAutocomplete}
+            options={descriptions}
+            getOptionLabel={(option) => option.name || ''}
+            isOptionEqualToValue={(option, value) => {
+                console.log("SensibleAutocomplete isOptionEqualToValue, option = ", option);
+                console.log("SensibleAutocomplete isOptionEqualToValue, value = ", value);
+                // Handle both object and string values
+                if (typeof value === 'string') {
+                    return option.pbotID === value;
+                }
+                return option.pbotID === value?.pbotID;
+            }}
+            onChange={(event, value) => {
+                console.log("SensibleAutocomplete onChange, value = ", value);
+                if (value) {
+                    props.handleSelect(value, props.populateMode);
+                }
+            }}
+            style={style}
+            renderInput={(params) => (
+                //We can't use Formik MUI TextField here because it expects to receive field props from the Field component. Must use plain MUI TextField, aliased as MuiTextField to avoid name conflict.
+                <MuiTextField
+                    {...params}
                     label="Description"
-                    select={true}
-                    SelectProps={{
-                        multiple: false,
-                    }}
-                    disabled={false}
-                    onChange={(event,child) => {
-                        props.handleSelect(JSON.parse(child.props.ddescription), props.populateMode)
-                    }}
-                >
-                    {descriptions.map((description) => (
-                        <MenuItem 
-                            key={description.pbotID} 
-                            value={description.pbotID}
-                            ddescription={JSON.stringify(description)}
-                        >{description.name}</MenuItem>
-                    ))}
-                </Field>
+                    variant="standard"
+                />
+            )}
+        />
             )            
         : 
             (
