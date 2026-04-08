@@ -1,5 +1,5 @@
 import React from 'react';
-import { Field } from 'formik';
+import { Field, useFormikContext } from 'formik';
 import { MenuItem } from '@mui/material';
 import { TextField } from 'formik-mui';
 import { alphabetize } from '../../util.js';
@@ -11,6 +11,8 @@ import {
 export const GroupSelect = (props) => {
     console.log("GroupSelect");
 
+    const { setFieldValue } = useFormikContext();
+
     const gQL = gql`
             query {
                 Group {
@@ -21,6 +23,15 @@ export const GroupSelect = (props) => {
         `;
 
     const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
+
+    //Preload Group select with all groups user is member of (while honoring omitPublic).
+    React.useEffect(() => {
+        if (props.preloadGroups && data) {
+            setFieldValue("groups", props.omitPublic ? 
+                data.Group.filter(group => "public" !== group.name).map(group => group.pbotID) : 
+                data.Group.map(group => group.pbotID));
+        }
+    }, [data]); 
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
