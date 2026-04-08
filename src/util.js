@@ -1,10 +1,18 @@
 import React from 'react';
 import { Link, styled, TableRow } from "@mui/material";
 
-export const alphabetize = (list, sortField) => {
+export const alphabetize = (list, sortField, ignoreQuotes) => {
     return list.sort((a,b) => {
-        const nameA = a[sortField] ? a[sortField].toUpperCase() : "z"; //"z" forces null names to end of list
-        const nameB = b[sortField] ? b[sortField].toUpperCase() : "z"; 
+        const nameA = a[sortField] ? 
+            ignoreQuotes ?
+                stripQuotes(a[sortField]).toUpperCase() : 
+                a[sortField].toUpperCase() :
+            "z"; //"z" forces null names to end of list
+        const nameB = b[sortField] ? 
+            ignoreQuotes ?
+                stripQuotes(b[sortField]).toUpperCase() : 
+                b[sortField].toUpperCase() : 
+            "z";
         if (nameA < nameB) {
             return -1;
         }
@@ -13,6 +21,13 @@ export const alphabetize = (list, sortField) => {
         }
         return 0;
     });
+}
+
+const stripQuotes = (str) => {
+    if (str.startsWith('"')) {
+        str = str.replaceAll('"', '') + 'z'; //Add "z" to end of string to force quoted names to end of list
+    }
+    return str;
 }
 
 export const sort = (list, sortField1, sortField2) => {
