@@ -25,11 +25,13 @@ function DescriptionList(props) {
     let descriptionGQL;
     descriptionGQL = gql`
         query (
+            $name: String,
             $pbotID: ID, 
             ${filters.specimen ? ", $specimen: ID" : ""} 
             $groups: [ID!]
         ) {
             Description (
+                name: $name,
                 pbotID: $pbotID
                 ${filter}
             ) {
@@ -85,6 +87,7 @@ const DescriptionQueryResults = ({queryParams, select, handleSelect}) => {
     return (
         <DescriptionList 
             filters={{
+                name: queryParams.name || null,
                 pbotID: queryParams.descriptionID || null,
                 specimen: queryParams.specimen || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 

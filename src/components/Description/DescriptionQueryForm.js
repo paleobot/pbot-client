@@ -16,11 +16,13 @@ const DescriptionQueryForm = ({handleSubmit}) => {
         <Formik
             initialValues={{
                 type: "all",
+                name: '',
                 descriptionID: '', 
                 specimen: '',
                 groups: [],
             }}
             validationSchema={Yup.object({
+                name: Yup.string(),
                 descriptionID: Yup.string()
                 .uuid('Must be a valid uuid'),
                 groups: Yup.array().of(Yup.string())
@@ -38,6 +40,15 @@ const DescriptionQueryForm = ({handleSubmit}) => {
             
                 <Field 
                     component={TextField}
+                    name="name" 
+                    type="text"
+                    label="Name"
+                    disabled={false}
+                />
+                <br />
+
+                <Field 
+                    component={TextField}
                     name="descriptionID" 
                     type="text"
                     label="Description ID"
@@ -46,8 +57,8 @@ const DescriptionQueryForm = ({handleSubmit}) => {
                 <br />
                 
                 <SpecimenSelect name="specimen" label="Specimen" populateMode="simple"/>
-                
-                <GroupSelect/>
+
+                <GroupSelect preloadGroups={true} />
                 <br />
 
                 <br />
