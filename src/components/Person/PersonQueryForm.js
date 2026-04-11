@@ -14,6 +14,7 @@ const PersonQueryForm = ({handleSubmit}) => {
         surname: '', 
         email: '',
         orcid: '',
+        fuzzy: false,
         groups: [],
     };
     
@@ -62,6 +63,16 @@ const PersonQueryForm = ({handleSubmit}) => {
                     variant="standard"
                 />
                 <br />
+
+                <Field 
+                    component={CheckboxWithLabel}
+                    name="fuzzy" 
+                    type="checkbox"
+                    Label={{label:"Fuzzy name search"}}
+                    disabled={false}
+                />
+                <br />
+
                 
                 <Field 
                     component={TextField}                

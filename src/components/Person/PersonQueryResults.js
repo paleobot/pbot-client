@@ -16,7 +16,28 @@ function Persons(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
-    const gQL = gql`
+    const fuzzy = props.fuzzy;
+
+    const gQL = fuzzy ? 
+         gql`
+            query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String, $groups: [ID!], $excludeList: [ID!]) {
+                fuzzyPersonSearch (pbotID: $pbotID, email: $email, orcid: $orcid, given: $given, surname: $surname, groups: $groups, excludeList: $excludeList) {
+                    pbotID
+                    given
+                    middle
+                    surname
+                    email
+                    orcid
+                    bio
+                    registered
+                    memberOf {
+                        pbotID
+                    }
+                }
+            }
+        `
+        :
+        gql`
             query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String, $groups: [ID!], $excludeList: [ID!]) {
                 Person (pbotID: $pbotID, email: $email, orcid: $orcid, filter:{AND: [
                     {surname_regexp: $surname},
@@ -50,7 +71,8 @@ function Persons(props) {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
-    const people = alphabetize([...data.Person], "surname");
+    let people = fuzzy ? [...data.fuzzyPersonSearch] : [...data.Person];
+    people = alphabetize(people, "surname");
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -108,12 +130,13 @@ const PersonQueryResults = ({queryParams, select, handleSelect, exclude}) => {
         <Persons 
             filters={{
                 pbotID: queryParams.personID || null,
-                given: queryParams.given ? `(?i).*${queryParams.given.replace(/\s+/, '.*')}.*` : null, 
-                surname: queryParams.surname ? `(?i).*${queryParams.surname.replace(/\s+/, '.*')}.*` : null, 
+                given: queryParams.given ? (queryParams.fuzzy ? queryParams.given : `(?i).*${queryParams.given.replace(/\s+/, '.*')}.*`) : null, 
+                surname: queryParams.surname ? (queryParams.fuzzy ? queryParams.surname : `(?i).*${queryParams.surname.replace(/\s+/, '.*')}.*`) : null, 
                 email: queryParams.email || null, 
                 orcid: queryParams.orcid || null, 
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
+            fuzzy={queryParams.fuzzy}
             select={select}
             handleSelect={handleSelect}
             exclude={exclude}
