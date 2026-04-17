@@ -63,7 +63,8 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                 includeComments: true,
                 collection: '',
                 enterers: [],
-                includeOverlappingIntervals: false
+                includeOverlappingIntervals: false,
+                fuzzy: false,
     };
     const style = {textAlign: "left", width: "60%", margin: "auto"}
     
@@ -102,11 +103,20 @@ const OTUQueryForm = ({handleSubmit, select}) => {
             {props => (
             <Form>
             
-                <Field 
+                <Field
                     component={SensibleTextField}
-                    name="name" 
+                    name="name"
                     type="text"
                     label="Name"
+                    disabled={false}
+                />
+                <br />
+
+                <Field
+                    component={CheckboxWithLabel}
+                    name="fuzzy"
+                    type="checkbox"
+                    Label={{label: "Fuzzy name search"}}
                     disabled={false}
                 />
                 <br />
@@ -116,7 +126,7 @@ const OTUQueryForm = ({handleSubmit, select}) => {
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="required-content"
-                        id="required-header"                        
+                        id="required-header"
                     >
                         Taxonomy
                     </AccordionSummary>

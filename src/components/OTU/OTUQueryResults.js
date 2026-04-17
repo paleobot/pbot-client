@@ -18,12 +18,33 @@ function OTUList(props) {
 
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
-    
+
+    const fuzzy = !props.standAlone && !!props.fuzzy;
+
     const groups = props.standAlone ? '' : '$groups: [ID!], ';
     //const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
 
     const filter = OTUFilterHelper(filters, props);
     console.log(filter)
+
+    //To support an AND query on mulitiple character instances, we must generate a
+    //query clause for each. Set up the per-index variables (shared by both the
+    //fuzzy and non-fuzzy branches).
+    let schemaIDstrings = [], characterIDstrings = [], stateIDstrings = []
+    if (!props.standAlone && filters.characterInstances) {
+        filters.characterInstances.forEach((ci,i) => {
+            schemaIDstrings[i] = `, $schema${i}: ID`;
+            filters[`schema${i}`] = ci.schema;
+            if (ci.character) {
+                characterIDstrings[i] = `, $character${i}: ID`;
+                filters[`character${i}`] = ci.character;
+            }
+            if (ci.state) {
+                stateIDstrings[i] = `, $state${i}: ID`;
+                filters[`state${i}`] = ci.state;
+            }
+        })
+    }
 
     const fields = 
         props.standAlone ?
@@ -311,30 +332,99 @@ function OTUList(props) {
         `
 
     let gQL;
-    if (!props.standAlone) {
-
-        //To support an AND query on mulitiple character instances, we must generate a
-        //query clause for each. A fully specified character instance includes a schema,
-        //a character, and a state. There must be an explicit query variable for each 
-        //schema, character, and state. These are set up here.
-        //
-        //We allow partial specification (i.e. can specify only a schema or a schema 
-        //and character). 
-        let schemaIDstrings = [], characterIDstrings = [], stateIDstrings = []
+    if (fuzzy) {
+        const fuzzyClauses = [`{elementOf_some: {pbotID_in: $groups}}`];
+        if (filters.pbotID) fuzzyClauses.push(`{pbotID: $pbotID}`);
+        if (filters.family) fuzzyClauses.push(`{family: $family}`);
+        if (filters.genus) fuzzyClauses.push(`{genus: $genus}`);
+        if (filters.species) fuzzyClauses.push(`{species: $species}`);
+        if (filters.authority) fuzzyClauses.push(`{authority: $authority}`);
+        if (filters.diagnosis) fuzzyClauses.push(`{diagnosis: $diagnosis}`);
+        if (filters.qualityIndex) fuzzyClauses.push(`{qualityIndex: $qualityIndex}`);
+        if (filters.majorTaxonGroup) fuzzyClauses.push(`{majorTaxonGroup: $majorTaxonGroup}`);
+        if (filters.pbdbParentTaxon) fuzzyClauses.push(`{pbdbParentTaxon: $pbdbParentTaxon}`);
+        if (filters.additionalClades) fuzzyClauses.push(`{additionalClades: $additionalClades}`);
+        if (filters.partsPreserved) fuzzyClauses.push(`{partsPreserved_some: {pbotID_in: $partsPreserved}}`);
+        if (filters.notableFeatures) fuzzyClauses.push(`{notableFeatures_some: {pbotID_in: $notableFeatures}}`);
+        if (filters.identifiedSpecimens) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {pbotID_in: $identifiedSpecimens}}}`);
+        if (filters.typeSpecimens) fuzzyClauses.push(`{typeSpecimens_some: {Specimen: {pbotID_in: $typeSpecimens}}}`);
+        if (filters.holotypeSpecimen) fuzzyClauses.push(`{holotypeSpecimen: {Specimen: {pbotID: $holotypeSpecimen}}}`);
+        if (filters.synonym) fuzzyClauses.push(`{AND: [{pbotID_not: $synonym}, {synonyms_some: {otus_some: {AND: [{pbotID: $synonym}, {pbotID_not: $pbotID}]}}}]}`);
+        if (filters.mininterval) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {mininterval: $mininterval}}}}`);
+        if (filters.maxinterval) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {maxinterval: $maxinterval}}}}`);
+        if (filters.intervals) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {OR: [{mininterval_in: $intervals}, {maxinterval_in: $intervals}]}}}}`);
+        if (filters.country) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {country: $country}}}}`);
+        if (filters.state) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {state: $state}}}}`);
+        if (filters.lat && filters.lon) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {location_distance_lt: {point: {latitude: $lat, longitude: $lon}, distance: 10000}}}}}`);
+        if (filters.stratigraphicGroup) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {stratigraphicGroup: $stratigraphicGroup}}}}`);
+        if (filters.stratigraphicFormation) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {stratigraphicFormation: $stratigraphicFormation}}}}`);
+        if (filters.stratigraphicMember) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {stratigraphicMember: $stratigraphicMember}}}}`);
+        if (filters.stratigraphicBed) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {stratigraphicBed: $stratigraphicBed}}}}`);
+        if (filters.collection) fuzzyClauses.push(`{identifiedSpecimens_some: {Specimen: {collection: {pbotID: $collection}}}}`);
+        if (filters.enterers) fuzzyClauses.push(`{enteredBy_some: {Person: {pbotID_in: $enterers}, type: "CREATE"}}`);
+        if (filters.references) fuzzyClauses.push(`{references_some: {Reference: {pbotID_in: $references}}}`);
         if (filters.characterInstances) {
-            filters.characterInstances.forEach((ci,i) => {
-                schemaIDstrings[i] = `, $schema${i}: ID`;
-                filters[`schema${i}`] = ci.schema;
+            filters.characterInstances.forEach((ci, i) => {
+                let ciClause = `{identifiedSpecimens_some: {Specimen: {describedBy_some: {Description: {schema: {pbotID: $schema${i}}`;
                 if (ci.character) {
-                    characterIDstrings[i] = `, $character${i}: ID`;
-                    filters[`character${i}`] = ci.character;
+                    ciClause += `, characterInstances_some: {character: {pbotID: $character${i}}`;
+                    if (ci.state) {
+                        ciClause += `, state: {State: {pbotID: $state${i}}}`;
+                    }
+                    ciClause += `}`;
                 }
-                if (ci.state) {
-                    stateIDstrings[i] = `, $state${i}: ID`;
-                    filters[`state${i}`] = ci.state;
-                }   
-            })
+                ciClause += `}}}}}`;
+                fuzzyClauses.push(ciClause);
+            });
         }
+
+        gQL = gql`
+            query (
+                $searchString: String!,
+                $groups: [ID!]
+                ${filters.pbotID ? ", $pbotID: ID" : ""}
+                ${filters.family ? ", $family: String" : ""}
+                ${filters.genus ? ", $genus: String" : ""}
+                ${filters.species ? ", $species: String" : ""}
+                ${filters.authority ? ", $authority: String" : ""}
+                ${filters.diagnosis ? ", $diagnosis: String" : ""}
+                ${filters.qualityIndex ? ", $qualityIndex: String" : ""}
+                ${filters.majorTaxonGroup ? ", $majorTaxonGroup: String" : ""}
+                ${filters.pbdbParentTaxon ? ", $pbdbParentTaxon: String" : ""}
+                ${filters.additionalClades ? ", $additionalClades: String" : ""}
+                ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""}
+                ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""}
+                ${schemaIDstrings}
+                ${characterIDstrings}
+                ${stateIDstrings}
+                ${filters.identifiedSpecimens ? ", $identifiedSpecimens: [ID!]" : ""}
+                ${filters.typeSpecimens ? ", $typeSpecimens: [ID!]" : ""}
+                ${filters.holotypeSpecimen ? ", $holotypeSpecimen: ID!" : ""}
+                ${filters.references ? ", $references: [ID!]" : ""}
+                ${filters.synonym ? ", $synonym: ID!" : ""}
+                ${filters.mininterval ? ", $mininterval: String" : ""}
+                ${filters.maxinterval ? ", $maxinterval: String" : ""}
+                ${filters.lat ? ", $lat: Float" : ""}
+                ${filters.lon ? ", $lon: Float" : ""}
+                ${filters.country ? ", $country: String" : ""}
+                ${filters.state ? ", $state: String" : ""}
+                ${filters.stratigraphicGroup ? ", $stratigraphicGroup: String" : ""}
+                ${filters.stratigraphicFormation ? ", $stratigraphicFormation: String" : ""}
+                ${filters.stratigraphicMember ? ", $stratigraphicMember: String" : ""}
+                ${filters.stratigraphicBed ? ", $stratigraphicBed: String" : ""}
+                ${filters.collection ? ", $collection: ID" : ""}
+                ${filters.enterers ? ", $enterers: [ID!]" : ""}
+                ${filters.intervals ? ", $intervals: [String!]" : ""}
+            ) {
+                OTU: fuzzyOTU (
+                    searchString: $searchString,
+                    filter: {AND: [${fuzzyClauses.join(',')}]}
+                ) {
+                    ${fields}
+                }
+            }
+        `;
+    } else if (!props.standAlone) {
 
         gQL = gql`
             query (
@@ -428,7 +518,8 @@ function OTUList(props) {
             includeSynonyms: props.includeSynonyms,
             includeComments: props.includeComments,
             includeHolotypeDescription: props.includeHolotypeDescription,
-            includeMergedDescription: props.includeMergedDescription
+            includeMergedDescription: props.includeMergedDescription,
+            ...(fuzzy ? {searchString: props.searchString || ''} : {})
         },
         fetchPolicy: "cache-and-network"
     });
@@ -440,7 +531,7 @@ function OTUList(props) {
     console.log(data.OTU);
     
     return (
-        <OTUs select={props.select} handleSelect={props.handleSelect} public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} data={data} standalone={props.standAlone} includeSynonyms={props.includeSynonyms} includeComments={props.includeComments} includeHolotypeDescription={props.includeHolotypeDescription} includeMergedDescription={props.includeMergedDescription} format={props.format}/>
+        <OTUs select={props.select} handleSelect={props.handleSelect} public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} data={data} standalone={props.standAlone} includeSynonyms={props.includeSynonyms} includeComments={props.includeComments} includeHolotypeDescription={props.includeHolotypeDescription} includeMergedDescription={props.includeMergedDescription} format={props.format} fuzzy={fuzzy}/>
     );
 
 }
@@ -451,6 +542,8 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
     console.log(queryParams);
 
     const global = useContext(GlobalContext);
+
+    const fuzzy = !!queryParams.fuzzy;
 
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
@@ -508,7 +601,7 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
         <OTUList 
             filters={{
                 pbotID: queryParams.otuID || null,
-                name: queryParams.name ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
+                name: (!fuzzy && queryParams.name) ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
                 family: queryParams.family || null, 
                 genus: queryParams.genus || null, 
                 pfnGenusLink: queryParams.pfnGenusLink || null, 
@@ -550,10 +643,12 @@ const OTUQueryResults = ({queryParams, select, handleSelect}) => {
             includeHolotypeDescription={queryParams.includeHolotypeDescription} 
             includeMergedDescription={queryParams.includeMergedDescription} 
             includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
-            standAlone={queryParams.standAlone} 
+            standAlone={queryParams.standAlone}
             select={select}
             handleSelect={handleSelect}
             format={queryParams.format}
+            fuzzy={fuzzy}
+            searchString={fuzzy ? (queryParams.name || '') : null}
         />
     );
 };

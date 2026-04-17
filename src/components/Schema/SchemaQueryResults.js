@@ -23,6 +23,8 @@ function Schemas(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
+    const fuzzy = !props.standAlone && !!props.fuzzy;
+
     const groups = props.standAlone ? '' : ', $groups: [ID!] ';
     //const filter = props.standAlone ? '' : ',  filter:{elementOf_some: {pbotID_in: $groups}}'
     
@@ -80,7 +82,40 @@ function Schemas(props) {
     console.log(filter)
 
     let gQL;
-    if (!props.standAlone) {
+    if (fuzzy) {
+        const fuzzyClauses = [`{elementOf_some: {pbotID_in: $groups}}`];
+        if (filters.pbotID) fuzzyClauses.push(`{pbotID: $pbotID}`);
+        if (filters.year) fuzzyClauses.push(`{year: $year}`);
+        if (filters.partsPreserved) fuzzyClauses.push(`{partsPreserved_some: {pbotID_in: $partsPreserved}}`);
+        if (filters.notableFeatures) fuzzyClauses.push(`{notableFeatures_some: {pbotID_in: $notableFeatures}}`);
+        if (filters.purpose) fuzzyClauses.push(`{purpose_contains: $purpose}`);
+        if (filters.reference) fuzzyClauses.push(`{references_some: {Reference: {pbotID: $reference}}}`);
+        if (filters.specimen) fuzzyClauses.push(`{appliedBy_some: {specimens_some: {Specimen: {pbotID: $specimen}}}}`);
+
+        gQL = gql`
+            query (
+                $searchString: String!,
+                ${filters.pbotID ? `$pbotID: ID,` : ''}
+                ${filters.year ? `$year: String,` : ''}
+                ${filters.title ? `$title: String,` : ''}
+                ${filters.purpose ? `$purpose: String,` : ''}
+                ${filters.partsPreserved ? `$partsPreserved: [ID!],` : ''}
+                ${filters.notableFeatures ? `$notableFeatures: [ID!],` : ''}
+                ${filters.reference ? `$reference: ID,` : ''}
+                ${filters.specimen ? `$specimen: ID,` : ''}
+                $groups: [ID!]
+            ) {
+                fuzzySchema (
+                    searchString: $searchString,
+                    filter: {AND: [${fuzzyClauses.join(',')}]}
+                ) {
+                    pbotID
+                    title
+                    year
+                }
+            }
+        `;
+    } else if (!props.standAlone) {
         gQL = gql`
             query (
                 $pbotID: ID, 
@@ -267,15 +302,18 @@ function Schemas(props) {
     
     const { loading, error, data } = useQuery(gQL, {
         variables: {
-            ...filters
+            ...filters,
+            ...(fuzzy ? {searchString: props.searchString || ''} : {})
         },
         fetchPolicy: "cache-and-network"
     });
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-           
-    const schemas = sort([...data.Schema], "year", "title");
+
+    const schemas = fuzzy
+        ? [...data.fuzzySchema]
+        : sort([...data.Schema], "year", "title");
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -390,12 +428,14 @@ const SchemaQueryResults = ({queryParams}) => {
 
     const global = useContext(GlobalContext);
 
+    const fuzzy = !!queryParams.fuzzy;
+
     return (
-        <Schemas 
+        <Schemas
             filters={{
                 pbotID: queryParams.schemaID || null,
-                title: queryParams.title ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null, 
-                year: queryParams.year || null, 
+                title: (!fuzzy && queryParams.title) ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null,
+                year: queryParams.year || null,
                 purpose: queryParams.purpose || null,
                 specimen: queryParams.specimen || null,
                 //some extra razzle-dazzle here use only non-empty pbotIDs
@@ -403,10 +443,12 @@ const SchemaQueryResults = ({queryParams}) => {
                 reference: queryParams.reference || null,
                 partsPreserved: queryParams.partsPreserved && queryParams.partsPreserved.length > 0 ? queryParams.partsPreserved : null,
                 notableFeatures: queryParams.notableFeatures && queryParams.notableFeatures.length > 0 ? queryParams.notableFeatures : null,
-                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
+                groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups,
             }}
-            includeCharacters={queryParams.includeCharacters} 
-            standAlone={queryParams.standAlone} 
+            fuzzy={fuzzy}
+            searchString={fuzzy ? (queryParams.title || '') : null}
+            includeCharacters={queryParams.includeCharacters}
+            standAlone={queryParams.standAlone}
             format={queryParams.format}
         />
     );

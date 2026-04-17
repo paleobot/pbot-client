@@ -27,7 +27,8 @@ const SchemaQueryForm = ({handleSubmit}) => {
         partsPreserved: [],
         notableFeatures: [],
         groups: [],
-        includeCharacters: true
+        includeCharacters: true,
+        fuzzy: false,
     };
     
     return (
@@ -52,13 +53,22 @@ const SchemaQueryForm = ({handleSubmit}) => {
         >
             {props => (
             <Form>
-                <Field 
+                <Field
                     component={TextField}
-                    name="title" 
-                    type="text" 
+                    name="title"
+                    type="text"
                     label="Title"
                     disabled={false}
                     variant="standard"
+                />
+                <br />
+
+                <Field
+                    component={CheckboxWithLabel}
+                    name="fuzzy"
+                    type="checkbox"
+                    Label={{label: "Fuzzy title search"}}
+                    disabled={false}
                 />
                 <br />
 

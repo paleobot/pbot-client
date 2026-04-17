@@ -55,7 +55,7 @@ Entities with full query+mutate surfaces: OTU, Collection, Specimen, Reference, 
 
 `src/components/Mutator.js` is a generic mutation component: pass `entity`, `mode` ("create" | "edit" | "delete"), and `data`, and it builds `Create<Entity>` / `Update<Entity>` / `Delete<Entity>` mutations on the fly from template strings. Most `*MutateResults` components use this instead of hand-written `useMutation` calls.
 
-Queries, on the other hand, are mostly written inline in each `*QueryResults` component using `useQuery`/`gql`. Person has a special **fuzzy-search** branch that switches between a standard `Person` query and a Neo4j-fulltext `fuzzySurname` query, with extra filters applied client-side — see `src/components/Person/FUZZY_SEARCH.md` for the full rationale and the server-side schema it depends on.
+Queries, on the other hand, are mostly written inline in each `*QueryResults` component using `useQuery`/`gql`. Person, Reference, Schema, Collection, and OTU each have a **fuzzy-search** branch that switches between the standard entity query and a Neo4j-fulltext `fuzzy<Entity>` query (Pattern D: fulltext hit → `pbotID_in` injection → `neo4jgraphql()` delegation, so the standard `_<Type>Filter` shape and `cypherParams` group scoping work on both branches). See `src/components/Person/FUZZY_SEARCH.md` for the pattern and the server-side change (`add-fuzzy-search-core-entities`) it depends on.
 
 ### Auth and global state
 

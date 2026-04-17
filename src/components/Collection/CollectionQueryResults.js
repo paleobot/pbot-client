@@ -20,6 +20,8 @@ function Collections(props) {
     //toss out falsy fields
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
 
+    const fuzzy = !props.standAlone && !!props.fuzzy;
+
     const groups = props.standAlone ? '' : ', $groups: [ID!] ';
     let filter = '';
     if (props.standAlone) {
@@ -339,7 +341,82 @@ function Collections(props) {
         `;
     
     let gQL;
-    if (!props.standAlone) {
+    if (fuzzy) {
+        const fuzzyClauses = [`{elementOf_some: {pbotID_in: $groups}}`];
+        if (filters.pbotID) fuzzyClauses.push(`{pbotID: $pbotID}`);
+        if (filters.country) fuzzyClauses.push(`{country: $country}`);
+        if (filters.state) fuzzyClauses.push(`{state: $state}`);
+        if (filters.collectionType) fuzzyClauses.push(`{collectionType: $collectionType}`);
+        if (filters.lithology) fuzzyClauses.push(`{lithology: $lithology}`);
+        if (filters.sizeClasses) fuzzyClauses.push(`{sizeClasses: $sizeClasses}`);
+        if (filters.environment) fuzzyClauses.push(`{environment: $environment}`);
+        if (filters.collectionMethods) fuzzyClauses.push(`{collectionMethods: $collectionMethods}`);
+        if (filters.pbdbid) fuzzyClauses.push(`{pbdbid: $pbdbid}`);
+        if (filters.stratigraphicGroup) fuzzyClauses.push(`{stratigraphicGroup: $stratigraphicGroup}`);
+        if (filters.stratigraphicFormation) fuzzyClauses.push(`{stratigraphicFormation: $stratigraphicFormation}`);
+        if (filters.stratigraphicMember) fuzzyClauses.push(`{stratigraphicMember: $stratigraphicMember}`);
+        if (filters.stratigraphicBed) fuzzyClauses.push(`{stratigraphicBed: $stratigraphicBed}`);
+        if (filters.mininterval) fuzzyClauses.push(`{mininterval: $mininterval}`);
+        if (filters.maxinterval) fuzzyClauses.push(`{maxinterval: $maxinterval}`);
+        if (filters.preservationModeIDs) fuzzyClauses.push(`{preservationModes_some: {pbotID_in: $preservationModeIDs}}`);
+        if (filters.partsPreserved) fuzzyClauses.push(`{specimens_some: {partsPreserved_some: {pbotID_in: $partsPreserved}}}`);
+        if (filters.notableFeatures) fuzzyClauses.push(`{specimens_some: {notableFeatures_some: {pbotID_in: $notableFeatures}}}`);
+        if (filters.specimens) fuzzyClauses.push(`{specimens_some: {pbotID_in: $specimens}}`);
+        if (filters.lat && filters.lon) fuzzyClauses.push(`{location_distance_lt: {point: {latitude: $lat, longitude: $lon}, distance: 10000}}`);
+        if (filters.enterers) fuzzyClauses.push(`{enteredBy_some: {Person: {pbotID_in: $enterers}, type: "CREATE"}}`);
+        if (filters.references) fuzzyClauses.push(`{references_some: {Reference: {pbotID_in: $references}}}`);
+        if (filters.otu) fuzzyClauses.push(`{specimens_some: {identifiedAs_some: {OTU: {pbotID: $otu}}}}`);
+        if (filters.majorTaxonGroup) fuzzyClauses.push(`{specimens_some: {identifiedAs_some: {OTU: {majorTaxonGroup: $majorTaxonGroup}}}}`);
+        if (filters.pbdbParentTaxon) fuzzyClauses.push(`{specimens_some: {identifiedAs_some: {OTU: {pbdbParentTaxon: $pbdbParentTaxon}}}}`);
+        if (filters.family) fuzzyClauses.push(`{specimens_some: {identifiedAs_some: {OTU: {family: $family}}}}`);
+        if (filters.genus) fuzzyClauses.push(`{specimens_some: {identifiedAs_some: {OTU: {genus: $genus}}}}`);
+        if (filters.species) fuzzyClauses.push(`{specimens_some: {identifiedAs_some: {OTU: {species: $species}}}}`);
+        if (filters.intervals) fuzzyClauses.push(`{OR: [{mininterval_in: $intervals}, {maxinterval_in: $intervals}]}`);
+
+        gQL = gql`
+            query (
+                $searchString: String!,
+                $groups: [ID!]
+                ${filters.pbotID ? ", $pbotID: ID" : ""}
+                ${filters.country ? ", $country: String" : ""}
+                ${filters.state ? ", $state: String" : ""}
+                ${filters.collectionType ? ", $collectionType: String" : ""}
+                ${filters.lithology ? ", $lithology: String" : ""}
+                ${filters.sizeClasses ? ", $sizeClasses: [String]" : ""}
+                ${filters.environment ? ", $environment: String" : ""}
+                ${filters.collectionMethods ? ", $collectionMethods: [String]" : ""}
+                ${filters.pbdbid ? ", $pbdbid: String" : ""}
+                ${filters.stratigraphicGroup ? ", $stratigraphicGroup: String" : ""}
+                ${filters.stratigraphicFormation ? ", $stratigraphicFormation: String" : ""}
+                ${filters.stratigraphicMember ? ", $stratigraphicMember: String" : ""}
+                ${filters.stratigraphicBed ? ", $stratigraphicBed: String" : ""}
+                ${filters.mininterval ? ", $mininterval: String" : ""}
+                ${filters.maxinterval ? ", $maxinterval: String" : ""}
+                ${filters.preservationModeIDs ? ", $preservationModeIDs: [ID!]" : ""}
+                ${filters.partsPreserved ? ", $partsPreserved: [ID!]" : ""}
+                ${filters.notableFeatures ? ", $notableFeatures: [ID!]" : ""}
+                ${filters.specimens ? ", $specimens: [ID!]" : ""}
+                ${filters.enterers ? ", $enterers: [ID!]" : ""}
+                ${filters.references ? ", $references: [ID!]" : ""}
+                ${filters.otu ? ", $otu: ID" : ""}
+                ${filters.majorTaxonGroup ? ", $majorTaxonGroup: String" : ""}
+                ${filters.pbdbParentTaxon ? ", $pbdbParentTaxon: String" : ""}
+                ${filters.family ? ", $family: String" : ""}
+                ${filters.genus ? ", $genus: String" : ""}
+                ${filters.species ? ", $species: String" : ""}
+                ${filters.lat ? ", $lat: Float" : ""}
+                ${filters.lon ? ", $lon: Float" : ""}
+                ${filters.intervals ? ", $intervals: [String!]" : ""}
+            ) {
+                fuzzyCollection (
+                    searchString: $searchString,
+                    filter: {AND: [${fuzzyClauses.join(',')}]}
+                ) {
+                    ${fields}
+                }
+            }
+        `;
+    } else if (!props.standAlone) {
         gQL = gql`
             query (
                 $pbotID: ID, 
@@ -428,14 +505,17 @@ function Collections(props) {
             ...filters,
             includeSpecimens: props.includeSpecimens,
             includeOTUs: props.includeOTUs,
+            ...(fuzzy ? {searchString: props.searchString || ''} : {})
         },
         fetchPolicy: "cache-and-network"
     });
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-           
-    const collections = alphabetize([...data.Collection], "name");
+
+    const collections = fuzzy
+        ? [...data.fuzzyCollection]
+        : alphabetize([...data.Collection], "name");
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const listIndent = {marginLeft:"2em"}
@@ -594,6 +674,7 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
 
     const global = useContext(GlobalContext);
 
+    const fuzzy = !!queryParams.fuzzy;
 
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
@@ -618,7 +699,7 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
         <Collections 
             filters={{
                 pbotID: queryParams.collectionID || null,
-                name: queryParams.name ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
+                name: (!fuzzy && queryParams.name) ? `(?i).*${queryParams.name.replace(/\s+/, '.*')}.*` : null,
                 lat: parseFloat(queryParams.lat) || null, 
                 lon: parseFloat(queryParams.lon) || null,
                 country: queryParams.country || null,
@@ -652,12 +733,14 @@ const CollectionQueryResults = ({queryParams, handleSelect}) => {
                 species: queryParams.species || null,
                 groups: queryParams.groups.length === 0 ? [global.publicGroupID] : queryParams.groups, 
             }}
-            includeSpecimens={queryParams.includeSpecimens} 
-            includeOTUs={queryParams.includeOTUs} 
+            includeSpecimens={queryParams.includeSpecimens}
+            includeOTUs={queryParams.includeOTUs}
             includeOverlappingIntervals={queryParams.includeOverlappingIntervals}
-            standAlone={queryParams.standAlone} 
+            standAlone={queryParams.standAlone}
             handleSelect={handleSelect}
             format={queryParams.format}
+            fuzzy={fuzzy}
+            searchString={fuzzy ? (queryParams.name || '') : null}
         />
     );
 };

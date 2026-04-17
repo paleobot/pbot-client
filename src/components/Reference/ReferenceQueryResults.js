@@ -24,61 +24,59 @@ function References(props) {
     let filters = Object.fromEntries(Object.entries(props.filters).filter(([_, v]) => v ));
     console.log(filters)
 
+    const fuzzy = !props.standAlone && !!props.fuzzy;
+
     const groups = props.standAlone ? '' : ', $groups: [ID!] ';
-    
-    const filter = props.standAlone ? 
+
+    const filter = props.standAlone ?
         (filters.pbotID && Array.isArray(filters.pbotID)) ?
-            `filter: {pbotID_in: $pbotID}` 
+            `filter: {pbotID_in: $pbotID}`
             :
-            ''  
-        : 
+            ''
+        :
         ',  filter:{elementOf_some: {pbotID_in: $groups}}'
 
     let gQL;
-    if (!props.standAlone) {
+    if (fuzzy) {
         gQL = gql`
         query (
-            $pbotID: ID, 
-            ${filters.title ? `$title: String,` : ''}
-            ${filters.authors && filters.authors.length > 0 ? `$authors: [ID!],` : ''} 
-            $year: String, 
-            ${filters.bookTitle ? `$bookTitle: String,` : ''} 
-            $publicationType: String, 
-            $pbdbid: String, 
-            $doi: String, 
-            $groups: [ID!], 
+            $searchString: String!,
+            ${filters.pbotID ? `$pbotID: ID,` : ''}
+            ${filters.authors && filters.authors.length > 0 ? `$authors: [ID!],` : ''}
+            ${filters.year ? `$year: String,` : ''}
+            ${filters.publicationType ? `$publicationType: String,` : ''}
+            ${filters.pbdbid ? `$pbdbid: String,` : ''}
+            ${filters.doi ? `$doi: String,` : ''}
+            $groups: [ID!],
             $excludeList: [ID!]
         ) {
-            Reference (
-                pbotID: $pbotID, 
-                year: $year, 
-                publicationType: $publicationType, 
-                pbdbid: $pbdbid, 
-                doi: $doi, 
-                filter:{AND: [
+            fuzzyReference (
+                searchString: $searchString,
+                filter: {AND: [
+                    ${filters.pbotID ? `{pbotID: $pbotID},` : ''}
+                    ${filters.year ? `{year: $year},` : ''}
+                    ${filters.publicationType ? `{publicationType: $publicationType},` : ''}
+                    ${filters.pbdbid ? `{pbdbid: $pbdbid},` : ''}
+                    ${filters.doi ? `{doi: $doi},` : ''}
                     ${filters.authors && filters.authors.length > 0 ? `{authoredBy_some: {Person: {pbotID_in: $authors}}},` : ''}
-                    ${filters.title || filters.bookTitle ?
-                        `{OR: [
-                            ${filters.title ? `{title_regexp: $title},` : ''}
-                            ${filters.bookTitle ? `{bookTitle_regexp: $bookTitle},` : ''}
-                        ]},` : ''}
-                    {elementOf_some: {pbotID_in: $groups}}, 
-                    {pbotID_not_in: $excludeList}]}
+                    {elementOf_some: {pbotID_in: $groups}},
+                    {pbotID_not_in: $excludeList}
+                ]}
             ) {
                 pbotID
                 title
                 year
                 publisher
-                bookTitle  
-                publicationType 
+                bookTitle
+                publicationType
                 firstPage
-                lastPage 
-                journal 
-                publicationVolume 
+                lastPage
+                journal
+                publicationVolume
                 publicationNumber
-                bookType 
-                pbdbid 
-                doi                    
+                bookType
+                pbdbid
+                doi
                 authoredBy {
                     Person {
                         pbotID
@@ -93,7 +91,65 @@ function References(props) {
             }
         }
     `;
-} else {
+    } else if (!props.standAlone) {
+        gQL = gql`
+        query (
+            $pbotID: ID,
+            ${filters.title ? `$title: String,` : ''}
+            ${filters.authors && filters.authors.length > 0 ? `$authors: [ID!],` : ''}
+            $year: String,
+            ${filters.bookTitle ? `$bookTitle: String,` : ''}
+            $publicationType: String,
+            $pbdbid: String,
+            $doi: String,
+            $groups: [ID!],
+            $excludeList: [ID!]
+        ) {
+            Reference (
+                pbotID: $pbotID,
+                year: $year,
+                publicationType: $publicationType,
+                pbdbid: $pbdbid,
+                doi: $doi,
+                filter:{AND: [
+                    ${filters.authors && filters.authors.length > 0 ? `{authoredBy_some: {Person: {pbotID_in: $authors}}},` : ''}
+                    ${filters.title || filters.bookTitle ?
+                        `{OR: [
+                            ${filters.title ? `{title_regexp: $title},` : ''}
+                            ${filters.bookTitle ? `{bookTitle_regexp: $bookTitle},` : ''}
+                        ]},` : ''}
+                    {elementOf_some: {pbotID_in: $groups}},
+                    {pbotID_not_in: $excludeList}]}
+            ) {
+                pbotID
+                title
+                year
+                publisher
+                bookTitle
+                publicationType
+                firstPage
+                lastPage
+                journal
+                publicationVolume
+                publicationNumber
+                bookType
+                pbdbid
+                doi
+                authoredBy {
+                    Person {
+                        pbotID
+                        given
+                        surname
+                    }
+                    order
+                }
+                elementOf {
+                    name
+                }
+            }
+        }
+    `;
+    } else {
         gQL = gql`
             query (
                 $pbotID: ${filters.pbotID && Array.isArray(filters.pbotID) ?
@@ -139,15 +195,18 @@ function References(props) {
     const { loading, error, data } = useQuery(gQL, {
         variables: {
             ...filters,
-            excludeList: excludeIDs
+            excludeList: excludeIDs,
+            ...(fuzzy ? {searchString: props.searchString || ''} : {})
         },
         fetchPolicy: "cache-and-network"
     });
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-           
-    const references = sort([...data.Reference], "year", "title");
+
+    const references = fuzzy
+        ? [...data.fuzzyReference]
+        : sort([...data.Reference], "year", "title");
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -279,12 +338,14 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => 
 
     const global = useContext(GlobalContext);
 
+    const fuzzy = !!queryParams.fuzzy;
+
     return (
-        <References 
+        <References
             filters={{
                 pbotID: queryParams.referenceID || null,
-                title: queryParams.title ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null, 
-                bookTitle: queryParams.title ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null,
+                title: (!fuzzy && queryParams.title) ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null,
+                bookTitle: (!fuzzy && queryParams.title) ? `(?i).*${queryParams.title.replace(/\s+/, '.*')}.*` : null,
                 authors: queryParams.authors ? queryParams.authors.map(a => a.pbotID) : null,
                 publicationType: queryParams.published ? null : "unpublished",
                 //firstPage: queryParams.firstPage || null,
@@ -299,10 +360,12 @@ const ReferenceQueryResults = ({queryParams, select, handleSelect, exclude}) => 
                 doi: queryParams.doi || null,
                 groups: [global.publicGroupID],
             }}
+            fuzzy={fuzzy}
+            searchString={fuzzy ? (queryParams.title || '') : null}
             select={select}
             handleSelect={handleSelect}
             exclude={exclude}
-            standAlone={queryParams.standAlone} 
+            standAlone={queryParams.standAlone}
             format={queryParams.format}
         />
     );

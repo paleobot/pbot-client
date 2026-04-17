@@ -18,41 +18,56 @@ function Persons(props) {
 
     const fuzzy = props.fuzzy;
 
-    const gQL = fuzzy ? 
-         gql`
-            query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String, $groups: [ID!], $excludeList: [ID!]) {
-                fuzzyPersonSearch (pbotID: $pbotID, email: $email, orcid: $orcid, given: $given, surname: $surname, groups: $groups, excludeList: $excludeList) {
-                    pbotID
-                    given
-                    middle
-                    surname
-                    email
-                    orcid
-                    bio
-                    registered
-                    memberOf {
-                        pbotID
-                    }
+    const varDecls = `
+        ${filters.pbotID ? `$pbotID: ID,` : ''}
+        ${filters.email ? `$email: String,` : ''}
+        ${filters.orcid ? `$orcid: String,` : ''}
+        ${filters.surname ? `$surname: String,` : ''}
+        ${filters.given ? `$given: String,` : ''}
+        ${filters.middle ? `$middle: String,` : ''}
+        $groups: [ID!],
+        $excludeList: [ID!]
+    `;
+
+    const filterClauses = `
+        ${filters.pbotID ? `{pbotID: $pbotID},` : ''}
+        ${filters.email ? `{email: $email},` : ''}
+        ${filters.orcid ? `{orcid: $orcid},` : ''}
+        ${!fuzzy && filters.surname ? `{surname_regexp: $surname},` : ''}
+        ${!fuzzy && filters.given ? `{given_regexp: $given},` : ''}
+        {memberOf_some: {pbotID_in: $groups}},
+        {pbotID_not_in: $excludeList}
+    `;
+
+    const projection = `
+        pbotID
+        given
+        middle
+        surname
+        email
+        orcid
+        bio
+        registered
+    `;
+
+    const gQL = fuzzy ?
+        gql`
+            query (${varDecls}) {
+                fuzzyPerson (
+                    ${filters.surname ? `surname: $surname,` : ''}
+                    ${filters.given ? `given: $given,` : ''}
+                    ${filters.middle ? `middle: $middle,` : ''}
+                    filter: {AND: [${filterClauses}]}
+                ) {
+                    ${projection}
                 }
             }
         `
         :
         gql`
-            query ($pbotID: ID, $given: String, $surname: String, $email: String, $orcid: String, $groups: [ID!], $excludeList: [ID!]) {
-                Person (pbotID: $pbotID, email: $email, orcid: $orcid, filter:{AND: [
-                    {surname_regexp: $surname},
-                    {given_regexp: $given},
-                    {memberOf_some: {pbotID_in: $groups}}, 
-                    {pbotID_not_in: $excludeList}
-                ]}) {
-                    pbotID
-                    given
-                    middle
-                    surname
-                    email
-                    orcid
-                    bio
-                    registered
+            query (${varDecls}) {
+                Person (filter: {AND: [${filterClauses}]}) {
+                    ${projection}
                 }
             }
         `;
@@ -71,8 +86,7 @@ function Persons(props) {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
-    let people = fuzzy ? [...data.fuzzyPersonSearch] : [...data.Person];
-    people = alphabetize(people, "surname");
+    let people = fuzzy ? [...data.fuzzyPerson] : alphabetize([...data.Person], "surname");
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}

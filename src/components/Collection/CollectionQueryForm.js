@@ -56,7 +56,8 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
         groups: [],
         includeSpecimens: true,
         includeOTUs: true,
-        includeOverlappingIntervals: false
+        includeOverlappingIntervals: false,
+        fuzzy: false,
     };
     
     const accstyle = {textAlign: "left", width: "70%"}
@@ -89,13 +90,22 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
             {props => (
             <Form>
                 
-                <Field 
+                <Field
                     component={TextField}
-                    name="name" 
-                    type="text" 
+                    name="name"
+                    type="text"
                     label="Name"
                     disabled={false}
                     variant="standard"
+                />
+                <br />
+
+                <Field
+                    component={CheckboxWithLabel}
+                    name="fuzzy"
+                    type="checkbox"
+                    Label={{label: "Fuzzy name search"}}
+                    disabled={false}
                 />
                 <br />
                 <br />
@@ -104,7 +114,7 @@ const CollectionQueryForm = ({handleSubmit, select}) => {
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="required-content"
-                        id="required-header"                        
+                        id="required-header"
                     >
                         Taxonomy
                     </AccordionSummary>

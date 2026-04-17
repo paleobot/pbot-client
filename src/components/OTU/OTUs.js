@@ -165,7 +165,9 @@ const massageOTU = (o, directQParams, jsonDirectQParams, pdfDirectQParams) => {
 function OTUs(props) {
     console.log("OTUs");
     console.log(props.data);
-    const otus = props.data ? alphabetize([...props.data.OTU], "name", true) : [];
+    const otus = props.data
+        ? (props.fuzzy ? [...props.data.OTU] : alphabetize([...props.data.OTU], "name", true))
+        : [];
     console.log(otus);
     
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}

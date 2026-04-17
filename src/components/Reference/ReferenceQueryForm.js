@@ -29,10 +29,11 @@ const ReferenceQueryForm = ({handleSubmit}) => {
         //publisher: '',
         //bookType: '',
         //editors:  '',
-        year: '', 
+        year: '',
         doi: '',
         pbdbid: '',
         published: true,
+        fuzzy: false,
         //groups: [],
         //public: false,
     };
@@ -91,7 +92,16 @@ const ReferenceQueryForm = ({handleSubmit}) => {
                     type="text"
                     name="title"
                     label="Title"
-                    fullWidth 
+                    fullWidth
+                    disabled={false}
+                />
+                <br />
+
+                <Field
+                    component={CheckboxWithLabel}
+                    name="fuzzy"
+                    type="checkbox"
+                    Label={{label: "Fuzzy title search"}}
                     disabled={false}
                 />
                 <br />
