@@ -3,6 +3,7 @@ import { Document, Page, Text, View, StyleSheet, Image, PDFViewer } from '@react
 import { alphabetize, sort } from '../../util.js';
 import logo from '../../PBOT-logo-transparent.png';
 import { styles } from '../../PDFStyles.js';
+import { Table, TableRow, TableCell } from '@ag-media/react-pdf-table';
 
 
 // Helper component for a labeled field
@@ -268,6 +269,28 @@ export const CollectionPDF = (props) => {
             <View style={styles.sectionContainer}>
             <Text style={styles.subheading}>OTUs</Text>
             <OTUsPDF collection={collection} />
+            </View>
+
+            {/* History Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>History</Text>
+                {collection.history && collection.history.length > 0 &&
+                    <Table tdStyle={{padding: 5, borderBottomWidth: 1, fontSize: 10}}>
+                        {collection.history.map((eb, i) => {
+                            const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
+                            return (
+                                <TableRow key={eb.timestamp} style={{backgroundColor: bgColor}}>
+                                    <TableCell>{eb.timestamp}</TableCell>
+                                    <TableCell>{eb.type}</TableCell>
+                                    <TableCell>{eb.person}</TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </Table>
+                }
+                {(!collection.history || collection.history.length === 0) &&
+                    <Text style={styles.paragraph}>No history available</Text>
+                }
             </View>
         </Page>
         </>

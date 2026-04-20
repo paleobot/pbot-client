@@ -106,6 +106,28 @@ export const SchemaPdf = (props) => {
                 <Characters characters={s.characters} top="true" format="pdf" style={styles.singleSpacedLine}/>
             </View>
 
+            {/* History Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>History</Text>
+                {s.history && s.history.length > 0 &&
+                    <Table tdStyle={{padding: 5, borderBottomWidth: 1, fontSize: 10}}>
+                        {s.history.map((eb, i) => {
+                            const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
+                            return (
+                                <TableRow key={eb.timestamp} style={{backgroundColor: bgColor}}>
+                                    <TableCell>{eb.timestamp}</TableCell>
+                                    <TableCell>{eb.type}</TableCell>
+                                    <TableCell>{eb.person}</TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </Table>
+                }
+                {(!s.history || s.history.length === 0) &&
+                    <Text style={styles.paragraph}>No history available</Text>
+                }
+            </View>
+
         </Page>
         </>
     );

@@ -411,8 +411,41 @@ export const CollectionWeb = (props) => {
                 </AccordionDetails>
             </Accordion>
 
+            <Accordion style={accstyle} defaultExpanded={false}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="history-content"
+                    id="history-header"
+                >
+                    History
+                </AccordionSummary>
+                <AccordionDetails>
+                    <TableContainer component={Paper}>
+                        <Table sx={{width:"100%", mr:"10px"}} aria-label="history table">
+                            <TableBody>
+                                {(collection.history || []).map(eb => {
+                                    return (
+                                        <AlternatingTableRow key={eb.timestamp}>
+                                            <TableCell align="left">
+                                                {eb.timestamp}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                {eb.type}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                {eb.person}
+                                            </TableCell>
+                                        </AlternatingTableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </AccordionDetails>
+            </Accordion>
+
             </>
         </div>
-        </>        
+        </>
     )
 }

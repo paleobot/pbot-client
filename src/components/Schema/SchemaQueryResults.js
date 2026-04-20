@@ -184,7 +184,18 @@ function Schemas(props) {
                         }
                         order
                     }
-                }            
+                    enteredBy {
+                        timestamp {
+                            formatted
+                        }
+                        type
+                        Person {
+                            given
+                            middle
+                            surname
+                        }
+                    }
+                }
             }
         `;
     } else {
@@ -291,6 +302,17 @@ function Schemas(props) {
                         }
                         order
                     }
+                    enteredBy {
+                        timestamp {
+                            formatted
+                        }
+                        type
+                        Person {
+                            given
+                            middle
+                            surname
+                        }
+                    }
                     characters {
                         ...CharacterFields
                         ...CharactersRecurse
@@ -352,6 +374,16 @@ function Schemas(props) {
 
             s.pdfURL = new URL(s.directURL.toString());
             s.pdfURL.searchParams.append("format", "pdf")
+
+            if (props.standAlone) {
+                s.history = sort((s.enteredBy || []).map(e => {
+                    return {
+                        timestamp: e.timestamp.formatted,
+                        type: e.type,
+                        person: `${e.Person.given}${e.Person.middle ? ` ${e.Person.middle}` : ``} ${e.Person.surname}`
+                    }
+                }), "timestamp");
+            }
 
             return s
         }

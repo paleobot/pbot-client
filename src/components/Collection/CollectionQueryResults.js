@@ -271,6 +271,17 @@ function Collections(props) {
                     }
                 }
             }
+            enteredBy {
+                timestamp {
+                    formatted
+                }
+                type
+                Person {
+                    given
+                    middle
+                    surname
+                }
+            }
         `
         : props.handleSelect ?
         `
@@ -580,6 +591,16 @@ function Collections(props) {
 
             collection.pdfURL = new URL(collection.directURL.toString());
             collection.pdfURL.searchParams.append("format", "pdf")
+
+            if (props.standAlone) {
+                collection.history = sort((collection.enteredBy || []).map(e => {
+                    return {
+                        timestamp: e.timestamp.formatted,
+                        type: e.type,
+                        person: `${e.Person.given}${e.Person.middle ? ` ${e.Person.middle}` : ``} ${e.Person.surname}`
+                    }
+                }), "timestamp");
+            }
 
             return collection
         }

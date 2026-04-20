@@ -107,7 +107,7 @@ export const SchemaWeb = (props) => {
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="required-content"
-                    id="required-header"                        
+                    id="required-header"
                 >
                     Characters
                 </AccordionSummary>
@@ -115,6 +115,39 @@ export const SchemaWeb = (props) => {
                     <Box sx={boxedDisplay}>
                         <Characters characters={schema.characters} top="true"/>
                     </Box>
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion style={accstyle} defaultExpanded={false}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="required-content"
+                    id="required-header"
+                >
+                    History
+                </AccordionSummary>
+                <AccordionDetails>
+                    <TableContainer component={Paper}>
+                        <Table sx={{width:"100%", mr:"10px"}} aria-label="history table">
+                            <TableBody>
+                                {(schema.history || []).map(eb => {
+                                    return (
+                                        <AlternatingTableRow key={eb.timestamp}>
+                                            <TableCell align="left">
+                                                {eb.timestamp}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                {eb.type}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                {eb.person}
+                                            </TableCell>
+                                        </AlternatingTableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </AccordionDetails>
             </Accordion>
 
