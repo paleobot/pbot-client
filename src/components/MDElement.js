@@ -19,8 +19,17 @@ const MDElement = (props) => {
     }, []);
 
     return (
-        <div align="left" style={{marginLeft:"10em", marginRight:"10em"}}>
-        <Markdown>{content}</Markdown>
+        <div align="left" className="md-wrapper">
+        <Markdown options={{
+            overrides: {
+                img: {
+                props: { style: { maxWidth: "100%", height: "auto", display: "block", margin: "0.5rem auto" } }
+                }
+            }
+            }}>
+            {content}
+        </Markdown>
+        
         </div>
     );
 };
