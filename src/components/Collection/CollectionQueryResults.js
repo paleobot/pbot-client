@@ -9,6 +9,7 @@ import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 import { CollectionWeb } from './CollectionWeb.js';
 import { CollectionPDF } from './CollectionPDF.js';
+import { normalizeEntity, cloneEntity } from '../../util/normalize';
 import { Document, PDFViewer } from '@react-pdf/renderer';
 
 function Collections(props) {
@@ -525,8 +526,15 @@ function Collections(props) {
     if (error) return <p>Error :(</p>;
 
     const collections = fuzzy
-        ? [...data.fuzzyCollection]
-        : alphabetize([...data.Collection], "name");
+        ? data.fuzzyCollection.map(cloneEntity)
+        : alphabetize(data.Collection.map(cloneEntity), "name");
+
+    // Normalize rich-rel rows produced by neo4j-graphql-js empty OPTIONAL
+    // MATCH (see src/util/normalize.js). Innermost first.
+    collections.forEach(c => {
+        c.specimens?.forEach(sp => normalizeEntity("Specimen", sp));
+        normalizeEntity("Collection", c);
+    });
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const listIndent = {marginLeft:"2em"}

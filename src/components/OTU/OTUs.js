@@ -13,6 +13,7 @@ import { Comments } from '../Comment/Comments';
 import { OTUweb } from './OTUweb';
 import { OTUpdf } from './OTUpdf';
 import { Document, Image, Page, PDFViewer, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { normalizeEntity, cloneEntity } from '../../util/normalize';
 
 
 
@@ -22,27 +23,13 @@ const massageOTU = (o, directQParams, jsonDirectQParams, pdfDirectQParams) => {
     otu.jsonDirectQParams = jsonDirectQParams;
     otu.pdfDirectQParams = pdfDirectQParams;
 
-    otu.history = sort(otu.enteredBy.map(e => { 
+    otu.history = sort(otu.enteredBy.map(e => {
         return {
             timestamp: e.timestamp.formatted,
             type: e.type,
             person: `${e.Person.given}${e.Person.middle ? ` ${e.Person.middle}` : ``} ${e.Person.surname}`
         }
     }), "timestamp");
-
-    //Private group membership of Specimens can cause empty values. 
-    //Here we clean that up 
-    if (otu.holotypeSpecimen && !otu.holotypeSpecimen.Specimen) {
-        otu.holotypeSpecimen = null;
-    }
-    if (otu.typeSpecimens) {
-        otu.typeSpecimens = otu.typeSpecimens.filter(tS => tS.Specimen)
-        console.log("typeSpecimens0")
-        console.log(otu.typeSpecimens)
-    }
-    if (otu.identifiedSpecimens) {
-        otu.identifiedSpecimens = otu.identifiedSpecimens.filter(iS => iS.Specimen)
-    }
 
     //For display purposes, we want to clear the holotype from the type specimens list and type specimens from the identified specimens list. We put these in new fields in case we need the full lists later.
     otu.exclusiveTypeSpecimens = otu.typeSpecimens.filter(tS => 
@@ -166,8 +153,23 @@ function OTUs(props) {
     console.log("OTUs");
     console.log(props.data);
     const otus = props.data
-        ? (props.fuzzy ? [...props.data.OTU] : alphabetize([...props.data.OTU], "name", true))
+        ? (props.fuzzy ? props.data.OTU.map(cloneEntity) : alphabetize(props.data.OTU.map(cloneEntity), "name", true))
         : [];
+
+    // Normalize rich-rel rows produced by neo4j-graphql-js empty OPTIONAL
+    // MATCH (see src/util/normalize.js). Innermost first, at the data seam.
+    otus.forEach(otu => {
+        otu.synonyms?.forEach(syn => {
+            syn.otus?.forEach(synOtu => normalizeEntity("OTU", synOtu));
+            syn.comments?.forEach(c => normalizeEntity("Comment", c));
+            normalizeEntity("Synonym", syn);
+        });
+        normalizeEntity("Specimen", otu.holotypeSpecimen?.Specimen);
+        otu.typeSpecimens?.forEach(r => normalizeEntity("Specimen", r.Specimen));
+        otu.identifiedSpecimens?.forEach(r => normalizeEntity("Specimen", r.Specimen));
+        normalizeEntity("OTU", otu);
+    });
+
     console.log(otus);
     
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}

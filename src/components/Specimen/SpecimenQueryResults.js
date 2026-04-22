@@ -17,6 +17,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Country, State }  from 'country-state-city';
 import { SpecimenWeb } from './SpecimenWeb.js';
 import { SpecimenPdf } from './SpecimenPdf.js';
+import { normalizeEntity, cloneEntity } from '../../util/normalize';
 import { Document, Page, PDFViewer, Text, View } from '@react-pdf/renderer';
 
 function Specimens(props) {
@@ -351,7 +352,14 @@ function Specimens(props) {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
            
-    const specimens = alphabetize([...data.Specimen], "name");
+    const specimens = alphabetize(data.Specimen.map(cloneEntity), "name");
+
+    // Normalize rich-rel rows produced by neo4j-graphql-js empty OPTIONAL
+    // MATCH (see src/util/normalize.js). Innermost first.
+    specimens.forEach(s => {
+        s.describedBy?.forEach(r => normalizeEntity("Description", r.Description));
+        normalizeEntity("Specimen", s);
+    });
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}

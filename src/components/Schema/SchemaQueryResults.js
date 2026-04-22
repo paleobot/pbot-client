@@ -10,6 +10,7 @@ import logo from '../../PBOT-logo-transparent.png';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { normalizeEntity, cloneEntity } from '../../util/normalize';
 import { SchemaWeb } from './SchemaWeb.js';
 import { Document, PDFViewer } from '@react-pdf/renderer';
 import { SchemaPdf } from './SchemaPdf.js';
@@ -334,8 +335,10 @@ function Schemas(props) {
     if (error) return <p>Error :(</p>;
 
     const schemas = fuzzy
-        ? [...data.fuzzySchema]
-        : sort([...data.Schema], "year", "title");
+        ? data.fuzzySchema.map(cloneEntity)
+        : sort(data.Schema.map(cloneEntity), "year", "title");
+
+    schemas.forEach(s => normalizeEntity("Schema", s));
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}

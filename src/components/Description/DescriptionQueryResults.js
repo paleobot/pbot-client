@@ -4,6 +4,7 @@ import {
   gql
 } from "@apollo/client";
 import Descriptions from "./Descriptions.js";
+import { normalizeEntity, cloneEntity } from '../../util/normalize';
 import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 
@@ -72,9 +73,12 @@ function DescriptionList(props) {
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-           
+
+    const descriptions = data.Description.map(cloneEntity);
+    descriptions.forEach(d => normalizeEntity("Description", d));
+
     return (
-        <Descriptions public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} descriptions={data.Description} select={props.select} handleSelect={props.handleSelect}/>
+        <Descriptions public={(filters.groups && filters.groups.length === 1 && global.publicGroupID === filters.groups[0])} descriptions={descriptions} select={props.select} handleSelect={props.handleSelect}/>
     );
 
 }

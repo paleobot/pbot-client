@@ -10,6 +10,7 @@ import { useContext } from 'react';
 import { GlobalContext } from '../GlobalContext.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReferenceSet from 'yup/lib/util/ReferenceSet.js';
+import { normalizeEntity, cloneEntity } from '../../util/normalize';
 import { ReferenceWeb } from './ReferenceWeb.js';
 import { ReferencePDF } from './ReferencePDF.js';
 import { Document, PDFViewer } from '@react-pdf/renderer';
@@ -216,8 +217,10 @@ function References(props) {
     if (error) return <p>Error :(</p>;
 
     const references = fuzzy
-        ? [...data.fuzzyReference]
-        : sort([...data.Reference], "year", "title");
+        ? data.fuzzyReference.map(cloneEntity)
+        : sort(data.Reference.map(cloneEntity), "year", "title");
+
+    references.forEach(r => normalizeEntity("Reference", r));
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
