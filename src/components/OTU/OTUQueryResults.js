@@ -9,6 +9,25 @@ import { GlobalContext } from '../GlobalContext.js';
 import { OTUFilterHelper } from './OTUFilterHelper.js';
 import { useFetchIntervals } from '../../util.js';
 
+const commentFields = gql`
+    fragment CommentFields on Comment {
+        content
+        enteredBy {
+            Person {
+                given
+                surname
+            }
+        }
+        references {
+            Reference {
+                pbotID
+                title
+            }
+            order
+        }
+    }
+`;
+
 function OTUList(props) {
     console.log("OTUList");
     console.log(props);
@@ -106,45 +125,15 @@ function OTUList(props) {
                     }
                 }
                 comments  @include(if: $includeComments) {
-                    enteredBy {
-                        Person {
-                            given
-                            surname
-                        }
-                    }
-                    content
+                    ...CommentFields
                     comments {
-                        enteredBy {
-                            Person {
-                                given
-                                surname
-                            }
-                        }
-                        content
+                        ...CommentFields
                         comments {
-                            enteredBy {
-                                Person {
-                                    given
-                                    surname
-                                }
-                            }
-                            content
+                            ...CommentFields
                             comments {
-                                enteredBy {
-                                    Person {
-                                        given
-                                        surname
-                                    }
-                                }
-                                content
+                                ...CommentFields
                                 comments {
-                                    enteredBy {
-                                        Person {
-                                            given
-                                            surname
-                                        }
-                                    }
-                                    content
+                                    ...CommentFields
                                 }
                             }
                         }
@@ -483,17 +472,18 @@ function OTUList(props) {
         `
     } else {
         gQL = gql`
+            ${commentFields}
             query (
                 $pbotID: ${filters.pbotID && Array.isArray(filters.pbotID) ?
                     "[ID!]" : "ID"},
-                $name: String, 
-                $family: String, 
-                $genus: String, 
-                $species: String, 
-                ${groups} 
-                $includeSynonyms: Boolean!, 
-                $includeComments: Boolean!, 
-                $includeHolotypeDescription: Boolean!, 
+                $name: String,
+                $family: String,
+                $genus: String,
+                $species: String,
+                ${groups}
+                $includeSynonyms: Boolean!,
+                $includeComments: Boolean!,
+                $includeHolotypeDescription: Boolean!,
                 $includeMergedDescription: Boolean!
             ) {
                 OTU (
