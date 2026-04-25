@@ -13,7 +13,8 @@ const SynonymMutateResults = ({queryParams}) => {
             params={{
                 pbotID: queryParams.synonym || null,
                 explanation: queryParams.explanation || null,
-                otus: queryParams.otus || null,
+                otus: (queryParams.otu0 && queryParams.otu1) ?
+                    [queryParams.otu0, queryParams.otu1] : null,
                 references: queryParams.references || null,
                 groups: queryParams.public ? 
                     [global.publicGroupID] : queryParams.groups || null,

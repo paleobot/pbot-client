@@ -1,4 +1,4 @@
-﻿import React, { useState }from 'react';
+﻿import React from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { Button, AppBar, Tabs, Tab, FormControlLabel, Radio, Grid, InputLabel, MenuItem, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
@@ -6,6 +6,7 @@ import { TextField, CheckboxWithLabel, RadioGroup, Select } from 'formik-mui';
 import { alphabetize } from '../../util.js';
 import {GroupSelect} from '../Group/GroupSelect.js';
 import {ReferenceManager} from '../Reference/ReferenceManager.js';
+import { OTUSelect } from '../OTU/OTUSelect.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {
@@ -78,7 +79,9 @@ const SynonymSelect = (props) => {
                 console.log("onChange");
                 console.log(child.props);
                 props.values.explanation = child.props.dexplanation;
-                props.values.otus = child.props.dotus ? JSON.parse(child.props.dotus) : [];
+                const loadedOtus = child.props.dotus ? JSON.parse(child.props.dotus) : [];
+                props.values.otu0 = loadedOtus[0] || '';
+                props.values.otu1 = loadedOtus[1] || '';
                 props.values.references = child.props.dreferences ? JSON.parse(child.props.dreferences) : [];
                 props.values.public = "true"=== child.props.dpublic || false;
                 props.values.origPublic = props.values.public;
@@ -103,59 +106,12 @@ const SynonymSelect = (props) => {
         
 }
 
-const OTUSelect = (props) => {
-    console.log("DescriptionSelect");
-    console.log(props);
-    console.log(props.type);
-    const gQL = gql`
-            query {
-                OTU {
-                    pbotID
-                    name
-                }            
-            }
-        `;
-        
-    //TODO: set global schema somehow, for use in getting Characters
-
-    const { loading: loading, error: error, data: data } = useQuery(gQL, {fetchPolicy: "cache-and-network"});
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-                                 
-    console.log(data);
-    let otus = alphabetize([...data.OTU], "name");
-    
-    return (
-        <Field 
-            component={TextField}
-            type="text"
-            name="otus"
-            label="OTUs"
-            fullWidth
-            select={true}
-            SelectProps={{
-                multiple: true,
-            }}
-            disabled={false}
-            defaultValue=""
-        >
-            {otus.map(({ pbotID, name }) => (
-                <MenuItem 
-                    key={pbotID} 
-                    value={pbotID}
-                >{name}</MenuItem>
-            ))}
-        </Field>
-    )        
-}
-
-
 const SynonymMutateForm = ({handleSubmit, mode}) => {
     const initValues = {
                 synonym: '',
                 explanation: '',
-                otus: [],
+                otu0: '',
+                otu1: '',
                 references: [{
                     pbotID: '',
                     order:'',
@@ -197,16 +153,19 @@ const SynonymMutateForm = ({handleSubmit, mode}) => {
                     is: false,
                     then: Yup.array().of(Yup.string()).min(1, "Must specify at least one group")
                 }),
-                otus: Yup.array().min(2, "Two OTUs are required").max(2, "Only two OTUs are allowed"),
+                otu0: Yup.string().required("OTU is required"),
+                otu1: Yup.string()
+                    .required("OTU is required")
+                    .test(
+                        "distinct",
+                        "OTUs must be different",
+                        function (v) { return !v || v !== this.parent.otu0; }
+                    ),
             })}
             onSubmit={(values, {resetForm}) => {
                 //alert(JSON.stringify(values, null, 2));
                 //setValues(values);
                 values.mode = mode;
-                //values.family = null;
-                //values.genus = null;
-                //values.species = null;
-                //values.specimen = null;
                 handleSubmit(values);
                 //setShowOTUs(true);
                 resetForm({values:initValues});
@@ -244,7 +203,9 @@ const SynonymMutateForm = ({handleSubmit, mode}) => {
                         />
                         <br />
                         
-                        <OTUSelect values={props.values} handleChange={props.handleChange} setFieldValue={props.setFieldValue}/>
+                        <OTUSelect name="otu0" label="OTU 1"/>
+                        <br />
+                        <OTUSelect name="otu1" label="OTU 2"/>
                         <br />
                         
                         <ReferenceManager values={props.values}/>
