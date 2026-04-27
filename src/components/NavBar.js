@@ -63,6 +63,7 @@ export default function NavBar() {
         localStorage.removeItem('PBOTMutationToken');
         setToken(localStorage.getItem('PBOTMutationToken'));
         localStorage.removeItem('PBOTMe');
+        localStorage.removeItem('PBOTMeUsername');
         navigate("/");
     }
    

@@ -95,6 +95,7 @@ const LoginForm = ({ /*setToken,*/ setShowRegistration }) => {
             setToken(loginResult.token);
             //localStorage.setItem('PBOTMe', values.userName);
             localStorage.setItem('PBOTMe', loginResult.pbotID);
+            localStorage.setItem('PBOTMeUsername', values.userName);
             console.log("navigating to workbench")
             navigate("/mutate");
         } else {
