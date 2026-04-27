@@ -28,7 +28,7 @@ export function Comments(props) {
                 {props.comments.map((comment, i) => (
                     <>
                         <Text style={[style1, {fontWeight: 'bold'}]}>
-                            {comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}
+                            {comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname + " (" + comment.enteredBy[0].timestamp.formatted + ")"}
                         </Text>
                         <Text style={style2}>{comment.content}</Text>
                         {comment.references && comment.references.length > 0 &&
@@ -55,7 +55,7 @@ export function Comments(props) {
                 {props.comments.map((comment, i) => (
                     <div key={i}>
                         <div style={style1}>
-                            <b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname}</b>
+                            <b>{comment.enteredBy[0].Person.given + " " + comment.enteredBy[0].Person.surname + " (" + comment.enteredBy[0].timestamp.formatted + ")"}</b>
                         </div>
                         <div style={style2}>{comment.content}</div>
                         {comment.references && comment.references.length > 0 &&

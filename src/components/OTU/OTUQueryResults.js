@@ -13,6 +13,9 @@ const commentFields = gql`
     fragment CommentFields on Comment {
         content
         enteredBy {
+            timestamp {
+                formatted
+            }
             Person {
                 given
                 surname
