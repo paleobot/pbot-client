@@ -16,7 +16,8 @@ function SpecimenTable({ title, specimens }) {
     return (
         <>
         <Text style={[styles.fieldLabel, {marginTop: 10}]}>{title}</Text>
-        <Table               
+        <Table
+            weightings={[0.25, 0.25, 0.08, 0.16, 0.16, 0.10]}
             tdStyle={{padding: 5, borderBottomWidth: 1, fontSize: 10}}
         >
             <TableHead>
@@ -25,6 +26,7 @@ function SpecimenTable({ title, specimens }) {
                 <TableCell style={{backgroundColor: '#e0e0e0'}}>Country</TableCell>
                 <TableCell style={{backgroundColor: '#e0e0e0'}}>Min interval</TableCell>
                 <TableCell style={{backgroundColor: '#e0e0e0'}}>Max interval</TableCell>
+                <TableCell style={{backgroundColor: '#e0e0e0'}}>Descriptions</TableCell>
             </TableHead>
                 {specimens
                     .filter(s => s.Specimen && s.Specimen.collection)
@@ -40,6 +42,7 @@ function SpecimenTable({ title, specimens }) {
                             <TableCell>{s.Specimen.collection.country}</TableCell>
                             <TableCell>{s.Specimen.collection.mininterval}</TableCell>
                             <TableCell>{s.Specimen.collection.maxinterval}</TableCell>
+                            <TableCell>{s.Specimen.describedBy && s.Specimen.describedBy.length > 0 ? 'Yes' : ''}</TableCell>
                         </TableRow>
                     ))}
         </Table>
@@ -179,7 +182,7 @@ export const OTUpdf = (props) => {
             {/* Holotype Descriptions Section */}
             <View style={styles.sectionContainer}>
                 <Text style={styles.subheading}>Holotype Descriptions</Text>
-                {(holotypeSpecimen && holotypeSpecimen.Specimen.describedBy)  && 
+                {(holotypeSpecimen && holotypeSpecimen.Specimen.describedBy && holotypeSpecimen.Specimen.describedBy.length > 0 && holotypeSpecimen.Specimen.describedBy[0].Description.schema) &&
                     <>
                     {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => {
                         const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
@@ -200,7 +203,7 @@ export const OTUpdf = (props) => {
                     </>
 
                 }
-                {(!holotypeSpecimen || !holotypeSpecimen.Specimen.describedBy) &&
+                {(!holotypeSpecimen || !holotypeSpecimen.Specimen.describedBy || holotypeSpecimen.Specimen.describedBy.length === 0 || !holotypeSpecimen.Specimen.describedBy[0].Description.schema) &&
                     <Text style={styles.paragraph}>No holotype descriptions available</Text>
                 }
             </View>

@@ -152,7 +152,7 @@ function OTUList(props) {
                 characterDeepOrder
                 stateDeepOrder
             }
-            holotypeSpecimen @include(if: $includeHolotypeDescription) {
+            holotypeSpecimen {
                 Specimen {
                     name
                     pbotID
@@ -173,31 +173,33 @@ function OTUList(props) {
                         lat
                         lon
                         country
-                        state     
+                        state
                     }
                      describedBy {
                         Description {
                             pbotID
-                            name
-                            writtenDescription
-                            notes
-                            schema {
-                                pbotID
-                                title
-                            }
-                            characterInstances {
-                                pbotID
-                                character {
-                                    name
-                                    deepOrder
+                            ... on Description @include(if: $includeHolotypeDescription) {
+                                name
+                                writtenDescription
+                                notes
+                                schema {
+                                    pbotID
+                                    title
                                 }
-                                state {
-                                    State {
+                                characterInstances {
+                                    pbotID
+                                    character {
                                         name
                                         deepOrder
                                     }
-                                    order
-                                    value
+                                    state {
+                                        State {
+                                            name
+                                            deepOrder
+                                        }
+                                        order
+                                        value
+                                    }
                                 }
                             }
                         }
@@ -225,7 +227,12 @@ function OTUList(props) {
                         lat
                         lon
                         country
-                        state                   
+                        state
+                    }
+                    describedBy {
+                        Description {
+                            pbotID
+                        }
                     }
                 }
             }
@@ -250,7 +257,12 @@ function OTUList(props) {
                         lat
                         lon
                         country
-                        state                   
+                        state
+                    }
+                    describedBy {
+                        Description {
+                            pbotID
+                        }
                     }
                 }
             }

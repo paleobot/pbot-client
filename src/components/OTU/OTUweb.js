@@ -116,6 +116,7 @@ function SpecimenTable({ title, specimens }) {
                                 <TableCell>Country</TableCell>
                                 <TableCell>Min interval</TableCell>
                                 <TableCell>Max interval</TableCell>
+                                <TableCell>Has descriptions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -145,6 +146,7 @@ function SpecimenTable({ title, specimens }) {
                                         <TableCell>{s.Specimen.collection.country}</TableCell>
                                         <TableCell>{s.Specimen.collection.mininterval}</TableCell>
                                         <TableCell>{s.Specimen.collection.maxinterval}</TableCell>
+                                        <TableCell>{s.Specimen.describedBy && s.Specimen.describedBy.length > 0 ? '✓' : ''}</TableCell>
                                     </TableRow>
                                 ))}
                         </TableBody>
@@ -308,8 +310,8 @@ export const OTUweb = (props) => {
                         Holotype descriptions
                     </AccordionSummary>
                     <AccordionDetails>
-                        {(holotypeSpecimen && holotypeSpecimen.Specimen.describedBy)  &&            
-                            <> 
+                        {(holotypeSpecimen && holotypeSpecimen.Specimen.describedBy && holotypeSpecimen.Specimen.describedBy.length > 0 && holotypeSpecimen.Specimen.describedBy[0].Description.schema)  &&
+                            <>
                             <TableContainer component={Paper}>
                             <Table sx={{width:"100%", mr:"10px"}} aria-label="description table">
                                 <TableBody>
@@ -338,7 +340,7 @@ export const OTUweb = (props) => {
                             </>
                         }
 
-                        {(!holotypeSpecimen || !holotypeSpecimen.Specimen.describedBy) &&
+                        {(!holotypeSpecimen || !holotypeSpecimen.Specimen.describedBy || holotypeSpecimen.Specimen.describedBy.length === 0 || !holotypeSpecimen.Specimen.describedBy[0].Description.schema) &&
                             <div style={indent}>No holotype descriptions available</div>
                         }
 
