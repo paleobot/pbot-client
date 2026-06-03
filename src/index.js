@@ -328,6 +328,46 @@ const router = createBrowserRouter([
         path: "/howto/state",
         element: <MDElement path="HowTo/State.md"/>
     },
+    {
+        path: "Explore.md",
+        element: <Navigate to="/howto/explore" replace/>
+    },
+    {
+        path: "/howto/explore",
+        element: <MDElement path="HowTo/Explore.md"/>
+    },
+    {
+        path: "PublishedData.md",
+        element: <Navigate to="/howto/publisheddata" replace/>
+    },
+    {
+        path: "/HowTo/PublishedData.md",
+        element: <Navigate to="/howto/publisheddata" replace/>
+    },
+    {
+        path: "/howto/publisheddata",
+        element: <MDElement path="HowTo/PublishedData.md"/>
+    },
+    {
+        path: "ProTips.md",
+        element: <Navigate to="/howto/protips" replace/>
+    },
+    {
+        path: "/HowTo/ProTips.md",
+        element: <Navigate to="/howto/protips" replace/>
+    },
+    {
+        path: "/howto/protips",
+        element: <MDElement path="HowTo/ProTips.md"/>
+    },
+    {
+        path: "NodeTypes.md",
+        element: <Navigate to="/howto/nodetypes" replace/>
+    },
+    {
+        path: "/howto/nodetypes",
+        element: <MDElement path="HowTo/NodeTypes.md"/>
+    },
     
 ]);
 
