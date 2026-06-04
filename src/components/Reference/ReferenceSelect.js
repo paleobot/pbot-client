@@ -124,6 +124,7 @@ export const InnerReferenceSelect = (props) => {
                     name={props.name || "references"}
                     label="Title"
                     select={true}
+                    fullWidth={props.fullWidth}
                     SelectProps={{
                         multiple: false,
                     }}
@@ -231,8 +232,8 @@ export const ReferenceSelect = (props) => {
     };
 
     return (
-        <Stack direction="row" key={props.name}>
-            <InnerReferenceSelect name={props.name} exclude={props.exclude} handleSelect={handleSelect}/>
+        <Stack direction="row" key={props.name} sx={props.fullWidth ? {minWidth: 0, width: "100%"} : undefined}>
+            <InnerReferenceSelect name={props.name} exclude={props.exclude} handleSelect={handleSelect} fullWidth={props.fullWidth}/>
             <Tooltip title="Search using a query form"><span>
                 <IconButton
                     color="secondary" 

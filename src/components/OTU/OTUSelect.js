@@ -64,6 +64,7 @@ export const InnerOTUSelect = (props) => {
                             pbotID
                         }
                         order
+                        publishedInReference
                     }
                     elementOf {
                         name
@@ -226,7 +227,7 @@ export const OTUSelect = (props) => {
 
             formikProps.setFieldValue("holotypeSpecimen", otu.holotypeSpecimen ? otu.holotypeSpecimen.Specimen.pbotID : '');
 
-            formikProps.setFieldValue("references", otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || ''}}) || null);
+            formikProps.setFieldValue("references", otu.references.map(reference => {return {pbotID: reference.Reference.pbotID, order: reference.order || '', publishedInReference: reference.publishedInReference || false}}) || null);
 
             const isPublic = otu.elementOf && otu.elementOf.reduce((acc,group) => {return acc || "public" === group.name}, false)
             formikProps.setFieldValue("public", isPublic);

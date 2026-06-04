@@ -295,6 +295,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                 references: [{
                     pbotID: '',
                     order:'',
+                    publishedInReference: false,
                 }],
                 public: true,
                 groups: [],
@@ -496,7 +497,7 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
                         }
                         <br />
 
-                        <ReferenceManager values={props.values}/>
+                        <ReferenceManager values={props.values} displayPublishedIn/>
                 
                         <SpecimenManager name="identifiedSpecimens" groupLabel="Identified specimens" individualLabel="identified specimen" values={props.values} />
 
