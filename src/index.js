@@ -387,7 +387,7 @@ const theme = createTheme({
             },
             styleOverrides: {
                 root: {
-                    width: "400px"
+                    width: "100%", maxWidth: "400px"
                 }
             }
       },
