@@ -14,8 +14,9 @@ export const ReferenceManager = (props) => {
     //Flag at most one reference as the one the OTU was published in. Clicking the
     //currently-flagged row clears it (toggle-off); clicking another row moves the flag.
     const orderShown = !props.omitOrder && !props.single;
-    //Fixed column widths used when the published-in radio is shown, so the header
-    //labels and the row cells share identical columns and never wrap.
+    //Fixed column widths for the order/published-in/delete columns. The title
+    //column is the only flexible one (it shrinks), so the rows stay on a single
+    //line and the columns line up across the header and every row at any width.
     const ORDER_W = "75px", PUB_W = "90px", DEL_W = "50px";
     const togglePublishedIn = (form, references, index) => {
         const next = references.map((ref, i) => ({
@@ -50,14 +51,14 @@ export const ReferenceManager = (props) => {
                         return (
                             <Grid container item spacing={2} direction="row" key={index}
                                 alignItems="center"
-                                wrap={props.displayPublishedIn ? "nowrap" : "wrap"}
+                                wrap="nowrap"
                             >
-                                <Grid item xs={8} sx={props.displayPublishedIn ? {minWidth: 0} : undefined}>
-                                    <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)} maxOrder={maxOrder} fullWidth={props.displayPublishedIn} />
+                                <Grid item xs={8} sx={{minWidth: 0}}>
+                                    <ReferenceSelect name={`references.${index}.pbotID`} exclude={props.values.references.filter(ref => ref.pbotID !== reference.pbotID)} maxOrder={maxOrder} fullWidth />
                                 </Grid>
 
-                                {(!props.omitOrder && !props.single) &&
-                                <Grid item sx={props.displayPublishedIn ? {width: ORDER_W, flexShrink: 0} : undefined}>
+                                {orderShown &&
+                                <Grid item sx={{width: ORDER_W, flexShrink: 0}}>
                                     <Field
                                         component={TextField}
                                         name={`references.${index}.order`}
@@ -83,13 +84,8 @@ export const ReferenceManager = (props) => {
                                 </Grid>
                                 }
 
-                                {(!props.single && (props.displayPublishedIn || index > 0 || props.optional)) &&
-                                <Grid item
-                                    xs={props.displayPublishedIn ? false : 1}
-                                    sx={props.displayPublishedIn
-                                        ? {width: DEL_W, flexShrink: 0, display: "flex", justifyContent: "flex-start"}
-                                        : {display: "flex", justifyContent: "flex-start"}}
-                                >
+                                {!props.single &&
+                                <Grid item sx={{width: DEL_W, flexShrink: 0, display: "flex", justifyContent: "flex-start"}}>
                                     {(index > 0 || props.optional) &&
                                     <Button
                                         type="button"
