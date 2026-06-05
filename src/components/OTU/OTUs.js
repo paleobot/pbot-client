@@ -164,6 +164,7 @@ function OTUs(props) {
             syn.comments?.forEach(c => normalizeEntity("Comment", c));
             normalizeEntity("Synonym", syn);
         });
+        otu.holotypeSpecimen?.Specimen?.describedBy?.forEach(r => normalizeEntity("Description", r.Description));
         normalizeEntity("Specimen", otu.holotypeSpecimen?.Specimen);
         otu.typeSpecimens?.forEach(r => normalizeEntity("Specimen", r.Specimen));
         otu.identifiedSpecimens?.forEach(r => normalizeEntity("Specimen", r.Specimen));

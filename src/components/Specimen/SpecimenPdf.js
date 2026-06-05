@@ -167,10 +167,13 @@ export const SpecimenPdf = (props) => {
                         const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
                         return (
                             <View key={i} style={{marginBottom: 10, backgroundColor: bgColor, padding: 5}}>
-                                <Text style={styles.subheading}>From schema "{d.Description.schema.title}"</Text>
+                                <Text style={styles.subheading}>{d.Description.name} from schema "{d.Description.schema.title}"</Text>
                                 {renderField("Written Description", d.Description.writtenDescription)}
                                 {renderField("Notes", d.Description.notes)}
-                                <Text style={styles.fieldLabel}>Character States:</Text>                                
+                                {renderField("References", d.Description.references && d.Description.references.length > 0
+                                    ? sort([...d.Description.references], "#order").map(ref => `${ref.Reference.title}, ${ref.Reference.year}`).join("; ")
+                                    : null)}
+                                <Text style={styles.fieldLabel}>Character States:</Text>
                                 <CharacterInstances format="pdf" style={styles.singleSpacedLine} characterInstances={d.Description.characterInstances} />                                
                             </View>
                         )

@@ -188,9 +188,12 @@ export const OTUpdf = (props) => {
                         const bgColor = i % 2 === 0 ? '#F0F0F0' : '#FFFFFF';
                         return (
                             <View key={i} style={{marginBottom: 10, backgroundColor: bgColor, padding: 5}}>
-                                <Text style={styles.subheading}>From schema "{d.Description.schema.title}"</Text>
+                                <Text style={styles.subheading}>{d.Description.name} from schema "{d.Description.schema.title}"</Text>
                                 {renderField("Written Description", d.Description.writtenDescription)}
                                 {renderField("Notes", d.Description.notes)}
+                                {renderField("References", d.Description.references && d.Description.references.length > 0
+                                    ? sort([...d.Description.references], "#order").map(ref => `${ref.Reference.title}, ${ref.Reference.year}`).join("; ")
+                                    : null)}
                                 {d.Description.characterInstances && d.Description.characterInstances.length > 0 &&
                                 <>
                                     <Text style={styles.fieldLabel}>Character States:</Text>                                

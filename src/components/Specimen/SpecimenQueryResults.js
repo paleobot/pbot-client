@@ -118,7 +118,16 @@ function Specimens(props) {
                     writtenDescription
                     notes
                     schema {
+                        pbotID
                         title
+                    }
+                    references {
+                        Reference {
+                            pbotID
+                            title
+                            year
+                        }
+                        order
                     }
                     characterInstances {
                         pbotID

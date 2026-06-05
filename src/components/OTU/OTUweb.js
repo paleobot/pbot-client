@@ -318,13 +318,21 @@ export const OTUweb = (props) => {
                                         {alphabetize([...holotypeSpecimen.Specimen.describedBy], "Description.schema.title").map((d, i) => (
                                             <AlternatingTableRow key={d.Description.pbotID}>
                                                 <TableCell align="left" sx={{fontSize: "1rem"}}>
-                                                    <div ><b>From schema "{d.Description.schema.title}":</b></div>
+                                                    <div ><b>{d.Description.name}</b> from schema "<Link color="success.main" underline="hover" href={new URL(window.location.origin + "/query/schema/" + d.Description.schema.pbotID + "?includeCharacters=true").toString()} target="_blank">{d.Description.schema.title}</Link>":</div>
                                                     { d.Description.writtenDescription &&
                                                         <div style={indent}><b>written description:</b> {d.Description.writtenDescription}</div>
-                                                    }   
+                                                    }
                                                     {d.Description.notes &&
                                                         <div style={indent}><b>notes:</b> {d.Description.notes}</div>
-                                                    }   
+                                                    }
+                                                    {d.Description.references && d.Description.references.length > 0 &&
+                                                        <div style={indent}><b>references:</b> {sort([...d.Description.references], "#order").map((ref, idx, arr) => (
+                                                            <span key={ref.Reference.pbotID}>
+                                                                <DirectQueryLink type="reference" pbotID={ref.Reference.pbotID} text={`${ref.Reference.title}, ${ref.Reference.year}`} />
+                                                                {idx < arr.length - 1 ? "; " : ""}
+                                                            </span>
+                                                        ))}</div>
+                                                    }
                                                     {(d.Description.characterInstances && d.Description.characterInstances.length > 0) &&   
                                                         <>
                                                         <div style={indent}><b>character states:</b></div>

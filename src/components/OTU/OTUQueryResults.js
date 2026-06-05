@@ -195,6 +195,14 @@ function OTUList(props) {
                                     pbotID
                                     title
                                 }
+                                references {
+                                    Reference {
+                                        pbotID
+                                        title
+                                        year
+                                    }
+                                    order
+                                }
                                 characterInstances {
                                     pbotID
                                     character {
