@@ -5,7 +5,7 @@ import logo from '../../PBOT-logo-transparent.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Country, State }  from 'country-state-city';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { alphabetize, sort, AlternatingTableRow, useFetchIntervals } from '../../util.js';
+import { alphabetize, sort, AlternatingTableRow, DirectQueryLink, useFetchIntervals } from '../../util.js';
 
 export const SpecimenWeb = (props) => {
     //console.log("SpecimenWeb");
@@ -263,8 +263,31 @@ export const SpecimenWeb = (props) => {
             <Accordion style={accstyle} defaultExpanded={false}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
+                    aria-controls="references-content"
+                    id="references-header"
+                >
+                    References
+                </AccordionSummary>
+                <AccordionDetails>
+                    {s.references && s.references.length > 0 &&
+                        sort([...s.references], "#order").map((ref, idx, arr) => (
+                            <span key={ref.Reference.pbotID}>
+                                <DirectQueryLink type="reference" pbotID={ref.Reference.pbotID} text={`${ref.Reference.title}, ${ref.Reference.year}`} />
+                                {idx < arr.length - 1 ? <br /> : ''}
+                            </span>
+                        ))
+                    }
+                    {(!s.references || s.references.length === 0) &&
+                        <div style={indent}>No references</div>
+                    }
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion style={accstyle} defaultExpanded={false}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
                     aria-controls="required-content"
-                    id="required-header"                        
+                    id="required-header"
                 >
                     History
                 </AccordionSummary>

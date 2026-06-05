@@ -250,13 +250,6 @@ export const CollectionPDF = (props) => {
                 {renderField("Notes on Collection Methods", collection.collectionComments)}
             </View>
 
-            {/* References Section */}
-            <View style={styles.sectionContainer}>
-            <Text style={styles.subheading}>References</Text>
-                {renderField("References", sort([...collection.references], "#order").map(reference => `${reference.Reference.title}, ${reference.Reference.year}`).join('; '))}
-            </View>
-
-
             {/* Specimens Section */}
             <View style={styles.sectionContainer}>
             <Text style={styles.subheading}>Specimens</Text>
@@ -269,6 +262,12 @@ export const CollectionPDF = (props) => {
             <View style={styles.sectionContainer}>
             <Text style={styles.subheading}>OTUs</Text>
             <OTUsPDF collection={collection} />
+            </View>
+
+            {/* References Section */}
+            <View style={styles.sectionContainer}>
+            <Text style={styles.subheading}>References</Text>
+                {renderField("References", sort([...collection.references], "#order").map(reference => `${reference.Reference.title}, ${reference.Reference.year}`).join('; '))}
             </View>
 
             {/* History Section */}

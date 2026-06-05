@@ -91,6 +91,15 @@ function OTUList(props) {
             notableFeatures {
                 name
             }
+            references (orderBy: order_asc) {
+                Reference {
+                    pbotID
+                    title
+                    year
+                }
+                order
+                publishedInReference
+            }
             elementOf {
                 name
             }

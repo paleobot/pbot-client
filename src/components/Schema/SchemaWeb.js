@@ -87,13 +87,6 @@ export const SchemaWeb = (props) => {
                     ))}
 
                 </Box>}
-                {schema.references && schema.references.length > 0 &&
-                <Box sx={boxedDisplay}>
-                    <Typography variant="caption" sx={{lineHeight:0}}>References</Typography><br />
-                    {sort([...schema.references], "#order").map(reference => (
-                        <div key={reference.Reference.pbotID}>{reference.Reference.title}, {reference.Reference.year}</div>
-                    ))}
-                </Box>}
                 {schema.authoredBy && schema.authoredBy.length > 0 &&
                 <Box sx={boxedDisplay}>
                     <Typography variant="caption" sx={{lineHeight:0}}>Authors</Typography><br />
@@ -115,6 +108,29 @@ export const SchemaWeb = (props) => {
                     <Box sx={boxedDisplay}>
                         <Characters characters={schema.characters} top="true"/>
                     </Box>
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion style={accstyle} defaultExpanded={false}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="reference-content"
+                    id="reference-header"
+                >
+                    Reference
+                </AccordionSummary>
+                <AccordionDetails>
+                    {schema.references && schema.references.length > 0 &&
+                        sort([...schema.references], "#order").map((reference, idx, arr) => (
+                            <span key={reference.Reference.pbotID}>
+                                <DirectQueryLink type="reference" pbotID={reference.Reference.pbotID} text={`${reference.Reference.title}, ${reference.Reference.year}`} />
+                                {idx < arr.length - 1 ? <br /> : ''}
+                            </span>
+                        ))
+                    }
+                    {(!schema.references || schema.references.length === 0) &&
+                        <Box sx={boxedDisplay}>No references</Box>
+                    }
                 </AccordionDetails>
             </Accordion>
 

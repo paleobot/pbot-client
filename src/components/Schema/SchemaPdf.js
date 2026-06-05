@@ -77,7 +77,6 @@ export const SchemaPdf = (props) => {
                 {renderField("Acknowledgments", s.acknowledgments)}
                 {renderArrayField("Parts Preserved", s.partsPreserved, 'type')}
                 {renderArrayField("Notable Features", s.notableFeatures, 'name')}
-                {renderField("References", sort([...s.references], "#order").map(reference => `${reference.Reference.title}, ${reference.Reference.year}`).join('; '))}
                 {renderField("Authors", sort([...s.authoredBy], "#order").map(author => `${author.Person.given} ${author.Person.surname}`).join(', '))}
             </View>
 
@@ -104,6 +103,21 @@ export const SchemaPdf = (props) => {
             <View style={styles.sectionContainer}>
                 <Text style={styles.subheading}>Characters</Text>
                 <Characters characters={s.characters} top="true" format="pdf" style={styles.singleSpacedLine}/>
+            </View>
+
+            {/* Reference Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>Reference</Text>
+                {s.references && s.references.length > 0 &&
+                    sort([...s.references], "#order").map((reference, idx) => (
+                        <Text key={reference.Reference.pbotID || idx} style={styles.paragraph}>
+                            {reference.Reference.title}, {reference.Reference.year}
+                        </Text>
+                    ))
+                }
+                {(!s.references || s.references.length === 0) &&
+                    <Text style={styles.paragraph}>No references available</Text>
+                }
             </View>
 
             {/* History Section */}

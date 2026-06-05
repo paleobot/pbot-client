@@ -363,27 +363,7 @@ export const CollectionWeb = (props) => {
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="required-content"
-                    id="required-header"                        
-                >
-                    References
-                </AccordionSummary>
-                <AccordionDetails>
-
-                    {sort([...collection.references], "#order").map(reference => {
-                        const directURL = new URL(window.location.origin + "/query/reference/" + reference.Reference.pbotID);
-                        return (
-                            <Link key={reference.Reference.pbotID}  color="success.main" underline="hover" href={directURL}  target="_blank">{reference.Reference.title}, {reference.Reference.year}</Link>
-                        )
-                    })}
-
-                </AccordionDetails>
-            </Accordion>
-
-            <Accordion style={accstyle} defaultExpanded={false}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="required-content"
-                    id="required-header"                        
+                    id="required-header"
                 >
                     Specimens
                 </AccordionSummary>
@@ -408,6 +388,26 @@ export const CollectionWeb = (props) => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <OTUs collection={collection} top={true} />
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion style={accstyle} defaultExpanded={false}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="references-content"
+                    id="references-header"
+                >
+                    References
+                </AccordionSummary>
+                <AccordionDetails>
+
+                    {sort([...collection.references], "#order").map(reference => {
+                        const directURL = new URL(window.location.origin + "/query/reference/" + reference.Reference.pbotID);
+                        return (
+                            <Link key={reference.Reference.pbotID}  color="success.main" underline="hover" href={directURL}  target="_blank">{reference.Reference.title}, {reference.Reference.year}</Link>
+                        )
+                    })}
+
                 </AccordionDetails>
             </Accordion>
 

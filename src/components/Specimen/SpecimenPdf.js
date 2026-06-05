@@ -181,6 +181,21 @@ export const SpecimenPdf = (props) => {
                 )}
             </View>
 
+            {/* References Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>References</Text>
+                {s.references && s.references.length > 0 &&
+                    sort([...s.references], "#order").map((ref, idx) => (
+                        <Text key={ref.Reference.pbotID || idx} style={styles.paragraph}>
+                            {ref.Reference.title}, {ref.Reference.year}
+                        </Text>
+                    ))
+                }
+                {(!s.references || s.references.length === 0) &&
+                    <Text style={styles.paragraph}>No references available</Text>
+                }
+            </View>
+
             {/* History Section */}
             <View style={styles.sectionContainer}>
                 <Text style={styles.subheading}>History</Text>

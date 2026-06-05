@@ -57,7 +57,7 @@ export const OTUpdf = (props) => {
         pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup,
         pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink,
         additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens,
-        mergedDescription, synonyms, elementOf, notes, partsPreserved,
+        mergedDescription, synonyms, references, elementOf, notes, partsPreserved,
         notableFeatures, enteredBy, directQParams, jsonDirectQParams,
         history, holotypeImages, typeImages, identifiedImages,
         minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations,
@@ -274,12 +274,27 @@ export const OTUpdf = (props) => {
                     }
             </View>
 
+            {/* References Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.subheading}>References</Text>
+                {references && references.length > 0 &&
+                    sort([...references], "#order").map((ref, idx) => (
+                        <Text key={ref.Reference.pbotID || idx} style={styles.paragraph}>
+                            {ref.Reference.title}, {ref.Reference.year}{ref.publishedInReference ? ' (authority source)' : ''}
+                        </Text>
+                    ))
+                }
+                {(!references || references.length === 0) &&
+                    <Text style={styles.paragraph}>No references available</Text>
+                }
+            </View>
+
             {/* History Section */}
             <View style={styles.sectionContainer}>
                 <Text style={styles.subheading}>History</Text>
                 {history && history.length > 0 &&
                     <>
-                    <Table               
+                    <Table
                         tdStyle={{padding: 5, borderBottomWidth: 1, fontSize: 10}}
                     >
                         {history.map((eb, i) => {

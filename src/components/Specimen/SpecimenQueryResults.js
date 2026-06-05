@@ -89,6 +89,7 @@ function Specimens(props) {
             }
             references (orderBy: order_asc) {
                 Reference {
+                    pbotID
                     title
                     year
                 }

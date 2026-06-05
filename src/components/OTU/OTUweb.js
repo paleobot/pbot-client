@@ -159,7 +159,7 @@ function SpecimenTable({ title, specimens }) {
 
 export const OTUweb = (props) => {
 
-    let { pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, elementOf, notes, partsPreserved, notableFeatures, enteredBy, directQParams, jsonDirectQParams, pdfDirectQParams, history, holotypeImages, typeImages, identifiedImages, minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations, stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon, countries, states, exclusiveTypeSpecimens, exclusiveIdentifiedSpecimens} = props.otu;
+    let { pbotID, name, authority, diagnosis, qualityIndex, majorTaxonGroup, pbdbParentTaxon, family, genus, pfnGenusLink, species, pfnSpeciesLink, additionalClades, holotypeSpecimen, typeSpecimens, identifiedSpecimens, mergedDescription, synonyms, references, elementOf, notes, partsPreserved, notableFeatures, enteredBy, directQParams, jsonDirectQParams, pdfDirectQParams, history, holotypeImages, typeImages, identifiedImages, minIntervals, maxIntervals, stratigraphicGroups, stratigraphicFormations, stratigraphicMembers, stratigraphicBeds, minLat, maxLat, minLon, maxLon, countries, states, exclusiveTypeSpecimens, exclusiveIdentifiedSpecimens} = props.otu;
 
     const style = {textAlign: "left", width: "100%", margin: "auto", marginTop:"1em"}
     const indent = {marginLeft:"2em"}
@@ -488,10 +488,34 @@ export const OTUweb = (props) => {
 */}
 
                 <Accordion style={accstyle} defaultExpanded={false}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="references-content"
+                        id="references-header"
+                    >
+                        References
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {references && references.length > 0 &&
+                            sort([...references], "#order").map((ref, idx, arr) => (
+                                <span key={ref.Reference.pbotID}>
+                                    <DirectQueryLink type="reference" pbotID={ref.Reference.pbotID} text={`${ref.Reference.title}, ${ref.Reference.year}`} />
+                                    {ref.publishedInReference ? ' (authority source)' : ''}
+                                    {idx < arr.length - 1 ? <br /> : ''}
+                                </span>
+                            ))
+                        }
+                        {(!references || !references.length > 0) &&
+                            <div style={indent}>No references</div>
+                        }
+                    </AccordionDetails>
+                </Accordion>
+
+                <Accordion style={accstyle} defaultExpanded={false}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="required-content"
-                    id="required-header"                        
+                    id="required-header"
                 >
                     History
                 </AccordionSummary>
