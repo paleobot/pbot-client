@@ -41,7 +41,7 @@ export const ReferenceManager = (props) => {
                         <Grid item xs={8} />
                         {orderShown && <Grid item sx={{width: ORDER_W, flexShrink: 0}} />}
                         <Grid item sx={{width: PUB_W, flexShrink: 0, textAlign: "center"}}>
-                            <Typography variant="caption" color="text.secondary">Published in</Typography>
+                            <Typography variant="caption" color="text.secondary">Authority source</Typography>
                         </Grid>
                         <Grid item sx={{width: DEL_W, flexShrink: 0}} />
                     </Grid>
@@ -71,7 +71,7 @@ export const ReferenceManager = (props) => {
 
                                 {props.displayPublishedIn &&
                                 <Grid item sx={{ width: PUB_W, flexShrink: 0, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                    <Tooltip title="Click again to clear">
+                                    <Tooltip title="Click here if this is the publication that named the taxon. Click again to clear.">
                                         <span>
                                             <Radio
                                                 color="secondary"
