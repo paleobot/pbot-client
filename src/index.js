@@ -329,6 +329,22 @@ const router = createBrowserRouter([
         element: <MDElement path="HowTo/State.md"/>
     },
     {
+        path: "Synonym.md",
+        element: <Navigate to="/howto/synonym" replace/>
+    },
+    {
+        path: "/howto/synonym",
+        element: <MDElement path="HowTo/Synonym.md"/>
+    },
+    {
+        path: "Comment.md",
+        element: <Navigate to="/howto/comment" replace/>
+    },
+    {
+        path: "/howto/comment",
+        element: <MDElement path="HowTo/Comment.md"/>
+    },
+    {
         path: "Explore.md",
         element: <Navigate to="/howto/explore" replace/>
     },
