@@ -41,7 +41,7 @@ export const ReferenceManager = (props) => {
                         <Grid item xs={8} />
                         {orderShown && <Grid item sx={{width: ORDER_W, flexShrink: 0}} />}
                         <Grid item sx={{width: PUB_W, flexShrink: 0, textAlign: "center"}}>
-                            <Typography variant="caption" color="text.secondary">Authority source</Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.0 }}>Authority source</Typography>
                         </Grid>
                         <Grid item sx={{width: DEL_W, flexShrink: 0}} />
                     </Grid>
