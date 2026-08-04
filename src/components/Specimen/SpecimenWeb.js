@@ -110,7 +110,7 @@ export const SpecimenWeb = (props) => {
                 <AccordionDetails>
 
                     {s.images && s.images.length > 0 &&
-                    <div style={carousel}>
+                    <div className="hideIdleLegend" style={carousel}>
                     {/*can't use thumbs because SecureImage does not immediately make image available*/}
                     <Carousel showThumbs={false}>  
                         {s.images.map((image) => (

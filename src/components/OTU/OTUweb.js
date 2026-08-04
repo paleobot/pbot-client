@@ -35,7 +35,7 @@ const ImageTabs = ({holotypeImages, typeImages, identifiedImages}) => {
             </Box>
             <TabPanel value="1">
                 {holotypeImages && holotypeImages.length > 0 &&
-                <div style={carousel}>
+                <div className="hideIdleLegend" style={carousel}>
                 {/*can't use thumbs because SecureImage does not immediately make image available*/}
                 <Carousel showThumbs={false}>  
                     {holotypeImages.map((image) => (
@@ -55,7 +55,7 @@ const ImageTabs = ({holotypeImages, typeImages, identifiedImages}) => {
             </TabPanel>
             <TabPanel value="2">
             {typeImages && typeImages.length > 0 &&
-                <div style={carousel}>
+                <div className="hideIdleLegend" style={carousel}>
                 {/*can't use thumbs because SecureImage does not immediately make image available*/}
                 <Carousel showThumbs={false}>  
                     {typeImages.map((image) => (
@@ -75,7 +75,7 @@ const ImageTabs = ({holotypeImages, typeImages, identifiedImages}) => {
             </TabPanel>
             <TabPanel value="3">
             {identifiedImages && identifiedImages.length > 0 &&
-                <div style={carousel}>
+                <div className="hideIdleLegend" style={carousel}>
                 {/*can't use thumbs because SecureImage does not immediately make image available*/}
                 <Carousel showThumbs={false}>  
                     {identifiedImages.map((image) => (

@@ -11,3 +11,18 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/*
+ * Override react-responsive-carousel's legend (caption) opacity for carousels
+ * that opt in via the .hideIdleLegend wrapper: fully hidden when idle instead
+ * of the package's faint 0.25, still fading in to 1 on hover. Scoped through
+ * the wrapper so these win on specificity, NOT source order — this stylesheet
+ * loads before the package's, so an equal-specificity rule would lose the tie.
+ */
+.hideIdleLegend .carousel .slide .legend {
+  opacity: 0;
+}
+
+.hideIdleLegend .carousel:hover .slide .legend {
+  opacity: 1;
+}
