@@ -4,6 +4,13 @@ import logo from '../../PBOT-logo-transparent.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function aggregateOTUs(collection) {
+
+    const dedupAndSort = (arr, dupKey, sortKey) => {
+        const massaged = Array.from(new Map(arr.map(obj => [obj[dupKey], obj])).values()).sort((a, b) => a[sortKey].localeCompare(b[sortKey]));
+        return massaged;
+    };
+
+
     const identifiedAsOTUs = [];
     const typeOfOTUs = [];
     const holotypeOfOTUs = [];
@@ -31,7 +38,12 @@ function aggregateOTUs(collection) {
         }
     });
 
-    return { identifiedAsOTUs, typeOfOTUs, holotypeOfOTUs };
+    //return { identifiedAsOTUs, typeOfOTUs, holotypeOfOTUs };
+    return { 
+            identifiedAsOTUs: dedupAndSort(identifiedAsOTUs, "pbotID", "name"),
+            typeOfOTUs: dedupAndSort(typeOfOTUs, "pbotID", "name"),
+            holotypeOfOTUs: dedupAndSort(holotypeOfOTUs, "pbotID", "name")
+    };
 }
 
 function Specimens(props) { //TODO: move this to standalone file in Specimens folder?
