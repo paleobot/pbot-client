@@ -24,6 +24,6 @@
 
 ## 5. Verify
 
-- [ ] 5.1 Manual check: create a specimen with a specimen number, use the search button to find and select a GBIF occurrence, save, and confirm the bare `key` is stored.
-- [ ] 5.2 Manual check: open the specimen detail (web) and confirm the GBIF link opens `https://www.gbif.org/occurrence/<key>`; confirm the PDF shows plain text.
-- [ ] 5.3 Manual check: search button is disabled with an empty specimen number; no-result and error dialogs display correctly.
+- [x] 5.1 Manual check: create a specimen with a specimen number, use the search button to find and select a GBIF occurrence, save, and confirm the bare `key` is stored.
+- [x] 5.2 Manual check: open the specimen detail (web) and confirm the GBIF link opens `https://www.gbif.org/occurrence/<key>`; confirm the PDF shows plain text. (Verified on dev; the `www.gbif.org` Cloudflare challenge that looped on localhost does not loop from the deployed host.)
+- [x] 5.3 Manual check: search button is disabled with an empty specimen number; no-result and error dialogs display correctly.
