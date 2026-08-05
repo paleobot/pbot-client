@@ -284,7 +284,7 @@ export const OTUweb = (props) => {
                         <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br />{family}</Box>
                         <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br />{genus}</Box>
                         <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br />{species}</Box>
-                        <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />{pbdbParentTaxon}</Box>
+                        <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br /><Link color="success.main" underline="hover" href={`https://paleobiodb.org/classic?action=classify&taxon_name=${pbdbParentTaxon}`} target="_blank">{pbdbParentTaxon}</Link></Box>
                     </AccordionDetails>
                 </Accordion>
 
