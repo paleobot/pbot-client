@@ -92,6 +92,7 @@ export const SpecimenPdf = (props) => {
                 {renderField("PDF Link", s.pdfURL.toString())}
                 {renderField("Repository", s.repository)}
                 {renderField("Other Repository Link", s.otherRepositoryLink)}
+                {renderField("GBIF", s.gbifID)}
                 <View style={styles.fieldRow}>
                     <Text style={styles.fieldLabel}>iDigBio InstitutionCode, CatalogNumber, uuid:</Text>
                     <Text style={styles.fieldValue}>{`${s.idigbioInstitutionCode}, ${s.idigbioCatalogNumber}, ${s.idigbiouuid}`}</Text>

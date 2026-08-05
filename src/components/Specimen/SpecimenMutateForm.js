@@ -22,6 +22,7 @@ import { PersonManager } from '../Person/PersonManager.js';
 import { PreservationModeSelect } from './PreservationModeSelect.js';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import IDigBioSelect from './IDigBioSelect.js';
+import GBIFSelect from './GBIFSelect.js';
 
 /*
 const SpecimenSelect = (props) => {
@@ -211,6 +212,7 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 otherRepositoryLink: '',
                 notes: '',
                 identifiers: [],
+                gbifID: '',
                 idigbiouuid: '',
                 idigbioInstitutionCode: '',
                 idigbioCatalogNumber: '',
@@ -251,10 +253,8 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                 otherRepositoryLink: Yup.string(),
                 notes: Yup.string(),
                 //identifiers: Yup.array().of(Yup.string()),
-                //gbifID: Yup.string(),
-                /*
                 gbifID: Yup.string().test(
-                    'isgbifID', 
+                    'isgbifID',
                     ({message}) => `${message}`,
                     async (value, context) => {
                         if (!value) return true;
@@ -266,13 +266,12 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                                 return true;
                             } else {
                                    return context.createError({message: `ID not found in GBIF.`})
-                            } 
+                            }
                         } catch (error) {
                             console.error("GBIF fetch error", error);
                             return context.createError({message: "Network error, unable to access GBIF"})
                         }
                 }),
-                */
                 //idigbiouuid: Yup.string().uuid('Must be a valid uuid'),
                 idigbioInstitutionCode: Yup.string(),
                 idigbioCatalogNumber: Yup.string(),
@@ -436,10 +435,23 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
                                         type="text"
                                         name="otherRepositoryLink"
                                         label="Other repository link"
-                                        fullWidth 
+                                        fullWidth
                                         disabled={false}
                                     >
                                     </Field>
+                                    <br />
+
+                                    <Stack direction="row" spacing={0}>
+                                        <Field
+                                            component={SensibleTextField}
+                                            type="text"
+                                            name="gbifID"
+                                            label="GBIF ID"
+                                            fullWidth
+                                            disabled={false}
+                                        />
+                                        <GBIFSelect />
+                                    </Stack>
                                     <br />
 
                                     <Field

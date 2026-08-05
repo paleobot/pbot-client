@@ -79,6 +79,11 @@ export const SpecimenWeb = (props) => {
                 <Box sx={boxedDisplay}>
                 <Typography variant="caption">Other repository link</Typography><br />{s.otherRepositoryLink}
                 </Box>
+                {s.gbifID &&
+                <Box sx={boxedDisplay}>
+                <Typography variant="caption">GBIF</Typography><br /><Link color="success.main" underline="hover" href={`https://www.gbif.org/occurrence/${s.gbifID}`} target="_blank">{s.gbifID}</Link>
+                </Box>
+                }
                 <Box sx={boxedDisplay}>
                 <Typography variant="caption">iDigBio InstitutionCode, CatalogNumber, uuid</Typography><br />{`${s.idigbioInstitutionCode}, ${s.idigbioCatalogNumber}, ${s.idigbiouuid}`}
                 </Box>

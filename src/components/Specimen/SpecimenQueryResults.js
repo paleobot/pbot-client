@@ -74,6 +74,7 @@ function Specimens(props) {
             preservationModes {
                 name
             }
+            gbifID
             idigbioInstitutionCode
             idigbioCatalogNumber
             idigbiouuid
@@ -195,6 +196,7 @@ function Specimens(props) {
                 name
                 pbotID
             }
+            gbifID
             idigbioInstitutionCode
             idigbioCatalogNumber
             idigbiouuid
