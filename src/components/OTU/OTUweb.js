@@ -1,7 +1,7 @@
 import React from 'react';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
 import { alphabetize, sort, AlternatingTableRow, DirectQueryLink } from '../../util.js';
-import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Accordion, AccordionSummary, AccordionDetails, Tabs, Tab } from '@mui/material';
+import { Link, Grid, Typography, List, ListItem, ListItemButton, ListItemText, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Accordion, AccordionSummary, AccordionDetails, Tabs, Tab, Tooltip } from '@mui/material';
 import logo from '../../PBOT-logo-transparent.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -284,7 +284,11 @@ export const OTUweb = (props) => {
                         <Box sx={boxedDisplay}><Typography variant="caption">Family</Typography><br />{family}</Box>
                         <Box sx={boxedDisplay}><Typography variant="caption">Genus</Typography><br />{genus}</Box>
                         <Box sx={boxedDisplay}><Typography variant="caption">Specific epithet</Typography><br />{species}</Box>
-                        <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br /><Link color="success.main" underline="hover" href={`https://paleobiodb.org/classic?action=classify&taxon_name=${pbdbParentTaxon}`} target="_blank">{pbdbParentTaxon}</Link></Box>
+                        <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />
+                            <Tooltip title={`View ${pbdbParentTaxon} in PBDB`} placement="top">
+                            <Link color="success.main" underline="hover" href={`https://paleobiodb.org/classic?action=classify&taxon_name=${pbdbParentTaxon}`} target="_blank">{pbdbParentTaxon}</Link>
+                            </Tooltip>
+                        </Box>
                     </AccordionDetails>
                 </Accordion>
 
