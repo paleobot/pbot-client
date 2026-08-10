@@ -5,7 +5,7 @@ import logo from '../../PBOT-logo-transparent.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Country, State }  from 'country-state-city';
 import CharacterInstances from "../CharacterInstance/CharacterInstances";
-import { alphabetize, sort, AlternatingTableRow, DirectQueryLink, useFetchIntervals } from '../../util.js';
+import { alphabetize, sort, AlternatingTableRow, DirectQueryLink, useFetchIntervals, LinkedParentTaxon } from '../../util.js';
 
 export const SpecimenWeb = (props) => {
     //console.log("SpecimenWeb");
@@ -198,7 +198,9 @@ export const SpecimenWeb = (props) => {
 
                                                     <Box sx={boxedDisplay}><Typography variant="caption">Major Taxon group</Typography><br />{otu.OTU.majorTaxonGroup}</Box>
 
-                                                    <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography><br />{otu.OTU.pbdbParentTaxon}</Box>
+                                                    <Box sx={boxedDisplay}><Typography variant="caption">Parent taxon</Typography>
+                                                        <br /><LinkedParentTaxon parentTaxon={otu.OTU.pbdbParentTaxon} />
+                                                    </Box>
 
                                                     <Box sx={boxedDisplay}><Typography variant="caption">Identified by</Typography><br />{s.identifiers.map((i, index, arr) => i.given + " " + i.middle + " " + i.surname + (index+1 === arr.length ? '' : ", "))}</Box>
                                                 </TableCell>

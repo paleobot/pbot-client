@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, styled, TableRow } from "@mui/material";
+import { Link, styled, TableRow, Tooltip } from "@mui/material";
 
 export const alphabetize = (list, sortField, ignoreQuotes) => {
     return list.sort((a,b) => {
@@ -153,5 +153,15 @@ export const DirectQueryLink = (props) => {
                 </>
             }
         </Link>
+    )
+}
+
+export const LinkedParentTaxon = (props) => {
+    console.log("LinkedParentTaxon")
+    console.log(props.children)
+    return (
+        <Tooltip title={`View ${props.parentTaxon} in PBDB`} placement="top">
+            <Link color="success.main" underline="hover" href={`https://paleobiodb.org/classic?action=classify&taxon_name=${props.parentTaxon}`} target="_blank">{props.parentTaxon}</Link>
+        </Tooltip>
     )
 }
