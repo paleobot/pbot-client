@@ -24,4 +24,4 @@
 - [x] 4.3 Check that both ecosystem entries print `v26.*` interpreters and the client script is `craco.js`
 - [x] 4.4 `nvm use 18.20.8`; `pm2 delete pbot-client && pm2 start ecosystem.config.cjs --only pbot-client && pm2 save`
 - [x] 4.5 Verify: `pm2 show pbot-client` (Node ≥ 26.12.1, craco script, args `start`, watch ✘); `pm2 logs pbot-client` shows `Compiled successfully`; in the browser, load the site, run a query, save a record, export a PDF
-- [ ] 4.6 Record the cutover in `NODE-RUNTIME.md`'s cutover log; then remove the nginx `br` block on dev and prod (outside both repos) when ready
+- [x] 4.6 Record the cutover in `NODE-RUNTIME.md`'s cutover log; then remove the nginx `br` block on dev and prod (outside both repos) when ready
