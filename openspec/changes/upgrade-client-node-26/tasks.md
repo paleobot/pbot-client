@@ -19,7 +19,7 @@
 
 ## 4. Dev host cutover (manual, user-run)
 
-- [ ] 4.1 `git -C ~/repos/pbot-api checkout -- ecosystem.config.cjs && git -C ~/repos/pbot-api pull`; confirm `client/` is on the commit containing `.nvmrc`
+- [ ] 4.1 In `~/repos/pbot-api/client`, `git pull origin ddm-dev` and confirm `.nvmrc` exists; then `git -C ~/repos/pbot-api checkout -- ecosystem.config.cjs && git -C ~/repos/pbot-api pull origin ddm-dev`
 - [ ] 4.2 `nvm use 26`; optionally `cd ~/repos/pbot-api/client && npm ci`
 - [ ] 4.3 Check that both ecosystem entries print `v26.*` interpreters and the client script is `craco.js`
 - [ ] 4.4 `nvm use 18.20.8`; `pm2 delete pbot-client && pm2 start ecosystem.config.cjs --only pbot-client && pm2 save`

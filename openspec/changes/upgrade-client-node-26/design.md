@@ -80,7 +80,7 @@ There's no runtime guard like the API's. The only hook CRACO offers is `craco.co
 
 Dev host only, as `doug`:
 
-1. `git -C ~/repos/pbot-api checkout -- ecosystem.config.cjs`, then `git -C ~/repos/pbot-api pull`. The `client/` checkout updates through the normal deploy (push to `master`).
+1. In `~/repos/pbot-api/client`, run `git pull origin ddm-dev` and confirm `.nvmrc` exists. Then run `git -C ~/repos/pbot-api checkout -- ecosystem.config.cjs` and `git -C ~/repos/pbot-api pull origin ddm-dev`. After verification, fast-forward `master` in both repos.
 2. `nvm use 26`. Optionally run `cd ~/repos/pbot-api/client && npm ci`; the Node 18-installed `node_modules` were verified on 26.
 3. `cd ~/repos/pbot-api && node -e 'const a=require("./ecosystem.config.cjs").apps; a.forEach(x=>console.log(x.name, x.interpreter, x.script))'`. Both interpreters should be under `v26.*`, and the client script should be `craco.js`.
 4. `nvm use 18.20.8`, then `pm2 delete pbot-client`, `pm2 start ecosystem.config.cjs --only pbot-client`, `pm2 save`.
