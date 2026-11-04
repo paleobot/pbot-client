@@ -14,7 +14,13 @@ This is a Create React App project wrapped with CRACO (package.json scripts use 
 
 CRACO (`craco.config.js`) exists solely to add Node-polyfills (`util`, `stream-browserify`, `buffer`, `process`, `browserify-zlib`) and the `ProvidePlugin` for `process`/`Buffer` that Webpack 5 no longer ships. `src/polyfills.js` is imported first in `src/index.js` for the same reason.
 
-Deploy: pushes to `master` trigger `.github/workflows/deploy-dev.yaml`, which SSHes into a dev host and does `git fetch && git reset --hard origin/master` in `repos/pbot-api/client` — a PM2 watcher picks up the change. There is no build step in CI; the server builds/serves.
+Runtime: Node ≥ 26.12.1 (`.nvmrc` = `26`, `engines` in `package.json`) — the floor patched against CVE-2026-111497. `nvm use` before `npm` commands.
+
+Deploy:
+- **Dev:** pushes to `master` trigger `.github/workflows/deploy-dev.yaml`, which SSHes into the dev host and does `git fetch && git reset --hard origin/master` in `repos/pbot-api/client`. There, PM2 runs `craco start` (the webpack dev server) on the Node selected by this repo's `.nvmrc`, with PM2 watch **off** — webpack's own watcher recompiles `src/` changes. Dependency changes need a manual `npm ci` + `pm2 restart pbot-client`. The PM2 entry lives in `pbot-api/ecosystem.config.cjs`; the runbook is `pbot-api/NODE-RUNTIME.md` ("pbot-client on the dev host").
+- **Prod:** serves a static `npm run build` output through nginx; no client Node process.
+
+There is no build step in CI.
 
 ## Architecture
 
