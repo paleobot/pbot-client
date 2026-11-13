@@ -99,7 +99,10 @@ const CollectionMutateForm = ({handleSubmit, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validationSchema={Yup.object({
+            //Delete only needs the selected record; full rules would block on hidden fields
+            validationSchema={mode === "delete" ? Yup.object({
+                collection: Yup.string().required("Collection is required"),
+            }) : Yup.object({
                 name: Yup.string().required(),
                 collectiontype: Yup.string().required(),
                 lithology: Yup.string().required(),

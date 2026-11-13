@@ -350,7 +350,10 @@ const OTUMutateForm = ({handleSubmit, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validationSchema={Yup.object({
+            //Delete only needs the selected record; full rules would block on hidden fields
+            validationSchema={mode === "delete" ? Yup.object({
+                otu: Yup.string().required("OTU is required"),
+            }) : Yup.object({
                 majorTaxonGroup: Yup.string().max(30, 'Must be 30 characters or less'),
                 pbdbParentTaxon: Yup.string().test(
                     'isPBDBTaxon', 

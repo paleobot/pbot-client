@@ -244,7 +244,10 @@ const SpecimenMutateForm = ({handleSubmit, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validationSchema={Yup.object({
+            //Delete only needs the selected record; full rules would block on hidden fields
+            validationSchema={mode === "delete" ? Yup.object({
+                specimen: Yup.string().required("Specimen is required"),
+            }) : Yup.object({
                 name: Yup.string().required(),
                 partsPreserved: Yup.array().of(Yup.string()).min(1, "At least one part is required"),
                 notableFeatures: Yup.array().of(Yup.string()),

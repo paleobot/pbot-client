@@ -140,7 +140,10 @@ const SchemaMutateForm = ({handleSubmit, mode}) => {
         <Formik
             innerRef={formikRef}
             initialValues={initValues}
-            validationSchema={Yup.object({
+            //Delete only needs the selected record; full rules would block on hidden fields
+            validationSchema={mode === "delete" ? Yup.object({
+                schema: Yup.string().required("Schema is required"),
+            }) : Yup.object({
                 title: Yup.string().required(),
                 year: Yup.date().required(),
                 acknowledgments: Yup.string(),
