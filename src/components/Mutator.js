@@ -22,6 +22,12 @@ const Mutator = (props) => {
     //const entityID=`${props.entity[0].toLowerCase()}${props.entity.slice(1)}ID`;
     const entityID="pbotID";
 
+    //These deletes take the server's slim DeleteInput {pbotID, cascade}. The rest (Person, Organ,
+    //PreservationMode, Feature) are refused by the server and still take their entity input.
+    const slimDeleteEntities = ["Reference", "Schema", "Character", "State", "Description", "CharacterInstance",
+        "OTU", "Synonym", "Comment", "Specimen", "Collection", "Group", "Image"];
+    const slimDelete = props.mode === "delete" && slimDeleteEntities.includes(props.entity);
+
     let gQL;
     gQL = props.mode === "edit" ?
         gql`
@@ -41,15 +47,20 @@ const Mutator = (props) => {
         ` :
         props.mode === "delete" ?
         gql`
-            mutation ($data: ${props.entity}Input!) {
+            mutation ($data: ${slimDelete ? "Delete" : props.entity}Input!) {
                 Delete${props.entity}(data: $data) {
                     ${entityID}
-                }      
+                }
             }
         ` :
         '';
 
-    const [mutateNode, { data, loading, error }] = useMutation(gQL, {variables: {data: props.params}});
+    //Slim deletes send only what the server reads; other fields would fail DeleteInput validation.
+    const variables = slimDelete ?
+        {data: {pbotID: props.params.pbotID, cascade: props.params.cascade ?? false}} :
+        {data: props.params};
+
+    const [mutateNode, { data, loading, error }] = useMutation(gQL, {variables: variables});
 
     //Apollo client mutations are a little weird. Rather than executing automatically on render, 
     //the hook returns a function we have to manually execute, in this case addDescription.
